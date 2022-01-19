@@ -1,0 +1,130 @@
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Xaml;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Xunkong.Core.Hoyolab;
+
+namespace Xunkong.Desktop.Models
+{
+    internal partial class UserPanelModel : ObservableObject
+    {
+
+
+        private bool _HasError;
+        /// <summary>
+        /// 仅在列出所有玩家信息的时候使用
+        /// </summary>
+        public bool HasError
+        {
+            get => _HasError;
+            set => SetProperty(ref _HasError, value);
+        }
+
+
+
+        private string? _ErrorMessage;
+        /// <summary>
+        /// 仅在列出所有玩家信息的时候使用
+        /// </summary>
+        public string? ErrorMessage
+        {
+            get => _ErrorMessage;
+            set => SetProperty(ref _ErrorMessage, value);
+        }
+
+
+        private bool _IsPinned;
+        public bool IsPinned
+        {
+            get => _IsPinned;
+            set => SetProperty(ref _IsPinned, value);
+        }
+
+
+
+        private UserInfo? _UserInfo;
+        public UserInfo? UserInfo
+        {
+            get => _UserInfo;
+            set => SetProperty(ref _UserInfo, value);
+        }
+
+
+
+        private UserGameRoleInfo? _GameRoleInfo;
+        public UserGameRoleInfo? GameRoleInfo
+        {
+            get => _GameRoleInfo;
+            set => SetProperty(ref _GameRoleInfo, value);
+        }
+
+
+
+        private DailyNoteInfo? _DailyNoteInfo;
+        public DailyNoteInfo? DailyNoteInfo
+        {
+            get => _DailyNoteInfo;
+            set
+            {
+                SetProperty(ref _DailyNoteInfo, value);
+                OnPropertyChanged(nameof(PinButtonVisibility));
+            }
+        }
+
+
+        public void ClearError()
+        {
+            HasError = false;
+            ErrorMessage = null;
+        }
+
+
+        public Visibility PinButtonVisibility
+        {
+            get
+            {
+                if (Environment.OSVersion.Version >= new Version("10.0.22000.0"))
+                {
+                    return Visibility.Collapsed;
+                }
+                else
+                {
+                    return DailyNoteInfo is null ? Visibility.Collapsed : Visibility.Visible;
+                }
+            }
+        }
+
+
+        [ICommand]
+        public async Task PinOrUnpinTileAsync()
+        {
+            if (DailyNoteInfo is null)
+            {
+                return;
+            }
+            try
+            {
+                if (IsPinned)
+                {
+                    IsPinned = !await TileService.RequestUnpinTileAsync(DailyNoteInfo);
+                }
+                else
+                {
+                    IsPinned = await TileService.RequestPinTileAsync(DailyNoteInfo);
+                }
+            }
+            catch (Exception ex)
+            {
+                InfoBarHelper.Error(ex.GetType().Name, ex.Message);
+            }
+
+        }
+
+
+
+    }
+}

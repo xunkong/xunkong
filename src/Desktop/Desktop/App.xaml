@@ -1,0 +1,63 @@
+﻿<Application x:Class="Xunkong.Desktop.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:cc="using:CommunityToolkit.WinUI.UI.Controls"
+             xmlns:ctc="using:CommunityToolkit.WinUI.UI.Converters"
+             xmlns:local="using:Xunkong.Desktop"
+             xmlns:xdc="using:Xunkong.Desktop.Converters">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+                <ResourceDictionary>
+                    <ResourceDictionary.ThemeDictionaries>
+                        <ResourceDictionary x:Key="Default" />
+                    </ResourceDictionary.ThemeDictionaries>
+                </ResourceDictionary>
+                <!--  Other merged dictionaries here  -->
+            </ResourceDictionary.MergedDictionaries>
+            <!--  Other app resources here  -->
+
+            <StaticResource x:Key="WindowCaptionBackground" ResourceKey="SystemControlCustomBackgroundBrush" />
+            <StaticResource x:Key="WindowCaptionBackgroundDisabled" ResourceKey="SystemControlCustomBackgroundBrush" />
+            <StaticResource x:Key="WindowCaptionForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+            <StaticResource x:Key="WindowCaptionForegroundDisabled" ResourceKey="SystemControlForegroundBaseHighBrush" />
+            <SolidColorBrush x:Key="SystemControlCustomBackgroundBrush" Color="Transparent" />
+
+
+            <Thickness x:Key="NavigationViewContentMargin">0,48,0,0</Thickness>
+
+
+            <StaticResource x:Key="MenuFlyoutSubItemChevron" ResourceKey="SystemControlDisabledTransparentBrush" />
+
+            <ctc:EmptyObjectToObjectConverter x:Key="ObjectToBoolConverter"
+                                              EmptyValue="False"
+                                              NotEmptyValue="True" />
+            <ctc:EmptyObjectToObjectConverter x:Key="ObjectToVisibilityConverter"
+                                              EmptyValue="Collapsed"
+                                              NotEmptyValue="Visible" />
+            <ctc:EmptyObjectToObjectConverter x:Key="ObjectToVisibilityReversedConverter"
+                                              EmptyValue="Visible"
+                                              NotEmptyValue="Collapsed" />
+            <ctc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+            <ctc:BoolToVisibilityConverter x:Key="BoolToVisibilityReversedConverter"
+                                           FalseValue="Visible"
+                                           TrueValue="Collapsed" />
+            <xdc:DateTimeOffsetToTimeStringConverter x:Key="DateTimeOffsetToTimeStringConverter" />
+            <xdc:ExpeditionStatusToColorConverter x:Key="ExpeditionStatusToColorConverter" />
+
+
+            <Style TargetType="cc:ImageEx">
+                <Setter Property="IsCacheEnabled" Value="True" />
+                <Setter Property="EnableLazyLoading" Value="True"/>
+                <Setter Property="Visibility" Value="Visible"/>
+            </Style>
+
+
+            <x:Boolean x:Key="True">True</x:Boolean>
+            <x:Boolean x:Key="False">False</x:Boolean>
+
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

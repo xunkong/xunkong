@@ -1,0 +1,112 @@
+﻿<UserControl x:Class="Xunkong.Desktop.Controls.MainWindowView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:cc="using:CommunityToolkit.WinUI.UI.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:Xunkong.Desktop.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vms="using:Xunkong.Desktop.ViewModels"
+             xmlns:xdc="using:Xunkong.Desktop.Controls"
+             d:DataContext="{x:Bind vms:MainWindowViewModel}"
+             mc:Ignorable="d">
+
+
+
+
+
+    <Grid>
+
+
+
+
+        <!--  Window Header  -->
+        <Grid Height="{Binding ElementName=_navigationView, Path=CompactPaneLength}"
+              Margin="0,0,120,0"
+              VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!--  Title Bar  -->
+            <Border x:Name="_appTitleBar"
+                    Grid.Column="0"
+                    Height="{Binding ElementName=_navigationView, Path=CompactPaneLength}"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Top">
+                <Grid>
+                    <TextBlock x:Name="AppTitle"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Text="{x:Bind GetAppTitleFromPackage()}" />
+                </Grid>
+            </Border>
+
+
+            <StackPanel Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Orientation="Horizontal">
+
+                <Button Height="28" Style="{StaticResource DateTimePickerFlyoutButtonStyle}">
+                    <SymbolIcon Symbol="Download" />
+                    <Button.Flyout>
+                        <Flyout Placement="BottomEdgeAlignedRight">
+                            <Border Width="200"
+                                    Height="300"
+                                    BorderThickness="0" />
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+
+                <Button Height="28" Style="{StaticResource DateTimePickerFlyoutButtonStyle}">
+                    <SymbolIcon Symbol="Mail" />
+                    <Button.Flyout>
+                        <Flyout Placement="BottomEdgeAlignedRight">
+                            <Flyout.FlyoutPresenterStyle>
+                                <Style TargetType="FlyoutPresenter">
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="CornerRadius" Value="6" />
+                                </Style>
+                            </Flyout.FlyoutPresenterStyle>
+                            <Border Width="200"
+                                    Height="300"
+                                    BorderBrush="Transparent"
+                                    BorderThickness="0" />
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </StackPanel>
+
+        </Grid>
+
+
+        <NavigationView Name="_navigationView"
+                        DisplayModeChanged="_navigationView_DisplayModeChanged"
+                        IsBackEnabled="{x:Bind _rootFrame.CanGoBack}"
+                        IsPaneToggleButtonVisible="False"
+                        ItemInvoked="_navigationView_ItemInvoked"
+                        PaneClosing="_navigationView_PaneClosing"
+                        PaneOpening="_navigationView_PaneOpening">
+            <!--  导航栏左上部那一块  -->
+            <NavigationView.PaneCustomContent>
+                <xdc:UserPanelControl NavigationViewPaneOpen="{x:Bind _navigationView.IsPaneOpen, Mode=OneWay}" />
+            </NavigationView.PaneCustomContent>
+
+
+            <NavigationView.MenuItems>
+                <NavigationViewItemSeparator />
+            </NavigationView.MenuItems>
+
+
+            <Frame Name="_rootFrame" />
+
+        </NavigationView>
+
+
+
+
+
+    </Grid>
+</UserControl>
