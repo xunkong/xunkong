@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Xunkong.Desktop.Controls.UserPanelControl"
+﻿<UserControl x:Class="Xunkong.Desktop.Views.UserPanelView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:cc="using:CommunityToolkit.WinUI.UI.Controls"

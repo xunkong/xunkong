@@ -11,13 +11,13 @@
 		<RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
 		<UseWinUI>true</UseWinUI>
 	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="Controls\WebToolContentControl.xaml" />
+	</ItemGroup>
+	
 	
 	<ItemGroup>
-		<None Remove="Controls\UserPanelControl.xaml" />
-		<None Remove="Controls\WelcomControl.xaml" />
-	</ItemGroup>
-
-	<ItemGroup>
+		<PackageReference Include="AngleSharp" Version="0.16.1" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="7.1.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.Notifications" Version="7.1.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
@@ -40,24 +40,34 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Page Update="Controls\MainWindowControl.xaml">
+	  <Page Update="Controls\WebToolContentControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <None Update="Controls\WelcomControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Views\WindowRootView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Pages\" />
-	  <Folder Include="Views\" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Page Update="Controls\WelcomControl.xaml">
+	  <Page Update="Pages\WebToolPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Page Update="Controls\UserPanelControl.xaml">
+	  <Page Update="Pages\SettingPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Views\UserPanelView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>

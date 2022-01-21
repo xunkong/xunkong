@@ -82,7 +82,7 @@ builder.Services.AddLogging(builder => builder.AddSimpleConsole(c => { c.ColorBe
 
 builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 
-builder.Services.Configure<ApiBehaviorOptions>(options => options.InvalidModelStateResponseFactory = (context) => throw new XunkongApiException(ReturnCode.InvalidModelException));
+builder.Services.Configure<ApiBehaviorOptions>(options => options.InvalidModelStateResponseFactory = (context) => throw new XunkongServerException(ReturnCode.InvalidModelException));
 
 builder.Host.UseSerilog((ctx, config) => config.ReadFrom.Configuration(ctx.Configuration));
 
@@ -97,7 +97,7 @@ app.UseExceptionHandler(c => c.Run(async context =>
     var feature = context.Features.Get<IExceptionHandlerPathFeature>();
     var ex = feature?.Error;
     app.Services.GetService<Microsoft.Extensions.Logging.ILogger>()?.LogError(ex, "Exception middleware");
-    var result = new ResponseData(ReturnCode.InternalException, ex?.Message, new ExceptionResult(ex?.GetType()?.ToString(), ex?.Message, ex?.StackTrace));
+    var result = new ResponseDto(ReturnCode.InternalException, ex?.Message, new ExceptionResult(ex?.GetType()?.ToString(), ex?.Message, ex?.StackTrace));
     context.Response.StatusCode = 500;
     await context.Response.WriteAsJsonAsync(result);
 }));

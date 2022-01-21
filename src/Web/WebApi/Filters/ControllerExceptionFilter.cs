@@ -41,7 +41,7 @@ namespace Xunkong.Web.Api.Filters
                 UserAgent = ua,
                 Ip = ip,
             };
-            if (context.Exception is XunkongApiException ex)
+            if (context.Exception is XunkongServerException ex)
             {
                 record.ReturnCode = ex.Code;
                 record.Message = ex.Message;
@@ -61,7 +61,7 @@ namespace Xunkong.Web.Api.Filters
             {
                 _logger.LogError(e, "Error in save record of exception filter.");
             }
-            context.Result = new JsonResult(new ResponseData((ReturnCode)record.ReturnCode, record.Message));
+            context.Result = new JsonResult(new ResponseDto((ReturnCode)record.ReturnCode, record.Message));
         }
     }
 }

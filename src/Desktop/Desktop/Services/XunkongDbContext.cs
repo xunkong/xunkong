@@ -37,7 +37,9 @@ namespace Xunkong.Desktop.Services
 
         public DbSet<DailyNoteInfo> DailyNoteInfos { get; set; }
 
+        public DbSet<NotificationDesktopModel> NotificationItems { get; set; }
 
+        public DbSet<WebToolItem> WebToolItems { get; set; }
 
 
         public XunkongDbContext(DbContextOptions<XunkongDbContext> options) : base(options)

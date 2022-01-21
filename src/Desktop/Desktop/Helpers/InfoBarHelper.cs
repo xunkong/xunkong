@@ -92,11 +92,15 @@ namespace Xunkong.Desktop.Helpers
                    IsOpen = true,
                };
                _container.Children.Add(bar);
-               if (timeSpan is not null)
+               if (timeSpan is null)
+               {
+                   await Task.Delay(2000);
+               }
+               else
                {
                    await Task.Delay((int)timeSpan.Value.TotalMilliseconds);
-                   bar.IsOpen = false;
                }
+               bar.IsOpen = false;
            });
 
         }

@@ -82,7 +82,7 @@ namespace Xunkong.Desktop.ViewModels
 
 
 
-        public async Task InitlizeUserPanel()
+        public async Task InitializeDataAsync()
         {
             _logger.LogDebug("Initlize User Panel.");
             try
@@ -100,7 +100,7 @@ namespace Xunkong.Desktop.ViewModels
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception in method {MethodName}.", nameof(InitlizeUserPanel));
+                _logger.LogError(ex, "Exception in method {MethodName}.", nameof(InitializeDataAsync));
                 InfoBarHelper.Error(ex.GetType().Name, ex.Message);
             }
         }
@@ -189,7 +189,7 @@ namespace Xunkong.Desktop.ViewModels
                             from n in roleGroup.DefaultIfEmpty()
                             select new UserPanelModel { UserInfo = user, GameRoleInfo = r, DailyNoteInfo = n };
                 var list = new ObservableCollection<UserPanelModel>(query);
-                var pinnedList = await TileService.FindAllAsync();
+                var pinnedList = await TileHelper.FindAllAsync();
                 // 更新磁贴
                 foreach (var item in list)
                 {
@@ -198,7 +198,7 @@ namespace Xunkong.Desktop.ViewModels
                         item.IsPinned = true;
                         if (item.DailyNoteInfo is not null)
                         {
-                            TileService.UpdatePinnedTile(item.DailyNoteInfo);
+                            TileHelper.UpdatePinnedTile(item.DailyNoteInfo);
                         }
                     }
                 }
@@ -208,7 +208,7 @@ namespace Xunkong.Desktop.ViewModels
                 SelectedUserPanelModel = lastModel;
                 if (showResult)
                 {
-                    InfoBarHelper.Success("刷新完成", TimeSpan.FromSeconds(3));
+                    InfoBarHelper.Success("刷新完成");
                 }
                 _logger.LogDebug("Finish refresh all hoyolab and genshin user info.");
             }
@@ -250,7 +250,7 @@ namespace Xunkong.Desktop.ViewModels
                     var userInfo = await _hoyolabService.GetUserInfoAsync(cookie);
                     var gameRoles = await _hoyolabService.GetUserGameRoleInfoListAsync(cookie);
                     var list = gameRoles.Select(x => new UserPanelModel { UserInfo = userInfo, GameRoleInfo = x }).ToList();
-                    var pinnedList = await TileService.FindAllAsync();
+                    var pinnedList = await TileHelper.FindAllAsync();
                     foreach (var item in list)
                     {
                         if (pinnedList.Any(x => x == $"DailyNote_{item.GameRoleInfo?.Uid}"))
@@ -312,7 +312,7 @@ namespace Xunkong.Desktop.ViewModels
                 model.DailyNoteInfo = info;
                 if (info is not null && model.IsPinned)
                 {
-                    TileService.UpdatePinnedTile(info);
+                    TileHelper.UpdatePinnedTile(info);
                 }
             }
             catch (Exception ex)
@@ -357,7 +357,7 @@ namespace Xunkong.Desktop.ViewModels
                         await _hoyolabService.DeleteUserGameRoleInfoAsync(model.GameRoleInfo.Uid);
                         if (model.IsPinned)
                         {
-                            await TileService.RequestUnpinTileAsync(model.GameRoleInfo.Uid);
+                            await TileHelper.RequestUnpinTileAsync(model.GameRoleInfo.Uid);
                         }
                     }
                     if (UserPanelModelList?.Contains(model) ?? false)
@@ -366,7 +366,7 @@ namespace Xunkong.Desktop.ViewModels
                     }
                 }
                 _logger.LogDebug("Finished delete user info.");
-                InfoBarHelper.Success("删除成功", TimeSpan.FromSeconds(3));
+                InfoBarHelper.Success("删除成功");
                 if (SelectedUserPanelModel is null)
                 {
                     SelectedUserPanelModel = UserPanelModelList?.FirstOrDefault();

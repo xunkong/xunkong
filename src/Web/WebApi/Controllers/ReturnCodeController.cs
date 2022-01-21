@@ -22,10 +22,10 @@ namespace Xunkong.Web.Api.Controllers
         /// </summary>
         /// <returns>retcode</returns>
         [HttpGet]
-        public ResponseData Get()
+        public ResponseDto Get()
         {
             var dic = Enum.GetValues<ReturnCode>().ToDictionary(x => (int)x, x => x.ToDescriptionOrString());
-            return new ResponseData(ReturnCode.Ok, null, new { CodeCount = dic.Count, Dic = dic });
+            return new ResponseDto(ReturnCode.Ok, null, new { CodeCount = dic.Count, Dic = dic });
         }
 
     }

@@ -16,9 +16,9 @@ using Windows.Foundation.Collections;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace Xunkong.Desktop.Controls
+namespace Xunkong.Desktop.Views
 {
-    public sealed partial class UserPanelControl : UserControl
+    public sealed partial class UserPanelView : UserControl
     {
 
 
@@ -31,9 +31,9 @@ namespace Xunkong.Desktop.Controls
         }
 
 
-        static UserPanelControl()
+        static UserPanelView()
         {
-            NavigationViewPaneOpenProperty = DependencyProperty.Register(nameof(NavigationViewPaneOpen), typeof(bool), typeof(UserPanelControl), null);
+            NavigationViewPaneOpenProperty = DependencyProperty.Register(nameof(NavigationViewPaneOpen), typeof(bool), typeof(UserPanelView), null);
         }
 
 
@@ -42,11 +42,11 @@ namespace Xunkong.Desktop.Controls
 
 
 
-        public UserPanelControl()
+        public UserPanelView()
         {
             this.InitializeComponent();
             DataContext = App.Current.Services.GetService<UserPanelViewModel>();
-            Loaded += async (_, _) => await vm.InitlizeUserPanel();
+            Loaded += async (_, _) => await vm.InitializeDataAsync();
             vm.HideUserPanelSelectorFlyout += () => _Flyout_UserPanelSelector.DispatcherQueue.TryEnqueue(() => _Flyout_UserPanelSelector.Hide());
         }
 

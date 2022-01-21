@@ -42,7 +42,7 @@ namespace Xunkong.Web.Api.Filters
             };
             if (context.Result is ObjectResult j)
             {
-                if (j.Value is ResponseData data)
+                if (j.Value is ResponseDto data)
                 {
                     record.ReturnCode = data.Code;
                     record.Message = data.Message;

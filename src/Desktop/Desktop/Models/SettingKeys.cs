@@ -9,11 +9,23 @@ namespace Xunkong.Desktop.Models
     internal class SettingKeys
     {
 
-        public const string LastSelectUserInfoUid = "LastSelectUserInfoUid";
+        public const string IsWindowMax = nameof(IsWindowMax);
 
-        public const string LastSelectGameRoleUid = "LastSelectGameRoleUid";
+        public const string WindowLeft = nameof(WindowLeft);
 
-        public const string UserDataPath = "UserDataPath";
+        public const string WindowTop = nameof(WindowTop);
+
+        public const string WindowRight = nameof(WindowRight);
+
+        public const string WindowBottom = nameof(WindowBottom);
+
+        public const string LastSelectUserInfoUid = nameof(LastSelectUserInfoUid);
+
+        public const string LastSelectGameRoleUid = nameof(LastSelectGameRoleUid);
+
+        public const string UserDataPath = nameof(UserDataPath);
+
+
 
     }
 }

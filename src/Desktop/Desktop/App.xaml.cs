@@ -1,13 +1,4 @@
-﻿global using Dapper;
-global using Microsoft.Extensions.DependencyInjection;
-global using Microsoft.Extensions.Logging;
-global using Xunkong.Desktop.Controls;
-global using Xunkong.Desktop.Helpers;
-global using Xunkong.Desktop.Models;
-global using Xunkong.Desktop.Services;
-global using Xunkong.Desktop.ViewModels;
-global using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Http;
 using Microsoft.UI.Xaml;
@@ -16,6 +7,8 @@ using Serilog.Events;
 using System.Text;
 using Windows.Storage;
 using Xunkong.Core.Hoyolab;
+using System.Diagnostics;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -102,52 +95,61 @@ namespace Xunkong.Desktop
               .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AutomaticDecompression = System.Net.DecompressionMethods.All });
 
             var dbPath = Path.Combine(userDataPath!, @"Data\XunkongData.db");
+            var sqlConStr = $"Data Source={dbPath};";
             Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);
-            sc.AddPooledDbContextFactory<XunkongDbContext>(options => options.UseSqlite($"Data Source={dbPath};"));
+            sc.AddPooledDbContextFactory<XunkongDbContext>(options => options.UseSqlite(sqlConStr));
+            sc.AddTransient(_ => new DbConnectionFactory<SqliteConnection>(sqlConStr));
+            sc.AddTransient<UserSettingService>();
+            sc.AddTransient<HoyolabService>();
+            sc.AddTransient<WindowRootViewModel>();
+            sc.AddTransient<UserPanelViewModel>();
+            sc.AddTransient<SettingViewModel>();
             sc.AddLogging(logBuilder =>
             {
                 logBuilder.AddSerilog(fxLogger, true);
                 logBuilder.AddSerilog(myLogger, true);
             });
-            sc.AddTransient(_ => new DbConnectionFactory<SqliteConnection>($"Data Source={dbPath};"));
-            sc.AddTransient<UserSettingService>();
-            sc.AddTransient<HoyolabService>();
-            sc.AddTransient<MainWindowViewModel>();
-            sc.AddTransient<UserPanelViewModel>();
             var service = sc.BuildServiceProvider();
 
             var _logger = service.GetRequiredService<ILogger<App>>();
             _logger.LogInformation(XunkongEnvironment.GetLogHeader());
 
+
+
             if (File.Exists(dbPath))
             {
-                Task.Run(async () =>
+                var sb = new StringBuilder();
+                sb.AppendLine("XunkongData.db is existed, the followings are applied migraions:");
+                var types = typeof(App).Assembly.GetTypes();
+                var allMigrations = typeof(App).Assembly.GetTypes()
+                                                        .Where(x => x.Namespace == "Xunkong.Desktop.Migrations")
+                                                        .Select(x => (x.GetCustomAttributes(typeof(MigrationAttribute), false).FirstOrDefault() as MigrationAttribute)?.Id)
+                                                        .Where(x => !string.IsNullOrWhiteSpace(x))
+                                                        .Distinct()
+                                                        .ToList();
+                var con = new SqliteConnection(sqlConStr);
+                var appliedMigrations = con.Query<string>("SELECT * FROM __EFMigrationsHistory;");
+                sb.AppendLine(string.Join("\n", appliedMigrations));
+                var appendingMigrations = allMigrations.Except(appliedMigrations);
+                if (appendingMigrations.Any())
                 {
+                    sb.AppendLine("The followings are pending migrations:");
+                    sb.AppendLine(string.Join("\n", appendingMigrations));
                     var f = service.GetService<IDbContextFactory<XunkongDbContext>>();
                     if (f is not null)
                     {
                         using var context = f.CreateDbContext();
-                        var ams = await context.Database.GetAppliedMigrationsAsync();
-                        var pms = await context.Database.GetPendingMigrationsAsync();
-                        var sb = new StringBuilder();
-                        sb.AppendLine("XunkongData.db is existed, the followings are applied migraions:");
-                        sb.AppendLine(string.Join("\n", ams));
-                        if (pms.Any())
-                        {
-                            sb.AppendLine("The followings are pending migrations:");
-                            sb.AppendLine(string.Join("\n", pms));
-                            sb.AppendLine("Start migration.");
-                            _logger.LogInformation(sb.ToString());
-                            await context.Database.MigrateAsync();
-                            _logger.LogInformation("Migration finished");
-                        }
-                        else
-                        {
-                            sb.AppendLine("Database is update to date.");
-                            _logger.LogInformation(sb.ToString());
-                        }
+                        sb.AppendLine("Start migration.");
+                        _logger.LogInformation(sb.ToString());
+                        context.Database.Migrate();
+                        _logger.LogInformation("Migration finished");
                     }
-                });
+                }
+                else
+                {
+                    sb.AppendLine("Database is update to date.");
+                    _logger.LogInformation(sb.ToString());
+                }
             }
             else
             {
@@ -160,6 +162,8 @@ namespace Xunkong.Desktop
                     _logger.LogInformation("Migration finished");
                 }
             }
+#warning 最好能够删除
+            Task.Run(() => service.GetService<IDbContextFactory<XunkongDbContext>>()!.CreateDbContext());
             return service;
         }
 

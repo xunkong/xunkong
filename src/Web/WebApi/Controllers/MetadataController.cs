@@ -25,42 +25,42 @@ namespace Xunkong.Web.Api.Controllers
 
 
         [HttpGet("character")]
-        public async Task<ResponseData> GetCharacterInfos()
+        public async Task<ResponseDto> GetCharacterInfos()
         {
-            if (_cache.TryGetValue("characterinfos", out ResponseData result))
+            if (_cache.TryGetValue("characterinfos", out ResponseDto result))
             {
                 return result;
             }
             var list = await _dbContext.CharacterInfos.AsNoTracking().Where(x => x.ConstllationName != null).ToListAsync();
-            result = ResponseData.Ok(new { Count = list.Count, List = list });
+            result = ResponseDto.Ok(new { Count = list.Count, List = list });
             _cache.Set("characterinfos", result);
             return result;
         }
 
 
         [HttpGet("weapon")]
-        public async Task<ResponseData> GetWeaponInfos()
+        public async Task<ResponseDto> GetWeaponInfos()
         {
-            if (_cache.TryGetValue("weaponinfos", out ResponseData result))
+            if (_cache.TryGetValue("weaponinfos", out ResponseDto result))
             {
                 return result;
             }
             var list = await _dbContext.WeaponInfos.AsNoTracking().Where(x => x.GachaIcon != null).ToListAsync();
-            result = ResponseData.Ok(new { Count = list.Count, List = list });
+            result = ResponseDto.Ok(new { Count = list.Count, List = list });
             _cache.Set("weaponinfos", result);
             return result;
         }
 
 
         [HttpGet("wishevent")]
-        public async Task<ResponseData> GetWishEventInfos()
+        public async Task<ResponseDto> GetWishEventInfos()
         {
-            if (_cache.TryGetValue("wisheventinfos", out ResponseData result))
+            if (_cache.TryGetValue("wisheventinfos", out ResponseDto result))
             {
                 return result;
             }
             var list = await _dbContext.WishEventInfos.AsNoTracking().ToListAsync();
-            result = ResponseData.Ok(new { Count = list.Count, List = list });
+            result = ResponseDto.Ok(new { Count = list.Count, List = list });
             _cache.Set("wisheventinfos", result);
             return result;
         }

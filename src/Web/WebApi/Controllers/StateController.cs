@@ -19,9 +19,9 @@ namespace Xunkong.Web.Api.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public ResponseData GetState()
+        public ResponseDto GetState()
         {
-            var data = new ResponseData(ReturnCode.Ok, "Api instance has started.", new { LastUpdateTime = lastUpdateTime, RunningTime = DateTime.Now - StartTime });
+            var data = new ResponseDto(ReturnCode.Ok, "Api instance has started.", new { LastUpdateTime = lastUpdateTime, RunningTime = DateTime.Now - StartTime });
             return data;
         }
 

@@ -44,20 +44,20 @@ namespace Xunkong.Web.Api.Controllers
         /// <param name="wishlog"></param>
         /// <returns></returns>
         [HttpPost("get")]
-        public async Task<ResponseData> GetWishlogAsync([FromBody] WishlogDto wishlog)
+        public async Task<ResponseDto> GetWishlogAsync([FromBody] WishlogDto wishlog)
         {
             var uid = wishlog.Uid;
             var currentCount = await _dbContext.WishlogItems.Where(x => x.Uid == uid).CountAsync();
             if (currentCount == 0)
             {
-                throw new XunkongApiException(ReturnCode.UidNotFound);
+                throw new XunkongServerException(ReturnCode.UidNotFound);
             }
             var list = await _dbContext.WishlogItems.AsNoTracking()
                                                     .Where(x => x.Uid == uid && x.Id > wishlog.LastId)
                                                     .OrderBy(x => x.Id)
                                                     .ToListAsync();
             var result = new WishlogResult(uid, currentCount, list.Count, 0, 0, list);
-            return ResponseData.Ok(result);
+            return ResponseDto.Ok(result);
         }
 
 
@@ -67,13 +67,13 @@ namespace Xunkong.Web.Api.Controllers
         /// <param name="wishlog"></param>
         /// <returns></returns>
         [HttpPost("put")]
-        public async Task<ResponseData> UpdateWishlogAsync([FromBody] WishlogDto wishlog)
+        public async Task<ResponseDto> UpdateWishlogAsync([FromBody] WishlogDto wishlog)
         {
             var uid = wishlog.Uid;
             var list = wishlog.List?.Where(x => x.Uid == uid).ToList();
             if (list is null || !list.Any())
             {
-                throw new XunkongApiException(ReturnCode.NoWishlogItem);
+                throw new XunkongServerException(ReturnCode.NoWishlogItem);
             }
             var lastId = await _dbContext.WishlogItems.Where(x => x.Uid == uid).OrderBy(x => x.Id).Select(x => x.Id).LastOrDefaultAsync();
             list = list.Where(x => x.Id > lastId).ToList();
@@ -89,7 +89,7 @@ namespace Xunkong.Web.Api.Controllers
             var putCount = await _dbContext.SaveChangesAsync();
             var currentCount = await _dbContext.WishlogItems.Where(x => x.Uid == uid).CountAsync();
             var result = new WishlogResult(uid, currentCount, 0, putCount, 0, null);
-            return ResponseData.Ok(result);
+            return ResponseDto.Ok(result);
         }
 
 
@@ -99,7 +99,7 @@ namespace Xunkong.Web.Api.Controllers
         /// <param name="wishlog"></param>
         /// <returns></returns>
         [HttpPost("delete")]
-        public async Task<ResponseData> DeleteWishlogAsync([FromBody] WishlogDto wishlog)
+        public async Task<ResponseDto> DeleteWishlogAsync([FromBody] WishlogDto wishlog)
         {
             var uid = wishlog.Uid;
             using var t = await _dbContext.Database.BeginTransactionAsync();
@@ -118,10 +118,10 @@ namespace Xunkong.Web.Api.Controllers
             }
             if (deleteCount == 0)
             {
-                throw new XunkongApiException(ReturnCode.UidNotFound);
+                throw new XunkongServerException(ReturnCode.UidNotFound);
             }
             var result = new WishlogResult(uid, 0, 0, 0, deleteCount, null);
-            return ResponseData.Ok(result);
+            return ResponseDto.Ok(result);
         }
 
 
@@ -132,17 +132,17 @@ namespace Xunkong.Web.Api.Controllers
         /// <param name="wishlog"></param>
         /// <returns></returns>
         [HttpPost("last")]
-        public async Task<ResponseData> GetLastWishlogAsync([FromBody] WishlogDto wishlog)
+        public async Task<ResponseDto> GetLastWishlogAsync([FromBody] WishlogDto wishlog)
         {
             var uid = wishlog.Uid;
             var currentCount = await _dbContext.WishlogItems.Where(x => x.Uid == uid).CountAsync();
             if (currentCount == 0)
             {
-                throw new XunkongApiException(ReturnCode.UidNotFound);
+                throw new XunkongServerException(ReturnCode.UidNotFound);
             }
             var item = await _dbContext.WishlogItems.AsNoTracking().Where(x => x.Uid == uid).OrderBy(x => x.Id).LastOrDefaultAsync();
             var result = new WishlogResult(uid, currentCount, 1, 0, 0, new List<WishlogItem> { item! });
-            return ResponseData.Ok(result);
+            return ResponseDto.Ok(result);
         }
 
 

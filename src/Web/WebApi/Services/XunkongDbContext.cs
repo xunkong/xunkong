@@ -34,6 +34,8 @@ namespace Xunkong.Web.Api.Services
 
         public DbSet<DailyNoteInfo> DailyNoteInfos { get; set; }
 
+        public DbSet<NotificationServerModel> NotificationItems { get; set; }
+
 
         public XunkongDbContext(DbContextOptions<XunkongDbContext> options) : base(options)
         {

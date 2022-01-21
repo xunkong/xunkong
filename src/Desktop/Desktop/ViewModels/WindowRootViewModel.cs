@@ -6,10 +6,11 @@ using Microsoft.UI.Xaml;
 using Xunkong.Core.Hoyolab;
 using Xunkong.Desktop.Services;
 using System.Net;
+using System.Collections.ObjectModel;
 
 namespace Xunkong.Desktop.ViewModels
 {
-    internal partial class MainWindowViewModel : ObservableObject
+    internal partial class WindowRootViewModel : ObservableObject
     {
 
 
@@ -21,11 +22,9 @@ namespace Xunkong.Desktop.ViewModels
         private readonly HoyolabService _hoyolabService;
 
 
-        public MainWindowViewModel() { }
 
 
-
-        public MainWindowViewModel(IDbContextFactory<XunkongDbContext> dbFactory, UserSettingService userSettingService, HoyolabService hoyolabService)
+        public WindowRootViewModel(IDbContextFactory<XunkongDbContext> dbFactory, UserSettingService userSettingService, HoyolabService hoyolabService)
         {
             _dbFactory = dbFactory;
             _userSettingService = userSettingService;
@@ -33,6 +32,14 @@ namespace Xunkong.Desktop.ViewModels
         }
 
 
+
+
+        private ObservableCollection<WebToolItem> _WebToolItemList;
+        public ObservableCollection<WebToolItem> WebToolItemList
+        {
+            get => _WebToolItemList;
+            set => SetProperty(ref _WebToolItemList, value);
+        }
 
 
 

@@ -1,0 +1,207 @@
+﻿<Page x:Class="Xunkong.Desktop.Pages.SettingPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:cc="using:CommunityToolkit.WinUI.UI.Controls"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:Xunkong.Desktop.Pages"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:models="using:Xunkong.Desktop.Models"
+      xmlns:ui="using:CommunityToolkit.WinUI.UI"
+      xmlns:viewmodels="using:Xunkong.Desktop.ViewModels"
+      d:DataContext="{x:Bind viewmodels:SettingViewModel}"
+      x:DefaultBindMode="OneWay"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+      mc:Ignorable="d">
+
+    <Grid RowSpacing="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition MaxWidth="1200" />
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+
+        <TextBlock Margin="48,24,0,0"
+                   Style="{StaticResource TitleTextBlockStyle}"
+                   Text="设置" />
+
+        <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition MaxWidth="1200" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Margin="48,0,48,0" Spacing="16">
+
+                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="关于" />
+                    <Grid Padding="16,12,16,12"
+                          Background="{StaticResource CardBackgroundFillColorDefaultBrush}"
+                          BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"
+                          BorderThickness="1"
+                          ColumnSpacing="16"
+                          CornerRadius="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <SymbolIcon Grid.Column="0" Symbol="Refresh" />
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center">
+                            <Run Text="版本" />
+                            <LineBreak />
+                            <Run FontSize="12"
+                                 Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                 Text="{x:Bind AppVersion}" />
+                        </TextBlock>
+                        <Button Grid.Column="2" Content="检查更新" />
+                    </Grid>
+
+
+                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="拓展" />
+                    <Expander Name="_Expander_WebTool"
+                              HorizontalAlignment="Stretch"
+                              HorizontalContentAlignment="Stretch"
+                              Collapsed="_Expander_WebTool_Collapsed">
+                        <Expander.Header>
+                            <StackPanel Padding="0,12,0,12"
+                                        Orientation="Horizontal"
+                                        Spacing="16">
+                                <SymbolIcon Symbol="Globe" />
+                                <TextBlock>
+                                    <!--  不知道为什么要空一格才能和下行文字对齐  -->
+                                    <Run Text="网页小工具" /><LineBreak /><Run FontSize="12"
+                                         Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                         Text="在左侧导航栏中添加网页小工具" />
+                                </TextBlock>
+                            </StackPanel>
+                        </Expander.Header>
+                        <Expander.Content>
+                            <Grid RowSpacing="12">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <CommandBar DefaultLabelPosition="Right">
+                                    <CommandBar.Content>
+                                        <TextBlock Margin="12,14,0,0"
+                                                   FontWeight="Bold"
+                                                   Text="已添加的网页小工具" />
+                                    </CommandBar.Content>
+                                    <AppBarButton Command="{x:Bind vm.AddWebToolItemCommand, Mode=OneTime}"
+                                                  Icon="Add"
+                                                  Label="添加" />
+                                    <AppBarButton Command="{x:Bind vm.DeleteSelectedWebToolItemCommand, Mode=OneTime}"
+                                                  Icon="Delete"
+                                                  Label="删除" />
+                                    <AppBarButton Command="{x:Bind vm.SaveWebToolItemCommand, Mode=OneTime}"
+                                                  Icon="Save"
+                                                  Label="保存" />
+                                </CommandBar>
+                                <ListView Grid.Row="1"
+                                          AllowDrop="True"
+                                          CanDragItems="True"
+                                          CanReorderItems="True"
+                                          ItemsSource="{Binding WebToolItemList, Mode=TwoWay}"
+                                          SelectedItem="{x:Bind vm.SelectedWebToolItem, Mode=TwoWay}"
+                                          SelectionMode="Single">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="models:WebToolItem">
+                                            <Grid Margin="0,0,16,0"
+                                                  HorizontalAlignment="Stretch"
+                                                  ColumnSpacing="16">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="40" />
+                                                    <ColumnDefinition Width="*"
+                                                                      MinWidth="80"
+                                                                      MaxWidth="160" />
+                                                    <ColumnDefinition Width="4*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <cc:ImageEx Grid.Column="0"
+                                                            Width="24"
+                                                            Source="{x:Bind Icon}"
+                                                            Stretch="Uniform" />
+                                                <TextBlock Grid.Column="1"
+                                                           VerticalAlignment="Center"
+                                                           Text="{x:Bind Title}" />
+                                                <TextBlock Grid.Column="2"
+                                                           VerticalAlignment="Center"
+                                                           Text="{x:Bind Url}" />
+                                                <TextBlock Grid.Column="3"
+                                                           VerticalAlignment="Center"
+                                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                           Text="&#xE700;" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </Grid>
+                        </Expander.Content>
+                    </Expander>
+
+
+                </StackPanel>
+
+
+
+            </Grid>
+
+
+        </ScrollViewer>
+
+
+
+        <Grid Name="_Grid_EditWebToolItem"
+              Grid.RowSpan="2"
+              Grid.Column="2"
+              Width="400"
+              Padding="12,0,12,0"
+              HorizontalAlignment="Right"
+              Background="{StaticResource CardBackgroundFillColorDefaultBrush}"
+              BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"
+              BorderThickness="1"
+              CornerRadius="4,0,0,4"
+              RowSpacing="12"
+              Visibility="{x:Bind vm.SelectedWebToolItem, Converter={StaticResource ObjectToVisibilityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <AppBarButton Width="40"
+                          HorizontalAlignment="Right"
+                          VerticalAlignment="Top"
+                          Command="{x:Bind vm.CloseEditWebToolGridCommand, Mode=OneTime}"
+                          Icon="Clear"
+                          LabelPosition="Collapsed" />
+            <StackPanel Grid.Row="1" Spacing="12">
+                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="基础设置" />
+                <TextBlock Text="标题" />
+                <TextBox PlaceholderText="不要太长" Text="{x:Bind vm.SelectedWebToolItem.Title, Mode=TwoWay}" />
+                <TextBlock Text="图标" />
+                <TextBox PlaceholderText="图标的网址" Text="{x:Bind vm.SelectedWebToolItem.Icon, Mode=TwoWay}" />
+                <TextBlock Text="网址" />
+                <TextBox PlaceholderText="应该优先填这个" Text="{x:Bind vm.SelectedWebToolItem.Url, Mode=TwoWay}" />
+                <Button Command="{x:Bind vm.GetTitleAndIconByUrlCommand}" Content="获取标题和图标" />
+                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="高级设置" />
+                <TextBlock Text="JavaScript" />
+                <TextBox MaxHeight="300"
+                         AcceptsReturn="True"
+                         IsSpellCheckEnabled="False"
+                         PlaceholderText="网页加载完成时会运行此脚本"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         Text="{x:Bind vm.SelectedWebToolItem.JavaScript, Mode=TwoWay}"
+                         TextWrapping="Wrap" />
+            </StackPanel>
+
+
+        </Grid>
+
+
+    </Grid>
+</Page>

@@ -1,19 +1,13 @@
 ﻿#pragma warning disable CA1416 // 验证平台兼容性
 using CommunityToolkit.WinUI.Notifications;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.UI.Notifications;
 using Windows.UI.StartScreen;
 using WinRT.Interop;
 using Xunkong.Core.Hoyolab;
 
-namespace Xunkong.Desktop.Services
+namespace Xunkong.Desktop.Helpers
 {
-    internal class TileService
+    internal class TileHelper
     {
 
         private static readonly string BaseUrl = "https://xunkong-1306705684.file.myqcloud.com/genshin/open/image/";

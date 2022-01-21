@@ -110,11 +110,11 @@ namespace Xunkong.Desktop.Models
             {
                 if (IsPinned)
                 {
-                    IsPinned = !await TileService.RequestUnpinTileAsync(DailyNoteInfo);
+                    IsPinned = !await TileHelper.RequestUnpinTileAsync(DailyNoteInfo);
                 }
                 else
                 {
-                    IsPinned = await TileService.RequestPinTileAsync(DailyNoteInfo);
+                    IsPinned = await TileHelper.RequestPinTileAsync(DailyNoteInfo);
                 }
             }
             catch (Exception ex)

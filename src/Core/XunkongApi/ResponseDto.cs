@@ -1,6 +1,6 @@
 ﻿namespace Xunkong.Core.XunkongApi
 {
-    public class ResponseData<TData>
+    public class ResponseDto<TData>
     {
         public ReturnCode Code { get; set; }
 
@@ -9,10 +9,10 @@
         public TData? Data { get; set; }
 
 
-        public ResponseData() { }
+        public ResponseDto() { }
 
 
-        public ResponseData(ReturnCode code, string? message, TData data)
+        public ResponseDto(ReturnCode code, string? message, TData data)
         {
             Code = code;
             Message = message ?? code.ToDescriptionOrString();
@@ -22,7 +22,7 @@
 
     }
 
-    public class ResponseData
+    public class ResponseDto
     {
         public ReturnCode Code { get; set; }
 
@@ -31,10 +31,10 @@
         public object? Data { get; set; }
 
 
-        public ResponseData() { }
+        public ResponseDto() { }
 
 
-        public ResponseData(ReturnCode code, string? message = null, object? data = null)
+        public ResponseDto(ReturnCode code, string? message = null, object? data = null)
         {
             Code = code;
             Message = message ?? code.ToDescriptionOrString();
@@ -43,9 +43,9 @@
 
 
 
-        public static ResponseData Ok(object data)
+        public static ResponseDto Ok(object data)
         {
-            return new ResponseData(ReturnCode.Ok, null, data);
+            return new ResponseDto(ReturnCode.Ok, null, data);
         }
 
 

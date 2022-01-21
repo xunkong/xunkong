@@ -29,29 +29,29 @@ namespace Xunkong.Web.Api.Filters
                 var uid = wishlog.Uid;
                 if (wishlog.Url is null)
                 {
-                    throw new XunkongApiException(ReturnCode.UrlFormatError);
+                    throw new XunkongServerException(ReturnCode.UrlFormatError);
                 }
                 try
                 {
                     var url_uid = await GetUidByUrlAsync(wishlog.Url);
                     if (url_uid != uid)
                     {
-                        throw new XunkongApiException(ReturnCode.UrlNotMatchUid);
+                        throw new XunkongServerException(ReturnCode.UrlNotMatchUid);
                     }
                 }
                 catch (HoyolabException ex)
                 {
-                    throw new XunkongApiException(ReturnCode.HoyolabException, ex.Message);
+                    throw new XunkongServerException(ReturnCode.HoyolabException, ex.Message);
                 }
                 catch (ArgumentException ex)
                 {
-                    throw new XunkongApiException(ReturnCode.UrlFormatError, ex.Message);
+                    throw new XunkongServerException(ReturnCode.UrlFormatError, ex.Message);
                 }
                 await next();
             }
             else
             {
-                throw new XunkongApiException(ReturnCode.InvalidModelException);
+                throw new XunkongServerException(ReturnCode.InvalidModelException);
             }
         }
 

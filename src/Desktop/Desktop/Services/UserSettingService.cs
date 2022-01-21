@@ -29,7 +29,7 @@ namespace Xunkong.Desktop.Services
         {
             using var con = _connectionFactory.CreateDbConnection();
             var value = await con.QueryFirstOrDefaultAsync<string>($"SELECT Value FROM UserSettings WHERE Key='{key}';");
-            _logger.LogTrace($"Query UserSetting by key '{key}' with value '{value}'");
+            _logger.LogTrace("Query UserSetting by key {Key} with value {Value}", key, value);
             if (value == null)
             {
                 return default(T);
@@ -53,7 +53,7 @@ namespace Xunkong.Desktop.Services
 
         public async Task SaveSettingAsync<T>(string key, T value)
         {
-            _logger.LogTrace($"Save UserSetting with key '{key}', value '{value}'");
+            _logger.LogTrace("Save UserSetting with key {Key}, value {Value}", key, value);
             using var con = _connectionFactory.CreateDbConnection();
             var setting = new UserSettingModel
             {
