@@ -9,6 +9,12 @@ using Windows.Storage;
 using Xunkong.Core.Hoyolab;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Xunkong.Core.XunkongApi;
+using System.Text.Json;
+using System.Text.Encodings.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Xunkong.Core.Wish;
+using Microsoft.Windows.AppLifecycle;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,6 +33,14 @@ namespace Xunkong.Desktop
         public App()
         {
             this.InitializeComponent();
+            UnhandledException += App_UnhandledException;
+            WeakReferenceMessenger.Default.Register<ConfigureServiceMessage>(this, (_, m) => m.Reply(Task.Run(() => Services = ConfigureServices())));
+        }
+
+
+        private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -36,6 +50,7 @@ namespace Xunkong.Desktop
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
+            //var param = AppInstance.GetCurrent().GetActivatedEventArgs();
             if (CheckUserDataPath())
             {
                 Services = ConfigureServices();
@@ -45,10 +60,10 @@ namespace Xunkong.Desktop
             else
             {
                 m_window = new MainWindow(true);
-                m_window.ConfigureServices = ConfigureServices;
                 m_window.Activate();
             }
         }
+
 
 
         private MainWindow m_window;
@@ -57,9 +72,9 @@ namespace Xunkong.Desktop
         public static new App Current => (App)Application.Current;
 
 
-        public IServiceProvider Services { get; set; }
+        public IServiceProvider Services { get; private set; }
 
-        private const string logTemplate = "{NewLine}[{Timestamp:HH:mm:ss.fff}] [{Level:u3}] {SourceContext}{NewLine}{Message}{NewLine}{Exception}";
+        private const string logTemplate = " {NewLine}[{Timestamp:HH:mm:ss.fff}] [{Level:u3}] {SourceContext}{NewLine}{Message}{NewLine}{Exception}";
 
 
         private static IServiceProvider ConfigureServices()
@@ -93,23 +108,54 @@ namespace Xunkong.Desktop
             sc.AddHttpClient<HoyolabClient>()
               .ConfigureHttpClient(client => client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br"))
               .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AutomaticDecompression = System.Net.DecompressionMethods.All });
+            sc.AddHttpClient<WishlogClient>()
+              .ConfigureHttpClient(client => client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br"))
+              .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AutomaticDecompression = System.Net.DecompressionMethods.All });
+            sc.AddHttpClient<XunkongApiClient>()
+              .ConfigureHttpClient(client =>
+              {
+                  client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
+                  client.DefaultRequestHeaders.Add("User-Agent", $"XunkongDesktop/{XunkongEnvironment.AppVersion}");
+                  client.DefaultRequestHeaders.Add("X-Platform", "Desktop");
+                  client.DefaultRequestHeaders.Add("X-Channel", XunkongEnvironment.Channel.ToString());
+                  client.DefaultRequestHeaders.Add("X-Version", XunkongEnvironment.AppVersion.ToString());
+                  client.DefaultRequestHeaders.Add("X-Device-Id", XunkongEnvironment.DeviceId);
+              })
+              .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AutomaticDecompression = System.Net.DecompressionMethods.All });
 
             var dbPath = Path.Combine(userDataPath!, @"Data\XunkongData.db");
             var sqlConStr = $"Data Source={dbPath};";
             Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);
             sc.AddPooledDbContextFactory<XunkongDbContext>(options => options.UseSqlite(sqlConStr));
+            sc.AddTransient(_ => new JsonSerializerOptions { PropertyNameCaseInsensitive = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
             sc.AddTransient(_ => new DbConnectionFactory<SqliteConnection>(sqlConStr));
-            sc.AddTransient<UserSettingService>();
-            sc.AddTransient<HoyolabService>();
-            sc.AddTransient<WindowRootViewModel>();
-            sc.AddTransient<UserPanelViewModel>();
-            sc.AddTransient<SettingViewModel>();
+            var allTypes = typeof(App).Assembly.GetTypes();
+            var serviceTypes = allTypes.Where(x => x.GetCustomAttributes(typeof(InjectServiceAttribute), false).Any());
+            foreach (var type in serviceTypes)
+            {
+                var attrs = type.GetCustomAttributes(typeof(InjectServiceAttribute), false).FirstOrDefault();
+                if (attrs is InjectServiceAttribute attr)
+                {
+                    if (attr.IsSingleton)
+                    {
+                        sc.AddSingleton(type);
+                    }
+                    else
+                    {
+                        sc.AddTransient(type);
+                    }
+                }
+            }
             sc.AddLogging(logBuilder =>
             {
                 logBuilder.AddSerilog(fxLogger, true);
                 logBuilder.AddSerilog(myLogger, true);
             });
             var service = sc.BuildServiceProvider();
+
+
+#warning 最好能够删除
+            Task.Run(() => service.GetService<IDbContextFactory<XunkongDbContext>>()!.CreateDbContext());
 
             var _logger = service.GetRequiredService<ILogger<App>>();
             _logger.LogInformation(XunkongEnvironment.GetLogHeader());
@@ -120,13 +166,11 @@ namespace Xunkong.Desktop
             {
                 var sb = new StringBuilder();
                 sb.AppendLine("XunkongData.db is existed, the followings are applied migraions:");
-                var types = typeof(App).Assembly.GetTypes();
-                var allMigrations = typeof(App).Assembly.GetTypes()
-                                                        .Where(x => x.Namespace == "Xunkong.Desktop.Migrations")
-                                                        .Select(x => (x.GetCustomAttributes(typeof(MigrationAttribute), false).FirstOrDefault() as MigrationAttribute)?.Id)
-                                                        .Where(x => !string.IsNullOrWhiteSpace(x))
-                                                        .Distinct()
-                                                        .ToList();
+                var allMigrations = allTypes.Where(x => x.Namespace == "Xunkong.Desktop.Migrations")
+                                            .Select(x => (x.GetCustomAttributes(typeof(MigrationAttribute), false).FirstOrDefault() as MigrationAttribute)?.Id)
+                                            .Where(x => !string.IsNullOrWhiteSpace(x))
+                                            .Distinct()
+                                            .ToList();
                 var con = new SqliteConnection(sqlConStr);
                 var appliedMigrations = con.Query<string>("SELECT * FROM __EFMigrationsHistory;");
                 sb.AppendLine(string.Join("\n", appliedMigrations));
@@ -162,8 +206,6 @@ namespace Xunkong.Desktop
                     _logger.LogInformation("Migration finished");
                 }
             }
-#warning 最好能够删除
-            Task.Run(() => service.GetService<IDbContextFactory<XunkongDbContext>>()!.CreateDbContext());
             return service;
         }
 

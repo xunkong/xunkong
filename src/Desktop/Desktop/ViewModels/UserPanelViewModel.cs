@@ -6,6 +6,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,8 @@ using Xunkong.Desktop.Services;
 
 namespace Xunkong.Desktop.ViewModels
 {
+
+    [InjectService]
     internal partial class UserPanelViewModel : ObservableObject
     {
 
@@ -87,6 +90,7 @@ namespace Xunkong.Desktop.ViewModels
             _logger.LogDebug("Initlize User Panel.");
             try
             {
+                _logger.LogInformation(Environment.CommandLine);
                 var userInfo = await _hoyolabService.GetLastSelectedOrFirstUserInfoAsync();
                 if (userInfo == null)
                 {
@@ -101,7 +105,7 @@ namespace Xunkong.Desktop.ViewModels
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Exception in method {MethodName}.", nameof(InitializeDataAsync));
-                InfoBarHelper.Error(ex.GetType().Name, ex.Message);
+                InfoBarHelper.Error(ex);
             }
         }
 
@@ -131,7 +135,7 @@ namespace Xunkong.Desktop.ViewModels
                     catch (HoyolabException ex)
                     {
                         _logger.LogError(ex, "Catch HoyolabException when get hoyolab user info (Nickname {Nickname}, Uid {Uid}).", x.Nickname, x.Uid);
-                        InfoBarHelper.Error(ex.GetType().Name, $"获取米游社账号信息 (Nickname {x.Nickname}, Uid {x.Uid})\n{ex.Message}");
+                        InfoBarHelper.Error(ex, $"获取米游社账号信息 (Nickname {x.Nickname}, Uid {x.Uid})");
                     }
                 });
                 // 更新原神账号数据
@@ -154,7 +158,7 @@ namespace Xunkong.Desktop.ViewModels
                     catch (HoyolabException ex)
                     {
                         _logger.LogError(ex, "Catch HoyolabException when get genshin user info (Nickname {Nickname}, Uid {Uid}).", x.Nickname, x.Uid);
-                        InfoBarHelper.Error(ex.GetType().Name, $"获取原神账号信息 (Nickname {x.Nickname}, Uid {x.Uid})\n{ex.Message}");
+                        InfoBarHelper.Error(ex, $"获取原神账号信息 (Nickname {x.Nickname}, Uid {x.Uid})");
                     }
                 });
                 // 更新实时便笺数据
@@ -173,7 +177,7 @@ namespace Xunkong.Desktop.ViewModels
                     catch (HoyolabException ex)
                     {
                         _logger.LogError(ex, "Catch HoyolabException when get daily note info (Nickname {Nickname}, Uid {Uid}).", x.Nickname, x.Uid);
-                        InfoBarHelper.Error(ex.GetType().Name, $"获取实时便笺 (Nickname {x.Nickname}, Uid {x.Uid})\n{ex.Message}");
+                        InfoBarHelper.Error(ex, $"获取实时便笺 (Nickname {x.Nickname}, Uid {x.Uid})");
                     }
                 });
                 // 重新从数据库获取所有数据，包含cookie过期的账号
@@ -215,7 +219,7 @@ namespace Xunkong.Desktop.ViewModels
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Catch Exception when refresh all hoyolab and genshin user info.");
-                InfoBarHelper.Error(ex.GetType().Name, $"刷新所有账号信息\n{ex.Message}");
+                InfoBarHelper.Error(ex, $"刷新所有账号信息");
             }
         }
 
@@ -287,7 +291,7 @@ namespace Xunkong.Desktop.ViewModels
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Error in {MethodName}", nameof(HoyolabLogin_InputCookieAsync));
-                    InfoBarHelper.Error(ex.GetType().Name, ex.Message);
+                    InfoBarHelper.Error(ex);
                 }
             }
             else
@@ -318,7 +322,7 @@ namespace Xunkong.Desktop.ViewModels
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in {MethodName}", nameof(RefreshDailyNoteAsync));
-                InfoBarHelper.Error(ex.GetType().Name, ex.Message);
+                InfoBarHelper.Error(ex);
             }
         }
 
@@ -386,7 +390,7 @@ namespace Xunkong.Desktop.ViewModels
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in {MethodName}", nameof(DeleteUserInfoAsync));
-                InfoBarHelper.Error(ex.GetType().Name, ex.Message);
+                InfoBarHelper.Error(ex);
             }
         }
 

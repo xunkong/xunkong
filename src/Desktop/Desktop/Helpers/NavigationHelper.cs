@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,18 +11,12 @@ namespace Xunkong.Desktop.Helpers
     internal static class NavigationHelper
     {
 
-        public static NavigationView NavigationView { get; private set; }
 
-
-        public static Frame RootFrame { get; private set; }
-
-
-        public static void Initialize(NavigationView navigationView,Frame frame)
+        public static void NavigateTo(Type type, object? parameter = null, NavigationTransitionInfo? transitionInfo = null)
         {
-            NavigationView = navigationView;
-            RootFrame = frame;
+            var message = new NavigateMessage(type, parameter, transitionInfo);
+            WeakReferenceMessenger.Default.Send(message);
         }
-
 
 
     }

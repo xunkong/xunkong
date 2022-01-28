@@ -4,6 +4,7 @@ using Xunkong.Core.Metadata;
 using Xunkong.Core.SpiralAbyss;
 using Xunkong.Core.TravelRecord;
 using Xunkong.Core.Wish;
+using Xunkong.Core.XunkongApi;
 using Xunkong.Web.Api.Models;
 
 namespace Xunkong.Web.Api.Services
@@ -36,15 +37,23 @@ namespace Xunkong.Web.Api.Services
 
         public DbSet<NotificationServerModel> NotificationItems { get; set; }
 
+        public DbSet<DesktopUpdateVersion> DesktopUpdateVersions { get; set; }
+
+        public DbSet<DesktopChangelog> DesktopChangelogs { get; set; }
+
+
+
 
         public XunkongDbContext(DbContextOptions<XunkongDbContext> options) : base(options)
         {
         }
 
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
         }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -61,6 +70,10 @@ namespace Xunkong.Web.Api.Services
                 e.HasOne<SpiralAbyssInfo>().WithMany(x => x.NormalSkillRank).HasForeignKey("SpiralAbyssInfo_NormalSkillRank").OnDelete(DeleteBehavior.Cascade);
                 e.HasOne<SpiralAbyssInfo>().WithMany(x => x.EnergySkillRank).HasForeignKey("SpiralAbyssInfo_EnergySkillRank").OnDelete(DeleteBehavior.Cascade);
             });
+            modelBuilder.Entity<NotificationServerModel>().Property(x => x.MinVersion).HasConversion(v => v.ToString(), s => new Version(s));
+            modelBuilder.Entity<NotificationServerModel>().Property(x => x.MaxVersion).HasConversion(v => v.ToString(), s => new Version(s));
+            modelBuilder.Entity<DesktopUpdateVersion>().Property(x => x.Version).HasConversion(v => v.ToString(), s => new Version(s));
+            modelBuilder.Entity<DesktopChangelog>().Property(x => x.Version).HasConversion(v => v.ToString(), s => new Version(s));
         }
 
 

@@ -42,7 +42,7 @@ namespace Xunkong.Desktop.Controls
 
         public UIElement AppTitleBar => _appTitleBar;
 
-        public Action FinishSetting { get; set; }
+
 
         public WelcomControl()
         {
@@ -121,12 +121,12 @@ namespace Xunkong.Desktop.Controls
                 var folder = await dialog.PickSingleFolderAsync();
                 if (folder != null)
                 {
-                    CreateUserDataFolder(folder.Path);
+                    await CreateUserDataFolder(folder.Path);
                 }
             }
             catch (Exception ex)
             {
-                InfoBarHelper.Error(ex.Message);
+                InfoBarHelper.Error(ex);
             }
         }
 
@@ -168,11 +168,12 @@ namespace Xunkong.Desktop.Controls
                     ApplicationData.Current.LocalSettings.Values[SettingKeys.UserDataPath] = defaultFolder;
                     UserDataPath = defaultFolder;
                 }
-                FinishSetting();
+                await WeakReferenceMessenger.Default.Send<ConfigureServiceMessage>();
+                WeakReferenceMessenger.Default.Send<FinishWelcomSettingMessage>();
             }
             catch (Exception ex)
             {
-                InfoBarHelper.Error(ex.Message);
+                InfoBarHelper.Error(ex);
             }
         }
 
@@ -181,7 +182,7 @@ namespace Xunkong.Desktop.Controls
 
 
 
-        private async void CreateUserDataFolder(string path)
+        private async Task CreateUserDataFolder(string path)
         {
             // 存在根文件
             if (File.Exists(Path.Combine(path, "XunkongRoot")))

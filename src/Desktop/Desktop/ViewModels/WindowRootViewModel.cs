@@ -10,10 +10,12 @@ using System.Collections.ObjectModel;
 
 namespace Xunkong.Desktop.ViewModels
 {
+
+    [InjectService]
     internal partial class WindowRootViewModel : ObservableObject
     {
 
-
+        private readonly ILogger<WindowRootViewModel> _logger;
 
         private readonly IDbContextFactory<XunkongDbContext> _dbFactory;
 
@@ -21,25 +23,19 @@ namespace Xunkong.Desktop.ViewModels
 
         private readonly HoyolabService _hoyolabService;
 
+        private readonly XunkongApiService _xunkongApiService;
 
 
 
-        public WindowRootViewModel(IDbContextFactory<XunkongDbContext> dbFactory, UserSettingService userSettingService, HoyolabService hoyolabService)
+        public WindowRootViewModel(ILogger<WindowRootViewModel> logger, IDbContextFactory<XunkongDbContext> dbFactory, UserSettingService userSettingService, HoyolabService hoyolabService, XunkongApiService xunkongApiService)
         {
+            _logger = logger;
             _dbFactory = dbFactory;
             _userSettingService = userSettingService;
             _hoyolabService = hoyolabService;
+            _xunkongApiService = xunkongApiService;
         }
 
-
-
-
-        private ObservableCollection<WebToolItem> _WebToolItemList;
-        public ObservableCollection<WebToolItem> WebToolItemList
-        {
-            get => _WebToolItemList;
-            set => SetProperty(ref _WebToolItemList, value);
-        }
 
 
 

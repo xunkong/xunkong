@@ -37,9 +37,9 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Margin="48,0,48,0" Spacing="16">
-
+                    <!--  关于  -->
                     <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="关于" />
-                    <Grid Padding="16,12,16,12"
+                    <!--<Grid Padding="16,12,16,12"
                           Background="{StaticResource CardBackgroundFillColorDefaultBrush}"
                           BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"
                           BorderThickness="1"
@@ -59,10 +59,53 @@
                                  Text="{x:Bind AppVersion}" />
                         </TextBlock>
                         <Button Grid.Column="2" Content="检查更新" />
-                    </Grid>
+                    </Grid>-->
+                    <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                        <Expander.Header>
+                            <Grid>
+                                <StackPanel Padding="0,12,0,12"
+                                            Orientation="Horizontal"
+                                            Spacing="16">
+                                    <SymbolIcon Symbol="Refresh" />
+                                    <TextBlock>
+                                        <!--  不知道为什么要空一格才能和下行文字对齐  -->
+                                        <Run Text="{x:Bind vm.AppName}" /><LineBreak /><Run FontSize="12"
+                                             Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                             Text="{x:Bind vm.AppVersion}" />
+                                    </TextBlock>
+                                </StackPanel>
+                                <Button HorizontalAlignment="Right"
+                                        Command="{x:Bind vm.CheckUpdateCommand}"
+                                        Content="检查更新" />
+                            </Grid>
+                        </Expander.Header>
+                        <Expander.Content>
+                            <StackPanel Margin="0,-16,44,-16">
+                                <Grid>
+                                    <StackPanel Padding="0,12,0,12"
+                                                HorizontalAlignment="Left"
+                                                Orientation="Horizontal"
+                                                Spacing="16">
+                                        <!--<SymbolIcon Symbol="Refresh" />-->
+                                        <Border Width="20" />
+                                        <TextBlock>
+                                            <!--  不知道为什么要空一格才能和下行文字对齐  -->
+                                            <Run Text="更新通道" /><LineBreak /><Run FontSize="12"
+                                                 Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                                 Text="可以选择稳定版、预览版、开发版，但只能从低版本升级至高版本" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                    <ComboBox HorizontalAlignment="Right"
+                                              VerticalAlignment="Center"
+                                              ItemsSource="{x:Bind vm.ChannelTypeList}"
+                                              SelectedItem="{x:Bind vm.SelectedChannel, Mode=TwoWay}" />
+                                </Grid>
+                            </StackPanel>
+                        </Expander.Content>
+                    </Expander>
 
-
-                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="拓展" />
+                    <!--  小工具  -->
+                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="小工具" />
                     <Expander Name="_Expander_WebTool"
                               HorizontalAlignment="Stretch"
                               HorizontalContentAlignment="Stretch"
@@ -102,6 +145,7 @@
                                                   Icon="Save"
                                                   Label="保存" />
                                 </CommandBar>
+                                <!--  网页小工具  -->
                                 <ListView Grid.Row="1"
                                           AllowDrop="True"
                                           CanDragItems="True"
@@ -145,6 +189,11 @@
                     </Expander>
 
 
+                    <!--  临时功能  -->
+                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="临时功能" />
+                    <Button Command="{x:Bind vm.RegisterBackgroundTaskCommand, Mode=OneTime}" Content="注册后台任务" />
+                    <Button Command="{x:Bind vm.GetTravelRecordSummaryCommand, Mode=OneTime}" Content="获取战绩" />
+                    <Button Command="{x:Bind vm.GetSpiralAbyssInfoSummaryCommand, Mode=OneTime}" Content="获取深渊" />
                 </StackPanel>
 
 
@@ -155,7 +204,7 @@
         </ScrollViewer>
 
 
-
+        <!--  网页小工具编辑面板  -->
         <Grid Name="_Grid_EditWebToolItem"
               Grid.RowSpan="2"
               Grid.Column="2"
@@ -182,11 +231,17 @@
             <StackPanel Grid.Row="1" Spacing="12">
                 <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="基础设置" />
                 <TextBlock Text="标题" />
-                <TextBox PlaceholderText="不要太长" Text="{x:Bind vm.SelectedWebToolItem.Title, Mode=TwoWay}" />
+                <TextBox IsSpellCheckEnabled="False"
+                         PlaceholderText="不要太长"
+                         Text="{x:Bind vm.SelectedWebToolItem.Title, Mode=TwoWay}" />
                 <TextBlock Text="图标" />
-                <TextBox PlaceholderText="图标的网址" Text="{x:Bind vm.SelectedWebToolItem.Icon, Mode=TwoWay}" />
+                <TextBox IsSpellCheckEnabled="False"
+                         PlaceholderText="图标的网址"
+                         Text="{x:Bind vm.SelectedWebToolItem.Icon, Mode=TwoWay}" />
                 <TextBlock Text="网址" />
-                <TextBox PlaceholderText="应该优先填这个" Text="{x:Bind vm.SelectedWebToolItem.Url, Mode=TwoWay}" />
+                <TextBox IsSpellCheckEnabled="False"
+                         PlaceholderText="应该优先填这个"
+                         Text="{x:Bind vm.SelectedWebToolItem.Url, Mode=TwoWay}" />
                 <Button Command="{x:Bind vm.GetTitleAndIconByUrlCommand}" Content="获取标题和图标" />
                 <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="高级设置" />
                 <TextBlock Text="JavaScript" />

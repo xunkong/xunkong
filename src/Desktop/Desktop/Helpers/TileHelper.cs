@@ -35,7 +35,7 @@ namespace Xunkong.Desktop.Helpers
         {
             SecondaryTile tile = new SecondaryTile($"DailyNote_{info.Uid}",
                                                    "实时便笺",
-                                                   "--update-note",
+                                                   "dailynote",
                                                    new Uri("ms-appx:///Images/Square150x150Logo.png"),
                                                    Windows.UI.StartScreen.TileSize.Wide310x150);
             tile.VisualElements.Square44x44Logo = new Uri("ms-appx:///Images/Square44x44Logo.png");

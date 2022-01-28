@@ -6,48 +6,50 @@ namespace Xunkong.Core.Wish
 {
     public class WishlogClient
     {
-        private static readonly string cnUrl = "https://hk4e-api.mihoyo.com/event/gacha_info/api/getGachaLog";
-        private static readonly string seaUrl = "https://hk4e-api-os.mihoyo.com/event/gacha_info/api/getGachaLog";
 
-        private readonly string? baseRequestUrl;
+        private const string CnUrl = "https://hk4e-api.mihoyo.com/event/gacha_info/api/getGachaLog";
 
-        /// <summary>
-        /// 祈愿记录网址的查询字符串，包含开头的「?」
-        /// </summary>
-        private readonly string? authString;
+        private const string SeaUrl = "https://hk4e-api-os.mihoyo.com/event/gacha_info/api/getGachaLog";
 
-        private static HttpClient HttpClient;
+        private readonly HttpClient _httpClient;
+
 
         public event EventHandler<(WishType WishType, int Page)>? ProgressChanged;
 
 
-        static WishlogClient()
+
+        public WishlogClient(HttpClient? httpClient = null)
         {
-            HttpClient = new HttpClient(new HttpClientHandler { AutomaticDecompression = System.Net.DecompressionMethods.All });
-            HttpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
+            if (httpClient is null)
+            {
+                _httpClient = new HttpClient(new HttpClientHandler { AutomaticDecompression = System.Net.DecompressionMethods.All });
+                _httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
+            }
+            else
+            {
+                _httpClient = httpClient;
+            }
         }
 
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="url">祈愿记录网页，以 https://webstatic.mihoyo.com 或 https://webstatic-sea.mihoyo.com 开头，以 #/log 结尾</param>
-        /// <exception cref="ArgumentException">输入的Url不符合要求</exception>
-        public WishlogClient(string url)
+
+
+
+        private static string GetBaseAndAuthString(string wishlogUrl)
         {
-            var match = Regex.Match(url, @"(https://webstatic.+#/log)");
+            var match = Regex.Match(wishlogUrl, @"(https://webstatic.+#/log)");
             if (!match.Success)
             {
                 throw new ArgumentException("Url does not meet the requirement.");
             }
-            url = match.Groups[1].Value;
-            authString = url.Substring(url.IndexOf('?')).Replace("#/log", "");
-            if (url.Contains("webstatic-sea"))
+            wishlogUrl = match.Groups[1].Value;
+            var auth = wishlogUrl.Substring(wishlogUrl.IndexOf('?')).Replace("#/log", "");
+            if (wishlogUrl.Contains("webstatic-sea"))
             {
-                baseRequestUrl = seaUrl;
+                return SeaUrl + auth;
             }
             else
             {
-                baseRequestUrl = cnUrl;
+                return CnUrl + auth;
             }
         }
 
@@ -60,10 +62,11 @@ namespace Xunkong.Core.Wish
         /// <param name="param"></param>
         /// <returns>没有数据时返回空集合</returns>
         /// <exception cref="HoyolabException">api请求返回值不为零时抛出异常</exception>
-        private async Task<List<WishlogItem>> GetWishlogByParamAsync(QueryParam param, CancellationToken cancellationToken = default)
+        private async Task<List<WishlogItem>> GetWishlogByParamAsync(string baseString, QueryParam param)
         {
-            var url = $"{baseRequestUrl}{authString}&{param}";
-            var response = await HttpClient.GetFromJsonAsync<WishlogResponseData>(url, cancellationToken);
+            var url = $"{baseString}&{param}";
+            await Task.Delay(Random.Shared.Next(200, 300));
+            var response = await _httpClient.GetFromJsonAsync<WishlogResponseData>(url);
             if (response is null)
             {
                 throw new HoyolabException(-1, "Cannot parse the return data.");
@@ -76,6 +79,7 @@ namespace Xunkong.Core.Wish
         }
 
 
+
         /// <summary>
         /// 获取一种卡池类型的祈愿数据
         /// </summary>
@@ -84,20 +88,19 @@ namespace Xunkong.Core.Wish
         /// <param name="size">每次api请求获取几条数据，不超过20，默认6</param>
         /// <returns>没有数据返回空集合</returns>
         /// <exception cref="HoyolabException">api请求返回值不为零时抛出异常</exception>
-        private async Task<List<WishlogItem>> GetWishlogByTypeAsync(WishType type, long lastId = 0, int size = 6)
+        private async Task<List<WishlogItem>> GetWishlogByTypeAsync(string baseString, WishType type, long lastId = 0, int size = 20)
         {
             var param = new QueryParam(type, 1, size);
             var result = new List<WishlogItem>();
             while (true)
             {
                 ProgressChanged?.Invoke(this, (type, param.Page));
-                var list = await GetWishlogByParamAsync(param);
+                var list = await GetWishlogByParamAsync(baseString, param);
                 result.AddRange(list);
                 if (list.Count == size && list.Last().Id < lastId)
                 {
                     param.Page++;
                     param.EndId = list.Last().Id;
-                    await Task.Delay(Random.Shared.Next(200, 300));
                 }
                 else
                 {
@@ -117,18 +120,19 @@ namespace Xunkong.Core.Wish
         /// 获取所有的祈愿数据，以id顺序排列
         /// </summary>
         /// <param name="lastId">获取的祈愿id小于最新id即停止</param>
-        /// <param name="size">每次api请求获取几条数据，不超过20，默认6</param>
+        /// <param name="size">每次api请求获取几条数据，不超过20，默认20</param>
         /// <returns>没有数据返回空集合</returns>
         /// <exception cref="HoyolabException">api请求返回值不为零时抛出异常</exception>
-        public async Task<List<WishlogItem>> GetAllWishlogAsync(int lastId = 0, int size = 6)
+        public async Task<List<WishlogItem>> GetAllWishlogAsync(string wishlogUrl, long lastId = 0, int size = 20)
         {
+            var baseUrl = GetBaseAndAuthString(wishlogUrl);
             lastId = lastId < 0 ? 0 : lastId;
             size = Math.Clamp(size, 1, 20);
             var result = new List<WishlogItem>();
-            result.AddRange(await GetWishlogByTypeAsync(WishType.Novice, lastId, size));
-            result.AddRange(await GetWishlogByTypeAsync(WishType.Permanent, lastId, size));
-            result.AddRange(await GetWishlogByTypeAsync(WishType.CharacterEvent, lastId, size));
-            result.AddRange(await GetWishlogByTypeAsync(WishType.WeaponEvent, lastId, size));
+            result.AddRange(await GetWishlogByTypeAsync(baseUrl, WishType.Novice, lastId, size));
+            result.AddRange(await GetWishlogByTypeAsync(baseUrl, WishType.Permanent, lastId, size));
+            result.AddRange(await GetWishlogByTypeAsync(baseUrl, WishType.CharacterEvent, lastId, size));
+            result.AddRange(await GetWishlogByTypeAsync(baseUrl, WishType.WeaponEvent, lastId, size));
             return result.OrderBy(x => x.Id).ToList();
         }
 
@@ -140,35 +144,29 @@ namespace Xunkong.Core.Wish
         /// <returns>返回值为0代表没有祈愿数据</returns>
         /// <exception cref="HoyolabException">api请求返回值不为零时抛出异常</exception>
         /// <exception cref="ArgumentNullException">祈愿记录网址为空</exception>
-        public async Task<int> GetUidAsync()
+        public async Task<int> GetUidAsync(string wishlogUrl)
         {
-            if (string.IsNullOrWhiteSpace(authString))
-            {
-                throw new ArgumentNullException(nameof(authString));
-            }
+            var baseUrl = GetBaseAndAuthString(wishlogUrl);
             var param = new QueryParam(WishType.CharacterEvent, 1);
-            var list = await GetWishlogByParamAsync(param);
+            var list = await GetWishlogByParamAsync(baseUrl, param);
             if (list.Any())
             {
                 return list.First().Uid;
             }
-            await Task.Delay(Random.Shared.Next(200, 300));
             param.WishType = WishType.Permanent;
-            list = await GetWishlogByParamAsync(param);
+            list = await GetWishlogByParamAsync(baseUrl, param);
             if (list.Any())
             {
                 return list.First().Uid;
             }
-            await Task.Delay(Random.Shared.Next(200, 300));
             param.WishType = WishType.WeaponEvent;
-            list = await GetWishlogByParamAsync(param);
+            list = await GetWishlogByParamAsync(baseUrl, param);
             if (list.Any())
             {
                 return list.First().Uid;
             }
-            await Task.Delay(Random.Shared.Next(200, 300));
             param.WishType = WishType.Novice;
-            list = await GetWishlogByParamAsync(param);
+            list = await GetWishlogByParamAsync(baseUrl, param);
             if (list.Any())
             {
                 return list.First().Uid;

@@ -61,7 +61,7 @@ namespace Xunkong.Desktop.Views
 
         private void _ImageEx_LeftAvatar_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            NavigationHelper.NavigationView.IsPaneOpen = true;
+            WeakReferenceMessenger.Default.Send(new OpenNavigationPanelMessage());
         }
 
         private void _Flyout_UserPanelSelector_Opening(object sender, object e)

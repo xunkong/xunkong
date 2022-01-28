@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Xunkong.Desktop.Models
+namespace Xunkong.Desktop.Messages
 {
-    internal enum MessageToken
+    internal class FinishWelcomSettingMessage
     {
-        None,
     }
 }

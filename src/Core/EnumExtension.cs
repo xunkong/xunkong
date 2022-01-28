@@ -4,13 +4,12 @@ namespace Xunkong.Core
 {
     public static class EnumExtension
     {
-        public static string ToDescription(this Enum enumValue)
+        public static string ToDescriptionOrString(this Enum enumValue)
         {
-            var fieldInfo = enumValue.GetType().GetField(enumValue.ToString());
-
-            var descriptionAttributes = fieldInfo?.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
-
-            return descriptionAttributes?.Length > 0 ? descriptionAttributes[0].Description : enumValue.ToString();
+            string text = enumValue.ToString();
+            var fieldInfo = enumValue.GetType().GetField(text);
+            var descriptionAttribute = fieldInfo?.GetCustomAttributes(typeof(DescriptionAttribute), false).FirstOrDefault();
+            return (descriptionAttribute as DescriptionAttribute)?.Description ?? text;
         }
 
     }

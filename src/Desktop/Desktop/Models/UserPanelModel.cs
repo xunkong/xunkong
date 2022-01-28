@@ -119,7 +119,7 @@ namespace Xunkong.Desktop.Models
             }
             catch (Exception ex)
             {
-                InfoBarHelper.Error(ex.GetType().Name, ex.Message);
+                InfoBarHelper.Error(ex);
             }
 
         }

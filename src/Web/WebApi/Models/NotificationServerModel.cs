@@ -1,13 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Xunkong.Core.XunkongApi;
 
 namespace Xunkong.Web.Api.Models
 {
     [Table("Notifications")]
     [Index(nameof(Time))]
-    [Index(nameof(Catagory))]
+    [Index(nameof(Category))]
     [Index(nameof(Platform))]
     [Index(nameof(Channel))]
     [Index(nameof(MinVersion))]
@@ -15,19 +16,19 @@ namespace Xunkong.Web.Api.Models
     [Index(nameof(Enable))]
     public class NotificationServerModel : NotificationModelBase
     {
+        [JsonIgnore]
+        public PlatformType Platform { get; set; }
 
-        [MaxLength(255)]
-        public string Platform { get; set; }
+        [JsonIgnore]
+        public ChannelType Channel { get; set; }
 
-        [MaxLength(255)]
-        public string Channel { get; set; }
+        [MaxLength(255), JsonIgnore]
+        public Version? MinVersion { get; set; }
 
-        [MaxLength(255)]
-        public string MinVersion { get; set; }
+        [MaxLength(255), JsonIgnore]
+        public Version? MaxVersion { get; set; }
 
-        [MaxLength(255)]
-        public string MaxVersion { get; set; }
-
+        [JsonIgnore]
         public bool Enable { get; set; }
 
 

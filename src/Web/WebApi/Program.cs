@@ -7,6 +7,8 @@ using Xunkong.Core.XunkongApi;
 using Xunkong.Web.Api.Controllers;
 using Xunkong.Web.Api.Filters;
 using Xunkong.Web.Api.Services;
+using Microsoft.AspNetCore.HttpLogging;
+using Xunkong.Core.Wish;
 
 // net6限定：避免因为启用剪裁，在efcore的使用中出现「找不到System.DateOnly相关方法」的异常
 DateOnly.FromDayNumber(1).AddYears(1).AddMonths(1).AddDays(1);
@@ -21,27 +23,15 @@ builder.Services.AddControllers(options =>
 //builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
+    c.SwaggerDoc("v0", new()
+    {
+        Title = "Xunkong Web Api",
+        Version = "v0",
+    });
     c.SwaggerDoc("v0.1", new()
     {
         Title = "Xunkong Web Api",
         Version = "v0.1",
-        Description = "刻记牛杂店的公开Api（v0为开发和测试版本）",
-        Contact = new Microsoft.OpenApi.Models.OpenApiContact
-        {
-            Name = "Github",
-            Url = new Uri("https://github.com/Scighost/Xunkong")
-        },
-    });
-    c.SwaggerDoc("v1", new()
-    {
-        Title = "Xunkong Web Api",
-        Version = "v1",
-        Description = "刻记牛杂店的公开Api（v1正式版）\n\n因个人能力有限（指边学边做），不能保证服务的安全和稳定（云服务商线路挂了别怪我）",
-        Contact = new Microsoft.OpenApi.Models.OpenApiContact
-        {
-            Name = "Github",
-            Url = new Uri("https://github.com/Scighost/Xunkong")
-        },
     });
     c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Xunkong.Web.Api.xml"), true);
 });
@@ -61,6 +51,7 @@ builder.Services.AddVersionedApiExplorer(options =>
 builder.Services.AddResponseCompression();
 builder.Services.AddMemoryCache();
 builder.Services.AddScoped<WishlogAuthActionFilter>();
+builder.Services.AddScoped<BaseRecordResultFilter>();
 builder.Services.AddScoped<WishlogResultFilter>();
 builder.Services.AddDbContextPool<XunkongDbContext>(options =>
 {
@@ -78,14 +69,19 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReadCommentHandling = System.Text.Json.JsonCommentHandling.Skip;
 });
 
-builder.Services.AddLogging(builder => builder.AddSimpleConsole(c => { c.ColorBehavior = LoggerColorBehavior.Enabled; c.TimestampFormat = "yyyy-MM-dd HH:mm:ss.fff zzz\n"; }));
+//builder.Services.AddLogging(builder => builder.AddSimpleConsole(c => { c.ColorBehavior = LoggerColorBehavior.Enabled; c.TimestampFormat = "yyyy-MM-dd HH:mm:ss.fff zzz\n"; }));
 
 builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 
-builder.Services.Configure<ApiBehaviorOptions>(options => options.InvalidModelStateResponseFactory = (context) => throw new XunkongServerException(ReturnCode.InvalidModelException));
+builder.Services.Configure<ApiBehaviorOptions>(options => options.InvalidModelStateResponseFactory = (context) => throw new XunkongException(ErrorCode.InvalidModelException));
+
+builder.Services.AddHttpLogging(options => options.LoggingFields = HttpLoggingFields.RequestPropertiesAndHeaders | HttpLoggingFields.ResponsePropertiesAndHeaders);
+
+builder.Services.AddHttpClient<WishlogClient>()
+                .ConfigureHttpClient(client => client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br"))
+                .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AutomaticDecompression = System.Net.DecompressionMethods.All });
 
 builder.Host.UseSerilog((ctx, config) => config.ReadFrom.Configuration(ctx.Configuration));
-
 
 
 
@@ -97,7 +93,7 @@ app.UseExceptionHandler(c => c.Run(async context =>
     var feature = context.Features.Get<IExceptionHandlerPathFeature>();
     var ex = feature?.Error;
     app.Services.GetService<Microsoft.Extensions.Logging.ILogger>()?.LogError(ex, "Exception middleware");
-    var result = new ResponseDto(ReturnCode.InternalException, ex?.Message, new ExceptionResult(ex?.GetType()?.ToString(), ex?.Message, ex?.StackTrace));
+    var result = new ResponseBaseWrapper(ErrorCode.InternalException, ex?.Message, new ExceptionResult(ex?.GetType()?.ToString(), ex?.Message, ex?.StackTrace));
     context.Response.StatusCode = 500;
     await context.Response.WriteAsJsonAsync(result);
 }));
@@ -115,7 +111,7 @@ app.Use(async (context, next) =>
 
 app.UseResponseCompression();
 
-//app.UseHttpLogging();
+app.UseHttpLogging();
 
 
 if (app.Environment.IsDevelopment())
@@ -123,7 +119,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Xunkong Web Api v1");
+        c.SwaggerEndpoint("/swagger/v0/swagger.json", "Xunkong Web Api v0");
         c.SwaggerEndpoint("/swagger/v0.1/swagger.json", "Xunkong Web Api v0.1");
     });
 }

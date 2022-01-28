@@ -9,6 +9,8 @@ using Xunkong.Desktop.Models;
 
 namespace Xunkong.Desktop.Services
 {
+
+    [InjectService]
     internal class UserSettingService
     {
 

@@ -646,7 +646,7 @@ namespace Xunkong.Web.Api.Migrations
                         .HasMaxLength(4096)
                         .HasColumnType("varchar(4096)");
 
-                    b.Property<DateTime>("DateTime")
+                    b.Property<DateTimeOffset>("DateTime")
                         .HasColumnType("datetime(6)");
 
                     b.Property<int>("Uid")
@@ -709,9 +709,77 @@ namespace Xunkong.Web.Api.Migrations
                     b.ToTable("Wishlog_Items");
                 });
 
+            modelBuilder.Entity("Xunkong.Core.XunkongApi.DesktopChangelog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("Channel")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("ContentType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("Time")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Version")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Channel");
+
+                    b.HasIndex("Version");
+
+                    b.ToTable("Desktop_Changelogs");
+                });
+
+            modelBuilder.Entity("Xunkong.Core.XunkongApi.DesktopUpdateVersion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Abstract")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Channel")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PackageUrl")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTimeOffset>("Time")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Version")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Channel");
+
+                    b.HasIndex("Version");
+
+                    b.ToTable("Desktop_UpdateVersions");
+                });
+
             modelBuilder.Entity("Xunkong.Web.Api.Models.BaseRecordModel", b =>
                 {
                     b.Property<string>("RequestId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Channel")
+                        .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
                     b.Property<DateTimeOffset>("DateTime")
@@ -736,6 +804,10 @@ namespace Xunkong.Web.Api.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
+                    b.Property<string>("Platform")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
                     b.Property<int?>("ReturnCode")
                         .HasColumnType("int");
 
@@ -745,7 +817,13 @@ namespace Xunkong.Web.Api.Migrations
                     b.Property<string>("UserAgent")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Version")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
                     b.HasKey("RequestId");
+
+                    b.HasIndex("Channel");
 
                     b.HasIndex("DateTime");
 
@@ -755,9 +833,13 @@ namespace Xunkong.Web.Api.Migrations
 
                     b.HasIndex("Path");
 
+                    b.HasIndex("Platform");
+
                     b.HasIndex("ReturnCode");
 
                     b.HasIndex("StatusCode");
+
+                    b.HasIndex("Version");
 
                     b.ToTable("Record_All");
                 });
@@ -849,6 +931,67 @@ namespace Xunkong.Web.Api.Migrations
                     b.HasIndex("zh_tw");
 
                     b.ToTable("i18n");
+                });
+
+            modelBuilder.Entity("Xunkong.Web.Api.Models.NotificationServerModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Category")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int>("Channel")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("ContentType")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Enable")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("MaxVersion")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("MinVersion")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int>("Platform")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("Time")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Category");
+
+                    b.HasIndex("Channel");
+
+                    b.HasIndex("Enable");
+
+                    b.HasIndex("MaxVersion");
+
+                    b.HasIndex("MinVersion");
+
+                    b.HasIndex("Platform");
+
+                    b.HasIndex("Time");
+
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("Xunkong.Web.Api.Models.WishlogRecordModel", b =>

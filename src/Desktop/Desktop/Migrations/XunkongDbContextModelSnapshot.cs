@@ -711,7 +711,7 @@ namespace Xunkong.Desktop.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("DateTime")
+                    b.Property<DateTimeOffset>("DateTime")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Url")
@@ -775,6 +775,43 @@ namespace Xunkong.Desktop.Migrations
                     b.ToTable("Wishlog_Items");
                 });
 
+            modelBuilder.Entity("Xunkong.Desktop.Models.NotificationDesktopModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Category")
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ContentType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("HasRead")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTimeOffset>("Time")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Category");
+
+                    b.HasIndex("HasRead");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("Xunkong.Desktop.Models.UserSettingModel", b =>
                 {
                     b.Property<string>("Key")
@@ -786,6 +823,33 @@ namespace Xunkong.Desktop.Migrations
                     b.HasKey("Key");
 
                     b.ToTable("UserSettings");
+                });
+
+            modelBuilder.Entity("Xunkong.Desktop.Models.WebToolItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Icon")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("JavaScript")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WebToolItems");
                 });
 
             modelBuilder.Entity("Xunkong.Core.Metadata.ConstellationInfo", b =>

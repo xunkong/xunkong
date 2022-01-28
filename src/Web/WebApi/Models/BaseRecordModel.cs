@@ -12,6 +12,9 @@ namespace Xunkong.Web.Api.Models
     [Index(nameof(ReturnCode))]
     [Index(nameof(DeviceId))]
     [Index(nameof(Ip))]
+    [Index(nameof(Platform))]
+    [Index(nameof(Channel))]
+    [Index(nameof(Version))]
     public class BaseRecordModel
     {
 
@@ -28,7 +31,7 @@ namespace Xunkong.Web.Api.Models
 
         public int StatusCode { get; set; }
 
-        public ReturnCode? ReturnCode { get; set; }
+        public ErrorCode? ReturnCode { get; set; }
 
         public string? Message { get; set; }
 
@@ -39,6 +42,15 @@ namespace Xunkong.Web.Api.Models
 
         [MaxLength(255)]
         public string? Ip { get; set; }
+
+        [MaxLength(255)]
+        public string? Platform { get; set; }
+
+        [MaxLength(255)]
+        public string? Channel { get; set; }
+
+        [MaxLength(255)]
+        public string? Version { get; set; }
 
 
     }

@@ -18,7 +18,6 @@ namespace Xunkong.Web.Api.Filters
         {
             _logger = logger;
             _dbContext = dbContext;
-
         }
 
 
@@ -30,6 +29,9 @@ namespace Xunkong.Web.Api.Filters
             var ua = context.HttpContext.Request.Headers["User-Agent"];
             var ip = context.HttpContext.Request.Headers["X-Forwarded-For"];
             var deviceId = context.HttpContext.Request.Headers["X-Device-Id"];
+            var platform = context.HttpContext.Request.Headers["X-Platform"];
+            var channel = context.HttpContext.Request.Headers["X-Channel"];
+            var version = context.HttpContext.Request.Headers["X-Version"];
             var record = new BaseRecordModel
             {
                 RequestId = string.IsNullOrWhiteSpace(requestId) ? Guid.NewGuid().ToString("D") : requestId,
@@ -40,15 +42,18 @@ namespace Xunkong.Web.Api.Filters
                 DeviceId = deviceId,
                 UserAgent = ua,
                 Ip = ip,
+                Platform = platform,
+                Channel = channel,
+                Version = version,
             };
-            if (context.Exception is XunkongServerException ex)
+            if (context.Exception is XunkongException ex)
             {
                 record.ReturnCode = ex.Code;
                 record.Message = ex.Message;
             }
             else
             {
-                record.ReturnCode = ReturnCode.InternalException;
+                record.ReturnCode = ErrorCode.InternalException;
                 record.Message = context.Exception.Message;
                 _logger.LogError(context.Exception, "Unknown exception in controller.");
             }
@@ -61,7 +66,7 @@ namespace Xunkong.Web.Api.Filters
             {
                 _logger.LogError(e, "Error in save record of exception filter.");
             }
-            context.Result = new JsonResult(new ResponseDto((ReturnCode)record.ReturnCode, record.Message));
+            context.Result = new JsonResult(new ResponseBaseWrapper((ErrorCode)record.ReturnCode, record.Message));
         }
     }
 }

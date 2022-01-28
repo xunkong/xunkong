@@ -12,13 +12,15 @@
 		<UseWinUI>true</UseWinUI>
 	</PropertyGroup>
 	<ItemGroup>
+	  <None Remove="Controls\NotificationControl.xaml" />
 	  <None Remove="Controls\WebToolContentControl.xaml" />
+	  <None Remove="Pages\WebViewPage.xaml" />
 	</ItemGroup>
 	
 	
 	<ItemGroup>
 		<PackageReference Include="AngleSharp" Version="0.16.1" />
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="7.1.2" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0-preview1" />
 		<PackageReference Include="CommunityToolkit.WinUI.Notifications" Version="7.1.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
 		<PackageReference Include="Dapper" Version="2.0.123" />
@@ -43,9 +45,15 @@
 	  <Page Update="Controls\WebToolContentControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
+	  <Page Update="Controls\NotificationControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <None Update="Controls\WelcomControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </None>
+	  <Page Update="Pages\WebViewPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>

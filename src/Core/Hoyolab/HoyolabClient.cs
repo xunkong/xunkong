@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Net.Http.Json;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using Xunkong.Core.SpiralAbyss;
 using Xunkong.Core.TravelRecord;
@@ -11,8 +12,9 @@ namespace Xunkong.Core.Hoyolab
 
 
 
-        public readonly HttpClient _httpClient;
+        private readonly HttpClient _httpClient;
 
+        private readonly JsonSerializerOptions _options;
 
 
         #region Constant
@@ -77,35 +79,35 @@ namespace Xunkong.Core.Hoyolab
         /// <summary>
         /// 签到信息
         /// </summary>
-        private static string SignInInfoUrl(UserGameRoleInfo role) => $"{ApiTakumi}/event/bbs_sign_reward/info?act_id={SignIn_ActivityId}&region={role.Region.ToDescription()}&uid={role.Uid}";
+        private static string SignInInfoUrl(UserGameRoleInfo role) => $"{ApiTakumi}/event/bbs_sign_reward/info?act_id={SignIn_ActivityId}&region={role.Region.ToDescriptionOrString()}&uid={role.Uid}";
 
         /// <summary>
         /// 深镜螺旋
         /// </summary>
         /// <param name="schedule">1本期，2上期</param>
-        private static string RecordSpiralAbyssUrl(UserGameRoleInfo role, int schedule) => $"{ApiTakumiRecord}/spiralAbyss?schedule_type={schedule}&server={role.Region.ToDescription()}&role_id={role.Uid}";
+        private static string RecordSpiralAbyssUrl(UserGameRoleInfo role, int schedule) => $"{ApiTakumiRecord}/spiralAbyss?schedule_type={schedule}&server={role.Region.ToDescriptionOrString()}&role_id={role.Uid}";
 
         /// <summary>
         /// 世界探索统计
         /// </summary>
-        private static string PalyerSummaryInfoUrl(UserGameRoleInfo role) => $"{ApiTakumiRecord}/index?server={role.Region.ToDescription()}&role_id={role.Uid}";
+        private static string PalyerSummaryInfoUrl(UserGameRoleInfo role) => $"{ApiTakumiRecord}/index?server={role.Region.ToDescriptionOrString()}&role_id={role.Uid}";
 
 
         /// <summary>
         /// 玩家活动记录
         /// </summary>
-        private static string ActivityUrl(UserGameRoleInfo role) => $"{ApiTakumiRecord}/activities?server={role.Region.ToDescription()}&role_id={role.Uid}";
+        private static string ActivityUrl(UserGameRoleInfo role) => $"{ApiTakumiRecord}/activities?server={role.Region.ToDescriptionOrString()}&role_id={role.Uid}";
 
         /// <summary>
         /// 实时便笺
         /// </summary>
-        private static string DailyNoteUrl(UserGameRoleInfo role) => $"{ApiTakumiRecord}/dailyNote?server={role.Region.ToDescription()}&role_id={role.Uid}";
+        private static string DailyNoteUrl(UserGameRoleInfo role) => $"{ApiTakumiRecord}/dailyNote?server={role.Region.ToDescriptionOrString()}&role_id={role.Uid}";
 
         /// <summary>
         /// 旅行者札记总览
         /// </summary>
         /// <param name="month">月份</param>
-        private static string TravelRecordSummaryUrl(UserGameRoleInfo role, int month) => $"{Hk4eApi}/monthInfo?month={month}&bind_uid={role.Uid}&bind_region={role.Region.ToDescription()}&{TravelRecord_Query}";
+        private static string TravelRecordSummaryUrl(UserGameRoleInfo role, int month) => $"{Hk4eApi}/monthInfo?month={month}&bind_uid={role.Uid}&bind_region={role.Region.ToDescriptionOrString()}&{TravelRecord_Query}";
 
         /// <summary>
         /// 旅行者札记详细
@@ -114,14 +116,14 @@ namespace Xunkong.Core.Hoyolab
         /// <param name="month">月份</param>
         /// <param name="page">第几页</param>
         /// <param name="limit">每页限制几项，最多100</param>
-        private static string TravelRecordDetailUrl(UserGameRoleInfo role, int month, TravelRecordAwardType type, int page, int limit = 10) => $"{Hk4eApi}/monthDetail?type={(int)type}&month={month}&page={page}&limit={limit}&bind_uid={role.Uid}&bind_region={role.Region.ToDescription()}&{TravelRecord_Query}";
+        private static string TravelRecordDetailUrl(UserGameRoleInfo role, int month, TravelRecordAwardType type, int page, int limit = 10) => $"{Hk4eApi}/monthDetail?type={(int)type}&month={month}&page={page}&limit={limit}&bind_uid={role.Uid}&bind_region={role.Region.ToDescriptionOrString()}&{TravelRecord_Query}";
 
         #endregion
 
 
 
 
-        public HoyolabClient(HttpClient? httpClient = null)
+        public HoyolabClient(HttpClient? httpClient = null, JsonSerializerOptions? options = null)
         {
             if (httpClient is null)
             {
@@ -132,17 +134,25 @@ namespace Xunkong.Core.Hoyolab
             {
                 _httpClient = httpClient;
             }
+            if (options is null)
+            {
+                _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+            }
+            else
+            {
+                _options = options;
+            }
         }
 
 
 
 
-        private async Task<T> HoyolabSendAsync<T>(HttpRequestMessage request) where T : class
+        private async Task<T> CommonSendAsync<T>(HttpRequestMessage request) where T : class
         {
             var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
-            var responseData = JsonSerializer.Deserialize<ResponseData<T>>(content);
+            var responseData = JsonSerializer.Deserialize<HoyolabBaseWrapper<T>>(content, _options);
             if (responseData is null)
             {
                 throw new HoyolabException(-1, "Can not parse the response body.");
@@ -181,7 +191,7 @@ namespace Xunkong.Core.Hoyolab
             request.Headers.Add(x_rpc_app_version, DynamicSecret.AppVersion_2101);
             request.Headers.Add(x_rpc_device_id, DeviceId);
             request.Headers.Add(x_rpc_client_type, "4");
-            var data = await HoyolabSendAsync<UserInfoDto>(request);
+            var data = await CommonSendAsync<UserInfoWrapper>(request);
             data.UserInfo.Cookie = cookie;
             return data.UserInfo;
         }
@@ -203,7 +213,7 @@ namespace Xunkong.Core.Hoyolab
             request.Headers.Add(UserAgent, UA2101);
             request.Headers.Add(X_Reuqest_With, com_mihoyo_hyperion);
             request.Headers.Add(Cookie, cookie);
-            var data = await HoyolabSendAsync<UserGameRoleDto>(request);
+            var data = await CommonSendAsync<UserGameRoleWrapper>(request);
             data.List?.ForEach(x => x.Cookie = cookie);
             return data.List ?? new List<UserGameRoleInfo>();
         }
@@ -225,7 +235,7 @@ namespace Xunkong.Core.Hoyolab
             request.Headers.Add(x_rpc_device_id, DeviceId);
             request.Headers.Add(X_Reuqest_With, com_mihoyo_hyperion);
             request.Headers.Add(Referer, SignIn_Referer);
-            return await HoyolabSendAsync<SignInInfo>(request);
+            return await CommonSendAsync<SignInInfo>(request);
         }
 
 
@@ -237,7 +247,7 @@ namespace Xunkong.Core.Hoyolab
         /// <returns></returns>
         public async Task<SignInResult> SignInAsync(UserGameRoleInfo role)
         {
-            var obj = new { act_id = SignIn_ActivityId, region = role.Region.ToDescription(), uid = role.Uid.ToString() };
+            var obj = new { act_id = SignIn_ActivityId, region = role.Region.ToDescriptionOrString(), uid = role.Uid.ToString() };
             var request = new HttpRequestMessage(HttpMethod.Post, SignInUrl);
             request.Headers.Add(Accept, Application_Json);
             request.Headers.Add(UserAgent, UA2101);
@@ -249,7 +259,7 @@ namespace Xunkong.Core.Hoyolab
             request.Headers.Add(x_rpc_client_type, "5");
             request.Headers.Add(X_Reuqest_With, com_mihoyo_hyperion);
             request.Content = JsonContent.Create(obj);
-            return await HoyolabSendAsync<SignInResult>(request);
+            return await CommonSendAsync<SignInResult>(request);
         }
 
 
@@ -272,7 +282,7 @@ namespace Xunkong.Core.Hoyolab
             request.Headers.Add(x_rpc_app_version, DynamicSecret.AppVersion_2161);
             request.Headers.Add(x_rpc_client_type, "5");
             request.Headers.Add(X_Reuqest_With, com_mihoyo_hyperion);
-            var data = await HoyolabSendAsync<SpiralAbyssInfo>(request);
+            var data = await CommonSendAsync<SpiralAbyssInfo>(request);
             data.Uid = role.Uid;
             return data;
         }
@@ -296,7 +306,7 @@ namespace Xunkong.Core.Hoyolab
             request.Headers.Add(x_rpc_app_version, DynamicSecret.AppVersion_2161);
             request.Headers.Add(x_rpc_client_type, "5");
             request.Headers.Add(X_Reuqest_With, com_mihoyo_hyperion);
-            return await HoyolabSendAsync<PlayerSummaryInfo>(request);
+            return await CommonSendAsync<PlayerSummaryInfo>(request);
         }
 
 
@@ -312,7 +322,7 @@ namespace Xunkong.Core.Hoyolab
             {
                 character_ids = player.AvatarInfos.Select(x => x.Id),
                 role_id = role.Uid,
-                server = role.Region.ToDescription(),
+                server = role.Region.ToDescriptionOrString(),
             };
             var request = new HttpRequestMessage(HttpMethod.Post, CharacterDetailsUrl);
             request.Headers.Add(Accept, Application_Json);
@@ -324,7 +334,7 @@ namespace Xunkong.Core.Hoyolab
             request.Headers.Add(x_rpc_client_type, "5");
             request.Headers.Add(X_Reuqest_With, com_mihoyo_hyperion);
             request.Content = JsonContent.Create(obj);
-            var data = await HoyolabSendAsync<AvatarDetailResponseData>(request);
+            var data = await CommonSendAsync<AvatarDetailWrapper>(request);
             return data.Avatars;
         }
 
@@ -347,7 +357,7 @@ namespace Xunkong.Core.Hoyolab
             request.Headers.Add(x_rpc_app_version, DynamicSecret.AppVersion_2161);
             request.Headers.Add(x_rpc_client_type, "5");
             request.Headers.Add(X_Reuqest_With, com_mihoyo_hyperion);
-            return await HoyolabSendAsync<dynamic>(request);
+            return await CommonSendAsync<dynamic>(request);
         }
 
 
@@ -368,7 +378,7 @@ namespace Xunkong.Core.Hoyolab
             request.Headers.Add(x_rpc_app_version, DynamicSecret.AppVersion_2161);
             request.Headers.Add(x_rpc_client_type, "5");
             request.Headers.Add(X_Reuqest_With, com_mihoyo_hyperion);
-            var data = await HoyolabSendAsync<DailyNoteInfo>(request);
+            var data = await CommonSendAsync<DailyNoteInfo>(request);
             data.Uid = role.Uid;
             data.Nickname = role.Nickname;
             var now = DateTimeOffset.Now;
@@ -400,7 +410,7 @@ namespace Xunkong.Core.Hoyolab
             request.Headers.Add(Cookie, role.Cookie);
             request.Headers.Add(Referer, TravelRecord_Referer);
             request.Headers.Add(X_Reuqest_With, com_mihoyo_hyperion);
-            return await HoyolabSendAsync<TravelRecordSummary>(request);
+            return await CommonSendAsync<TravelRecordSummary>(request);
         }
 
 
@@ -413,7 +423,7 @@ namespace Xunkong.Core.Hoyolab
         /// <param name="page">第几页</param>
         /// <param name="limit">每页几条，最多100</param>
         /// <returns></returns>
-        public async Task<TravelRecordDetail> GetTravelRecordDetailByPageAsync(UserGameRoleInfo role, int month, TravelRecordAwardType type, int page, int limit = 10)
+        public async Task<TravelRecordDetail> GetTravelRecordDetailByPageAsync(UserGameRoleInfo role, int month, TravelRecordAwardType type, int page, int limit = 100)
         {
             var url = TravelRecordDetailUrl(role, month, type, page, limit);
             var request = new HttpRequestMessage(HttpMethod.Get, url);
@@ -422,7 +432,7 @@ namespace Xunkong.Core.Hoyolab
             request.Headers.Add(Cookie, role.Cookie);
             request.Headers.Add(Referer, TravelRecord_Referer);
             request.Headers.Add(X_Reuqest_With, com_mihoyo_hyperion);
-            var data = await HoyolabSendAsync<TravelRecordDetail>(request);
+            var data = await CommonSendAsync<TravelRecordDetail>(request);
             foreach (var item in data.List)
             {
                 item.Type = type;

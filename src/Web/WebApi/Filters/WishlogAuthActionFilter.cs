@@ -10,48 +10,51 @@ namespace Xunkong.Web.Api.Filters
 {
     public class WishlogAuthActionFilter : IAsyncActionFilter
     {
+
         private readonly ILogger<WishlogAuthActionFilter> _logger;
 
         private readonly XunkongDbContext _dbContext;
 
+        private readonly WishlogClient _wishlogClient;
 
-        public WishlogAuthActionFilter(ILogger<WishlogAuthActionFilter> logger, XunkongDbContext dbContext)
+        public WishlogAuthActionFilter(ILogger<WishlogAuthActionFilter> logger, XunkongDbContext dbContext, WishlogClient wishlogClient)
         {
             _logger = logger;
             _dbContext = dbContext;
+            _wishlogClient = wishlogClient;
         }
 
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            if (context.ActionArguments["wishlog"] is WishlogDto wishlog)
+            if (context.ActionArguments["wishlog"] is WishlogBackupRequestModel wishlog)
             {
                 var uid = wishlog.Uid;
-                if (wishlog.Url is null)
+                if (string.IsNullOrWhiteSpace(wishlog.Url))
                 {
-                    throw new XunkongServerException(ReturnCode.UrlFormatError);
+                    throw new XunkongException(ErrorCode.UrlFormatError);
                 }
                 try
                 {
                     var url_uid = await GetUidByUrlAsync(wishlog.Url);
                     if (url_uid != uid)
                     {
-                        throw new XunkongServerException(ReturnCode.UrlNotMatchUid);
+                        throw new XunkongException(ErrorCode.UrlNotMatchUid);
                     }
                 }
                 catch (HoyolabException ex)
                 {
-                    throw new XunkongServerException(ReturnCode.HoyolabException, ex.Message);
+                    throw new XunkongException(ErrorCode.HoyolabException, ex.Message);
                 }
                 catch (ArgumentException ex)
                 {
-                    throw new XunkongServerException(ReturnCode.UrlFormatError, ex.Message);
+                    throw new XunkongException(ErrorCode.UrlFormatError, ex.Message);
                 }
                 await next();
             }
             else
             {
-                throw new XunkongServerException(ReturnCode.InvalidModelException);
+                throw new XunkongException(ErrorCode.InvalidModelException);
             }
         }
 
@@ -67,7 +70,7 @@ namespace Xunkong.Web.Api.Filters
                     return key.Uid;
                 }
             }
-            var uid = await new WishlogClient(url).GetUidAsync();
+            var uid = await _wishlogClient.GetUidAsync(url);
             var info = new WishlogAuthkeyItem
             {
                 Url = url,

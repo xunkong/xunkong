@@ -27,12 +27,13 @@
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <PackageCertificateThumbprint>09188B610F483A0C7BF46142AC329CC22CCAA7B6</PackageCertificateThumbprint>
     <EntryPointProjectUniqueName>..\Desktop\Xunkong.Desktop.csproj</EntryPointProjectUniqueName>
-    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+    <GenerateAppInstallerFile>True</GenerateAppInstallerFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+    <AppInstallerUri>https://localhost:44362/v0/desktop/appinstall</AppInstallerUri>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <AppxBundle>Always</AppxBundle>
@@ -55,6 +56,14 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Desktop\Xunkong.Desktop.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\LockScreenLogo.png" />
+    <Content Include="Images\SplashScreen.png" />
+    <Content Include="Images\Square150x150Logo.png" />
+    <Content Include="Images\Square44x44Logo.png" />
+    <Content Include="Images\StoreLogo.png" />
+    <Content Include="Images\Wide310x150Logo.png" />
   </ItemGroup>
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
 </Project>

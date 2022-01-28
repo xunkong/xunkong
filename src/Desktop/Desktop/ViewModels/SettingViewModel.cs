@@ -3,18 +3,24 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Background;
+using Xunkong.Core.XunkongApi;
 using Xunkong.Desktop.Services;
 
 namespace Xunkong.Desktop.ViewModels
 {
+
+    [InjectService]
     internal partial class SettingViewModel : ObservableObject
     {
 
@@ -28,17 +34,44 @@ namespace Xunkong.Desktop.ViewModels
 
         private readonly HttpClient _httpClient;
 
+        private readonly XunkongApiService _xunkongApiService;
+
+        private readonly WishlogService _wishlogService;
+
+        private readonly HoyolabService _hoyolabService;
 
 
 
-        public SettingViewModel(ILogger<SettingViewModel> logger, IDbContextFactory<XunkongDbContext> dbContextFactory, DbConnectionFactory<SqliteConnection> dbConnectionFactory, HttpClient httpClient)
+        public string AppName => XunkongEnvironment.AppName;
+
+        public string AppVersion => XunkongEnvironment.AppVersion.ToString();
+
+
+
+
+        public SettingViewModel(ILogger<SettingViewModel> logger,
+                                IDbContextFactory<XunkongDbContext> dbContextFactory,
+                                DbConnectionFactory<SqliteConnection> dbConnectionFactory,
+                                HttpClient httpClient,
+                                XunkongApiService xunkongApiService,
+                                WishlogService wishlogService,
+                                HoyolabService hoyolabService)
         {
             _logger = logger;
             _dbContextFactory = dbContextFactory;
             _dbConnectionFactory = dbConnectionFactory;
             _webToolItemDbContext = dbContextFactory.CreateDbContext();
             _httpClient = httpClient;
+            _xunkongApiService = xunkongApiService;
+            _wishlogService = wishlogService;
+            _hoyolabService = hoyolabService;
         }
+
+
+
+
+        #region WebTool Setting
+
 
 
         private ObservableCollection<WebToolItem> _WebToolItemList;
@@ -60,9 +93,65 @@ namespace Xunkong.Desktop.ViewModels
 
         public async Task InitializeDataAsync()
         {
-            var list = await _webToolItemDbContext.WebToolItems.OrderBy(x => x.Order).ToListAsync();
-            _WebToolItemList = new(list);
+            try
+            {
+                var list = await _webToolItemDbContext.WebToolItems.OrderBy(x => x.Order).ToListAsync();
+                _WebToolItemList = new(list);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error when init webtool setting items.");
+                InfoBarHelper.Error(ex, "无法加载网页小工具的数据");
+            }
+        }
 
+
+        private ChannelType _SelectedChannel = XunkongEnvironment.Channel;
+        public ChannelType SelectedChannel
+        {
+            get => _SelectedChannel;
+            set => SetProperty(ref _SelectedChannel, value);
+        }
+
+
+        public List<ChannelType> ChannelTypeList { get; set; } = Enum.GetValues<ChannelType>().ToList();
+
+
+
+        [ICommand(AllowConcurrentExecutions = false)]
+        private async Task CheckUpdateAsync()
+        {
+            try
+            {
+                var version = await _xunkongApiService.CheckUpdateAsync(SelectedChannel);
+                if (version.Version > XunkongEnvironment.AppVersion && !string.IsNullOrWhiteSpace(version.PackageUrl))
+                {
+                    var button = new Button { Content = "下载", HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Right };
+                    button.Click += (_, _) => Process.Start(new ProcessStartInfo
+                    {
+                        FileName = version.PackageUrl,
+                        UseShellExecute = true,
+                    });
+                    var infoBar = new InfoBar
+                    {
+                        Severity = InfoBarSeverity.Success,
+                        Title = $"新版本 {version.Version}",
+                        Message = version.Abstract,
+                        ActionButton = button,
+                        IsOpen = true,
+                    };
+                    InfoBarHelper.Show(infoBar);
+                }
+                else
+                {
+                    InfoBarHelper.Information("已是最新版本");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in {MethodName}", nameof(CheckUpdateAsync));
+                InfoBarHelper.Error(ex);
+            }
         }
 
 
@@ -70,6 +159,10 @@ namespace Xunkong.Desktop.ViewModels
         private void AddWebToolItem()
         {
             var newItem = new WebToolItem();
+            if (WebToolItemList is null)
+            {
+                WebToolItemList = new();
+            }
             WebToolItemList.Add(newItem);
             SelectedWebToolItem = newItem;
         }
@@ -103,7 +196,7 @@ namespace Xunkong.Desktop.ViewModels
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in {MethodName}", nameof(DeleteSelectedWebToolItem));
-                InfoBarHelper.Error(ex.GetType().Name, ex.Message);
+                InfoBarHelper.Error(ex);
             }
 
         }
@@ -149,7 +242,7 @@ namespace Xunkong.Desktop.ViewModels
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in {MethodName}", nameof(GetTitleAndIconByUrlAsync));
-                InfoBarHelper.Error(ex.GetType().Name, ex.Message);
+                InfoBarHelper.Error(ex);
             }
         }
 
@@ -172,12 +265,102 @@ namespace Xunkong.Desktop.ViewModels
                 await _webToolItemDbContext.SaveChangesAsync();
                 _logger.LogDebug("Saved the above WebToolItem changes.");
                 InfoBarHelper.Success("保存成功");
-                WeakReferenceMessenger.Default.Send(new RefreshWebToolNavItemMessage());
+                WeakReferenceMessenger.Default.Send<RefreshWebToolNavItemMessage>();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in {MethodName}", nameof(SaveWebToolItemAsync));
-                InfoBarHelper.Error(ex.GetType().Name, ex.Message);
+                InfoBarHelper.Error(ex);
+            }
+        }
+
+
+
+        #endregion
+
+
+
+
+        [ICommand]
+        private async Task RegisterBackgroundTask()
+        {
+            try
+            {
+                var a = BackgroundTaskRegistration.AllTasks;
+                foreach (var item in a)
+                {
+                    if (item.Value.Name == "My Background Trigger")
+                    {
+                        item.Value.Unregister(true);
+                    }
+                }
+                var requestStatus = await BackgroundExecutionManager.RequestAccessAsync();
+                var builder = new BackgroundTaskBuilder();
+                builder.Name = "My Background Trigger";
+                builder.SetTrigger(new TimeTrigger(15, false));
+                //builder.TaskEntryPoint = typeof(DailyNoteTask).FullName;
+                builder.SetTaskEntryPointClsid(Guid.NewGuid());
+                // Do not set builder.TaskEntryPoint for in-process background tasks
+                // Here we register the task and work will start based on the time trigger.
+                BackgroundTaskRegistration task = builder.Register();
+                await Task.Delay(3000);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+        }
+
+
+
+
+
+
+        [ICommand(AllowConcurrentExecutions = false)]
+        private async Task GetTravelRecordSummary()
+        {
+            try
+            {
+                var role = await _hoyolabService.GetLastSelectedOrFirstUserGameRoleInfoAsync();
+                var now = DateTime.UtcNow.AddHours(8);
+                var month = now.Month;
+                var r = await _hoyolabService.GetTravelRecordSummaryAsync(role, month);
+                var s = await _hoyolabService.GetTravelRecordDetailAsync(role, month, Core.TravelRecord.TravelRecordAwardType.Primogems);
+                var t = await _hoyolabService.GetTravelRecordDetailAsync(role, month, Core.TravelRecord.TravelRecordAwardType.Mora);
+                month = now.AddMonths(-1).Month;
+                r = await _hoyolabService.GetTravelRecordSummaryAsync(role, month);
+                s = await _hoyolabService.GetTravelRecordDetailAsync(role, month, Core.TravelRecord.TravelRecordAwardType.Primogems);
+                t = await _hoyolabService.GetTravelRecordDetailAsync(role, month, Core.TravelRecord.TravelRecordAwardType.Mora);
+                month = now.AddMonths(-2).Month;
+                r = await _hoyolabService.GetTravelRecordSummaryAsync(role, month);
+                s = await _hoyolabService.GetTravelRecordDetailAsync(role, month, Core.TravelRecord.TravelRecordAwardType.Primogems);
+                t = await _hoyolabService.GetTravelRecordDetailAsync(role, month, Core.TravelRecord.TravelRecordAwardType.Mora);
+                InfoBarHelper.Success("成功");
+            }
+            catch (Exception ex)
+            {
+                InfoBarHelper.Error(ex);
+                throw;
+            }
+        }
+
+
+        [ICommand(AllowConcurrentExecutions = false)]
+        private async Task GetSpiralAbyssInfoSummary()
+        {
+            try
+            {
+                var role = await _hoyolabService.GetLastSelectedOrFirstUserGameRoleInfoAsync();
+                var c = await _hoyolabService.GetSpiralAbyssInfoAsync(role, 1);
+                var l = await _hoyolabService.GetSpiralAbyssInfoAsync(role, 2);
+                InfoBarHelper.Success("成功");
+            }
+            catch (Exception ex)
+            {
+                InfoBarHelper.Error(ex);
+                throw;
             }
         }
 

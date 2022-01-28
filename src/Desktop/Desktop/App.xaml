@@ -28,11 +28,8 @@
             <StaticResource x:Key="WindowCaptionForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
             <StaticResource x:Key="WindowCaptionForegroundDisabled" ResourceKey="SystemControlForegroundBaseHighBrush" />
             <SolidColorBrush x:Key="SystemControlCustomBackgroundBrush" Color="Transparent" />
-            <!--<SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#F3F3F3" />
-            <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="#F3F3F3" />
-            <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="#F3F3F3" />
-            <SolidColorBrush x:Key="SystemColorBackgroundBrush" Color="#F3F3F3" />
-            <SolidColorBrush x:Key="SolidBackgroundFillColorBase" Color="#F3F3F3" />-->
+            <x:Double x:Key="ContentDialogMaxWidth">800</x:Double>
+
 
             <Thickness x:Key="NavigationViewContentMargin">0,48,0,0</Thickness>
 
@@ -53,6 +50,7 @@
                                            FalseValue="Visible"
                                            TrueValue="Collapsed" />
             <xdc:DateTimeOffsetToTimeStringConverter x:Key="DateTimeOffsetToTimeStringConverter" />
+            <xdc:DateTimeOffsetToDateTimeStringConverter x:Key="DateTimeOffsetToDateTimeStringConverter" />
             <xdc:ExpeditionStatusToColorConverter x:Key="ExpeditionStatusToColorConverter" />
 
 

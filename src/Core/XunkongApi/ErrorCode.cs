@@ -2,17 +2,19 @@
 
 namespace Xunkong.Core.XunkongApi
 {
-    public enum ReturnCode
+    public enum ErrorCode
     {
 
         [Description("Ok")]
-        Ok,
+        Ok = 0,
 
         [Description("Server internal exception")]
         InternalException = -1,
 
-        [Description("Request arguement can not be parsed")]
+        [Description("Invalid arguement")]
         InvalidModelException = -2,
+
+
 
         [Description("Format of wishlog url is error")]
         UrlFormatError = 101,
@@ -28,5 +30,16 @@ namespace Xunkong.Core.XunkongApi
 
         [Description("Wishlog of uid is not found")]
         UidNotFound = 105,
+
+
+
+        [Description("Version is null")]
+        VersionIsNull = 201,
+
+        [Description("No content for specific version")]
+        NoContentForVersion = 202,
+
+
+
     }
 }

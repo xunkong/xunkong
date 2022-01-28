@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Xunkong.Core.XunkongApi;
 
 namespace Xunkong.Web.Api.Controllers
@@ -9,9 +10,19 @@ namespace Xunkong.Web.Api.Controllers
     [ApiVersionNeutral]
     public class StateController : ControllerBase
     {
+
+
         public static DateTime StartTime;
 
         private static DateTime lastUpdateTime = new FileInfo(typeof(StateController).Assembly.Location).CreationTime;
+
+
+        private readonly IMemoryCache _cache;
+
+        public StateController(IMemoryCache cache)
+        {
+            _cache = cache;
+        }
 
 
         /// <summary>
@@ -19,18 +30,24 @@ namespace Xunkong.Web.Api.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public ResponseDto GetState()
+        public ResponseBaseWrapper GetState()
         {
-            var data = new ResponseDto(ReturnCode.Ok, "Api instance has started.", new { LastUpdateTime = lastUpdateTime, RunningTime = DateTime.Now - StartTime });
+            var data = new ResponseBaseWrapper(ErrorCode.Ok, "Api instance has started.", new { LastUpdateTime = lastUpdateTime, RunningTime = DateTime.Now - StartTime });
             return data;
         }
 
-        [HttpGet("long")]
-        public string GetLong()
+
+        [HttpPost("ClearCache")]
+        public ResponseBaseWrapper ClearCache()
         {
-            var str = System.IO.File.ReadAllText(@"E:\main_wishlog.sql");
-            return str;
+            (_cache as MemoryCache)?.Compact(1);
+            return new(0, "Cache cleared.");
         }
+
+
+
+
+
 
     }
 }

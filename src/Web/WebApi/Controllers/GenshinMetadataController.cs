@@ -1,22 +1,23 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Xunkong.Core.XunkongApi;
+using Xunkong.Web.Api.Filters;
 using Xunkong.Web.Api.Services;
 
 namespace Xunkong.Web.Api.Controllers
 {
     [ApiController]
     [ApiVersion("0")]
-    [Route("v{version:ApiVersion}/[controller]")]
-    public class MetadataController : ControllerBase
+    [Route("v{version:ApiVersion}/Genshin/Metadata")]
+    [ServiceFilter(typeof(BaseRecordResultFilter))]
+    public class GenshinMetadataController : ControllerBase
     {
-        private readonly ILogger<MetadataController> _logger;
+        private readonly ILogger<GenshinMetadataController> _logger;
         private readonly XunkongDbContext _dbContext;
         private readonly IMemoryCache _cache;
 
-        public MetadataController(ILogger<MetadataController> logger, XunkongDbContext dbContext, IMemoryCache cache)
+        public GenshinMetadataController(ILogger<GenshinMetadataController> logger, XunkongDbContext dbContext, IMemoryCache cache)
         {
             _logger = logger;
             _dbContext = dbContext;
@@ -25,42 +26,42 @@ namespace Xunkong.Web.Api.Controllers
 
 
         [HttpGet("character")]
-        public async Task<ResponseDto> GetCharacterInfos()
+        public async Task<ResponseBaseWrapper> GetCharacterInfos()
         {
-            if (_cache.TryGetValue("characterinfos", out ResponseDto result))
+            if (_cache.TryGetValue("characterinfos", out ResponseBaseWrapper result))
             {
                 return result;
             }
             var list = await _dbContext.CharacterInfos.AsNoTracking().Where(x => x.ConstllationName != null).ToListAsync();
-            result = ResponseDto.Ok(new { Count = list.Count, List = list });
+            result = ResponseBaseWrapper.Ok(new { Count = list.Count, List = list });
             _cache.Set("characterinfos", result);
             return result;
         }
 
 
         [HttpGet("weapon")]
-        public async Task<ResponseDto> GetWeaponInfos()
+        public async Task<ResponseBaseWrapper> GetWeaponInfos()
         {
-            if (_cache.TryGetValue("weaponinfos", out ResponseDto result))
+            if (_cache.TryGetValue("weaponinfos", out ResponseBaseWrapper result))
             {
                 return result;
             }
             var list = await _dbContext.WeaponInfos.AsNoTracking().Where(x => x.GachaIcon != null).ToListAsync();
-            result = ResponseDto.Ok(new { Count = list.Count, List = list });
+            result = ResponseBaseWrapper.Ok(new { Count = list.Count, List = list });
             _cache.Set("weaponinfos", result);
             return result;
         }
 
 
         [HttpGet("wishevent")]
-        public async Task<ResponseDto> GetWishEventInfos()
+        public async Task<ResponseBaseWrapper> GetWishEventInfos()
         {
-            if (_cache.TryGetValue("wisheventinfos", out ResponseDto result))
+            if (_cache.TryGetValue("wisheventinfos", out ResponseBaseWrapper result))
             {
                 return result;
             }
             var list = await _dbContext.WishEventInfos.AsNoTracking().ToListAsync();
-            result = ResponseDto.Ok(new { Count = list.Count, List = list });
+            result = ResponseBaseWrapper.Ok(new { Count = list.Count, List = list });
             _cache.Set("wisheventinfos", result);
             return result;
         }

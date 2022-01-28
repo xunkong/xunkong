@@ -87,7 +87,10 @@ namespace Xunkong.Core.Wish
         public long Id { get; set; }
 
 
-        [JsonIgnore]
+        /// <summary>
+        /// 查询类型，此值为自行添加的值
+        /// </summary>
+        [JsonPropertyName("query_type"), JsonConverter(typeof(WishTypeJsonConverter))]
         public WishType QueryType { get; set; }
 
 

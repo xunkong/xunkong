@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
 using System.Diagnostics;
+using Microsoft.UI.Xaml.Media.Animation;
 
 namespace Xunkong.Desktop.Helpers
 {
@@ -49,9 +50,9 @@ namespace Xunkong.Desktop.Helpers
 
         }
 
-        public static void Information(string? message)
+        public static void Information(string message, int delay = 3000)
         {
-            _container.DispatcherQueue.TryEnqueue(() =>
+            _container.DispatcherQueue.TryEnqueue(async () =>
             {
                 var bar = new InfoBar
                 {
@@ -60,29 +61,39 @@ namespace Xunkong.Desktop.Helpers
                     IsOpen = true,
                 };
                 _container.Children.Add(bar);
-
-            });
-        }
-
-        public static void Information(string? title, string? message)
-        {
-            _container.DispatcherQueue.TryEnqueue(() =>
-            {
-                var bar = new InfoBar
+                if (delay > 0)
                 {
-                    Severity = InfoBarSeverity.Informational,
-                    Title = title,
-                    Message = message,
-                    IsOpen = true,
-                };
-                _container.Children.Add(bar);
+                    await Task.Delay(delay);
+                    bar.IsOpen = false;
+                }
             });
+        }
+
+        public static void Information(string title, string message, int delay = 3000)
+        {
+            _container.DispatcherQueue.TryEnqueue(async () =>
+           {
+               var bar = new InfoBar
+               {
+                   Severity = InfoBarSeverity.Informational,
+                   Title = title,
+                   Message = message,
+                   IsOpen = true,
+               };
+               _container.Children.Add(bar);
+               if (delay > 0)
+               {
+                   await Task.Delay(delay);
+                   bar.IsOpen = false;
+               }
+           });
 
         }
 
 
-        public static void Success(string? message, TimeSpan? timeSpan = null)
+        public static void Success(string message, int delay = 2000)
         {
+            var trans = new EntranceThemeTransition();
             _container.DispatcherQueue.TryEnqueue(async () =>
            {
                var bar = new InfoBar
@@ -92,22 +103,19 @@ namespace Xunkong.Desktop.Helpers
                    IsOpen = true,
                };
                _container.Children.Add(bar);
-               if (timeSpan is null)
+               if (delay > 0)
                {
-                   await Task.Delay(2000);
+                   await Task.Delay(delay);
+                   bar.IsOpen = false;
                }
-               else
-               {
-                   await Task.Delay((int)timeSpan.Value.TotalMilliseconds);
-               }
-               bar.IsOpen = false;
            });
 
         }
 
-        public static void Success(string? title, string? message)
+        public static void Success(string title, string message, int delay = 2000)
         {
-            _container.DispatcherQueue.TryEnqueue(() =>
+            var trans = new EntranceThemeTransition();
+            _container.DispatcherQueue.TryEnqueue(async () =>
             {
                 var bar = new InfoBar
                 {
@@ -117,11 +125,16 @@ namespace Xunkong.Desktop.Helpers
                     IsOpen = true,
                 };
                 _container.Children.Add(bar);
+                if (delay > 0)
+                {
+                    await Task.Delay(delay);
+                    bar.IsOpen = false;
+                }
             });
         }
 
 
-        public static void Warning(string? message)
+        public static void Warning(string message)
         {
             _container.DispatcherQueue.TryEnqueue(() =>
             {
@@ -135,7 +148,7 @@ namespace Xunkong.Desktop.Helpers
             });
         }
 
-        public static void Warning(string? title, string? message)
+        public static void Warning(string title, string message)
         {
             _container.DispatcherQueue.TryEnqueue(() =>
             {
@@ -151,7 +164,7 @@ namespace Xunkong.Desktop.Helpers
         }
 
 
-        public static void Error(string? message)
+        public static void Error(string message)
         {
             _container.DispatcherQueue.TryEnqueue(() =>
             {
@@ -166,7 +179,7 @@ namespace Xunkong.Desktop.Helpers
             });
         }
 
-        public static void Error(string? title, string? message)
+        public static void Error(string title, string message)
         {
             _container.DispatcherQueue.TryEnqueue(() =>
             {
@@ -180,6 +193,53 @@ namespace Xunkong.Desktop.Helpers
                 _container.Children.Add(bar);
             });
         }
+
+
+        public static void Error(Exception ex)
+        {
+            _container.DispatcherQueue.TryEnqueue(() =>
+            {
+                var bar = new InfoBar
+                {
+                    Severity = InfoBarSeverity.Error,
+                    Title = ex.GetType().Name,
+                    Message = ex.Message,
+                    IsOpen = true,
+                };
+                _container.Children.Add(bar);
+            });
+        }
+
+
+        public static void Error(Exception ex, string step)
+        {
+            _container.DispatcherQueue.TryEnqueue(() =>
+            {
+                var bar = new InfoBar
+                {
+                    Severity = InfoBarSeverity.Error,
+                    Title = ex.GetType().Name,
+                    Message = $"{step}\n{ex.Message}",
+                    IsOpen = true,
+                };
+                _container.Children.Add(bar);
+            });
+        }
+
+
+        public static void Show(InfoBar infoBar, int delay = 0)
+        {
+            _container.DispatcherQueue.TryEnqueue(async () =>
+            {
+                _container.Children.Add(infoBar);
+                if (delay > 0)
+                {
+                    await Task.Delay(delay);
+                    infoBar.IsOpen = false;
+                }
+            });
+        }
+
 
 
     }

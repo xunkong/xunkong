@@ -37,20 +37,22 @@
                 IsHitTestVisible="False"
                 Opacity="1" />
 
-        <StackPanel HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
+
+        <StackPanel Margin="0,120,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
                     RequestedTheme="Dark"
                     Spacing="8">
             <TextBlock FontSize="36" Text="欢迎使用「寻空」" />
             <TextBlock Text="您需要了解以下几项内容" />
-            
+
             <TextBlock FontSize="24" Text="App Center" />
             <TextBlock>
                 <Run Text="您需要同意「寻空」使用" />
                 <Hyperlink NavigateUri="https://appcenter.ms/">Microsoft App Center</Hyperlink>
                 <Run Text="进行数据统计，此功能不会收集您的个人隐私。" />
             </TextBlock>
-            
+
             <TextBlock FontSize="24" Text="WebView2" />
             <TextBlock>
                 <Run Text="「寻空」使用 WebView2 丰富应用功能，您需要安装" />
@@ -93,5 +95,5 @@
 
 
     </Grid>
-    
+
 </UserControl>

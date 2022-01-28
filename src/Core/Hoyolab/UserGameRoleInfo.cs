@@ -48,7 +48,7 @@
     }
 
 
-    internal class UserGameRoleDto
+    internal class UserGameRoleWrapper
     {
         [JsonPropertyName("list")]
         public List<UserGameRoleInfo>? List { get; set; }

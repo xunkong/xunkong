@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Xunkong.Core;
 using Xunkong.Core.XunkongApi;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -10,7 +11,7 @@ namespace Xunkong.Web.Api.Controllers
     /// 返回值
     /// </summary>
     [ApiController]
-    [ApiVersion("1.0")]
+    [ApiVersion("0.1")]
     [Route("v{version:ApiVersion}/[controller]")]
     public class ReturnCodeController : ControllerBase
     {
@@ -22,10 +23,10 @@ namespace Xunkong.Web.Api.Controllers
         /// </summary>
         /// <returns>retcode</returns>
         [HttpGet]
-        public ResponseDto Get()
+        public ResponseBaseWrapper Get()
         {
-            var dic = Enum.GetValues<ReturnCode>().ToDictionary(x => (int)x, x => x.ToDescriptionOrString());
-            return new ResponseDto(ReturnCode.Ok, null, new { CodeCount = dic.Count, Dic = dic });
+            var dic = Enum.GetValues<ErrorCode>().ToDictionary(x => (int)x, x => x.ToDescriptionOrString());
+            return new ResponseBaseWrapper(ErrorCode.Ok, null, new { CodeCount = dic.Count, Dic = dic });
         }
 
     }

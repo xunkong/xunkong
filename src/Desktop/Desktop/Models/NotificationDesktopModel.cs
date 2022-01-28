@@ -1,17 +1,37 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.CompilerServices;
 using Xunkong.Core.XunkongApi;
 
 namespace Xunkong.Desktop.Models
 {
 
     [Table("Notifications")]
-    [Index(nameof(Catagory))]
+    [Index(nameof(Category))]
     [Index(nameof(HasRead))]
-    internal class NotificationDesktopModel : NotificationModelBase
+    internal class NotificationDesktopModel : NotificationModelBase, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler? PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
-        public bool HasRead { get; set; }
+
+        private bool _HasRead;
+        public bool HasRead
+        {
+            get { return _HasRead; }
+            set
+            {
+                _HasRead = value;
+                OnPropertyChanged();
+            }
+        }
+
+        //public bool HasRead { get; set; }
+
 
     }
 }

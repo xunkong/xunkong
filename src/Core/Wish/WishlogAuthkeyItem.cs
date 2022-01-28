@@ -13,7 +13,7 @@ namespace Xunkong.Core.Wish
 
         public int Uid { get; set; }
 
-        public DateTime DateTime { get; set; }
+        public DateTimeOffset DateTime { get; set; }
 
     }
 }

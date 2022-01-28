@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using CommunityToolkit.WinUI.Helpers;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -6,10 +7,12 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -44,8 +47,17 @@ namespace Xunkong.Desktop.Views
             DataContext = App.Current.Services.GetService<WindowRootViewModel>();
             _dbConnectionFactory = App.Current.Services.GetService<DbConnectionFactory<SqliteConnection>>()!;
             _logger = App.Current.Services.GetService<ILogger<WindowRootView>>()!;
-            NavigationHelper.Initialize(_NavigationView, _rootFrame);
+            Loaded += WindowRootView_Loaded;
             WeakReferenceMessenger.Default.Register<RefreshWebToolNavItemMessage>(this, async (_, _) => await RefreshWebToolNavItemAsync());
+            WeakReferenceMessenger.Default.Register<NavigateMessage>(this, (_, m) => NavigateTo(m));
+            WeakReferenceMessenger.Default.Register<OpenNavigationPanelMessage>(this, (_, _) => _NavigationView.IsPaneOpen = true); ;
+        }
+
+        private async void WindowRootView_Loaded(object sender, RoutedEventArgs e)
+        {
+            await RefreshWebToolNavItemAsync();
+            await GetNotificationsAsync();
+            await CheckWebView2Runtime();
         }
 
 
@@ -161,14 +173,14 @@ namespace Xunkong.Desktop.Views
             }
             if (args.IsSettingsInvoked)
             {
-                _logger.LogDebug("Navigate to {PageName}", "SettingPage");
+                _logger.LogInformation("Navigate to {PageName}", "SettingPage");
                 _rootFrame.Navigate(typeof(SettingPage));
             }
             else
             {
                 if (args.InvokedItemContainer.DataContext is WebToolItem webToolItem)
                 {
-                    _logger.LogDebug("Navigate to {PageName} with title {Title} and url {Url}", "WebToolPage", webToolItem.Title, webToolItem.Url);
+                    _logger.LogInformation("Navigate to {PageName} with title {Title} and url {Url}", "WebToolPage", webToolItem.Title, webToolItem.Url);
                     _rootFrame.Navigate(typeof(WebToolPage), webToolItem);
                 }
                 else
@@ -178,7 +190,7 @@ namespace Xunkong.Desktop.Views
                     var type = asm.GetType($"Xunkong.Desktop.Pages.{tag}");
                     if (type is not null)
                     {
-                        _logger.LogDebug("Navigate to {PageName}", tag);
+                        _logger.LogInformation("Navigate to {PageName}", tag);
                         _rootFrame.Navigate(type);
                     }
                     else
@@ -187,14 +199,18 @@ namespace Xunkong.Desktop.Views
                     }
                 }
             }
-
         }
 
 
-        private async void _NavigationView_Loading(FrameworkElement sender, object args)
+
+
+        private void NavigateTo(NavigateMessage message)
         {
-            await RefreshWebToolNavItemAsync();
+            _logger.LogInformation("Navigate to {PageName} with paramter {Parameter}", message.Type.Name, message.Parameter);
+            _rootFrame.DispatcherQueue.TryEnqueue(() => _rootFrame.Navigate(message.Type, message.Parameter, message.TransitionInfo));
         }
+
+
 
 
         private async Task RefreshWebToolNavItemAsync()
@@ -213,7 +229,7 @@ namespace Xunkong.Desktop.Views
                 if (list.Any())
                 {
                     _NavigationView.MenuItems.Add(new NavigationViewItemSeparator { Tag = WEBTOOL });
-                    _NavigationView.MenuItems.Add(new NavigationViewItemHeader { Content = "拓展", Tag = WEBTOOL });
+                    _NavigationView.MenuItems.Add(new NavigationViewItemHeader { Content = "小工具", Tag = WEBTOOL });
                     foreach (var item in list)
                     {
                         _NavigationView.MenuItems.Add(new NavigationViewItem
@@ -229,7 +245,58 @@ namespace Xunkong.Desktop.Views
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in {MethodName}", nameof(RefreshWebToolNavItemAsync));
-                InfoBarHelper.Error(ex.GetType().Name, $"加载拓展项时出现错误\n{ex.Message}");
+                InfoBarHelper.Error(ex, $"加载网页小工具");
+            }
+        }
+
+
+
+
+        private async Task GetNotificationsAsync()
+        {
+            try
+            {
+                var channel = XunkongEnvironment.Channel;
+                var version = XunkongEnvironment.AppVersion;
+                var xunkongApiService = App.Current.Services.GetService<XunkongApiService>();
+                var hasNew = await xunkongApiService!.GetNotificationsAsync(channel, version);
+                if (hasNew)
+                {
+                    _Badge_Notification.Visibility = Visibility.Visible;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+
+
+        private async Task CheckWebView2Runtime()
+        {
+            try
+            {
+                _ = Microsoft.Web.WebView2.Core.CoreWebView2Environment.GetAvailableBrowserVersionString();
+            }
+            catch
+            {
+                const string url = "https://go.microsoft.com/fwlink/p/?LinkId=2124703";
+                var button = new Button { Content = "下载", HorizontalAlignment = HorizontalAlignment.Right };
+                button.Click += (_, _) => Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true,
+                });
+                var infoBar = new InfoBar
+                {
+                    Severity = InfoBarSeverity.Warning,
+                    Title = "警告",
+                    Message = "没有找到WebView2运行时，会影响软件必要的功能。",
+                    ActionButton = button,
+                    IsOpen = true,
+                };
+                InfoBarHelper.Show(infoBar);
             }
         }
 

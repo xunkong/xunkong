@@ -1,6 +1,6 @@
 ﻿namespace Xunkong.Core.Hoyolab
 {
-    internal class ResponseData<T> where T : class
+    internal class HoyolabBaseWrapper<T> where T : class
     {
 
         [JsonPropertyName("retcode")]

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Xunkong.Core.XunkongApi
 {
+
     public class NotificationModelBase
     {
 
@@ -17,9 +18,9 @@ namespace Xunkong.Core.XunkongApi
         public string Title { get; set; }
 
         [MaxLength(255)]
-        public string Catagory { get; set; }
+        public string? Category { get; set; }
 
-        public NotificationType ContentType { get; set; }
+        public ContentType ContentType { get; set; }
 
         public string Content { get; set; }
 
@@ -28,14 +29,14 @@ namespace Xunkong.Core.XunkongApi
 
 
 
-    public enum NotificationType
+    public enum ContentType
     {
 
         Text,
 
-        Markdown,
+        HtmlDialog,
 
-        Html,
+        HtmlPage,
 
         Url,
 

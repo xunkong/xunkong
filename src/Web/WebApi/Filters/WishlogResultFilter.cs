@@ -22,31 +22,13 @@ namespace Xunkong.Web.Api.Filters
 
         public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
         {
-            var requestId = context.HttpContext.Request.Headers["X-Fc-Request-Id"];
-            var method = context.HttpContext.Request.Method;
-            var path = context.HttpContext.Request.Path.Value;
-            var operation = path?.Substring(path.LastIndexOf('/') + 1).ToLower();
-            var ua = context.HttpContext.Request.Headers["User-Agent"];
-            var ip = context.HttpContext.Request.Headers["X-Forwarded-For"];
-            var deviceId = context.HttpContext.Request.Headers["X-Device-Id"];
-            var record = new WishlogRecordModel
-            {
-                RequestId = string.IsNullOrWhiteSpace(requestId) ? Guid.NewGuid().ToString("D") : requestId,
-                DateTime = DateTimeOffset.UtcNow,
-                Path = path,
-                Method = method,
-                StatusCode = 200,
-                DeviceId = deviceId,
-                UserAgent = ua,
-                Ip = ip,
-            };
+            var record = FilterHelper.GetRecordModel<WishlogRecordModel>(context);
+            var operation = record.Path?.Substring(record.Path.LastIndexOf('/') + 1).ToLower();
             if (context.Result is ObjectResult j)
             {
-                if (j.Value is ResponseDto data)
+                if (j.Value is ResponseBaseWrapper data)
                 {
-                    record.ReturnCode = data.Code;
-                    record.Message = data.Message;
-                    if (data.Data is WishlogResult result)
+                    if (data.Data is WishlogBackupResult result)
                     {
                         record.Uid = result.Uid;
                         record.Operation = operation;

@@ -48,7 +48,7 @@ namespace Xunkong.Core.Hoyolab
 
         public override void Write(Utf8JsonWriter writer, RegionType value, JsonSerializerOptions options)
         {
-            writer.WriteStringValue(value.ToDescription());
+            writer.WriteStringValue(value.ToDescriptionOrString());
         }
     }
 

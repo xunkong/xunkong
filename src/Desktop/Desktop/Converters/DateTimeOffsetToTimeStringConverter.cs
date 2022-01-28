@@ -12,7 +12,7 @@ namespace Xunkong.Desktop.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             var time = (DateTimeOffset)value;
-            return time.ToString("HH:mm:ss");
+            return time.LocalDateTime.ToString("HH:mm:ss");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -20,4 +20,25 @@ namespace Xunkong.Desktop.Converters
             throw new NotImplementedException();
         }
     }
+
+
+    internal class DateTimeOffsetToDateTimeStringConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            var time = (DateTimeOffset)value;
+            return time.LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
+
+
+
+
 }

@@ -64,7 +64,7 @@
     }
 
 
-    internal class UserInfoDto
+    internal class UserInfoWrapper
     {
         [JsonPropertyName("user_info")]
         public UserInfo UserInfo { get; set; }

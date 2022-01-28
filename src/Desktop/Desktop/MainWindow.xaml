@@ -19,7 +19,11 @@
         <StackPanel Name="_InfoBarContainer"
                  MaxWidth="600"
                  Margin="20,40,20,40"
-                 VerticalAlignment="Bottom" />
+                 VerticalAlignment="Bottom" >
+            <StackPanel.Transitions>
+                <AddDeleteThemeTransition/>
+            </StackPanel.Transitions>
+        </StackPanel>
 
     </Grid>
 
