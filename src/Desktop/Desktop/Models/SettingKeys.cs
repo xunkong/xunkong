@@ -25,7 +25,11 @@ namespace Xunkong.Desktop.Models
 
         public const string UserDataPath = nameof(UserDataPath);
 
+        public const string EnableDailyNoteNotification = nameof(EnableDailyNoteNotification);
 
+        public const string DailyNoteNotification_ResinThreshold = nameof(DailyNoteNotification_ResinThreshold);
+
+        public const string DailyNoteNotification_HomeCoinThreshold = nameof(DailyNoteNotification_HomeCoinThreshold);
 
     }
 }

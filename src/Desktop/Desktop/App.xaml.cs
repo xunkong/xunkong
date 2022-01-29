@@ -1,20 +1,19 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Http;
 using Microsoft.UI.Xaml;
 using Serilog;
 using Serilog.Events;
 using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using Windows.Storage;
 using Xunkong.Core.Hoyolab;
-using System.Diagnostics;
-using Microsoft.EntityFrameworkCore.Migrations;
-using Xunkong.Core.XunkongApi;
-using System.Text.Json;
-using System.Text.Encodings.Web;
-using Microsoft.Extensions.DependencyInjection;
 using Xunkong.Core.Wish;
-using Microsoft.Windows.AppLifecycle;
+using Xunkong.Core.XunkongApi;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -40,7 +39,11 @@ namespace Xunkong.Desktop
 
         private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
         {
-            throw new NotImplementedException();
+            var logger = Services?.GetService<ILogger<App>>();
+            if (logger is not null)
+            {
+                logger.LogCritical(e.Exception, "App crash.");
+            }
         }
 
         /// <summary>
@@ -79,11 +82,14 @@ namespace Xunkong.Desktop
 
         private static IServiceProvider ConfigureServices()
         {
+#if !DEBUG
+            AppCenter.Start("", typeof(Analytics), typeof(Crashes));
+#endif
             var setting = ApplicationData.Current.LocalSettings.Values;
 
             var userDataPath = setting[SettingKeys.UserDataPath] as string;
-            var myLogPath = Path.Combine(userDataPath!, $@"Log\Log\XunkongLog_{DateTime.Now:yyyyMMdd}_{DateTime.Now:HHmmss}.txt");
-            var fxLogPath = Path.Combine(userDataPath!, $@"Log\Trace\XunkongTrace_{DateTime.Now:yyyyMMdd}_{DateTime.Now:HHmmss}.txt");
+            var myLogPath = Path.Combine(userDataPath!, $@"Log\Log\log_{DateTime.Now:yyyyMMdd}_{DateTime.Now:HHmmss}.txt");
+            var fxLogPath = Path.Combine(userDataPath!, $@"Log\Trace\trace_{DateTime.Now:yyyyMMdd}_{DateTime.Now:HHmmss}.txt");
             var fxLogger = new LoggerConfiguration().MinimumLevel.Verbose()
                                                     .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
                                                     .WriteTo.Async(x => x.File(path: fxLogPath, outputTemplate: logTemplate, shared: true, retainedFileCountLimit: 1000))
@@ -129,6 +135,7 @@ namespace Xunkong.Desktop
             sc.AddPooledDbContextFactory<XunkongDbContext>(options => options.UseSqlite(sqlConStr));
             sc.AddTransient(_ => new JsonSerializerOptions { PropertyNameCaseInsensitive = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
             sc.AddTransient(_ => new DbConnectionFactory<SqliteConnection>(sqlConStr));
+            _ = new SqliteConnection(sqlConStr);
             var allTypes = typeof(App).Assembly.GetTypes();
             var serviceTypes = allTypes.Where(x => x.GetCustomAttributes(typeof(InjectServiceAttribute), false).Any());
             foreach (var type in serviceTypes)

@@ -21,8 +21,6 @@ namespace Xunkong.Desktop.Models
 
         public static readonly string? UserDataPath;
 
-        public static readonly string? WebView2Version;
-
 
         static XunkongEnvironment()
         {
@@ -37,13 +35,7 @@ namespace Xunkong.Desktop.Models
             var bytes = Encoding.UTF8.GetBytes(UserName + MachineGuid);
             var hash = MD5.HashData(bytes);
             DeviceId = Convert.ToHexString(hash);
-
-            UserDataPath = ApplicationData.Current.LocalSettings.Values[SettingKeys.UserDataPath] as string;
-            try
-            {
-                WebView2Version = Microsoft.Web.WebView2.Core.CoreWebView2Environment.GetAvailableBrowserVersionString();
-            }
-            catch { }
+           
         }
 
 
@@ -51,13 +43,12 @@ namespace Xunkong.Desktop.Models
         {
             var sb = new StringBuilder();
             sb.AppendLine(DateTimeOffset.Now.ToString("O"));
-            sb.AppendLine("Xunkong Desktop Log Message");
+            sb.AppendLine("Xunkong Desktop Background Task Log Message");
             sb.AppendLine($"App Name: {AppName}");
             sb.AppendLine($"App Version: {AppVersion}");
             sb.AppendLine($"OS Version: {Environment.OSVersion}");
             sb.AppendLine($"Device Id: {DeviceId}");
             sb.AppendLine($"Data Path: {UserDataPath}");
-            sb.AppendLine($"WebView2 Version: {WebView2Version ?? "Null"}");
             sb.AppendLine($"Command Line: {Environment.CommandLine}");
             return sb.ToString();
         }

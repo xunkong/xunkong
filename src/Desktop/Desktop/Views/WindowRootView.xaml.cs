@@ -57,7 +57,8 @@ namespace Xunkong.Desktop.Views
         {
             await RefreshWebToolNavItemAsync();
             await GetNotificationsAsync();
-            await CheckWebView2Runtime();
+            vm.CheckWebView2Runtime();
+            vm.CheckVersionUpdateAsync();
         }
 
 
@@ -267,38 +268,13 @@ namespace Xunkong.Desktop.Views
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(ex, "Error in {MethodName}", nameof(GetNotificationsAsync));
             }
         }
 
 
 
-        private async Task CheckWebView2Runtime()
-        {
-            try
-            {
-                _ = Microsoft.Web.WebView2.Core.CoreWebView2Environment.GetAvailableBrowserVersionString();
-            }
-            catch
-            {
-                const string url = "https://go.microsoft.com/fwlink/p/?LinkId=2124703";
-                var button = new Button { Content = "下载", HorizontalAlignment = HorizontalAlignment.Right };
-                button.Click += (_, _) => Process.Start(new ProcessStartInfo
-                {
-                    FileName = url,
-                    UseShellExecute = true,
-                });
-                var infoBar = new InfoBar
-                {
-                    Severity = InfoBarSeverity.Warning,
-                    Title = "警告",
-                    Message = "没有找到WebView2运行时，会影响软件必要的功能。",
-                    ActionButton = button,
-                    IsOpen = true,
-                };
-                InfoBarHelper.Show(infoBar);
-            }
-        }
+
 
 
 

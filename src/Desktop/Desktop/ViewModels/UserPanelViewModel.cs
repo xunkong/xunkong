@@ -110,7 +110,7 @@ namespace Xunkong.Desktop.ViewModels
         }
 
 
-        [ICommand]
+        [ICommand(AllowConcurrentExecutions = false)]
         public async Task RefreshAllUserPanelModelAsync(bool showResult = false)
         {
             _logger.LogDebug("Start refresh all hoyolab and genshin user info.");
@@ -225,16 +225,16 @@ namespace Xunkong.Desktop.ViewModels
 
 
 
-        [ICommand]
+        [ICommand(AllowConcurrentExecutions = false)]
         public async Task HoyolabLogin_InputCookieAsync()
         {
             _logger.LogDebug("Login Input Cookie button has been pressed.");
             var dialog = new ContentDialog
             {
-                Title = "Input cookie",
+                Title = "输入Cookie",
                 Content = new TextBox(),
-                PrimaryButtonText = "Confirm",
-                SecondaryButtonText = "Cancel",
+                PrimaryButtonText = "确认",
+                SecondaryButtonText = "取消",
                 DefaultButton = ContentDialogButton.Primary,
                 XamlRoot = MainWindow.XamlRoot,
             };
@@ -301,7 +301,7 @@ namespace Xunkong.Desktop.ViewModels
         }
 
 
-        [ICommand]
+        [ICommand(AllowConcurrentExecutions = false)]
         public async Task RefreshDailyNoteAsync()
         {
             var model = SelectedUserPanelModel;

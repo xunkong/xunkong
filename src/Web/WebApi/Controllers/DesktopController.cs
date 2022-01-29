@@ -10,7 +10,7 @@ namespace Xunkong.Web.Api.Controllers
 {
 
     [ApiController]
-    [ApiVersion("0")]
+    [ApiVersion("0.1")]
     [Route("v{version:ApiVersion}/[controller]")]
     [ServiceFilter(typeof(BaseRecordResultFilter))]
     public class DesktopController : Controller
@@ -61,7 +61,7 @@ namespace Xunkong.Web.Api.Controllers
 
 
         [HttpGet("Changelog")]
-        public async Task<ResponseBaseWrapper> GetChangelog([FromQuery] string? version)
+        public async Task<ResponseBaseWrapper> GetChangelogAsync([FromQuery] string? version)
         {
             if (!Version.TryParse(version, out var v))
             {
@@ -92,7 +92,7 @@ namespace Xunkong.Web.Api.Controllers
 
 
         [HttpGet("Notifications")]
-        public async Task<ResponseBaseWrapper> GetNotifications([FromQuery] ChannelType channel, [FromQuery] string? version, [FromQuery] int lastId)
+        public async Task<ResponseBaseWrapper> GetNotificationsAsync([FromQuery] ChannelType channel, [FromQuery] string? version, [FromQuery] int lastId)
         {
             if (!Version.TryParse(version, out var v))
             {

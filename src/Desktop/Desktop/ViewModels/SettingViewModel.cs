@@ -14,6 +14,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
+using Windows.Storage;
 using Xunkong.Core.XunkongApi;
 using Xunkong.Desktop.Services;
 
@@ -47,6 +48,7 @@ namespace Xunkong.Desktop.ViewModels
         public string AppVersion => XunkongEnvironment.AppVersion.ToString();
 
 
+        private const string DailyNoteRefreshBackgroundTask = "DailyNoteRefreshBackgroundTask";
 
 
         public SettingViewModel(ILogger<SettingViewModel> logger,
@@ -69,28 +71,6 @@ namespace Xunkong.Desktop.ViewModels
 
 
 
-
-        #region WebTool Setting
-
-
-
-        private ObservableCollection<WebToolItem> _WebToolItemList;
-        public ObservableCollection<WebToolItem> WebToolItemList
-        {
-            get => _WebToolItemList;
-            set => SetProperty(ref _WebToolItemList, value);
-        }
-
-
-        private WebToolItem? _SelectedWebToolItem;
-        public WebToolItem? SelectedWebToolItem
-        {
-            get => _SelectedWebToolItem;
-            set => SetProperty(ref _SelectedWebToolItem, value);
-        }
-
-
-
         public async Task InitializeDataAsync()
         {
             try
@@ -103,18 +83,29 @@ namespace Xunkong.Desktop.ViewModels
                 _logger.LogError(ex, "Error when init webtool setting items.");
                 InfoBarHelper.Error(ex, "无法加载网页小工具的数据");
             }
+            try
+            {
+                var allTasks = BackgroundTaskRegistration.AllTasks;
+                if (allTasks.Any(x => x.Value.Name == DailyNoteRefreshBackgroundTask))
+                {
+                    _IsRegisterDailyNoteTask = true;
+                    OnPropertyChanged(nameof(IsRegisterDailyNoteTask));
+                }
+                var settings = ApplicationData.Current.LocalSettings.Values;
+                _EnableDailyNoteNotification = (bool)(settings[SettingKeys.EnableDailyNoteNotification] ?? false);
+                OnPropertyChanged(nameof(EnableDailyNoteNotification));
+                _DailyNoteNotification_ResinThreshold = (int)(settings[SettingKeys.DailyNoteNotification_ResinThreshold] ?? 160);
+                OnPropertyChanged(nameof(DailyNoteNotification_ResinThreshold));
+                _DailyNoteNotification_HomeCoinThreshold = (double)(settings[SettingKeys.DailyNoteNotification_HomeCoinThreshold] ?? 1.0);
+                OnPropertyChanged(nameof(DailyNoteNotification_HomeCoinThreshold));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error when get background task setting.");
+                InfoBarHelper.Error(ex, "无法获取后台任务的设置");
+            }
+
         }
-
-
-        private ChannelType _SelectedChannel = XunkongEnvironment.Channel;
-        public ChannelType SelectedChannel
-        {
-            get => _SelectedChannel;
-            set => SetProperty(ref _SelectedChannel, value);
-        }
-
-
-        public List<ChannelType> ChannelTypeList { get; set; } = Enum.GetValues<ChannelType>().ToList();
 
 
 
@@ -153,6 +144,44 @@ namespace Xunkong.Desktop.ViewModels
                 InfoBarHelper.Error(ex);
             }
         }
+
+
+
+        #region WebTool Setting
+
+
+
+        private ObservableCollection<WebToolItem> _WebToolItemList;
+        public ObservableCollection<WebToolItem> WebToolItemList
+        {
+            get => _WebToolItemList;
+            set => SetProperty(ref _WebToolItemList, value);
+        }
+
+
+        private WebToolItem? _SelectedWebToolItem;
+        public WebToolItem? SelectedWebToolItem
+        {
+            get => _SelectedWebToolItem;
+            set => SetProperty(ref _SelectedWebToolItem, value);
+        }
+
+
+
+
+        private ChannelType _SelectedChannel = XunkongEnvironment.Channel;
+        public ChannelType SelectedChannel
+        {
+            get => _SelectedChannel;
+            set => SetProperty(ref _SelectedChannel, value);
+        }
+
+
+        public List<ChannelType> ChannelTypeList { get; set; } = Enum.GetValues<ChannelType>().ToList();
+
+
+
+
 
 
         [ICommand]
@@ -280,41 +309,108 @@ namespace Xunkong.Desktop.ViewModels
 
 
 
+        #region Background Task
 
-        [ICommand]
-        private async Task RegisterBackgroundTask()
+
+
+        private bool _IsRegisterDailyNoteTask;
+        public bool IsRegisterDailyNoteTask
+        {
+            get => _IsRegisterDailyNoteTask;
+            set
+            {
+                if (_IsRegisterDailyNoteTask != value)
+                {
+                    ChangeDailyNoteBackgroundTaskStateAsync(value);
+                }
+                SetProperty(ref _IsRegisterDailyNoteTask, value);
+            }
+        }
+
+
+        private async void ChangeDailyNoteBackgroundTaskStateAsync(bool enable)
         {
             try
             {
-                var a = BackgroundTaskRegistration.AllTasks;
-                foreach (var item in a)
+                var allTasks = BackgroundTaskRegistration.AllTasks;
+                foreach (var item in allTasks)
                 {
-                    if (item.Value.Name == "My Background Trigger")
+                    if (item.Value.Name == DailyNoteRefreshBackgroundTask)
                     {
                         item.Value.Unregister(true);
                     }
                 }
-                var requestStatus = await BackgroundExecutionManager.RequestAccessAsync();
-                var builder = new BackgroundTaskBuilder();
-                builder.Name = "My Background Trigger";
-                builder.SetTrigger(new TimeTrigger(15, false));
-                //builder.TaskEntryPoint = typeof(DailyNoteTask).FullName;
-                builder.SetTaskEntryPointClsid(Guid.NewGuid());
-                // Do not set builder.TaskEntryPoint for in-process background tasks
-                // Here we register the task and work will start based on the time trigger.
-                BackgroundTaskRegistration task = builder.Register();
-                await Task.Delay(3000);
+                if (enable)
+                {
+                    var requestStatus = await BackgroundExecutionManager.RequestAccessAsync();
+                    var builder = new BackgroundTaskBuilder();
+                    builder.Name = DailyNoteRefreshBackgroundTask;
+                    builder.SetTrigger(new TimeTrigger(16, false));
+                    builder.TaskEntryPoint = "Xunkong.Desktop.BackgroundTask.DailyNoteTask";
+                    BackgroundTaskRegistration task = builder.Register();
+                }
             }
             catch (Exception ex)
             {
-
-                throw;
+                _IsRegisterDailyNoteTask = !IsRegisterDailyNoteTask;
+                OnPropertyChanged(nameof(IsRegisterDailyNoteTask));
+                _logger.LogError(ex, "Error in {MethodName}", nameof(ChangeDailyNoteBackgroundTaskStateAsync));
+                InfoBarHelper.Error(ex);
             }
-
         }
 
 
 
+        private bool _EnableDailyNoteNotification;
+        public bool EnableDailyNoteNotification
+        {
+            get => _EnableDailyNoteNotification;
+            set
+            {
+                if (_EnableDailyNoteNotification != value)
+                {
+                    ApplicationData.Current.LocalSettings.Values[SettingKeys.EnableDailyNoteNotification] = value;
+                }
+                SetProperty(ref _EnableDailyNoteNotification, value);
+            }
+        }
+
+
+        private int _DailyNoteNotification_ResinThreshold;
+        public int DailyNoteNotification_ResinThreshold
+        {
+            get => _DailyNoteNotification_ResinThreshold;
+            set
+            {
+                value = Math.Clamp(value, 0, 160);
+                if (_DailyNoteNotification_ResinThreshold != value)
+                {
+                    _DailyNoteNotification_ResinThreshold = value;
+                    ApplicationData.Current.LocalSettings.Values[SettingKeys.DailyNoteNotification_ResinThreshold] = value;
+                }
+                OnPropertyChanged();
+            }
+        }
+
+
+        private double _DailyNoteNotification_HomeCoinThreshold;
+        public double DailyNoteNotification_HomeCoinThreshold
+        {
+            get => _DailyNoteNotification_HomeCoinThreshold;
+            set
+            {
+                value = Math.Clamp(value, 0, 1);
+                if (_DailyNoteNotification_HomeCoinThreshold != value)
+                {
+                    _DailyNoteNotification_HomeCoinThreshold = value;
+                    ApplicationData.Current.LocalSettings.Values[SettingKeys.DailyNoteNotification_HomeCoinThreshold] = value;
+                }
+                OnPropertyChanged();
+            }
+        }
+
+
+        #endregion
 
 
 
@@ -323,6 +419,7 @@ namespace Xunkong.Desktop.ViewModels
         {
             try
             {
+                InfoBarHelper.Information("请稍等");
                 var role = await _hoyolabService.GetLastSelectedOrFirstUserGameRoleInfoAsync();
                 var now = DateTime.UtcNow.AddHours(8);
                 var month = now.Month;
@@ -337,7 +434,7 @@ namespace Xunkong.Desktop.ViewModels
                 r = await _hoyolabService.GetTravelRecordSummaryAsync(role, month);
                 s = await _hoyolabService.GetTravelRecordDetailAsync(role, month, Core.TravelRecord.TravelRecordAwardType.Primogems);
                 t = await _hoyolabService.GetTravelRecordDetailAsync(role, month, Core.TravelRecord.TravelRecordAwardType.Mora);
-                InfoBarHelper.Success("成功");
+                InfoBarHelper.Success($"{role.Nickname}的旅行札记保存成功");
             }
             catch (Exception ex)
             {
@@ -352,10 +449,11 @@ namespace Xunkong.Desktop.ViewModels
         {
             try
             {
+                InfoBarHelper.Information("请稍等");
                 var role = await _hoyolabService.GetLastSelectedOrFirstUserGameRoleInfoAsync();
                 var c = await _hoyolabService.GetSpiralAbyssInfoAsync(role, 1);
                 var l = await _hoyolabService.GetSpiralAbyssInfoAsync(role, 2);
-                InfoBarHelper.Success("成功");
+                InfoBarHelper.Success($"{role.Nickname}的深渊记录保存成功");
             }
             catch (Exception ex)
             {

@@ -12,6 +12,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Globalization.NumberFormatting;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -38,6 +39,7 @@ namespace Xunkong.Desktop.Pages
             this.InitializeComponent();
             DataContext = App.Current.Services.GetService<SettingViewModel>();
             Loaded += async (_, _) => await vm.InitializeDataAsync();
+            SetNumberBoxNumberFormatter();
         }
 
 
@@ -45,6 +47,20 @@ namespace Xunkong.Desktop.Pages
         private void _Expander_WebTool_Collapsed(Expander sender, ExpanderCollapsedEventArgs args)
         {
             vm.SelectedWebToolItem = null;
+        }
+
+
+        private void SetNumberBoxNumberFormatter()
+        {
+            IncrementNumberRounder rounder = new IncrementNumberRounder();
+            rounder.Increment = 0.01;
+            rounder.RoundingAlgorithm = RoundingAlgorithm.RoundUp;
+
+            DecimalFormatter formatter = new DecimalFormatter();
+            formatter.IntegerDigits = 1;
+            formatter.FractionDigits = 2;
+            formatter.NumberRounder = rounder;
+            _NumberBox_HomeCoinThreshold.NumberFormatter = formatter;
         }
     }
 }

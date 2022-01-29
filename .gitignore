@@ -8,6 +8,7 @@ s.yaml
 deploy.cmd
 others/
 [Tt]est/
+Images/
 
 # User-specific files
 *.rsuser

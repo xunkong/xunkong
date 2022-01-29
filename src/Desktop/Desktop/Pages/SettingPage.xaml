@@ -188,12 +188,107 @@
                         </Expander.Content>
                     </Expander>
 
+                    <!--  后台任务  -->
+                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="后台任务" />
+                    <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                        <Expander.Header>
+                            <Grid>
+                                <StackPanel Padding="0,12,0,12"
+                                            Orientation="Horizontal"
+                                            Spacing="16">
+                                    <SymbolIcon Symbol="Clock" />
+                                    <TextBlock Grid.Column="1" VerticalAlignment="Center">
+                                        <Run Text="实时便笺定时刷新及提醒通知" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                             Text="每16分钟刷新一次实时便笺磁贴" />
+                                    </TextBlock>
+                                </StackPanel>
+                                <ToggleSwitch Margin="0,0,-44,0"
+                                              HorizontalAlignment="Right"
+                                              IsOn="{x:Bind vm.IsRegisterDailyNoteTask, Mode=TwoWay}"
+                                              OffContent="已停止"
+                                              OnContent="已启用" />
+                            </Grid>
+                        </Expander.Header>
+                        <Expander.Content>
+                            <StackPanel Margin="0,-16,44,-16">
+                                <Grid>
+                                    <StackPanel Padding="0,12,0,12"
+                                                HorizontalAlignment="Left"
+                                                Orientation="Horizontal"
+                                                Spacing="16">
+                                        <Border Width="20" />
+                                        <TextBlock>
+                                            <Run Text="提醒通知" />
+                                            <LineBreak />
+                                            <Run FontSize="12"
+                                                 Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                                 Text="原粹树脂或洞天宝钱超过阈值时，使用系统通知提醒您" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                    <ToggleSwitch Margin="0,0,-44,0"
+                                                  HorizontalAlignment="Right"
+                                                  VerticalAlignment="Center"
+                                                  IsOn="{x:Bind vm.EnableDailyNoteNotification, Mode=TwoWay}"
+                                                  OffContent="已停止"
+                                                  OnContent="已启用" />
+                                </Grid>
+                                <MenuFlyoutSeparator />
+                                <Grid>
+                                    <StackPanel Padding="0,12,0,12"
+                                                HorizontalAlignment="Left"
+                                                Orientation="Horizontal"
+                                                Spacing="16">
+                                        <Border Width="20" />
+                                        <TextBlock>
+                                            <Run Text="原粹树脂提醒阈值" />
+                                            <LineBreak />
+                                            <Run FontSize="12"
+                                                 Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                                 Text="原粹树脂达到此值，且上一次刷新时未达到时，发送系统通知" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                    <NumberBox Width="120"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Center"
+                                               SmallChange="10"
+                                               SpinButtonPlacementMode="Compact"
+                                               Value="{x:Bind vm.DailyNoteNotification_ResinThreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </Grid>
+                                <Grid>
+                                    <StackPanel Padding="0,12,0,12"
+                                                HorizontalAlignment="Left"
+                                                Orientation="Horizontal"
+                                                Spacing="16">
+                                        <Border Width="20" />
+                                        <TextBlock>
+                                            <Run Text="洞天宝钱提醒阈值" />
+                                            <LineBreak />
+                                            <Run FontSize="12"
+                                                 Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                                 Text="通天宝钱使用相对阈值" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                    <NumberBox Name="_NumberBox_HomeCoinThreshold"
+                                               Width="120"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Center"
+                                               SmallChange="0.05"
+                                               SpinButtonPlacementMode="Compact"
+                                               Value="{x:Bind vm.DailyNoteNotification_HomeCoinThreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </Grid>
+                            </StackPanel>
+                        </Expander.Content>
+                    </Expander>
+
 
                     <!--  临时功能  -->
                     <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="临时功能" />
-                    <Button Command="{x:Bind vm.RegisterBackgroundTaskCommand, Mode=OneTime}" Content="注册后台任务" />
-                    <Button Command="{x:Bind vm.GetTravelRecordSummaryCommand, Mode=OneTime}" Content="获取战绩" />
-                    <Button Command="{x:Bind vm.GetSpiralAbyssInfoSummaryCommand, Mode=OneTime}" Content="获取深渊" />
+                    <TextBlock FontSize="12" Foreground="{StaticResource TextFillColorSecondaryBrush}" Text="11月的旅行札记和21年第一期深渊即将过期，点击下面的按钮可以把信息保存到本地" />
+                    <Button Command="{x:Bind vm.GetTravelRecordSummaryCommand, Mode=OneTime}" Content="获取旅行札记" />
+                    <Button Command="{x:Bind vm.GetSpiralAbyssInfoSummaryCommand, Mode=OneTime}" Content="获取深渊记录" />
                 </StackPanel>
 
 
@@ -240,7 +335,7 @@
                          Text="{x:Bind vm.SelectedWebToolItem.Icon, Mode=TwoWay}" />
                 <TextBlock Text="网址" />
                 <TextBox IsSpellCheckEnabled="False"
-                         PlaceholderText="应该优先填这个"
+                         PlaceholderText="优先填这个，然后点下面的按键"
                          Text="{x:Bind vm.SelectedWebToolItem.Url, Mode=TwoWay}" />
                 <Button Command="{x:Bind vm.GetTitleAndIconByUrlCommand}" Content="获取标题和图标" />
                 <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="高级设置" />

@@ -4,48 +4,70 @@
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
   IgnorableNamespaces="uap rescap">
 
-  <Identity
-    Name="Xunkong.Desktop"
-    Publisher="CN=Xunkong by Scighost"
-    Version="2.0.0.0" />
+	<Identity
+	  Name="Xunkong.Desktop"
+	  Publisher="CN=Xunkong by Scighost"
+	  Version="0.0.1.1" />
 
-  <Properties>
-    <DisplayName>Xunkong Dev</DisplayName>
-    <PublisherDisplayName>Scighost</PublisherDisplayName>
-    <Logo>StoreLogo.png</Logo>
-  </Properties>
+	<Properties>
+		<DisplayName>Xunkong Dev</DisplayName>
+		<PublisherDisplayName>Scighost</PublisherDisplayName>
+		<Logo>Images\StoreLogo.png</Logo>
+	</Properties>
 
-  <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
-  </Dependencies>
+	<Dependencies>
+		<TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
+		<TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
+	</Dependencies>
 
-  <Resources>
-    <Resource Language="x-generate"/>
-  </Resources>
+	<Resources>
+		<Resource Language="x-generate"/>
+	</Resources>
 
-  <Applications>
-    <Application Id="App"
-      Executable="$targetnametoken$.exe"
-      EntryPoint="$targetentrypoint$">
-      <uap:VisualElements
-        DisplayName="Xunkong Dev"
-        Description="Xunkong Desktop Development Version"
-        BackgroundColor="transparent" Square44x44Logo="Images\Square44x44Logo.png" Square150x150Logo="Images\Square150x150Logo.png">
-        <uap:DefaultTile  Square71x71Logo="Images\Square44x44Logo.png" Wide310x150Logo="Images\Wide310x150Logo.png">
-          <uap:ShowNameOnTiles>
-            <uap:ShowOn Tile="square150x150Logo"/>
-            <uap:ShowOn Tile="wide310x150Logo"/>
-          </uap:ShowNameOnTiles>
-        </uap:DefaultTile>
-        <uap:SplashScreen Image="Images\SplashScreen.png"/>
-      </uap:VisualElements>
-    </Application>
-  </Applications>
+	<Applications>
+		<Application Id="Xunkong.Desktop"
+		  Executable="$targetnametoken$.exe"
+		  EntryPoint="$targetentrypoint$">
+			<uap:VisualElements
+			  DisplayName="Xunkong Dev"
+			  Description="Xunkong Desktop Development Version"
+			  BackgroundColor="transparent" Square44x44Logo="Images\Square44x44Logo.png" Square150x150Logo="Images\Square150x150Logo.png">
+				<uap:DefaultTile  Wide310x150Logo="Images\Wide310x150Logo.png" Square310x310Logo="Images\LargeTile.png">
+					<uap:ShowNameOnTiles>
+						<uap:ShowOn Tile="square150x150Logo"/>
+						<uap:ShowOn Tile="wide310x150Logo"/>
+					</uap:ShowNameOnTiles>
+				</uap:DefaultTile>
+			</uap:VisualElements>
+			<Extensions>
+				<Extension Category="windows.backgroundTasks" EntryPoint="Xunkong.Desktop.BackgroundTask.DailyNoteTask">
+					<BackgroundTasks>
+						<Task Type="timer"/>
+					</BackgroundTasks>
+				</Extension>
+				<desktop:Extension Category="windows.fullTrustProcess" Executable="Xunkong.Desktop\Xunkong.Desktop.Extension.exe">
+					<desktop:FullTrustProcess>
+						<desktop:ParameterGroup GroupId="DailyNoteTask" Parameters="DailyNoteTask"/>
+					</desktop:FullTrustProcess>
+				</desktop:Extension>
+			</Extensions>
+		</Application>
+		
+	</Applications>
 
-  <Capabilities>
-    <rescap:Capability Name="runFullTrust" />
-  </Capabilities>
+	<Capabilities>
+		<rescap:Capability Name="runFullTrust" />
+	</Capabilities>
+
+	<Extensions>
+		<Extension Category="windows.activatableClass.inProcessServer">
+			<InProcessServer>
+				<Path>Xunkong.Desktop\WinRT.Host.dll</Path>
+				<ActivatableClass ActivatableClassId="Xunkong.Desktop.BackgroundTask.DailyNoteTask" ThreadingModel="both" />
+			</InProcessServer>
+		</Extension>
+	</Extensions>
 </Package>

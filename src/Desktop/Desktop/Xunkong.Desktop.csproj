@@ -24,9 +24,12 @@
 		<PackageReference Include="CommunityToolkit.WinUI.Notifications" Version="7.1.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
 		<PackageReference Include="Dapper" Version="2.0.123" />
+		<PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.5.0" />
+		<PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.5.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.1" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="1.4.1" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.196" />
 		<PackageReference Include="Serilog.Expressions" Version="3.2.1" />
@@ -39,6 +42,8 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Core\Xunkong.Core.csproj" />
+		<ProjectReference Include="..\BackgroundTask\Xunkong.Desktop.BackgroundTask.csproj" />
+		<ProjectReference Include="..\Extension\Xunkong.Desktop.Extension.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
