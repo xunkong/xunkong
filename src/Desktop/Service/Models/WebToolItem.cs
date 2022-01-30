@@ -1,16 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Xunkong.Desktop.Models
 {
 
     [Table("WebToolItems")]
-    internal class WebToolItem : ObservableObject
+    public class WebToolItem : ObservableObject
     {
 
         private int _Id;

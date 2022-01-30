@@ -1,6 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Xunkong.Core.Hoyolab;
 using Xunkong.Core.SpiralAbyss;
 using Xunkong.Core.TravelRecord;
@@ -8,7 +7,7 @@ using Xunkong.Core.TravelRecord;
 namespace Xunkong.Desktop.Services
 {
     [InjectService]
-    internal class HoyolabService
+    public class HoyolabService
     {
 
         private readonly ILogger<HoyolabService> _logger;

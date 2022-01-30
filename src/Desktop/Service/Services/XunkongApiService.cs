@@ -1,19 +1,12 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Globalization;
-using Xunkong.Core.Wish;
 using Xunkong.Core.XunkongApi;
 
 namespace Xunkong.Desktop.Services
 {
 
     [InjectService]
-    internal class XunkongApiService
+    public class XunkongApiService
     {
 
 

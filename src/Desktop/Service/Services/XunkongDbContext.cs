@@ -1,16 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
 using Xunkong.Core.Hoyolab;
 using Xunkong.Core.Metadata;
 using Xunkong.Core.SpiralAbyss;
 using Xunkong.Core.TravelRecord;
 using Xunkong.Core.Wish;
-using Xunkong.Desktop.Models;
 
 namespace Xunkong.Desktop.Services
 {
-    internal class XunkongDbContext : DbContext
+    public class XunkongDbContext : DbContext
     {
 
         public DbSet<UserSettingModel> UserSettings { get; set; }

@@ -44,6 +44,7 @@
 		<ProjectReference Include="..\..\Core\Xunkong.Core.csproj" />
 		<ProjectReference Include="..\BackgroundTask\Xunkong.Desktop.BackgroundTask.csproj" />
 		<ProjectReference Include="..\Extension\Xunkong.Desktop.Extension.csproj" />
+		<ProjectReference Include="..\Service\Xunkong.Desktop.Service.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

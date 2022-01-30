@@ -1,21 +1,14 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Xunkong.Core.Hoyolab;
 using Xunkong.Core.Wish;
-using Xunkong.Core.XunkongApi;
 
 namespace Xunkong.Desktop.Services
 {
 
     [InjectService]
-    internal class WishlogService
+    public class WishlogService
     {
 
         private readonly ILogger<WishlogService> _logger;

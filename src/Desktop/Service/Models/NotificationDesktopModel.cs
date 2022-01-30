@@ -10,7 +10,7 @@ namespace Xunkong.Desktop.Models
     [Table("Notifications")]
     [Index(nameof(Category))]
     [Index(nameof(HasRead))]
-    internal class NotificationDesktopModel : NotificationModelBase, INotifyPropertyChanged
+    public class NotificationDesktopModel : NotificationModelBase, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = "")

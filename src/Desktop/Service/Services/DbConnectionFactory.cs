@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Common;
 
 namespace Xunkong.Desktop.Services
 {
-    internal class DbConnectionFactory<TDbConnection> where TDbConnection : DbConnection, new()
+    public class DbConnectionFactory<TDbConnection> where TDbConnection : DbConnection, new()
     {
 
         private readonly string _connectionString;

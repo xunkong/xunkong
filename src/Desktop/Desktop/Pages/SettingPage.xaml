@@ -90,7 +90,9 @@
                                         <Border Width="20" />
                                         <TextBlock>
                                             <!--  不知道为什么要空一格才能和下行文字对齐  -->
-                                            <Run Text="更新通道" /><LineBreak /><Run FontSize="12"
+                                            <Run Text="更新通道" />
+                                            <LineBreak />
+                                            <Run FontSize="12"
                                                  Foreground="{StaticResource TextFillColorSecondaryBrush}"
                                                  Text="可以选择稳定版、预览版、开发版，但只能从低版本升级至高版本" />
                                         </TextBlock>
@@ -286,7 +288,9 @@
 
                     <!--  临时功能  -->
                     <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="临时功能" />
-                    <TextBlock FontSize="12" Foreground="{StaticResource TextFillColorSecondaryBrush}" Text="11月的旅行札记和21年第一期深渊即将过期，点击下面的按钮可以把信息保存到本地" />
+                    <TextBlock FontSize="12"
+                               Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                               Text="11月的旅行札记和21年第一期深渊即将过期，点击下面的按钮可以把信息保存到本地" />
                     <Button Command="{x:Bind vm.GetTravelRecordSummaryCommand, Mode=OneTime}" Content="获取旅行札记" />
                     <Button Command="{x:Bind vm.GetSpiralAbyssInfoSummaryCommand, Mode=OneTime}" Content="获取深渊记录" />
                 </StackPanel>

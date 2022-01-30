@@ -1,17 +1,12 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
-using Dapper;
-using Xunkong.Desktop.Models;
 
 namespace Xunkong.Desktop.Services
 {
 
     [InjectService]
-    internal class UserSettingService
+    public class UserSettingService
     {
 
 

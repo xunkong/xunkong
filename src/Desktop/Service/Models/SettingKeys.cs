@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Xunkong.Desktop.Models
+﻿namespace Xunkong.Desktop.Models
 {
-    internal class SettingKeys
+    public class SettingKeys
     {
 
         public const string IsWindowMax = nameof(IsWindowMax);
