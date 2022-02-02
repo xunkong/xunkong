@@ -31,28 +31,16 @@ namespace Xunkong.Desktop
 
         public static IntPtr Hwnd { get; private set; }
 
-        public MainWindow(bool showWelcom = false)
+        public MainWindow()
         {
             Current = this;
             Closed += MainWindow_Closed;
             this.InitializeComponent();
             ExtendsContentIntoTitleBar = true;
+            SetTitleBar(_rootView.AppTitleBar);
             InfoBarHelper.Initialize(_InfoBarContainer);
-            WeakReferenceMessenger.Default.Register<FinishWelcomSettingMessage>(this, (_, _) => FinishSettingAndChangeContent());
             Hwnd = WindowNative.GetWindowHandle(this);
             InitializeWindowSize();
-            if (showWelcom)
-            {
-                var welcomControl = new WelcomControl();
-                _rootContent.Content = welcomControl;
-                SetTitleBar(welcomControl.AppTitleBar);
-            }
-            else
-            {
-                var rootControl = new WindowRootView();
-                _rootContent.Content = rootControl;
-                SetTitleBar(rootControl.AppTitleBar);
-            }
         }
 
 
@@ -106,12 +94,6 @@ namespace Xunkong.Desktop
             setting[SettingKeys.WindowBottom] = wp.rcNormalPosition.bottom;
         }
 
-        private void FinishSettingAndChangeContent()
-        {
-            var rootControl = new WindowRootView();
-            _rootContent.Content = rootControl;
-            SetTitleBar(rootControl.AppTitleBar);
-        }
 
 
 

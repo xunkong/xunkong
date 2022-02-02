@@ -332,11 +332,11 @@
                 <TextBlock Text="标题" />
                 <TextBox IsSpellCheckEnabled="False"
                          PlaceholderText="不要太长"
-                         Text="{x:Bind vm.SelectedWebToolItem.Title, Mode=TwoWay}" />
+                         Text="{x:Bind vm.SelectedWebToolItem.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBlock Text="图标" />
                 <TextBox IsSpellCheckEnabled="False"
                          PlaceholderText="图标的网址"
-                         Text="{x:Bind vm.SelectedWebToolItem.Icon, Mode=TwoWay}" />
+                         Text="{x:Bind vm.SelectedWebToolItem.Icon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBlock Text="网址" />
                 <TextBox IsSpellCheckEnabled="False"
                          PlaceholderText="优先填这个，然后点下面的按键"
@@ -349,7 +349,7 @@
                          IsSpellCheckEnabled="False"
                          PlaceholderText="网页加载完成时会运行此脚本"
                          ScrollViewer.VerticalScrollBarVisibility="Auto"
-                         Text="{x:Bind vm.SelectedWebToolItem.JavaScript, Mode=TwoWay}"
+                         Text="{x:Bind vm.SelectedWebToolItem.JavaScript, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          TextWrapping="Wrap" />
             </StackPanel>
 

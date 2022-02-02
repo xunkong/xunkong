@@ -1,6 +1,7 @@
 ﻿<UserControl x:Class="Xunkong.Desktop.Controls.NotificationControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:cc="using:CommunityToolkit.WinUI.UI.Controls"
              xmlns:converters="using:Xunkong.Desktop.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="using:Xunkong.Desktop.Controls"
@@ -21,7 +22,7 @@
         </Grid.RowDefinitions>
 
 
-        <StackPanel Margin="12,0,0,0" Orientation="Horizontal">
+        <StackPanel Margin="8,0,0,0" Orientation="Horizontal">
             <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="通知" />
             <TextBlock Margin="12,0,0,0"
                        HorizontalAlignment="Left"
@@ -45,16 +46,38 @@
 
         <ScrollViewer Grid.Row="2">
             <StackPanel>
-                <ItemsRepeater Background="Wheat" ItemsSource="{x:Bind NotificationList}">
+                <ItemsRepeater ItemsSource="{x:Bind NotificationList}">
                     <ItemsRepeater.ItemTemplate>
                         <DataTemplate>
-                            <Grid Height="60" Padding="0,4,16,4">
+                            <Grid Height="60" Padding="-8,4,16,4">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
+                                <cc:SwitchPresenter Margin="12,0,0,0"
+                                                    HorizontalAlignment="Left"
+                                                    FontSize="12"
+                                                    TargetType="x:String"
+                                                    Value="{Binding HasRead}">
+                                    <cc:Case Value="True">
+                                        <Border Padding="4,2,4,2"
+                                                Background="{StaticResource SystemControlAcrylicElementBrush}"
+                                                CornerRadius="4">
+                                            <TextBlock Foreground="{StaticResource TextFillColorDisabledBrush}" Text="{Binding Category}" />
+                                        </Border>
+                                    </cc:Case>
+                                    <cc:Case Value="False">
+                                        <Border Padding="4,2,4,2"
+                                                Background="{StaticResource SystemControlAccentAcrylicElementAccentMediumHighBrush}"
+                                                CornerRadius="4">
+                                            <TextBlock Foreground="{StaticResource SystemRevealAltHighColor}" Text="{Binding Category}" />
+                                        </Border>
+                                    </cc:Case>
+                                </cc:SwitchPresenter>
+
                                 <TextBlock HorizontalAlignment="Right"
+                                           VerticalAlignment="Center"
                                            FontSize="12"
                                            Foreground="{StaticResource TextFillColorSecondaryBrush}"
                                            Text="{Binding Time, Converter={StaticResource DateTimeOffsetToDateTimeStringConverter}}" />

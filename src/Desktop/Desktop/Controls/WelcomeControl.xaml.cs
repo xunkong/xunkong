@@ -29,7 +29,7 @@ using Windows.Storage;
 
 namespace Xunkong.Desktop.Controls
 {
-    public sealed partial class WelcomControl : UserControl, INotifyPropertyChanged
+    public sealed partial class WelcomeControl : UserControl, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = "")
@@ -44,7 +44,7 @@ namespace Xunkong.Desktop.Controls
 
 
 
-        public WelcomControl()
+        public WelcomeControl()
         {
             this.InitializeComponent();
             Loading += WelcomControl_Loading;

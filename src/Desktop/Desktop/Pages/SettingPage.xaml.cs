@@ -62,5 +62,9 @@ namespace Xunkong.Desktop.Pages
             formatter.NumberRounder = rounder;
             _NumberBox_HomeCoinThreshold.NumberFormatter = formatter;
         }
+
+
+
+
     }
 }

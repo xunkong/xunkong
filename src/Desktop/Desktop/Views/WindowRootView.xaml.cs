@@ -20,6 +20,7 @@ using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
+using Windows.Storage;
 using Xunkong.Desktop.Pages;
 using Xunkong.Desktop.Services;
 using Xunkong.Desktop.ViewModels;
@@ -47,18 +48,26 @@ namespace Xunkong.Desktop.Views
             DataContext = App.Current.Services.GetService<WindowRootViewModel>();
             _dbConnectionFactory = App.Current.Services.GetService<DbConnectionFactory<SqliteConnection>>()!;
             _logger = App.Current.Services.GetService<ILogger<WindowRootView>>()!;
-            Loaded += WindowRootView_Loaded;
             WeakReferenceMessenger.Default.Register<RefreshWebToolNavItemMessage>(this, async (_, _) => await RefreshWebToolNavItemAsync());
             WeakReferenceMessenger.Default.Register<NavigateMessage>(this, (_, m) => NavigateTo(m));
             WeakReferenceMessenger.Default.Register<OpenNavigationPanelMessage>(this, (_, _) => _NavigationView.IsPaneOpen = true); ;
+            Loaded += WindowRootView_Loaded;
         }
 
         private async void WindowRootView_Loaded(object sender, RoutedEventArgs e)
         {
             await RefreshWebToolNavItemAsync();
             await GetNotificationsAsync();
-            vm.CheckWebView2Runtime();
             vm.CheckVersionUpdateAsync();
+            if ((bool)(ApplicationData.Current.LocalSettings.Values[SettingKeys.HasShownWelcomePage] ?? false))
+            {
+                vm.CheckWebView2Runtime();
+            }
+            else
+            {
+                NavigationHelper.NavigateTo(typeof(WelcomePage));
+                ApplicationData.Current.LocalSettings.Values[SettingKeys.HasShownWelcomePage] = true;
+            }
         }
 
 
@@ -274,12 +283,10 @@ namespace Xunkong.Desktop.Views
 
 
 
-
-
-
-
-
-
+        private void _Flyout_Notification_Opened(object sender, object e)
+        {
+            _Badge_Notification.Visibility = Visibility.Collapsed;
+        }
     }
 
 

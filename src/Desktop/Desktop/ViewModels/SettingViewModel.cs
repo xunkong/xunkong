@@ -109,6 +109,20 @@ namespace Xunkong.Desktop.ViewModels
 
 
 
+
+
+        private ChannelType _SelectedChannel = XunkongEnvironment.Channel;
+        public ChannelType SelectedChannel
+        {
+            get => _SelectedChannel;
+            set => SetProperty(ref _SelectedChannel, value);
+        }
+
+
+        public List<ChannelType> ChannelTypeList { get; set; } = Enum.GetValues<ChannelType>().Take(3).ToList();
+
+
+
         [ICommand(AllowConcurrentExecutions = false)]
         private async Task CheckUpdateAsync()
         {
@@ -165,22 +179,6 @@ namespace Xunkong.Desktop.ViewModels
             get => _SelectedWebToolItem;
             set => SetProperty(ref _SelectedWebToolItem, value);
         }
-
-
-
-
-        private ChannelType _SelectedChannel = XunkongEnvironment.Channel;
-        public ChannelType SelectedChannel
-        {
-            get => _SelectedChannel;
-            set => SetProperty(ref _SelectedChannel, value);
-        }
-
-
-        public List<ChannelType> ChannelTypeList { get; set; } = Enum.GetValues<ChannelType>().ToList();
-
-
-
 
 
 

@@ -15,6 +15,7 @@
 	  <None Remove="Controls\NotificationControl.xaml" />
 	  <None Remove="Controls\WebToolContentControl.xaml" />
 	  <None Remove="Pages\WebViewPage.xaml" />
+	  <None Remove="Pages\WelcomePage.xaml" />
 	</ItemGroup>
 	
 	
@@ -54,9 +55,12 @@
 	  <Page Update="Controls\NotificationControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
-	  <None Update="Controls\WelcomControl.xaml">
+	  <None Update="Controls\WelcomeControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </None>
+	  <Page Update="Pages\WelcomePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Update="Pages\WebViewPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>

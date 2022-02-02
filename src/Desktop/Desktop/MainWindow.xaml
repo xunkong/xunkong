@@ -6,22 +6,19 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="using:Xunkong.Desktop"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="using:Xunkong.Desktop.Views"
         mc:Ignorable="d">
 
     <Grid>
 
-        <ContentControl Name="_rootContent"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        HorizontalContentAlignment="Stretch"
-                        VerticalContentAlignment="Stretch" />
+        <views:WindowRootView x:Name="_rootView" />
 
         <StackPanel Name="_InfoBarContainer"
-                 MaxWidth="600"
-                 Margin="20,40,20,40"
-                 VerticalAlignment="Bottom" >
+                    MaxWidth="600"
+                    Margin="20,40,20,40"
+                    VerticalAlignment="Bottom">
             <StackPanel.Transitions>
-                <AddDeleteThemeTransition/>
+                <AddDeleteThemeTransition />
             </StackPanel.Transitions>
         </StackPanel>
 

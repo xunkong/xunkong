@@ -84,7 +84,9 @@
                                  Visibility="Collapsed" />
                     </Grid>
                     <Button.Flyout>
-                        <Flyout Placement="BottomEdgeAlignedRight">
+                        <Flyout x:Name="_Flyout_Notification"
+                                Opened="_Flyout_Notification_Opened"
+                                Placement="BottomEdgeAlignedRight">
                             <Flyout.FlyoutPresenterStyle>
                                 <Style TargetType="FlyoutPresenter">
                                     <Setter Property="Padding" Value="12,8,12,8" />
