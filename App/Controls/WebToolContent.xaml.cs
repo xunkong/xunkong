@@ -80,7 +80,7 @@ public sealed partial class WebToolContent : UserControl
         if (e.Key == Windows.System.VirtualKey.Enter)
         {
             var address = _TextBox_Address.Text;
-            if (!(address.StartsWith("https://") || !address.StartsWith("http://")))
+            if (!address.StartsWith("https://") && !address.StartsWith("http://"))
             {
                 address = $"https://{address}";
             }
@@ -88,7 +88,7 @@ public sealed partial class WebToolContent : UserControl
             {
                 if (Uri.TryCreate(address, UriKind.RelativeOrAbsolute, out var uri))
                 {
-                    if (uri.Scheme == Uri.UriSchemeHttps)
+                    if (uri.Scheme == Uri.UriSchemeHttps || uri.Scheme == Uri.UriSchemeHttp)
                     {
                         _WebView2.Source = uri;
                     }

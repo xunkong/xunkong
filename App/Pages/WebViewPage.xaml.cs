@@ -34,7 +34,7 @@ public sealed partial class WebViewPage : Page
                 }
                 else
                 {
-                    _WebView2.Source = new Uri("https://xunkong.cc");
+                    _WebView2.Source = new Uri("https://go.xunkong.cc/home");
                 }
             }
             catch (Exception ex)
@@ -86,7 +86,7 @@ public sealed partial class WebViewPage : Page
         if (e.Key == Windows.System.VirtualKey.Enter)
         {
             var address = _TextBox_Address.Text;
-            if (!(address.StartsWith("https://") || !address.StartsWith("http://")))
+            if (!address.StartsWith("https://") && !address.StartsWith("http://"))
             {
                 address = $"https://{address}";
             }
@@ -94,7 +94,7 @@ public sealed partial class WebViewPage : Page
             {
                 if (Uri.TryCreate(address, UriKind.Absolute, out var uri))
                 {
-                    if (uri.Scheme == Uri.UriSchemeHttps)
+                    if (uri.Scheme == Uri.UriSchemeHttps || uri.Scheme == Uri.UriSchemeHttp)
                     {
                         _WebView2.Source = uri;
                     }
