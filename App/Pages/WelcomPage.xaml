@@ -46,6 +46,14 @@
             <StackPanel x:Name="Tip_2"
                         Spacing="8"
                         Visibility="Collapsed">
+                <TextBlock FontSize="24" Text="风险提醒" />
+                <TextBlock Text="「寻空」是原神的第三方工具，任何第三方工具都会有一定的风险。" TextWrapping="Wrap" />
+                <TextBlock Text="点击下一步则代表您理解并接受未知的风险，如不接受请关闭并卸载本应用。" TextWrapping="Wrap" />
+            </StackPanel>
+
+            <StackPanel x:Name="Tip_3"
+                        Spacing="8"
+                        Visibility="Collapsed">
                 <TextBlock FontSize="24" Text="隐私 &amp; 用户数据" />
                 <TextBlock Text="「寻空」充分尊重您的隐私，在进行网络通信时，会向服务器发送您的IP和匿名设备ID。" TextWrapping="Wrap" />
                 <TextBlock Text="除此之外，未经您同意的情况下，不会上传您的其他个人信息。" TextWrapping="Wrap" />
@@ -59,12 +67,12 @@
                         Content="隐私策略" />
             </StackPanel>
 
-            <StackPanel x:Name="Tip_3"
+            <StackPanel x:Name="Tip_4"
                         Spacing="8"
                         Visibility="Collapsed">
                 <TextBlock FontSize="24" Text="依赖组件" />
                 <TextBlock TextWrapping="Wrap">
-                    <Run Text="「寻空」的部分功能依赖 WebView2，您需要安装" />
+                    <Run Text="「寻空」的部分功能依赖 WebView2，您的设备上需要存在" />
                     <Hyperlink NavigateUri="https://developer.microsoft.com/zh-cn/microsoft-edge/webview2/">WebView2 Runtime</Hyperlink>
                     <Run Text="。" />
                 </TextBlock>
@@ -74,9 +82,6 @@
                     <Run Text="{x:Bind WebView2State}" />
                 </TextBlock>
                 <StackPanel Orientation="Horizontal" Spacing="12">
-                    <Button Name="_Button_Download"
-                            Click="_Button_Download_Click"
-                            Content="下载" />
                     <Button Name="_Button_RefreshStats"
                             Click="_Button_RefreshStats_Click"
                             Content="刷新状态" />
@@ -93,15 +98,14 @@
                 </StackPanel>
             </StackPanel>
 
-            <StackPanel x:Name="Tip_4"
+            <StackPanel x:Name="Tip_5"
                         Spacing="8"
                         Visibility="Collapsed">
                 <TextBlock FontSize="24" Text="数据库迁移" />
-                <TextBlock Text="如果您之前使用过「寻空」任意 0.x 版本，您需要迁移数据库适应新版本。" TextWrapping="Wrap" />
-                <TextBlock Text="没有使用过则忽略此项。" TextWrapping="Wrap" />
-                <Button Name="_Button_Download_DatabaseMigration"
-                        Click="_Button_Download_DatabaseMigration_Click"
-                        Content="了解详情" />
+                <TextBlock Text="检测到您的设备上存在寻空 0.x 版本的数据库，正在迁移数据库适应新版本。" TextWrapping="Wrap" />
+                <ProgressRing x:Name="_ProgressRing_MigrateDatabase"
+                              HorizontalAlignment="Left"
+                              IsActive="True" />
             </StackPanel>
 
             <StackPanel Margin="0,48,0,0"

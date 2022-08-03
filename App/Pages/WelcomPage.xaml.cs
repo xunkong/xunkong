@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using DatabaseMigration;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
 using System.Diagnostics;
@@ -29,6 +30,11 @@ public sealed partial class WelcomPage : Page
     {
         try
         {
+            needToMigrateDatabase = Migration.NeedToMigrate();
+        }
+        catch { }
+        try
+        {
             var version = CoreWebView2Environment.GetAvailableBrowserVersionString();
             WebView2State = $"已安装 ({version})";
         }
@@ -38,6 +44,8 @@ public sealed partial class WelcomPage : Page
         }
     }
 
+
+    private bool needToMigrateDatabase;
 
 
     [ObservableProperty]
@@ -117,15 +125,42 @@ public sealed partial class WelcomPage : Page
             case 2:
                 Tip_1.Visibility = Visibility.Collapsed;
                 Tip_2.Visibility = Visibility.Visible;
+                await ClockDown();
                 break;
             case 3:
                 Tip_2.Visibility = Visibility.Collapsed;
                 Tip_3.Visibility = Visibility.Visible;
+                await ClockDown();
                 break;
             case 4:
                 Tip_3.Visibility = Visibility.Collapsed;
                 Tip_4.Visibility = Visibility.Visible;
+                if (!needToMigrateDatabase)
+                {
+                    _Button_Next.Content = "已完成";
+                    showIndex++;
+                }
+                await ClockDown();
+                break;
+            case 5:
+                Tip_4.Visibility = Visibility.Collapsed;
+                Tip_5.Visibility = Visibility.Visible;
                 _Button_Next.Content = "已完成";
+                _Button_Next.IsEnabled = false;
+                await Task.Delay(100);
+                try
+                {
+                    Migration.Migrate();
+                }
+                catch (Exception ex)
+                {
+                    NotificationProvider.Error(ex);
+                }
+                finally
+                {
+                    _ProgressRing_MigrateDatabase.IsActive = false;
+                    _Button_Next.IsEnabled = true;
+                }
                 break;
             default:
                 try
@@ -139,6 +174,12 @@ public sealed partial class WelcomPage : Page
                 }
                 break;
         }
+    }
+
+
+
+    private async Task ClockDown()
+    {
         _Button_Next.IsEnabled = false;
         _TextBlock_ClockDown.Visibility = Visibility.Visible;
         _TextBlock_ClockDown.Text = "3s";
@@ -152,9 +193,11 @@ public sealed partial class WelcomPage : Page
         _Button_Next.IsEnabled = true;
     }
 
+
+
     private void _Button_Privacy_Click(object sender, RoutedEventArgs e)
     {
-        const string url = "https://go.xunkong.cc/privacy-policy";
+        const string url = "https://go.xunkong.cc/desktop/privacy-policy";
         try
         {
             var startInfo = new ProcessStartInfo
@@ -170,21 +213,5 @@ public sealed partial class WelcomPage : Page
         }
     }
 
-    private void _Button_Download_DatabaseMigration_Click(object sender, RoutedEventArgs e)
-    {
-        const string url = "https://go.xunkong.cc/database-migration";
-        try
-        {
-            var startInfo = new ProcessStartInfo
-            {
-                UseShellExecute = true,
-                FileName = url,
-            };
-            Process.Start(startInfo);
-        }
-        catch (Exception ex)
-        {
-            NotificationProvider.Error(ex);
-        }
-    }
+  
 }
