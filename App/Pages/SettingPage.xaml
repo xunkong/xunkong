@@ -82,11 +82,11 @@
                             <TextBlock Margin="0,0,4,0"
                                        VerticalAlignment="Center"
                                        Text="相关链接" />
-                            <HyperlinkButton Content="项目主页" NavigateUri="https://xunkong.cc" />
-                            <HyperlinkButton Content="更新记录" NavigateUri="https://go.xunkong.cc/update-history" />
-                            <HyperlinkButton Content="反馈和建议" NavigateUri="https://github.com/xunkong/desktop/issues" />
+                            <HyperlinkButton Content="项目主页" NavigateUri="https://go.xunkong.cc/desktop" />
+                            <HyperlinkButton Content="更新记录" NavigateUri="https://go.xunkong.cc/desktop/update-history" />
+                            <HyperlinkButton Content="反馈和建议" NavigateUri="https://go.xunkong.cc/desktop/issues" />
                             <HyperlinkButton Command="{x:Bind vm.CopyDevelopersMailCommand, Mode=OneTime}" Content="联系开发者" />
-                            <HyperlinkButton Content="隐私策略" NavigateUri="https://go.xunkong.cc/privacy-policy" />
+                            <HyperlinkButton Content="隐私策略" NavigateUri="https://go.xunkong.cc/desktop/privacy-policy" />
                         </StackPanel>
                     </Grid>
                     <!--  版本与外观  -->

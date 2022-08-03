@@ -77,7 +77,7 @@ internal partial class SettingViewModel : ObservableObject
             }
             else
             {
-                uri = new("https://go.xunkong.cc/check-update");
+                uri = new("https://go.xunkong.cc/desktop/check-update");
             }
             await Launcher.LaunchUriAsync(uri);
         }
