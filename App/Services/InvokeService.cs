@@ -102,23 +102,36 @@ internal class InvokeService
             }
             var fps = AppSetting.GetValue(SettingKeys.TargetFPS, 60);
             var isPopup = AppSetting.GetValue<bool>(SettingKeys.IsPopupWindow);
-            var command = new StringBuilder();
-            command.Append("-exe ");
-            command.Append($@"""{exePath}""");
-            command.Append(" -fps ");
-            command.Append(fps);
-            if (isPopup)
+            if (fps > 60)
             {
-                command.Append(" -popupwindow");
+                var command = new StringBuilder();
+                command.Append("-exe ");
+                command.Append($@"""{exePath}""");
+                command.Append(" -fps ");
+                command.Append(fps);
+                if (isPopup)
+                {
+                    command.Append(" -popupwindow");
+                }
+                var info = new ProcessStartInfo
+                {
+                    FileName = Path.Combine(Package.Current.InstalledPath, @"Xunkong.Desktop.FpsUnlocker\Xunkong.Desktop.FpsUnlocker.exe"),
+                    Arguments = command.ToString(),
+                    UseShellExecute = true,
+                    Verb = "runas",
+                };
+                Process.Start(info);
             }
-            var info = new ProcessStartInfo
+            else
             {
-                FileName = Path.Combine(Package.Current.InstalledPath, "Xunkong.Desktop.FpsUnlocker/Xunkong.Desktop.FpsUnlocker.exe"),
-                Arguments = command.ToString(),
-                UseShellExecute = true,
-                Verb = "runas",
-            };
-            Process.Start(info);
+                var info = new ProcessStartInfo
+                {
+                    FileName = exePath,
+                    Arguments = isPopup ? "-popupwindow" : "",
+                    UseShellExecute = true,
+                    Verb = "runas",
+                };
+            }
             return true;
         }
         catch (Exception ex)
