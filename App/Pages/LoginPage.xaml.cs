@@ -23,6 +23,7 @@ public sealed partial class LoginPage : Page
     {
         this.InitializeComponent();
         Loaded += LoginPage_Loaded;
+        _WebView2.NavigationCompleted += _WebView2_NavigationCompleted;
     }
 
 
@@ -55,6 +56,44 @@ public sealed partial class LoginPage : Page
         {
             NotificationProvider.Error(ex);
         }
+    }
+
+
+
+    private async void _WebView2_NavigationCompleted(WebView2 sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs args)
+    {
+        try
+        {
+            if (args.IsSuccess && sender.Source.ToString() == "https://bbs.mihoyo.com/ys/")
+            {
+                const string js = """
+                    var removeQRIntervalId = setInterval(RemoveAppQRCode, 100);
+                    function RemoveAppQRCode() {
+                        var c1 = document.getElementsByClassName('mhy-side-section mhy-sem-section');
+                        var removed = false;
+                        if (c1.length > 0) {
+                            c1[0].remove();
+                            removed = true;
+                        }
+                        var c2 = document.getElementsByClassName('mhy-ad-container swiper-container swiper-container-initialized swiper-container-horizontal');
+                        if (c2.length > 0) {
+                            c2[0].remove();
+                            removed = true;
+                        }
+                        if (removed) {
+                            clearInterval(removeQRIntervalId);
+                            removeQRIntervalId = null;
+                            var c3 = document.getElementsByClassName('header__avatarwrp')
+                            if (c3.length > 0) {
+                                c3[0].click();
+                            }
+                        }
+                    }
+                    """;
+                await _WebView2.CoreWebView2.ExecuteScriptAsync(js);
+            }
+        }
+        catch { }
     }
 
 
