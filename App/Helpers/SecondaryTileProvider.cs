@@ -83,7 +83,6 @@ internal static class SecondaryTileProvider
         if (updater != null)
         {
             var content = GetDailyNoteTileContent(info);
-            var xml = content.GetXml();
             var notification = new TileNotification(content.GetXml());
             updater.Update(notification);
         }

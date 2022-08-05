@@ -47,7 +47,7 @@
                         Spacing="8"
                         Visibility="Collapsed">
                 <TextBlock FontSize="24" Text="风险提醒" />
-                <TextBlock Text="「寻空」是原神的第三方工具，任何第三方工具都会有一定的风险。" TextWrapping="Wrap" />
+                <TextBlock Text="「寻空」是原神的第三方工具，本应用严格遵守相关法律，不会新增、修改、删除您的个人账号的数据，但是任何第三方工具都可能会有一定的风险。" TextWrapping="Wrap" />
                 <TextBlock Text="点击下一步则代表您理解并接受未知的风险，如不接受请关闭并卸载本应用。" TextWrapping="Wrap" />
             </StackPanel>
 
