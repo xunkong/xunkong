@@ -43,6 +43,7 @@ internal class InvokeService
                     catch (Exception ex) when (ex is HoyolabException or HttpRequestException)
                     {
                         await ToastProvider.SendAsync("刷新磁贴时遇到错误", $"Uid {uid}\n{ex.Message}");
+                        Logger.Error(ex, $"刷新磁贴 - Uid {uid}");
                     }
                 }
             }
@@ -54,6 +55,7 @@ internal class InvokeService
         catch (Exception ex)
         {
             await ToastProvider.SendAsync("刷新磁贴时遇到错误", ex.Message);
+            Logger.Error(ex, "刷新磁贴");
         }
     }
 
@@ -146,6 +148,7 @@ internal class InvokeService
                 }
             }
             await ToastProvider.SendAsync("出错了", ex.Message);
+            Logger.Error(ex, "启动游戏");
             return false;
         }
     }
@@ -177,7 +180,10 @@ internal class InvokeService
                         nicknames.Add(user.Nickname!);
                     }
                 }
-                catch { }
+                catch (Exception ex) when (ex is HoyolabException or HttpRequestException)
+                {
+                    Logger.Error(ex, $"检查参量质变仪 - Uid {user.Uid}");
+                }
             }
             if (nicknames.Any())
             {
@@ -187,6 +193,7 @@ internal class InvokeService
         catch (Exception ex)
         {
             await ToastProvider.SendAsync("出错了", ex.Message);
+            Logger.Error(ex, "检查参量质变仪");
         }
     }
 
@@ -210,12 +217,14 @@ internal class InvokeService
                 catch (Exception ex) when (ex is HoyolabException or HttpRequestException)
                 {
                     await ToastProvider.SendAsync("签到时出现错误", $"Uid {role.Uid}\n{ex.Message}");
+                    Logger.Error(ex, $"签到 - Uid {role.Uid}");
                 }
             }
         }
         catch (Exception ex)
         {
             await ToastProvider.SendAsync("签到时出现错误", ex.Message);
+            Logger.Error(ex, "检查参量质变仪");
         }
     }
 

@@ -84,6 +84,7 @@ internal partial class SettingViewModel : ObservableObject
         catch (Exception ex)
         {
             NotificationProvider.Error(ex);
+            Logger.Error(ex, "检查更新");
         }
     }
 
@@ -496,7 +497,8 @@ internal partial class SettingViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "清除图片缓存");
+            Logger.Error(ex, "清除图片缓存");
         }
     }
 
@@ -579,7 +581,8 @@ internal partial class SettingViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "缓存所有图片");
+            Logger.Error(ex, "缓存所有图片");
         }
     }
 

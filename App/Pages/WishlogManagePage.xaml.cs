@@ -119,7 +119,8 @@ public sealed partial class WishlogManagePage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "初始化祈愿记录管理页面");
+            Logger.Error(ex, "初始化祈愿记录管理页面");
         }
     }
 
@@ -137,7 +138,8 @@ public sealed partial class WishlogManagePage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "切换账号");
+            Logger.Error(ex, "切换账号");
         }
     }
 
@@ -177,7 +179,8 @@ public sealed partial class WishlogManagePage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "添加待删除记录");
+            Logger.Error(ex, "添加待删除记录");
         }
     }
 
@@ -210,7 +213,8 @@ public sealed partial class WishlogManagePage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "删除记录");
+            Logger.Error(ex, "删除记录");
         }
     }
 
@@ -251,7 +255,8 @@ public sealed partial class WishlogManagePage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "选择导入文件");
+            Logger.Error(ex, "选择导入文件");
         }
     }
 
@@ -397,7 +402,8 @@ public sealed partial class WishlogManagePage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "导入数据");
+            Logger.Error(ex, "导入数据");
         }
     }
 
@@ -513,7 +519,8 @@ public sealed partial class WishlogManagePage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "导出数据");
+            Logger.Error(ex, "导出数据");
         }
     }
 

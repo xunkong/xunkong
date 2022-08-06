@@ -19,6 +19,13 @@ public partial class App : Application
     {
         this.InitializeComponent();
         InitializeApplicationTheme();
+        UnhandledException += App_UnhandledException;
+    }
+
+
+    private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+    {
+        Logger.Error(e.Exception, "崩溃了");
     }
 
 

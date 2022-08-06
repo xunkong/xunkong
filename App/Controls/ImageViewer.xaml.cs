@@ -177,6 +177,7 @@ public sealed partial class ImageViewer : UserControl
         catch (Exception ex)
         {
             NotificationProvider.Error(ex);
+            Logger.Error(ex, "复制图片");
         }
     }
 

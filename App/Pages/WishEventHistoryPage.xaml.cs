@@ -62,7 +62,8 @@ public sealed partial class WishEventHistoryPage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "加载卡池数据");
+            Logger.Error(ex, "加载卡池数据");
         }
         finally
         {

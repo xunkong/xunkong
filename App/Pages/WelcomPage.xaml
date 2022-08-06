@@ -33,7 +33,7 @@
 
         <StackPanel Grid.Row="1"
                     Grid.Column="1"
-                    Margin="24,0,24,0"
+                    Margin="0,0,48,0"
                     HorizontalAlignment="Left">
 
             <StackPanel x:Name="Tip_1" Spacing="8">

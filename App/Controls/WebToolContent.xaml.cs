@@ -94,10 +94,7 @@ public sealed partial class WebToolContent : UserControl
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                NotificationProvider.Error(ex);
-            }
+            catch { }
         }
     }
 

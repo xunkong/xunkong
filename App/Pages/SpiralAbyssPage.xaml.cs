@@ -67,7 +67,8 @@ public sealed partial class SpiralAbyssPage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "初始化深渊页面");
+            Logger.Error(ex, "初始化深渊页面");
         }
     }
 
@@ -92,7 +93,8 @@ public sealed partial class SpiralAbyssPage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "获取深渊数据");
+            Logger.Error(ex, "获取深渊数据");
         }
     }
 
@@ -122,7 +124,8 @@ public sealed partial class SpiralAbyssPage : Page
             }
             catch (Exception ex)
             {
-                NotificationProvider.Error(ex);
+                NotificationProvider.Error(ex, "切换显示的深渊数据");
+                Logger.Error(ex, "切换显示的深渊数据");
             }
         }
     }

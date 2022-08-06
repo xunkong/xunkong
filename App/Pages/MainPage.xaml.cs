@@ -155,7 +155,8 @@ public sealed partial class MainPage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex, $"Naviate to page {args.InvokedItemContainer.Tag}");
+            NotificationProvider.Error(ex, $"导肮错误 {args.InvokedItemContainer.Tag}");
+            Logger.Error(ex, $"导肮错误 {args.InvokedItemContainer.Tag}");
         }
     }
 
@@ -173,7 +174,8 @@ public sealed partial class MainPage : Page
 
     private void _MainPageFrame_NavigationFailed(object sender, NavigationFailedEventArgs e)
     {
-        NotificationProvider.Error(e.Exception, 3000);
+        NotificationProvider.Error(e.Exception, "导航失败");
+        Logger.Error(e.Exception, "导航失败");
         e.Handled = true;
     }
 
@@ -249,7 +251,8 @@ public sealed partial class MainPage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex, $"加载网页小工具");
+            NotificationProvider.Error(ex, "加载网页小工具");
+            Logger.Error(ex, "加载网页小工具");
         }
     }
 
@@ -265,7 +268,7 @@ public sealed partial class MainPage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            Logger.Error(ex, "获取原神数据");
         }
     }
 
@@ -297,7 +300,7 @@ public sealed partial class MainPage : Page
             }
             catch (Exception ex)
             {
-                NotificationProvider.Error(ex);
+                Logger.Error(ex, "刷新所有账号信息");
             }
         });
     }
@@ -324,12 +327,14 @@ public sealed partial class MainPage : Page
                 catch (Exception e)
                 {
                     NotificationProvider.Error(e, $"签到 {role.Nickname}");
+                    Logger.Error(e, $"签到 {role.Nickname}");
                 }
             }
         }
         catch (Exception ex)
         {
             NotificationProvider.Error(ex, "签到");
+            Logger.Error(ex, "签到");
         }
     }
 
@@ -380,7 +385,8 @@ public sealed partial class MainPage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "切换账号");
+            Logger.Error(ex, "切换账号");
         }
     }
 
@@ -409,7 +415,8 @@ public sealed partial class MainPage : Page
             }
             catch (Exception ex)
             {
-                NotificationProvider.Error(ex);
+                NotificationProvider.Error(ex, "导航到米游社登录页面");
+                Logger.Error(ex, "导航到米游社登录页面");
             }
         });
         _MainPageFrame.Navigate(typeof(LoginPage), action);
@@ -472,7 +479,8 @@ public sealed partial class MainPage : Page
             }
             catch (Exception ex)
             {
-                NotificationProvider.Error(ex);
+                NotificationProvider.Error(ex, "获取账号信息");
+                Logger.Error(ex, "获取账号信息");
             }
         }
     }
@@ -508,7 +516,8 @@ public sealed partial class MainPage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "固定磁贴到开始菜单");
+            Logger.Error(ex, "固定磁贴到开始菜单");
         }
     }
 
@@ -572,7 +581,8 @@ public sealed partial class MainPage : Page
                 }
                 catch (Exception ex)
                 {
-                    NotificationProvider.Error(ex);
+                    NotificationProvider.Error(ex, "删除账号");
+                    Logger.Error(ex, "删除账号");
                 }
             }
         }

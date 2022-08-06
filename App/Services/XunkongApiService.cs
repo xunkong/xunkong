@@ -177,29 +177,19 @@ internal class XunkongApiService
 
 
 
-    public async Task GetAllGenshinDataFromServerAsync(bool throwError = true)
+    public async Task GetAllGenshinDataFromServerAsync()
     {
-        try
-        {
-            var data = await _xunkongClient.GetAllGenshinDataAsync();
-            using var liteDb = DatabaseProvider.CreateLiteDB();
-            var col1 = liteDb.GetCollection<CharacterInfo>();
-            col1.DeleteAll();
-            col1.InsertBulk(data.Characters);
-            var col2 = liteDb.GetCollection<WeaponInfo>();
-            col2.DeleteAll();
-            col2.InsertBulk(data.Weapons);
-            var col3 = liteDb.GetCollection<WishEventInfo>();
-            col3.DeleteAll();
-            col3.InsertBulk(data.WishEvents);
-        }
-        catch
-        {
-            if (throwError)
-            {
-                throw;
-            }
-        }
+        var data = await _xunkongClient.GetAllGenshinDataAsync();
+        using var liteDb = DatabaseProvider.CreateLiteDB();
+        var col1 = liteDb.GetCollection<CharacterInfo>();
+        col1.DeleteAll();
+        col1.InsertBulk(data.Characters);
+        var col2 = liteDb.GetCollection<WeaponInfo>();
+        col2.DeleteAll();
+        col2.InsertBulk(data.Weapons);
+        var col3 = liteDb.GetCollection<WishEventInfo>();
+        col3.DeleteAll();
+        col3.InsertBulk(data.WishEvents);
     }
 
 

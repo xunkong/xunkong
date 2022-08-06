@@ -49,7 +49,8 @@ public sealed partial class AlbumPage : Page
                 }
                 catch (Exception ex)
                 {
-                    NotificationProvider.Error(ex);
+                    NotificationProvider.Error(ex, "复制图片");
+                    Logger.Error(ex, "复制图片");
                 }
             }
         }

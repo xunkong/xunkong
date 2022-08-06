@@ -162,7 +162,8 @@ public sealed partial class TravelNotesPage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "初始化旅行札记页面");
+            Logger.Error(ex, "初始化旅行札记页面");
         }
         finally
         {
@@ -210,7 +211,8 @@ public sealed partial class TravelNotesPage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "获取旅行札记详细数据");
+            Logger.Error(ex, "获取旅行札记详细数据");
         }
         finally
         {
@@ -257,7 +259,8 @@ public sealed partial class TravelNotesPage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "导出旅行札记");
+            Logger.Error(ex, "导出旅行札记");
         }
     }
 

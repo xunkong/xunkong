@@ -50,7 +50,10 @@ internal partial class AlbumViewModel : ObservableObject
                 }
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "截图文件夹内有新文件");
+        }
     }
 
 
@@ -86,7 +89,10 @@ internal partial class AlbumViewModel : ObservableObject
                 });
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "截图文件夹内有文件被删除");
+        }
     }
 
 
@@ -112,59 +118,60 @@ internal partial class AlbumViewModel : ObservableObject
 
     public async Task InitializeDataAsync()
     {
-        await Task.Delay(100);
-        if (!string.IsNullOrWhiteSpace(albumFolder))
+        try
         {
-            return;
+            await Task.Delay(100);
+            if (!string.IsNullOrWhiteSpace(albumFolder))
+            {
+                return;
+            }
+            await InitializeScreenFolderAsync();
+            if (Directory.Exists(albumFolder))
+            {
+                _watcher.Path = albumFolder;
+                _watcher.EnableRaisingEvents = true;
+                GetAllImages();
+            }
         }
-        await InitializeScreenFolderAsync();
-        if (Directory.Exists(albumFolder))
+        catch (Exception ex)
         {
-            _watcher.Path = albumFolder;
-            _watcher.EnableRaisingEvents = true;
-            GetAllImages();
+            NotificationProvider.Error(ex, "初始化相册页面");
+            Logger.Error(ex, "初始化相册页面");
         }
     }
 
 
     private async Task InitializeScreenFolderAsync()
     {
-        try
+        if (AppSetting.TryGetValue<string>(SettingKeys.ScreenFolderPath, out var screenFolderPath))
         {
-            if (AppSetting.TryGetValue<string>(SettingKeys.ScreenFolderPath, out var screenFolderPath))
+            if (Directory.Exists(screenFolderPath))
             {
-                if (Directory.Exists(screenFolderPath))
-                {
-                    albumFolder = screenFolderPath;
-                    return;
-                }
+                albumFolder = screenFolderPath;
+                return;
             }
-            var launcherPath = Registry.GetValue(REG_PATH, REG_KEY, null) as string;
-            if (!string.IsNullOrWhiteSpace(launcherPath))
+        }
+        var launcherPath = Registry.GetValue(REG_PATH, REG_KEY, null) as string;
+        if (!string.IsNullOrWhiteSpace(launcherPath))
+        {
+            var configPath = Path.Combine(launcherPath, "config.ini");
+            if (File.Exists(configPath))
             {
-                var configPath = Path.Combine(launcherPath, "config.ini");
-                if (File.Exists(configPath))
+                var str = await File.ReadAllTextAsync(configPath);
+                var gamePath = Regex.Match(str, @"game_install_path=(.+)").Groups[1].Value.Trim();
+                if (!string.IsNullOrWhiteSpace(gamePath))
                 {
-                    var str = await File.ReadAllTextAsync(configPath);
-                    var gamePath = Regex.Match(str, @"game_install_path=(.+)").Groups[1].Value.Trim();
-                    if (!string.IsNullOrWhiteSpace(gamePath))
+                    screenFolderPath = Path.Combine(gamePath, "ScreenShot");
+                    if (Directory.Exists(screenFolderPath))
                     {
-                        screenFolderPath = Path.Combine(gamePath, "ScreenShot");
-                        if (Directory.Exists(screenFolderPath))
-                        {
-                            albumFolder = screenFolderPath;
-                            AppSetting.TrySetValue(SettingKeys.ScreenFolderPath, screenFolderPath);
-                            return;
-                        }
+                        albumFolder = screenFolderPath;
+                        AppSetting.TrySetValue(SettingKeys.ScreenFolderPath, screenFolderPath);
+                        return;
                     }
                 }
             }
-            NotificationProvider.Warning("没有找到截图文件夹");
         }
-        catch (Exception ex)
-        {
-            NotificationProvider.Error(ex);
-        }
+        NotificationProvider.Warning("没有找到截图文件夹");
     }
 
 
@@ -173,19 +180,12 @@ internal partial class AlbumViewModel : ObservableObject
     {
         if (Directory.Exists(albumFolder))
         {
-            try
-            {
-                var folderInfo = new DirectoryInfo(albumFolder);
-                var fileInfos = folderInfo.GetFiles();
-                var queryList = fileInfos.Where(x => x.Extension.ToLower() == ".png").OrderByDescending(x => x.CreationTime);
-                ImageList = new(queryList);
-                var queryGroup = ImageList.GroupBy(x => x.CreationTime.ToString("yyyy-MM")).Select(x => new ImageGroupCollection(x.Key, x)).OrderByDescending(x => x.Header);
-                ImageGroupList = new(queryGroup);
-            }
-            catch (Exception ex)
-            {
-                NotificationProvider.Error(ex);
-            }
+            var folderInfo = new DirectoryInfo(albumFolder);
+            var fileInfos = folderInfo.GetFiles();
+            var queryList = fileInfos.Where(x => x.Extension.ToLower() == ".png").OrderByDescending(x => x.CreationTime);
+            ImageList = new(queryList);
+            var queryGroup = ImageList.GroupBy(x => x.CreationTime.ToString("yyyy-MM")).Select(x => new ImageGroupCollection(x.Key, x)).OrderByDescending(x => x.Header);
+            ImageGroupList = new(queryGroup);
         }
     }
 
@@ -209,7 +209,8 @@ internal partial class AlbumViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "打开截图文件夹");
+            Logger.Error(ex, "打开截图文件夹");
         }
     }
 
@@ -235,7 +236,8 @@ internal partial class AlbumViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "设置截图文件夹");
+            Logger.Error(ex, "设置截图文件夹");
         }
     }
 

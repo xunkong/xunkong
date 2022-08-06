@@ -147,7 +147,8 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "初始化祈愿记录页面");
+            Logger.Error(ex, "初始化祈愿记录页面");
         }
     }
 
@@ -284,7 +285,8 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "加载祈愿数据");
+            Logger.Error(ex, "加载祈愿数据");
         }
         finally
         {
@@ -336,6 +338,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         {
             StateText = "";
             NotificationProvider.Error(ex);
+            Logger.Error(ex, "从保存的网址获取新的祈愿记录");
         }
         finally
         {
@@ -384,6 +387,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         {
             StateText = "";
             NotificationProvider.Error(ex);
+            Logger.Error(ex, "从日志文件获取新的祈愿记录");
         }
         finally
         {
@@ -433,6 +437,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
             {
                 StateText = "";
                 NotificationProvider.Error(ex);
+                Logger.Error(ex, "从输入的网址获取新的祈愿记录");
             }
             finally
             {
@@ -511,6 +516,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         {
             StateText = "";
             NotificationProvider.Error(ex);
+            Logger.Error(ex, "查询祈愿记录备份");
         }
         finally
         {
@@ -550,6 +556,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         {
             StateText = "";
             NotificationProvider.Error(ex);
+            Logger.Error(ex, "上传祈愿记录备份");
         }
         finally
         {
@@ -589,6 +596,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         {
             StateText = "";
             NotificationProvider.Error(ex);
+            Logger.Error(ex, "下载祈愿记录备份");
         }
         finally
         {
@@ -654,6 +662,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         {
             StateText = "";
             NotificationProvider.Error(ex);
+            Logger.Error(ex, "删除祈愿记录备份");
         }
         finally
         {
@@ -690,6 +699,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         catch (Exception ex)
         {
             NotificationProvider.Error(ex);
+            Logger.Error(ex, "更新元数据");
         }
         finally
         {
@@ -711,6 +721,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         catch (Exception ex)
         {
             NotificationProvider.Error(ex);
+            Logger.Error(ex, "导航到祈愿记录管理页面");
         }
     }
 
@@ -729,6 +740,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         catch (Exception ex)
         {
             NotificationProvider.Error(ex);
+            Logger.Error(ex, "导航到祈愿活动历史记录页面");
         }
     }
 

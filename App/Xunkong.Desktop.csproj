@@ -71,6 +71,7 @@
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.1" />
 		<PackageReference Include="MiniExcel" Version="1.26.5" />
 		<PackageReference Include="Octokit" Version="1.0.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageReference Include="Vanara.PInvoke.User32" Version="3.4.5" />
 		<PackageReference Include="Syncfusion.Chart.WinUI" Version="20.1.0.61" />
 		<Manifest Include="$(ApplicationManifest)" />

@@ -120,7 +120,10 @@ internal class BackupService
             cnt.Open();
             cnt.BackupDatabase(backupConnection);
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "自动备份数据库");
+        }
     }
 
 

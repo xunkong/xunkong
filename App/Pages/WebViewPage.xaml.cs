@@ -18,6 +18,7 @@ public sealed partial class WebViewPage : Page
     public WebViewPage()
     {
         this.InitializeComponent();
+        _WebView2.NavigationStarting += _WebView2_NavigationStarting;
     }
 
 
@@ -37,10 +38,7 @@ public sealed partial class WebViewPage : Page
                     _WebView2.Source = new Uri("https://go.xunkong.cc/home");
                 }
             }
-            catch (Exception ex)
-            {
-                NotificationProvider.Error(ex);
-            }
+            catch { }
         }
     }
 
@@ -100,10 +98,7 @@ public sealed partial class WebViewPage : Page
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                NotificationProvider.Error(ex);
-            }
+            catch { }
         }
     }
 

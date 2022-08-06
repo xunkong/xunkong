@@ -158,7 +158,8 @@ public sealed partial class HomePage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "加载推荐图片");
+            Logger.Error(ex, "加载推荐图片");
         }
     }
 
@@ -238,13 +239,14 @@ public sealed partial class HomePage : Page
             _Border_BackgroundImage.Visibility = Visibility.Visible;
             ElementCompositionPreview.SetElementChildVisual(_Border_BackgroundImage, imageVisual);
         }
-        catch (COMException)
+        catch (COMException ex)
         {
             // 部分设备会出现 COMExeption 组件初始化失败。（0x88982F8B）
             // 还有可能会出现其他不知道的错误
             // 原因不明，使用无透明度效果的图片代替
             _Image_BackgroundImage.Source = file;
             _StackPanel_BackgroundImage.Visibility = Visibility.Visible;
+            Logger.Error(ex, "使用 Win2D 加载背景图片");
         }
     }
 
@@ -314,7 +316,8 @@ public sealed partial class HomePage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "天赋材料日历");
+            Logger.Error(ex, "天赋材料日历");
         }
     }
 
@@ -363,7 +366,8 @@ public sealed partial class HomePage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "活动内容");
+            Logger.Error(ex, "活动内容");
         }
     }
 
@@ -400,11 +404,13 @@ public sealed partial class HomePage : Page
                         {
                             try
                             {
+                                // 好像不会有异常
                                 await Launcher.LaunchUriAsync(new Uri(item.ButtonUri));
                             }
                             catch (Exception ex)
                             {
                                 NotificationProvider.Error(ex);
+                                Logger.Error(ex, $"点击通知栏按键 - {item.Title}");
                             }
                         };
                         infoBar.ActionButton = button;
@@ -431,18 +437,20 @@ public sealed partial class HomePage : Page
                         };
                         var button = new Button
                         {
-                            Content = "下载",
+                            Content = "详细信息",
                             HorizontalAlignment = HorizontalAlignment.Right,
                         };
                         button.Click += async (_, _) =>
                         {
                             try
                             {
+                                // 好像不会有异常
                                 await Launcher.LaunchUriAsync(new Uri(release.HtmlUrl));
                             }
                             catch (Exception ex)
                             {
                                 NotificationProvider.Error(ex);
+                                Logger.Error(ex, $"点击通知栏按键 - 新版本 {version}");
                             }
                         };
                         infoBar.ActionButton = button;
@@ -451,7 +459,10 @@ public sealed partial class HomePage : Page
                 }
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "通知栏内容");
+        }
     }
 
 
@@ -512,7 +523,8 @@ public sealed partial class HomePage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "复制图片");
+            Logger.Error(ex, "复制图片");
         }
     }
 
@@ -554,7 +566,8 @@ public sealed partial class HomePage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "保存图片");
+            Logger.Error(ex, "保存图片");
         }
     }
 
@@ -576,7 +589,8 @@ public sealed partial class HomePage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "打开图源");
+            Logger.Error(ex, "打开图源");
         }
     }
 

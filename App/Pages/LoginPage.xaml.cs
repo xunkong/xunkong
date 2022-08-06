@@ -54,7 +54,8 @@ public sealed partial class LoginPage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "初始化登录页面");
+            Logger.Error(ex, "初始化登录页面");
         }
     }
 
@@ -144,10 +145,7 @@ public sealed partial class LoginPage : Page
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                NotificationProvider.Error(ex);
-            }
+            catch { }
         }
     }
 
@@ -171,7 +169,8 @@ public sealed partial class LoginPage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "添加 Cookie");
+            Logger.Error(ex, "添加 Cookie");
         }
     }
 

@@ -93,39 +93,39 @@ internal static class NotificationProvider
     }
 
 
-    public static void Warning(string message, int delay = 0)
+    public static void Warning(string message, int delay = 5000)
     {
         AddInfoBarToContainer(InfoBarSeverity.Warning, null, message, delay);
     }
 
 
-    public static void Warning(string title, string message, int delay = 0)
+    public static void Warning(string title, string message, int delay = 5000)
     {
         AddInfoBarToContainer(InfoBarSeverity.Warning, title, message, delay);
     }
 
 
-    public static void Error(string message, int delay = 0)
+    public static void Error(string message, int delay = 5000)
     {
         AddInfoBarToContainer(InfoBarSeverity.Error, null, message, delay);
     }
 
 
-    public static void Error(string title, string message, int delay = 0)
+    public static void Error(string title, string message, int delay = 5000)
     {
         AddInfoBarToContainer(InfoBarSeverity.Error, title, message, delay);
     }
 
 
-    public static void Error(Exception ex, int delay = 0)
+    public static void Error(Exception ex, int delay = 5000)
     {
         AddInfoBarToContainer(InfoBarSeverity.Error, ex.GetType().Name, ex.Message, delay);
     }
 
 
-    public static void Error(Exception ex, string step, int delay = 0)
+    public static void Error(Exception ex, string message, int delay = 5000)
     {
-        AddInfoBarToContainer(InfoBarSeverity.Error, ex.GetType().Name, $"{step}\n{ex.Message}", delay);
+        AddInfoBarToContainer(InfoBarSeverity.Error, $"{ex.GetType().Name} - {message}", ex.Message, delay);
     }
 
 
@@ -169,7 +169,7 @@ internal static class NotificationProvider
                 }
                 catch (Exception ex)
                 {
-                    NotificationProvider.Error(ex);
+                    Logger.Error(ex, $"{title} - {message} - {buttonContent}");
                 }
             };
             var infoBar = new InfoBar
@@ -188,7 +188,10 @@ internal static class NotificationProvider
                     {
                         closedAction();
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex, $"{title} - {message}");
+                    }
                 };
             }
             _container.Children.Add(infoBar);

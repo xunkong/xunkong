@@ -202,7 +202,7 @@ public sealed partial class CharacterInfoPage : Page
             }
             catch (Exception ex)
             {
-
+                Logger.Error(ex, "解析文字颜色");
             }
         }
         FlyoutBase.ShowAttachedFlyout(sender as FrameworkElement);
@@ -309,7 +309,8 @@ public sealed partial class CharacterInfoPage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "初始化角色信息页面");
+            Logger.Error(ex, "初始化角色信息页面");
         }
         finally
         {
@@ -356,7 +357,8 @@ public sealed partial class CharacterInfoPage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "获取角色天赋等级");
+            Logger.Error(ex, "获取角色天赋等级");
         }
         finally
         {
@@ -380,7 +382,8 @@ public sealed partial class CharacterInfoPage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex);
+            NotificationProvider.Error(ex, "获取元数据");
+            Logger.Error(ex, "获取元数据");
         }
     }
 
