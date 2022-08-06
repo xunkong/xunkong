@@ -63,7 +63,7 @@
 
 ## 致谢
 
-寻空的完善离不开以下开源项目：
+寻空离不开以下开源项目的帮助：
 
 - [.NET Platform](https://github.com/dotnet)
 - [AngleSharp](https://github.com/AngleSharp/AngleSharp)
@@ -74,14 +74,16 @@
 - [WindowsAppSDK](https://github.com/microsoft/WindowsAppSDK)
 - [MiniExcel](https://github.com/MiniExcel/MiniExcel)
 - [Octokit](https://github.com/octokit/octokit.net)
+- [Serilog](https://github.com/serilog/serilog)
 - [Vanara](https://github.com/dahall/Vanara)
 
-感谢微软提供的 Visual Studio 社区版 和 Visual Studio Code 开发工具
+感谢 [Twitter@心臓弱眞君](https://twitter.com/xinzoruo)、[Pixiv@Sigrixxx](https://www.pixiv.net/users/7861320) 以及所有为原神创作同人图的画师们。
 
-感谢 JetBrains 提供的开源许可证
+感谢微软提供的 Visual Studio 社区版 和 Visual Studio Code 开发工具，JetBrains 提供的开源项目许可证，Syncfusion 提供的免费许可证。
 
 <div>
     <img alt="Visual Studio" src="https://file.xunkong.cc/static/repo/xunkong/Visual_Studio_Icon_2019.svg" width="60" />
     <img alt="Visual Studio Code" src="https://file.xunkong.cc/static/repo/xunkong/Visual_Studio_Code_1.35_icon.svg" width="60" />
     <img alt="JetBrains" src="https://file.xunkong.cc/static/repo/xunkong/JetBrains_Logo_2016.svg" width="60" />
+    <img alt="Syncfusion" src="https://file.xunkong.cc/static/repo/xunkong/syncfusion.png" width="60" />
 </div>
