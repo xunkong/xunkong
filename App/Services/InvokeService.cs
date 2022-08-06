@@ -131,6 +131,7 @@ internal class InvokeService
                     UseShellExecute = true,
                     Verb = "runas",
                 };
+                Process.Start(info);
             }
             return true;
         }
