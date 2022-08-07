@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Dispatching;
+﻿using Microsoft.UI;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -27,6 +28,11 @@ namespace Xunkong.Desktop.Helpers
 
         private static double uiScale;
 
+        public static int Height => _appWindow!.Size.Height;
+
+        public static int Width => _appWindow.Size.Width;
+
+
         /// <summary>
         /// UI 缩放率
         /// </summary>
@@ -41,6 +47,9 @@ namespace Xunkong.Desktop.Helpers
                 return uiScale;
             }
         }
+
+
+        public static DisplayArea DisplayArea => DisplayArea.GetFromWindowId(Win32Interop.GetWindowIdFromWindow(HWND), DisplayAreaFallback.Primary);
 
 
         public static void Initialize(MainWindow mainWindow, IntPtr hwnd, AppWindow appWindow, Frame frame, ContentControl content)

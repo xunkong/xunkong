@@ -81,7 +81,13 @@ public sealed partial class HomePage : Page
     private List<Hoyolab.Wiki.Activity>? strategyData;
 
 
-
+    /// <summary>
+    /// 图片最大高度
+    /// </summary>
+    private double imageMaxHeight;
+    /// <summary>
+    /// 图片高宽比
+    /// </summary>
     private double heightDivWidth;
     private Compositor _compositor;
     private SpriteVisual imageVisual;
@@ -96,7 +102,6 @@ public sealed partial class HomePage : Page
 
     private async void HomePage_Loaded(object sender, RoutedEventArgs e)
     {
-
         InitializeWallpaper();
         await InitializeCalendarAsync();
         await InitializeActivityAsync();
@@ -138,6 +143,8 @@ public sealed partial class HomePage : Page
                     file = (await StorageFile.GetFileFromApplicationUriAsync(new(FallbackWallpaperUri))).Path;
                 }
             }
+            imageMaxHeight = MainWindowHelper.Height * 0.75 / MainWindowHelper.UIScale;
+            _Grid_Image.MaxHeight = imageMaxHeight;
             await LoadBackgroundImage(file);
             if (NetworkHelper.IsInternetOnMeteredConnection)
             {
@@ -234,7 +241,7 @@ public sealed partial class HomePage : Page
             imageVisual.Brush = maskEffectBrush;
 
             var width = _Border_BackgroundImage.ActualWidth;
-            var height = Math.Clamp(width * heightDivWidth, 0, 800);
+            var height = Math.Clamp(width * heightDivWidth, 0, imageMaxHeight);
             imageVisual.Size = new Vector2((float)width, (float)height);
             _Border_BackgroundImage.Height = height;
             _Border_BackgroundImage.Visibility = Visibility.Visible;
@@ -264,7 +271,7 @@ public sealed partial class HomePage : Page
             return;
         }
         var width = _Border_BackgroundImage.ActualWidth;
-        var height = Math.Clamp(width * heightDivWidth, 0, 800);
+        var height = Math.Clamp(width * heightDivWidth, 0, imageMaxHeight);
         if (imageVisual is not null)
         {
             imageVisual.Size = new Vector2((float)width, (float)height);

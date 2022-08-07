@@ -22,7 +22,6 @@
                 </StackPanel.ChildrenTransitions>
 
                 <Grid x:Name="_Grid_Image"
-                      MaxHeight="800"
                       Margin="-48,0,-48,-48"
                       Visibility="Collapsed">
                     <Border x:Name="_Border_BackgroundImage"

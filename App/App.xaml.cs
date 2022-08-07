@@ -54,15 +54,19 @@ public partial class App : Application
     {
         m_window = new MainWindow();
         m_window.Activate();
+#if !DEBUG
         AppSetting.TryGetValue<bool>(SettingKeys.HasShownWelcomePage, out var shown);
         if (shown)
         {
+#endif
             MainWindowHelper.Navigate(typeof(MainPage));
+#if !DEBUG
         }
         else
         {
             MainWindowHelper.Navigate(typeof(WelcomPage));
         }
+#endif
     }
 
     private Window m_window;
