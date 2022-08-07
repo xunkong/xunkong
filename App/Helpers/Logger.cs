@@ -27,6 +27,44 @@ internal static class Logger
 
 
 
+    public static void Info(string message, [CallerMemberName] string callerMemberName = "")
+    {
+        if (!_initialized)
+        {
+            Initialize();
+        }
+        try
+        {
+            var stack = new StackFrame(1);
+            var callerName = $"{stack.GetMethod()?.DeclaringType?.FullName}.{callerMemberName}";
+            using (LogContext.PushProperty("CallerName", callerName))
+            {
+                Log.Information(message);
+            }
+        }
+        catch { }
+    }
+
+
+    public static void Info(object obj, [CallerMemberName] string callerMemberName = "")
+    {
+        if (!_initialized)
+        {
+            Initialize();
+        }
+        try
+        {
+            var stack = new StackFrame(1);
+            var callerName = $"{stack.GetMethod()?.DeclaringType?.FullName}.{callerMemberName}";
+            using (LogContext.PushProperty("CallerName", callerName))
+            {
+                Log.Information(obj.ToString());
+            }
+        }
+        catch { }
+    }
+
+
     public static void Error(Exception ex, string? message = null, [CallerMemberName] string callerMemberName = "")
     {
         if (!_initialized)

@@ -10,6 +10,7 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics.Imaging;
+using Windows.Services.Store;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.System;
@@ -410,7 +411,7 @@ public sealed partial class HomePage : Page
                             catch (Exception ex)
                             {
                                 NotificationProvider.Error(ex);
-                                Logger.Error(ex, $"点击通知栏按键 - {item.Title}");
+                                Logger.Error(ex, $"点击主页通知栏按键 - {item.Title}");
                             }
                         };
                         infoBar.ActionButton = button;
@@ -418,11 +419,50 @@ public sealed partial class HomePage : Page
                     _StackPanel_InfoBar.Children.Add(infoBar);
                 }
             }
-            // 侧载版检查更新
-            if (!XunkongEnvironment.IsStoreVersion)
+            if (XunkongEnvironment.IsStoreVersion)
             {
+                // 商店版检查更新
+                var context = StoreContext.GetDefault();
+                // 调用需要在UI线程运行的函数前
+                // WinRT.Interop.InitializeWithWindow.Initialize(context, MainWindowHelper.HWND);
+                var updates = await context.GetAppAndOptionalStorePackageUpdatesAsync();
+                if (updates.Any())
+                {
+                    _Grid_InfoBar.Visibility = Visibility.Visible;
+                    var infoBar = new InfoBar
+                    {
+                        Severity = InfoBarSeverity.Success,
+                        Title = "有新版本",
+                        Message = "注意：关闭应用后商店才能安装新版本",
+                        IsOpen = true,
+                    };
+                    var button = new Button
+                    {
+                        Content = "打开商店",
+                        HorizontalAlignment = HorizontalAlignment.Right,
+                    };
+                    button.Click += async (_, _) =>
+                    {
+                        try
+                        {
+                            // 好像不会有异常
+                            await Launcher.LaunchUriAsync(new("ms-windows-store://pdp/?productid=9N2SVG0JMT12"));
+                        }
+                        catch (Exception ex)
+                        {
+                            NotificationProvider.Error(ex);
+                            Logger.Error(ex, "点击主页通知栏按键 - 打开商店");
+                        }
+                    };
+                    infoBar.ActionButton = button;
+                    _StackPanel_InfoBar.Children.Insert(0, infoBar);
+                }
+            }
+            else
+            {
+                // 侧载版检查更新
                 var client = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("Xunkong"));
-                var release = await client.Repository.Release.GetLatest("xunkong", "desktop");
+                var release = await client.Repository.Release.GetLatest("xunkong", "xunkong");
                 if (Version.TryParse(release.TagName, out var version))
                 {
                     if (version > XunkongEnvironment.AppVersion)
@@ -450,7 +490,7 @@ public sealed partial class HomePage : Page
                             catch (Exception ex)
                             {
                                 NotificationProvider.Error(ex);
-                                Logger.Error(ex, $"点击通知栏按键 - 新版本 {version}");
+                                Logger.Error(ex, $"点击主页通知栏按键 - 新版本 {version}");
                             }
                         };
                         infoBar.ActionButton = button;
@@ -461,7 +501,7 @@ public sealed partial class HomePage : Page
         }
         catch (Exception ex)
         {
-            Logger.Error(ex, "通知栏内容");
+            Logger.Error(ex, "主页通知栏内容");
         }
     }
 
