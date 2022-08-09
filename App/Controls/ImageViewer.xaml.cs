@@ -1,10 +1,8 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Storage;
-using Windows.Storage.Streams;
 using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -19,18 +17,20 @@ namespace Xunkong.Desktop.Controls;
 /// <remarks>
 /// <see cref="Image"/> 在解码后属性 <see cref="FrameworkElement.ActualWidth"/>和<see cref="FrameworkElement.ActualHeight"/> 实际上是图片像素的宽高；
 /// 再经过系统的缩放后，在显示器上实际占用的像素值会比图片像素要多，一定程度上造成了图片模糊；
-/// 查看器中通过引入系统缩放率 <see cref="MainWindowHelper.UIScale"/> 解决这个问题。
+/// 查看器中通过引入系统缩放率 <see cref="MainWindow.UIScale"/> 解决这个问题。
 /// </remarks>
 [INotifyPropertyChanged]
 public sealed partial class ImageViewer : UserControl
 {
 
+    private readonly double uiScale;
 
 
     public ImageViewer()
     {
         this.InitializeComponent();
-        _ScrollViewer_Image.MaxZoomFactor = (float)(2 / MainWindowHelper.UIScale);
+        uiScale = MainWindow.Current.UIScale;
+        _ScrollViewer_Image.MaxZoomFactor = (float)(2 / uiScale);
     }
 
 
@@ -57,7 +57,7 @@ public sealed partial class ImageViewer : UserControl
     /// <param name="factor">缩放因子</param>
     private void Zoom(double factor)
     {
-        var newFactor = Math.Clamp(factor, 0.1, 2 / MainWindowHelper.UIScale);
+        var newFactor = Math.Clamp(factor, 0.1, 2 / uiScale);
         var oldFactor = _ScrollViewer_Image.ZoomFactor;
         var offset_Width = _ScrollViewer_Image.HorizontalOffset;
         var offset_Height = _ScrollViewer_Image.VerticalOffset;
@@ -111,7 +111,7 @@ public sealed partial class ImageViewer : UserControl
     private void ZoomOut()
     {
         // 缩放率调整为 0.1 的倍数
-        var factor = Math.Ceiling(_ScrollViewer_Image.ZoomFactor * 10 * MainWindowHelper.UIScale - 1.1f) / 10 / MainWindowHelper.UIScale;
+        var factor = Math.Ceiling(_ScrollViewer_Image.ZoomFactor * 10 * uiScale - 1.1f) / 10 / uiScale;
         Zoom(factor);
     }
 
@@ -122,7 +122,7 @@ public sealed partial class ImageViewer : UserControl
     [RelayCommand]
     private void ZoomIn()
     {
-        var factor = Math.Floor(_ScrollViewer_Image.ZoomFactor * 10 * MainWindowHelper.UIScale + 1.1f) / 10 / MainWindowHelper.UIScale;
+        var factor = Math.Floor(_ScrollViewer_Image.ZoomFactor * 10 * uiScale + 1.1f) / 10 / uiScale;
         Zoom(factor);
     }
 
@@ -149,11 +149,10 @@ public sealed partial class ImageViewer : UserControl
         try
         {
 
-            RandomAccessStreamReference reference;
+            StorageFile file;
             if (Source.StartsWith("ms-appx"))
             {
-                var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri(Source));
-                reference = RandomAccessStreamReference.CreateFromFile(file);
+                file = await StorageFile.GetFileFromApplicationUriAsync(new Uri(Source));
             }
             else
             {
@@ -162,14 +161,9 @@ public sealed partial class ImageViewer : UserControl
                     NotificationProvider.Warning("找不到缓存的文件", 3000);
                     return;
                 }
-                var file = await StorageFile.GetFileFromPathAsync(Source);
-                reference = RandomAccessStreamReference.CreateFromFile(file);
+                file = await StorageFile.GetFileFromPathAsync(Source);
             }
-            var data = new DataPackage();
-            data.RequestedOperation = DataPackageOperation.Copy;
-
-            data.SetBitmap(reference);
-            Clipboard.SetContent(data);
+            ClipboardHelper.SetBitmap(file);
             _Button_Copy.Content = "\xE8FB";
             await Task.Delay(3000);
             _Button_Copy.Content = "\xE8C8";
@@ -189,7 +183,7 @@ public sealed partial class ImageViewer : UserControl
     [RelayCommand]
     private void Close()
     {
-        MainWindowHelper.CloseFullScreen();
+        MainWindow.Current.CloseFullWindowContent();
     }
 
 
@@ -201,7 +195,7 @@ public sealed partial class ImageViewer : UserControl
     /// <param name="e"></param>
     private void _ScrollViewer_Image_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
     {
-        _TextBlock_Factor.Text = (_ScrollViewer_Image.ZoomFactor * MainWindowHelper.UIScale).ToString("P0");
+        _TextBlock_Factor.Text = (_ScrollViewer_Image.ZoomFactor * uiScale).ToString("P0");
     }
 
 
@@ -221,7 +215,7 @@ public sealed partial class ImageViewer : UserControl
         }
         _Image.CenterPoint = new System.Numerics.Vector3((float)(width / 2), (float)(height / 2), 0);
         var factor = GetFitZoomFactor();
-        _TextBlock_Factor.Text = (factor * MainWindowHelper.UIScale).ToString("P0");
+        _TextBlock_Factor.Text = (factor * uiScale).ToString("P0");
         _ScrollViewer_Image.ZoomToFactor((float)factor);
     }
 
@@ -241,7 +235,7 @@ public sealed partial class ImageViewer : UserControl
         }
         _Image.CenterPoint = new System.Numerics.Vector3((float)(width / 2), (float)(height / 2), 0);
         var factor = GetFitZoomFactor();
-        _TextBlock_Factor.Text = (factor * MainWindowHelper.UIScale).ToString("P0");
+        _TextBlock_Factor.Text = (factor * uiScale).ToString("P0");
         _ScrollViewer_Image.ZoomToFactor((float)factor);
     }
 
@@ -264,7 +258,7 @@ public sealed partial class ImageViewer : UserControl
             var heightFactor = _ScrollViewer_Image.ViewportWidth / _Image.ActualHeight;
             factor = Math.Min(widthFactor, heightFactor);
         }
-        return Math.Min(factor, 1 / MainWindowHelper.UIScale);
+        return Math.Min(factor, 1 / uiScale);
     }
 
 
@@ -317,13 +311,13 @@ public sealed partial class ImageViewer : UserControl
         ChangeToolBarVisibility();
         var oldFactor = _ScrollViewer_Image.ZoomFactor;
         double newFactor;
-        if (oldFactor < 0.4 / MainWindowHelper.UIScale)
+        if (oldFactor < 0.4 / uiScale)
         {
             newFactor = oldFactor * 2;
         }
-        else if (oldFactor < 0.999 / MainWindowHelper.UIScale)
+        else if (oldFactor < 0.999 / uiScale)
         {
-            newFactor = 1 / MainWindowHelper.UIScale;
+            newFactor = 1 / uiScale;
         }
         else
         {

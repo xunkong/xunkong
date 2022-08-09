@@ -49,10 +49,7 @@ internal partial class SettingViewModel : ObservableObject
     [RelayCommand]
     private void CopyDevelopersMail()
     {
-        var data = new DataPackage();
-        data.RequestedOperation = DataPackageOperation.Copy;
-        data.SetText("scighost@outlook.com");
-        Clipboard.SetContent(data);
+        ClipboardHelper.SetText("scighost@outlook.com");
         NotificationProvider.Success("已复制开发者的邮件（如果没收到回复，可能是被识别为垃圾邮件了）", 5000);
     }
 

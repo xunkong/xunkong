@@ -1,8 +1,5 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Windows.ApplicationModel.DataTransfer;
-using Windows.Storage;
-using Windows.Storage.Streams;
 using Xunkong.Desktop.Controls;
 using Xunkong.Desktop.ViewModels;
 
@@ -36,13 +33,7 @@ public sealed partial class AlbumPage : Page
             {
                 try
                 {
-                    var path = fileInfo.FullName;
-                    var data = new DataPackage();
-                    data.RequestedOperation = DataPackageOperation.Copy;
-                    var file = await StorageFile.GetFileFromPathAsync(path);
-                    var reference = RandomAccessStreamReference.CreateFromFile(file);
-                    data.SetBitmap(reference);
-                    Clipboard.SetContent(data);
+                    ClipboardHelper.SetBitmap(new Uri(fileInfo.FullName));
                     button.Content = new SymbolIcon(Symbol.Accept);
                     await Task.Delay(3000);
                     button.Content = new SymbolIcon(Symbol.Copy);

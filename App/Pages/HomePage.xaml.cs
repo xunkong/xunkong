@@ -8,11 +8,9 @@ using Microsoft.UI.Xaml.Media;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics.Imaging;
 using Windows.Services.Store;
 using Windows.Storage;
-using Windows.Storage.Streams;
 using Windows.System;
 using Xunkong.ApiClient;
 using Xunkong.Desktop.Controls;
@@ -543,11 +541,10 @@ public sealed partial class HomePage : Page
     {
         try
         {
-            RandomAccessStreamReference reference;
+            StorageFile file;
             if (WallpaperInfo == FallbackWallpaper)
             {
-                var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri(FallbackWallpaperUri));
-                reference = RandomAccessStreamReference.CreateFromFile(file);
+                file = await StorageFile.GetFileFromApplicationUriAsync(new Uri(FallbackWallpaperUri));
             }
             else
             {
@@ -557,13 +554,9 @@ public sealed partial class HomePage : Page
                     NotificationProvider.Warning("找不到缓存的文件", 3000);
                     return;
                 }
-                var file = await StorageFile.GetFileFromPathAsync(path);
-                reference = RandomAccessStreamReference.CreateFromFile(file);
+                file = await StorageFile.GetFileFromPathAsync(path);
             }
-            var data = new DataPackage();
-            data.RequestedOperation = DataPackageOperation.Copy;
-            data.SetBitmap(reference);
-            Clipboard.SetContent(data);
+            ClipboardHelper.SetBitmap(file);
             _Button_Copy.Content = "\xE8FB";
             await Task.Delay(3000);
             _Button_Copy.Content = "\xE8C8";
