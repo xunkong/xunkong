@@ -128,7 +128,7 @@
                    HorizontalAlignment="Right"
                    VerticalAlignment="Bottom"
                    FontSize="12"
-                   Text="图片来源：twitter@心臓弱眞君" />
+                   Text="图片来源：Twitter@心臓弱眞君" />
 
     </Grid>
 

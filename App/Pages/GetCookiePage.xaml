@@ -1,0 +1,116 @@
+﻿<Page x:Class="Xunkong.Desktop.Pages.GetCookiePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:Xunkong.Desktop.Pages"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:xdc="using:Xunkong.Desktop.Controls"
+      x:DefaultBindMode="OneWay"
+      mc:Ignorable="d">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0"
+                    Margin="12,0,12,12"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Orientation="Horizontal"
+                    Spacing="12">
+            <TextBlock x:Name="c_TextBlock_Title" VerticalAlignment="Bottom" />
+            <TextBlock x:Name="c_TextBlock_Caller"
+                       VerticalAlignment="Bottom"
+                       Style="{ThemeResource CaptionTextBlockStyle}" />
+        </StackPanel>
+
+        <GridView x:Name="c_GridView_Cookies"
+                  Grid.Row="1"
+                  Padding="12,0,12,0"
+                  ItemsSource="{x:Bind Users}"
+                  SelectionMode="None">
+            <GridView.Resources>
+                <Style BasedOn="{StaticResource DefaultGridViewItemStyle}" TargetType="GridViewItem">
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </GridView.Resources>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="local:GetCookiePageModel_HoyolabAndGenshinUserInfo">
+                    <Grid Padding="12"
+                          HorizontalAlignment="Stretch"
+                          Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                          BorderThickness="1"
+                          CornerRadius="8">
+                        <xdc:CachedImage Width="44"
+                                         Height="44"
+                                         HorizontalAlignment="Left"
+                                         VerticalAlignment="Center"
+                                         CornerRadius="44"
+                                         Source="{x:Bind HoyolabUserInfo.AvatarUrl}" />
+                        <TextBlock Width="120"
+                                   Margin="64,0,0,0"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center">
+                            <Run Text="{x:Bind GenshinRoleInfo.Nickname}" />
+                            <LineBreak />
+                            <Run FontSize="12"
+                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                 Text="{x:Bind GenshinRoleInfo.RegionName}" />
+                            <Run FontSize="12"
+                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                 Text=" " />
+                            <Run FontSize="12"
+                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                 Text="{x:Bind GenshinRoleInfo.Level}" />
+                            <Run FontSize="12"
+                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                 Text="级" />
+                        </TextBlock>
+                        <Button x:Name="c_Button_CopyCookie"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Click="c_Button_CopyCookie_Click"
+                                Content="&#xE8C8;"
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                Tag="{x:Bind}"
+                                ToolTipService.ToolTip="复制">
+                            <Button.ContentTransitions>
+                                <ContentThemeTransition />
+                            </Button.ContentTransitions>
+                        </Button>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </GridView>
+
+
+        <Grid x:Name="c_Grid_Button"
+              Grid.Row="2"
+              Margin="12,8,12,8"
+              ColumnSpacing="8"
+              Visibility="Collapsed">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Button HorizontalAlignment="Stretch"
+                    Command="{x:Bind OKCommand}"
+                    Content="确定" />
+            <Button Grid.Column="1"
+                    HorizontalAlignment="Stretch"
+                    Command="{x:Bind CancelCommand}"
+                    Content="取消" />
+        </Grid>
+
+    </Grid>
+</Page>
