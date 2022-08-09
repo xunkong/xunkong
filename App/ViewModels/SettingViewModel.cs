@@ -4,7 +4,6 @@ using CommunityToolkit.WinUI.UI;
 using System.Collections.ObjectModel;
 using System.Net.Http;
 using Windows.ApplicationModel.Background;
-using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.System;
@@ -445,7 +444,7 @@ internal partial class SettingViewModel : ObservableObject
             var dialog = new FileOpenPicker();
             dialog.SuggestedStartLocation = PickerLocationId.ComputerFolder;
             dialog.FileTypeFilter.Add(".exe");
-            InitializeWithWindow.Initialize(dialog, MainWindowHelper.HWND);
+            InitializeWithWindow.Initialize(dialog, MainWindow.Current.HWND);
             var file = await dialog.PickSingleFileAsync();
             if (file != null)
             {
@@ -570,7 +569,7 @@ internal partial class SettingViewModel : ObservableObject
                 {
                     lock (_precacheImage_lock)
                     {
-                        MainWindowHelper.DispatcherQueue.TryEnqueue(() => PrecacheImage_FinishCount++);
+                        MainWindow.Current.DispatcherQueue.TryEnqueue(() => PrecacheImage_FinishCount++);
                     }
                 }
             });

@@ -412,7 +412,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
             PrimaryButtonText = "确认",
             SecondaryButtonText = "取消",
             DefaultButton = ContentDialogButton.Primary,
-            XamlRoot = MainWindowHelper.XamlRoot,
+            XamlRoot = MainWindow.Current.XamlRoot,
         };
         var result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Primary && !string.IsNullOrWhiteSpace(textBox.Text))
@@ -470,7 +470,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
             PrimaryButtonText = "已了解",
             SecondaryButtonText = "不接受",
             DefaultButton = ContentDialogButton.Primary,
-            XamlRoot = MainWindowHelper.XamlRoot,
+            XamlRoot = MainWindow.Current.XamlRoot,
         };
         var result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Primary)
@@ -641,7 +641,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
                     PrimaryButtonText = "继续删除",
                     CloseButtonText = "取消",
                     DefaultButton = ContentDialogButton.Close,
-                    XamlRoot = MainWindowHelper.XamlRoot,
+                    XamlRoot = MainWindow.Current.XamlRoot,
                 };
                 var dialogResult = await dialog.ShowAsync();
                 if (dialogResult != ContentDialogResult.Primary)
@@ -716,7 +716,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
     {
         try
         {
-            MainPageHelper.Navigate(typeof(WishlogManagePage), _SelectedUid);
+            MainPage.Current.Navigate(typeof(WishlogManagePage), _SelectedUid);
         }
         catch (Exception ex)
         {
@@ -735,7 +735,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
     {
         try
         {
-            MainPageHelper.Navigate(typeof(WishEventHistoryPage));
+            MainPage.Current.Navigate(typeof(WishEventHistoryPage));
         }
         catch (Exception ex)
         {

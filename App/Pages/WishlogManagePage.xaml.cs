@@ -249,7 +249,7 @@ public sealed partial class WishlogManagePage : Page
             dialog.FileTypeFilter.Add("*");
             dialog.FileTypeFilter.Add(".xlsx");
             dialog.FileTypeFilter.Add(".json");
-            InitializeWithWindow.Initialize(dialog, MainWindowHelper.HWND);
+            InitializeWithWindow.Initialize(dialog, MainWindow.Current.HWND);
             var files = await dialog.PickMultipleFilesAsync();
             await ImportWishlogAsync(files.FirstOrDefault()?.Path);
         }

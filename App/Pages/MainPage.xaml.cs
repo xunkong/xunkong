@@ -3,9 +3,9 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System.Collections.ObjectModel;
-using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.StartScreen;
 using Xunkong.Desktop.Messages;
 using Xunkong.Hoyolab.Account;
@@ -27,19 +27,19 @@ public sealed partial class MainPage : Page
 
     private readonly XunkongApiService _xunkongApiService;
 
-    public Frame ContentFrame => _MainPageFrame;
-
 
     private string AppName => XunkongEnvironment.AppName;
 
+
+    public static MainPage Current { get; private set; }
 
 
 
     public MainPage()
     {
+        Current = this;
         this.InitializeComponent();
-        MainPageHelper.Initialize(this);
-        MainWindowHelper.SetTitleBar(_appTitleBar);
+        MainWindow.Current.SetTitleBar(_appTitleBar);
         _hoyolabService = ServiceProvider.GetService<HoyolabService>()!;
         _xunkongApiService = ServiceProvider.GetService<XunkongApiService>()!;
         WeakReferenceMessenger.Default.Register<InitializeNavigationWebToolItemMessage>(this, (_, e) => InitializeNavigationWebToolItem());
@@ -48,7 +48,6 @@ public sealed partial class MainPage : Page
 
 
     // todo 再次简化主页面元素
-
 
 
 
@@ -72,7 +71,6 @@ public sealed partial class MainPage : Page
             _NavigationView.IsPaneToggleButtonVisible = false;
         }
         UpdateAppTitleMargin(sender);
-        MainWindowHelper.SetDragRectangles((int)left);
     }
 
 
@@ -181,6 +179,21 @@ public sealed partial class MainPage : Page
 
 
 
+    public void Navigate(Type sourcePageType, object? param = null, NavigationTransitionInfo? infoOverride = null)
+    {
+        if (param is null)
+        {
+            _MainPageFrame.Navigate(sourcePageType);
+        }
+        else if (infoOverride is null)
+        {
+            _MainPageFrame.Navigate(sourcePageType, param);
+        }
+        else
+        {
+            _MainPageFrame.Navigate(sourcePageType, param, infoOverride);
+        }
+    }
 
 
 
@@ -454,7 +467,7 @@ public sealed partial class MainPage : Page
             PrimaryButtonText = "确认",
             SecondaryButtonText = "取消",
             DefaultButton = ContentDialogButton.Primary,
-            XamlRoot = MainWindowHelper.XamlRoot,
+            XamlRoot = MainWindow.Current.XamlRoot,
         };
         var result = await dialog.ShowAsync();
         if (result is ContentDialogResult.Primary)
@@ -536,10 +549,7 @@ public sealed partial class MainPage : Page
     {
         if (((FrameworkElement)sender).DataContext is GenshinRoleInfo role)
         {
-            var data = new DataPackage();
-            data.RequestedOperation = DataPackageOperation.Copy;
-            data.SetText(role.Cookie);
-            Clipboard.SetContent(data);
+            ClipboardHelper.SetText(role.Cookie);
             NotificationProvider.Success("已复制", 1500);
         }
     }
@@ -566,7 +576,7 @@ public sealed partial class MainPage : Page
                 PrimaryButtonText = "确认",
                 SecondaryButtonText = "取消",
                 DefaultButton = ContentDialogButton.Secondary,
-                XamlRoot = MainWindowHelper.XamlRoot,
+                XamlRoot = MainWindow.Current.XamlRoot,
             };
             var result = await dialog.ShowAsync();
             if (result is ContentDialogResult.Primary)

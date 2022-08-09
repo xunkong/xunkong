@@ -2,11 +2,15 @@
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.Windows.AppLifecycle;
 using System.Runtime.InteropServices;
 using Vanara.PInvoke;
 using Windows.Graphics;
 using WinRT.Interop;
 using Xunkong.Desktop.Messages;
+using Xunkong.Desktop.Pages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -19,15 +23,56 @@ namespace Xunkong.Desktop;
 public sealed partial class MainWindow : Window
 {
 
-    private IntPtr _hWnd;
+    public IntPtr HWND { get; private set; }
 
     private AppWindow _appWindow;
 
     private SystemBackdropHelper _backdrop;
 
+    public static new MainWindow Current { get; private set; }
+
+    public int Height => _appWindow.Size.Height;
+
+    public int Width => _appWindow.Size.Width;
+
+    public double UIScale => (double)User32.GetDpiForWindow(HWND) / 96;
+
+    public XamlRoot XamlRoot => Content.XamlRoot;
+
+    public DisplayArea DisplayArea => DisplayArea.GetFromWindowId(Win32Interop.GetWindowIdFromWindow(HWND), DisplayAreaFallback.Primary);
+
+
     public MainWindow()
     {
+        Current = this;
         this.InitializeComponent();
+        InitializeWindow();
+#if !DEBUG
+        AppSetting.TryGetValue<bool>(SettingKeys.HasShownWelcomePage, out var shown);
+        if (shown)
+        {
+#endif
+        Navigate(typeof(MainPage));
+#if !DEBUG
+        }
+        else
+        {
+            Navigate(typeof(WelcomPage));
+        }
+#endif
+    }
+
+
+    public MainWindow(AppActivationArguments args)
+    {
+        Current = this;
+        this.InitializeComponent();
+        InitializeWindow();
+    }
+
+
+    private void InitializeWindow()
+    {
         _backdrop = new SystemBackdropHelper(this, BackbdropFallBackBehavior.None);
         if (_backdrop.TrySetBackdrop())
         {
@@ -35,17 +80,14 @@ public sealed partial class MainWindow : Window
         }
         InitializeWindowState();
         InitializeMessage();
-        MainWindowHelper.Initialize(this, _hWnd, _appWindow!, RootFrame, FullScreenContent);
         NotificationProvider.Initialize(InfoBarContainer);
         Closed += MainWindow_Closed;
     }
 
-
-
     private void InitializeWindowState()
     {
-        _hWnd = WindowNative.GetWindowHandle(this);
-        var windowId = Win32Interop.GetWindowIdFromWindow(_hWnd);
+        HWND = WindowNative.GetWindowHandle(this);
+        var windowId = Win32Interop.GetWindowIdFromWindow(HWND);
         _appWindow = AppWindow.GetFromWindowId(windowId);
         // AppWindowTitleBar 的体验不是很好
         //if (AppWindowTitleBar.IsCustomizationSupported())
@@ -67,12 +109,12 @@ public sealed partial class MainWindow : Window
         //}
         if (AppSetting.GetValue<bool>(SettingKeys.IsMainWindowMaximum))
         {
-            User32.ShowWindow(_hWnd, ShowWindowCommand.SW_MAXIMIZE);
+            User32.ShowWindow(HWND, ShowWindowCommand.SW_MAXIMIZE);
             return;
         }
         if (AppSetting.TryGetValue<ulong>(SettingKeys.MainWindowRect, out var value))
         {
-            var display = DisplayArea.GetFromWindowId(windowId, DisplayAreaFallback.Primary);
+            var display = DisplayArea;
             var workAreaWidth = display.WorkArea.Width;
             var workAreaHeight = display.WorkArea.Height;
             var rect = new WindowRect(value);
@@ -105,7 +147,7 @@ public sealed partial class MainWindow : Window
     private void SaveWindowState()
     {
         var wpl = new User32.WINDOWPLACEMENT();
-        if (User32.GetWindowPlacement(_hWnd, ref wpl))
+        if (User32.GetWindowPlacement(HWND, ref wpl))
         {
             AppSetting.TrySetValue(SettingKeys.IsMainWindowMaximum, wpl.showCmd == ShowWindowCommand.SW_MAXIMIZE);
             var p = _appWindow.Position;
@@ -128,6 +170,47 @@ public sealed partial class MainWindow : Window
         };
         RootGrid.RequestedTheme = elementTheme;
     }
+
+
+
+
+    public void Navigate(Type sourcePageType, object? param = null, NavigationTransitionInfo? infoOverride = null)
+    {
+        if (param is null)
+        {
+            RootFrame.Navigate(sourcePageType);
+        }
+        else if (infoOverride is null)
+        {
+            RootFrame.Navigate(sourcePageType, param);
+        }
+        else
+        {
+            RootFrame.Navigate(sourcePageType, param, infoOverride);
+        }
+    }
+
+
+    public void SetFullWindowContent(Control content)
+    {
+        FullWindowContent.Visibility = Visibility.Visible;
+        FullWindowContent.Content = content;
+    }
+
+
+
+    public void CloseFullWindowContent()
+    {
+        FullWindowContent.Content = null;
+        FullWindowContent.Visibility = Visibility.Collapsed;
+    }
+
+
+    public void SetForeground()
+    {
+        User32.SetForegroundWindow(HWND);
+    }
+
 
 
 

@@ -141,7 +141,7 @@ public sealed partial class HomePage : Page
                     file = (await StorageFile.GetFileFromApplicationUriAsync(new(FallbackWallpaperUri))).Path;
                 }
             }
-            imageMaxHeight = MainWindowHelper.Height * 0.75 / MainWindowHelper.UIScale;
+            imageMaxHeight = MainWindow.Current.Height * 0.75 / MainWindow.Current.UIScale;
             _Grid_Image.MaxHeight = imageMaxHeight;
             await LoadBackgroundImage(file);
             if (NetworkHelper.IsInternetOnMeteredConnection)
@@ -429,7 +429,7 @@ public sealed partial class HomePage : Page
                 // 商店版检查更新
                 var context = StoreContext.GetDefault();
                 // 调用需要在UI线程运行的函数前
-                // WinRT.Interop.InitializeWithWindow.Initialize(context, MainWindowHelper.HWND);
+                // WinRT.Interop.InitializeWithWindow.Initialize(context, MainWindow.Current.HWND);
                 var updates = await context.GetAppAndOptionalStorePackageUpdatesAsync();
                 if (updates.Any())
                 {
@@ -522,11 +522,11 @@ public sealed partial class HomePage : Page
         {
             if (WallpaperInfo == FallbackWallpaper)
             {
-                MainWindowHelper.OpenFullScreen(new ImageViewer { Source = FallbackWallpaperUri });
+                MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = FallbackWallpaperUri });
             }
             else
             {
-                MainWindowHelper.OpenFullScreen(new ImageViewer { Source = CacheHelper.GetCacheFilePath(WallpaperInfo.Url) });
+                MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = CacheHelper.GetCacheFilePath(WallpaperInfo.Url) });
             }
         }
     }

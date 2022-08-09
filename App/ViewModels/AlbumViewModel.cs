@@ -36,7 +36,7 @@ internal partial class AlbumViewModel : ObservableObject
                 var fileInfo = new FileInfo(e.FullPath);
                 if (fileInfo.Exists && fileInfo.Extension.ToLower() == ".png")
                 {
-                    var dq = MainWindowHelper.DispatcherQueue;
+                    var dq = MainWindow.Current.DispatcherQueue;
                     if (latestImages is null)
                     {
                         latestImages = new("新增", new[] { fileInfo });
@@ -64,7 +64,7 @@ internal partial class AlbumViewModel : ObservableObject
             if (e.ChangeType == WatcherChangeTypes.Deleted)
             {
                 var path = Path.GetFullPath(e.FullPath);
-                var dq = MainWindowHelper.DispatcherQueue;
+                var dq = MainWindow.Current.DispatcherQueue;
                 dq.TryEnqueue(() =>
                 {
                     var file1 = latestImages?.FirstOrDefault(x => x.FullName == path);
@@ -223,7 +223,7 @@ internal partial class AlbumViewModel : ObservableObject
             var folderPicker = new Windows.Storage.Pickers.FolderPicker();
             folderPicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.Desktop;
             folderPicker.FileTypeFilter.Add("*");
-            WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, MainWindowHelper.HWND);
+            WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, MainWindow.Current.HWND);
             var folder = await folderPicker.PickSingleFolderAsync();
             if (folder is not null)
             {

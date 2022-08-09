@@ -41,7 +41,7 @@ internal static class SecondaryTileProvider
         tile.VisualElements.Wide310x150Logo = new Uri("ms-appx:///Images/Square310x150Logo.png");
         tile.VisualElements.Square310x310Logo = new Uri("ms-appx:///Images/Square310x310Logo.png");
 
-        WinRT.Interop.InitializeWithWindow.Initialize(tile, MainWindowHelper.HWND);
+        WinRT.Interop.InitializeWithWindow.Initialize(tile, MainWindow.Current.HWND);
 
         // Pin the tile
         bool isPinned = await tile.RequestCreateAsync();

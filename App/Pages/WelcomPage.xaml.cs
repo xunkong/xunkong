@@ -166,7 +166,7 @@ public sealed partial class WelcomPage : Page
                 try
                 {
                     AppSetting.SetValue(SettingKeys.HasShownWelcomePage, true);
-                    MainWindowHelper.Navigate(typeof(MainPage));
+                    MainWindow.Current.Navigate(typeof(MainPage));
                 }
                 catch (Exception ex)
                 {

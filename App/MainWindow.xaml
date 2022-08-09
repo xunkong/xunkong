@@ -11,7 +11,7 @@
 
         <Frame x:Name="RootFrame" />
 
-        <ContentControl x:Name="FullScreenContent"
+        <ContentControl x:Name="FullWindowContent"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch"

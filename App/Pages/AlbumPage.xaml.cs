@@ -53,7 +53,7 @@ public sealed partial class AlbumPage : Page
     {
         if (e.ClickedItem is FileInfo file)
         {
-            MainWindowHelper.OpenFullScreen(new ImageViewer { Source = file.FullName, SourceCollection = vm.ImageList.Select(x => x.FullName).ToList() });
+            MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = file.FullName, SourceCollection = vm.ImageList.Select(x => x.FullName).ToList() });
         }
     }
 

@@ -19,7 +19,7 @@ internal static class Logger
             Log.Logger = new LoggerConfiguration().WriteTo.File(path: path, outputTemplate: "{NewLine}[{Timestamp:HH:mm:ss.fff}] [{Level:u4}] {CallerName}{NewLine}{Message}{NewLine}{Exception}")
                                                   .Enrich.FromLogContext()
                                                   .CreateLogger();
-            Log.Information($"{XunkongEnvironment.AppName} {XunkongEnvironment.AppVersion}\n{XunkongEnvironment.DeviceId}");
+            Log.Information($"{XunkongEnvironment.AppName} {XunkongEnvironment.AppVersion}\n{XunkongEnvironment.DeviceId}\n{Environment.CommandLine}");
             _initialized = true;
         }
         catch { }

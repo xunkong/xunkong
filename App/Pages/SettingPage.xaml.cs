@@ -38,7 +38,7 @@ public sealed partial class SettingPage : Page
 
     private void _Image_RecommendWallpaper_Tapped(object sender, TappedRoutedEventArgs e)
     {
-        MainWindowHelper.OpenFullScreen(new ImageViewer { Source = "ms-appx:///Assets/Images/96839227_p0.webp" });
+        MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = "ms-appx:///Assets/Images/96839227_p0.webp" });
     }
 
 
