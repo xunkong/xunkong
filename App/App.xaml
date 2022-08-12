@@ -10,6 +10,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <ResourceDictionary Source="Themes\RightAlignToggleSwitchStyle.xaml" />
+                <ResourceDictionary Source="Themes\CachedImageStyle.xaml" />
                 <!--  Other merged dictionaries here  -->
             </ResourceDictionary.MergedDictionaries>
             <!--  Other app resources here  -->
@@ -33,7 +34,7 @@
             <Style TargetType="cc:ImageEx">
                 <Setter Property="IsCacheEnabled" Value="True" />
             </Style>
-            <Style TargetType="controls:CachedImage">
+            <Style BasedOn="{StaticResource CachedImageStyle}" TargetType="controls:CachedImage">
                 <Setter Property="IsCacheEnabled" Value="True" />
             </Style>
 
