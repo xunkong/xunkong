@@ -53,4 +53,19 @@ internal static class ClipboardHelper
     }
 
 
+
+    public static async Task<string?> GetTextAsync()
+    {
+        var data = Clipboard.GetContent();
+        if (data.Contains(StandardDataFormats.Text))
+        {
+            return await data.GetTextAsync();
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+
 }

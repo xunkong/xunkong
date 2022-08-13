@@ -9,8 +9,9 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-                <ResourceDictionary Source="Themes\RightAlignToggleSwitchStyle.xaml" />
                 <ResourceDictionary Source="Themes\CachedImageStyle.xaml" />
+                <ResourceDictionary Source="Themes\FullBackgroundProgressBarStyle.xaml" />
+                <ResourceDictionary Source="Themes\RightAlignToggleSwitchStyle.xaml" />
                 <!--  Other merged dictionaries here  -->
             </ResourceDictionary.MergedDictionaries>
             <!--  Other app resources here  -->

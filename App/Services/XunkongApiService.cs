@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using Xunkong.ApiClient;
 using Xunkong.ApiClient.Xunkong;
+using Xunkong.GenshinData.Achievement;
 using Xunkong.GenshinData.Character;
 using Xunkong.GenshinData.Weapon;
 using Xunkong.Hoyolab.Wishlog;
@@ -190,6 +191,12 @@ internal class XunkongApiService
         var col3 = liteDb.GetCollection<WishEventInfo>();
         col3.DeleteAll();
         col3.InsertBulk(data.WishEvents);
+        var col4 = liteDb.GetCollection<AchievementItem>();
+        col4.DeleteAll();
+        col4.InsertBulk(data.Achievement.Items);
+        var col5 = liteDb.GetCollection<AchievementGoal>();
+        col5.DeleteAll();
+        col5.InsertBulk(data.Achievement.Goals);
     }
 
 

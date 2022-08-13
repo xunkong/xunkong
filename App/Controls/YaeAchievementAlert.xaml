@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="Xunkong.Desktop.Controls.YaeAchievementAlert"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:Xunkong.Desktop.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <StackPanel Spacing="8">
+        <TextBlock Foreground="{ThemeResource SystemFillColorCriticalBrush}" TextWrapping="Wrap">
+            <Run Text="寻空使用" />
+            <Hyperlink NavigateUri="https://github.com/HolographicHat/YaeAchievement" UnderlineStyle="None">YaeAchievement</Hyperlink>
+            <Run Text="获取成就数据，此工具将 DLL 注入到原神进程后拦截数据包，有非常高的风险，可能会被检测为第三方工具导致封号。" />
+        </TextBlock>
+        <TextBlock TextWrapping="Wrap">
+            <Run Text="您也可以选择使用其他更安全的支持" />
+            <Hyperlink NavigateUri="https://www.snapgenshin.com/development/UIAF.html" UnderlineStyle="None">统一可交换成就标准</Hyperlink>
+            <Run Text="的成就导出工具。" />
+        </TextBlock>
+    </StackPanel>
+</UserControl>

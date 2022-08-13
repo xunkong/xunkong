@@ -41,24 +41,14 @@ public sealed partial class GetCookiePage : Page
     public GetCookiePage(IProtocolActivatedEventArgs args)
     {
         this.InitializeComponent();
-        ResizeToolWindow();
+        ToolWindow.Current.ResizeToCenter(360, 480);
         InitializeTitle(args);
         Loaded += GetCookiePage_Loaded;
         _hoyolabService = ServiceProvider.GetService<HoyolabService>()!;
 
     }
 
-    
-    private void ResizeToolWindow()
-    {
-        var uiScale = ToolWindow.Current.UIScale;
-        var width = (int)(360 * uiScale);
-        var height = (int)(480 * uiScale);
-        var workArea = ToolWindow.Current.DisplayArea.WorkArea;
-        var left = (workArea.Width - width) / 2;
-        var top = (workArea.Height - height) / 2;
-        ToolWindow.Current.AppWindow.MoveAndResize(new Windows.Graphics.RectInt32(left, top, width, height));
-    }
+
 
 
     private void InitializeTitle(IProtocolActivatedEventArgs args)

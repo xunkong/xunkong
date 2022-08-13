@@ -93,7 +93,7 @@ public partial class App : Application
                 // 协议启动
                 if (e.Data is IProtocolActivatedEventArgs args)
                 {
-                    if (args.Uri.Host == "get-cookie")
+                    if (args.Uri.Host.ToLower() is "get-cookie" or "import-achievement")
                     {
                         toolWindow = new ToolWindow(e);
                         toolWindow.Activate();

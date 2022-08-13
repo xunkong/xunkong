@@ -17,6 +17,16 @@
                        VerticalAlignment="Center"
                        FontSize="12" />
         </Border>
+        <StackPanel x:Name="c_StackPanel_Error"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="16"
+                    Visibility="Collapsed">
+            <Image Width="160"
+                   Height="160"
+                   Source="ms-appx:///Assets/Images/UI_EmotionIcon5.png" />
+            <TextBlock HorizontalAlignment="Center" Text="参数解析失败" />
+        </StackPanel>
         <Frame x:Name="Frame_Root" Margin="0,32,0,0" />
     </Grid>
 </Window>

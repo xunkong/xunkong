@@ -17,7 +17,7 @@ internal class DatabaseProvider
 
     private static bool _initialized;
 
-    private const int DATABASE_VERSION = 1;
+    private const int DATABASE_VERSION = 2;
 
 
     public static string SqlitePath => _sqlitePath;
@@ -96,7 +96,8 @@ internal class DatabaseProvider
     {
         return version switch
         {
-            0 => new List<string> { TableStructure_v1 },
+            0 => new List<string> { TableStructure_v1, TableStructure_v2 },
+            1 => new List<string> { TableStructure_v2 },
             _ => new List<string> { },
         };
     }
@@ -248,7 +249,23 @@ internal class DatabaseProvider
         """;
 
 
-
+    private const string TableStructure_v2 = """
+        BEGIN TRANSACTION;
+        CREATE TABLE IF NOT EXISTS AchievementData
+        (
+            Uid            INT NOT NULL,
+            Id             INT NOT NULL,
+            Current        INT NOT NULL,
+            Status         INT NOT NULL,
+            FinishedTime   TEXT,
+            Comment        TEXT,
+            LastUpdateTime TEXT,
+            PRIMARY KEY (Uid, Id)
+        );
+        INSERT OR
+        REPLACE INTO DatabaseVersion (Key, Value) VALUES ('DatabaseVersion', 2);
+        COMMIT;
+        """;
 
 
 }

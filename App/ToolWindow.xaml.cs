@@ -72,17 +72,46 @@ public sealed partial class ToolWindow : Window
 
     private void HandleActivationEvent(AppActivationArguments e)
     {
+        bool handled = false;
         if (e.Kind == ExtendedActivationKind.Protocol || e.Kind == ExtendedActivationKind.ProtocolForResults)
         {
             if (e.Data is IProtocolActivatedEventArgs args)
             {
-                if (args.Uri.Host == "get-cookie")
+                if (args.Uri.Host.ToLower() == "get-cookie")
                 {
                     Frame_Root.Content = new GetCookiePage(args);
+                    handled = true;
+                }
+                if (args.Uri.Host.ToLower() == "import-achievement")
+                {
+                    Frame_Root.Content = new ImportAchievementPage(args);
+                    handled = true;
                 }
             }
         }
+        if (!handled)
+        {
+            ResizeToCenter(360, 480);
+            c_StackPanel_Error.Visibility = Visibility.Visible;
+        }
     }
+
+
+
+
+
+    public void ResizeToCenter(int width, int height)
+    {
+        var uiScale = UIScale;
+        var scaledwidth = (int)(width * uiScale);
+        var scaledheight = (int)(height * uiScale);
+        var workArea = DisplayArea.WorkArea;
+        var left = (workArea.Width - scaledwidth) / 2;
+        var top = (workArea.Height - scaledheight) / 2;
+        AppWindow.MoveAndResize(new Windows.Graphics.RectInt32(left, top, scaledwidth, scaledheight));
+    }
+
+
 
 
 

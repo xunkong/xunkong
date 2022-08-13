@@ -69,39 +69,12 @@ internal class InvokeService
     {
         try
         {
-            var ps = Process.GetProcessesByName("YuanShen").Concat(Process.GetProcessesByName("GenshinImpact"));
-            if (ps.Any())
+            if (IsGameRunning())
             {
                 await ToastProvider.SendAsync("出错了", "已有游戏进程在运行");
                 return false;
             }
-            var exePath = AppSetting.GetValue<string>(SettingKeys.GameExePath);
-            if (!File.Exists(exePath))
-            {
-                const string REG_PATH = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\原神\";
-                const string REG_KEY = "InstallPath";
-                var launcherPath = Registry.GetValue(REG_PATH, REG_KEY, null) as string;
-                if (!string.IsNullOrWhiteSpace(launcherPath))
-                {
-                    var configPath = Path.Combine(launcherPath, "config.ini");
-                    if (File.Exists(configPath))
-                    {
-                        var str = await File.ReadAllTextAsync(configPath);
-                        var gamePath = Regex.Match(str, @"game_install_path=(.+)").Groups[1].Value.Trim();
-                        exePath = Path.Combine(gamePath, "YuanShen.exe");
-                    }
-                }
-                if (!File.Exists(exePath))
-                {
-                    await ToastProvider.SendAsync("出错了", "没有找到 YuanShen.exe");
-                    return false;
-                }
-            }
-            if (!(exePath.EndsWith("YuanShen.exe") || exePath.EndsWith("GenshinImpact.exe")))
-            {
-                await ToastProvider.SendAsync("出错了", "文件名不为 YuanShen.exe 或 GenshinImpact.exe");
-                return false;
-            }
+            var exePath = await GetGameExePathAsync();
             var fps = AppSetting.GetValue(SettingKeys.TargetFPS, 60);
             var isPopup = AppSetting.GetValue<bool>(SettingKeys.IsPopupWindow);
             if (fps > 60)
@@ -151,6 +124,44 @@ internal class InvokeService
             Logger.Error(ex, "启动游戏");
             return false;
         }
+    }
+
+
+
+    public static bool IsGameRunning()
+    {
+        return Process.GetProcessesByName("YuanShen").Concat(Process.GetProcessesByName("GenshinImpact")).Any();
+    }
+
+
+    public static async Task<string> GetGameExePathAsync()
+    {
+        var exePath = AppSetting.GetValue<string>(SettingKeys.GameExePath);
+        if (!File.Exists(exePath))
+        {
+            const string REG_PATH = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\原神\";
+            const string REG_KEY = "InstallPath";
+            var launcherPath = Registry.GetValue(REG_PATH, REG_KEY, null) as string;
+            if (!string.IsNullOrWhiteSpace(launcherPath))
+            {
+                var configPath = Path.Combine(launcherPath, "config.ini");
+                if (File.Exists(configPath))
+                {
+                    var str = await File.ReadAllTextAsync(configPath);
+                    var gamePath = Regex.Match(str, @"game_install_path=(.+)").Groups[1].Value.Trim();
+                    exePath = Path.Combine(gamePath, "YuanShen.exe");
+                }
+            }
+            if (!File.Exists(exePath))
+            {
+                throw new XunkongException("没有找到 YuanShen.exe");
+            }
+        }
+        if (!(exePath.EndsWith("YuanShen.exe") || exePath.EndsWith("GenshinImpact.exe")))
+        {
+            throw new XunkongException("文件名不为 YuanShen.exe 或 GenshinImpact.exe");
+        }
+        return exePath;
     }
 
 

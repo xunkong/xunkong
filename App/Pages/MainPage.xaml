@@ -233,6 +233,11 @@
                         <BitmapIcon ShowAsMonochrome="True" UriSource="ms-appx:///Assets/Images/UI_Icon_Tower_Star_Dark.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem Content="成就管理" Tag="AchievementPage">
+                    <NavigationViewItem.Icon>
+                        <BitmapIcon ShowAsMonochrome="True" UriSource="ms-appx:///Assets/Images/UI_Icon_Achievement.png" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
             </NavigationView.MenuItems>
 
             <Frame Name="_MainPageFrame"
