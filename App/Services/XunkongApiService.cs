@@ -269,7 +269,7 @@ internal class XunkongApiService
 
     public async Task<List<WallpaperInfo>> GetWallpaperInfoListAsync(int page, int size)
     {
-        return await _xunkongClient.GetWallpaperListAsync(page, size);
+        return await _xunkongClient.GetWallpaperListAsync(size);
     }
 
 

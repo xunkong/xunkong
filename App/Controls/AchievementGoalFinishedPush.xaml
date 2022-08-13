@@ -35,7 +35,9 @@
                        FontWeight="Bold"
                        Foreground="#FFFFFF"
                        Text="{x:Bind Title}" />
-            <xdc:CachedImage Width="200" Source="{x:Bind NameCard}" />
+            <xdc:CachedImage Width="200"
+                             Margin="0,-16,0,0"
+                             Source="{x:Bind NameCard}" />
         </StackPanel>
         <TextBlock Margin="0,0,0,48"
                    HorizontalAlignment="Center"

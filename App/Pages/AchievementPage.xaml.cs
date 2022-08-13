@@ -99,7 +99,14 @@ public sealed partial class AchievementPage : Page
         try
         {
             Uids = LoadAchievementUids();
-            selectedUid = Uids.FirstOrDefault();
+            if (UserSetting.TryGetValue(SettingKeys.LastSelectedUidInAchievementPage, out int uid))
+            {
+                selectedUid = uid;
+            }
+            else
+            {
+                selectedUid = Uids.FirstOrDefault();
+            }
             if (selectedUid > 0)
             {
                 c_ComboBox_Uids.SelectedValue = selectedUid;
@@ -127,6 +134,7 @@ public sealed partial class AchievementPage : Page
         if (uid is int i and > 0)
         {
             SelectedUid = i;
+            UserSetting.TrySetValue(SettingKeys.LastSelectedUidInAchievementPage, SelectedUid);
         }
     }
 
@@ -337,10 +345,10 @@ public sealed partial class AchievementPage : Page
                     return;
                 }
                 var exePath = await InvokeService.GetGameExePathAsync();
-                var yaePath = Path.Combine(Package.Current.InstalledPath, @"YaeAchievement (Modified by Xunkong).exe");
+                var yaePath = Path.Combine(Package.Current.InstalledPath, @"Xunkong.Desktop\YaeAchievement (Modified by Xunkong).exe");
                 if (!File.Exists(yaePath))
                 {
-                    NotificationProvider.Warning("没有找到 YaeAchievement.exe");
+                    NotificationProvider.Warning("没有找到 YaeAchievement (Modified by Xunkong).exe");
                     return;
                 }
                 var info = new ProcessStartInfo

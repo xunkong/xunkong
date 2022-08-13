@@ -453,7 +453,7 @@
                                     </TextBlock>
                                     <Button HorizontalAlignment="Right"
                                             Command="{x:Bind vm.ClearImageCacheCommand, Mode=OneTime}"
-                                            Content="开始清理" />
+                                            Content="清理图片" />
                                 </Grid>
                             </StackPanel>
                         </Expander.Content>

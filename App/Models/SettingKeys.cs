@@ -28,6 +28,11 @@ internal static class SettingKeys
     public const string LastSelectedUidInWishlogSummaryPage = nameof(LastSelectedUidInWishlogSummaryPage);
 
     /// <summary>
+    /// 成就管理页面最后选中的uid
+    /// </summary>
+    public const string LastSelectedUidInAchievementPage = nameof(LastSelectedUidInAchievementPage);
+
+    /// <summary>
     /// 上个版本
     /// </summary>
     [Obsolete("", true)]
