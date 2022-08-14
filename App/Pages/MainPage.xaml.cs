@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Input;
@@ -7,7 +6,6 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System.Collections.ObjectModel;
 using Windows.UI.StartScreen;
-using Xunkong.Desktop.Messages;
 using Xunkong.Hoyolab.Account;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -300,15 +298,34 @@ public sealed partial class MainPage : Page
         {
             try
             {
-                var user = _hoyolabService.GetLastSelectedOrFirstHoyolabUserInfo();
-                var role = _hoyolabService.GetLastSelectedOrFirstGenshinRoleInfo();
+                var selectedUser = _hoyolabService.GetLastSelectedOrFirstHoyolabUserInfo();
+                var selectedRole = _hoyolabService.GetLastSelectedOrFirstGenshinRoleInfo();
                 var roles = _hoyolabService.GetGenshinRoleInfoList().ToList();
-                this.DispatcherQueue.TryEnqueue(() =>
+                DispatcherQueue.TryEnqueue(() =>
                 {
-                    HoyolabUserInfo = user;
-                    GenshinRoleInfo = role;
+                    HoyolabUserInfo = selectedUser;
+                    GenshinRoleInfo = selectedRole;
                     GenshinRoleInfoList = new(roles);
                 });
+                foreach (var role in roles)
+                {
+                    var note = await _hoyolabService.GetDailyNoteAsync(role);
+                    if (note != null)
+                    {
+                        var text = (note.IsResinFull, note.IsHomeCoinFull) switch
+                        {
+                            (true, true) => $"{role.Nickname} 的 原粹树脂 和 洞天宝钱 已满",
+                            (true, false) => $"{role.Nickname} 的 原粹树脂 已满",
+                            (false, true) => $"{role.Nickname} 的 洞天宝钱 已满",
+                            (false, false) => "",
+                        };
+                        if (!string.IsNullOrWhiteSpace(text))
+                        {
+                            // 方法内部会切换为UI线程
+                            NotificationProvider.Success("注意了", text, 8000);
+                        }
+                    }
+                }
                 await _hoyolabService.UpdateAllAccountsAsync();
             }
             catch (Exception ex)
