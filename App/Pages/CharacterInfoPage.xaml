@@ -228,41 +228,93 @@
 
 
             <!--  左侧角色列表  -->
-            <GridView Name="_GridView_Character"
-                      Grid.Row="1"
-                      Width="480"
-                      Padding="20,0,12,0"
-                      Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
-                      Canvas.ZIndex="1"
-                      CornerRadius="0 8 8 0"
-                      ItemsSource="{x:Bind Characters}"
-                      SelectedItem="{x:Bind SelectedCharacter, Mode=TwoWay}"
-                      SelectionChanged="_Character_SelectionChanged"
-                      Visibility="{x:Bind _ToggleButton_LeftPanel.IsChecked, Converter={StaticResource BoolToVisibilityConverter}}">
-                <GridView.ItemContainerStyle>
-                    <Style BasedOn="{StaticResource DefaultGridViewItemStyle}" TargetType="GridViewItem">
-                        <Setter Property="Margin" Value="4" />
-                    </Style>
-                </GridView.ItemContainerStyle>
-                <GridView.ItemTemplate>
-                    <DataTemplate x:DataType="models:CharacterInfoPage_Character">
-                        <Grid Width="80" CornerRadius="4">
-                            <xdc:CachedImage Source="{x:Bind Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}" />
-                            <xdc:CachedImage VerticalAlignment="Top"
-                                             CornerRadius="4,4,16,0"
-                                             Source="{x:Bind FaceIcon}" />
-                            <TextBlock HorizontalAlignment="Center"
-                                       VerticalAlignment="Bottom"
-                                       FontWeight="SemiBold"
-                                       Foreground="#84603D">
-                                <Run Text="Lv." /><Run Text="{x:Bind Level}" />
-                                <Run Text="C." /><Run Text="{x:Bind ActivedConstellationNumber}" />
-                            </TextBlock>
-                            <Rectangle Fill="#60000000" Visibility="{x:Bind IsOwn, Converter={StaticResource BoolToVisibilityReversedConverter}}" />
-                        </Grid>
-                    </DataTemplate>
-                </GridView.ItemTemplate>
-            </GridView>
+            <Grid Grid.Row="1"
+                  Width="480"
+                  Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
+                  Canvas.ZIndex="1"
+                  Visibility="{x:Bind _ToggleButton_LeftPanel.IsChecked, Converter={StaticResource BoolToVisibilityConverter}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="1"
+                      Height="48"
+                      Margin="24,0,24,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" Text="拖动排序：" />
+                    <GridView x:Name="c_GridView_Reorder"
+                              Grid.Column="1"
+                              Margin="16,2,0,0"
+                              AllowDrop="True"
+                              CanDragItems="True"
+                              CanReorderItems="True"
+                              ItemsSource="{x:Bind ReorderCollection, Mode=TwoWay}"
+                              SelectionMode="None">
+                        <GridView.ItemTemplate>
+                            <DataTemplate x:DataType="x:String">
+                                <TextBlock HorizontalAlignment="Center" Text="{x:Bind}" />
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                    </GridView>
+                </Grid>
+
+                <GridView Name="_GridView_Character"
+                          Padding="20,0,12,0"
+                          CornerRadius="0,8,8,0"
+                          ItemsSource="{x:Bind Characters}"
+                          SelectedItem="{x:Bind SelectedCharacter, Mode=TwoWay}"
+                          SelectionChanged="_Character_SelectionChanged">
+                    <GridView.Transitions>
+                        <ReorderThemeTransition />
+                    </GridView.Transitions>
+                    <GridView.ItemContainerStyle>
+                        <Style BasedOn="{StaticResource DefaultGridViewItemStyle}" TargetType="GridViewItem">
+                            <Setter Property="Margin" Value="4" />
+                        </Style>
+                    </GridView.ItemContainerStyle>
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="models:CharacterInfoPage_Character">
+                            <Grid Width="80" CornerRadius="4">
+                                <xdc:CachedImage Source="{x:Bind Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}" />
+                                <xdc:CachedImage VerticalAlignment="Top"
+                                                 CornerRadius="4,4,16,0"
+                                                 Source="{x:Bind FaceIcon}" />
+                                <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Bottom"
+                                           FontWeight="SemiBold"
+                                           Foreground="#84603D">
+                                    <Run Text="Lv." /><Run Text="{x:Bind Level}" />
+                                </TextBlock>
+                                <Border Height="20"
+                                        MinWidth="20"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top"
+                                        Background="#60000000"
+                                        CornerRadius="0,4,0,4"
+                                        Visibility="{x:Bind IsOwn, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <TextBlock HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="12"
+                                               Foreground="#F3F3F3"
+                                               Text="{x:Bind ActivedConstellationNumber}" />
+                                </Border>
+                                <xdc:CachedImage Width="20"
+                                                 Height="20"
+                                                 Margin="1"
+                                                 HorizontalAlignment="Left"
+                                                 VerticalAlignment="Top"
+                                                 Source="{x:Bind Element, Converter={StaticResource ElementToElementImageConverter}}" />
+                                <Rectangle Fill="#60000000" Visibility="{x:Bind IsOwn, Converter={StaticResource BoolToVisibilityReversedConverter}}" />
+                            </Grid>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
+            </Grid>
+
 
 
             <!--  主要内容  -->

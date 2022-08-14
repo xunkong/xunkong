@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using System.Collections.ObjectModel;
 using System.Numerics;
 using System.Text.RegularExpressions;
 using Windows.Foundation;
@@ -57,6 +58,7 @@ public sealed partial class CharacterInfoPage : Page
         _wishlogService = ServiceProvider.GetService<WishlogService>()!;
         _xunkongApiService = ServiceProvider.GetService<XunkongApiService>()!;
         Loaded += CharacterInfoPage_Loaded;
+        ReorderCollection.CollectionChanged += ReorderCollection_CollectionChanged;
     }
 
 
@@ -301,9 +303,9 @@ public sealed partial class CharacterInfoPage : Page
             }
             Characters = characters.Where(x => x.Id != exceptId)
                                    .OrderByDescending(x => x.Level)
-                                   .ThenByDescending(x => x.Fetter)
-                                   .ThenByDescending(x => x.ActivedConstellationNumber)
                                    .ThenByDescending(x => x.Rarity)
+                                   .ThenByDescending(x => x.ActivedConstellationNumber)
+                                   .ThenByDescending(x => x.Fetter)
                                    .ToList();
             SelectedCharacter = Characters.FirstOrDefault();
         }
@@ -388,6 +390,47 @@ public sealed partial class CharacterInfoPage : Page
     }
 
 
+    int reoderCollectionCount = 4;
+
+    bool canReorderFlag = false;
+
+    public ObservableCollection<string> ReorderCollection { get; set; } = new ObservableCollection<string>() { "等级", "星级", "命座", "好感度" };
+
+
+    private void ReorderCollection_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        if (reoderCollectionCount - 1 == ReorderCollection.Count)
+        {
+            canReorderFlag = true;
+        }
+        if (reoderCollectionCount == ReorderCollection.Count && canReorderFlag)
+        {
+            try
+            {
+                IOrderedEnumerable<CharacterInfoPage_Character>? result = Characters?.OrderByDescending(x => x.IsOwn);
+                foreach (var item in ReorderCollection)
+                {
+                    result = item switch
+                    {
+                        "等级" => result?.ThenByDescending(x => x.Level),
+                        "星级" => result?.ThenByDescending(x => x.Rarity),
+                        "命座" => result?.ThenByDescending(x => x.ActivedConstellationNumber),
+                        "好感度" => result?.ThenByDescending(x => x.Fetter),
+                        _ => result,
+                    };
+                }
+                Characters = result?.ToList()!;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "排序");
+            }
+            finally
+            {
+                canReorderFlag = false;
+            }
+        }
+    }
 
 
 }
