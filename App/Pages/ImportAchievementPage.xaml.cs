@@ -1,9 +1,11 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.Windows.AppLifecycle;
 using System.Net.Http;
 using System.Text.Json.Nodes;
 using System.Web;
 using Windows.ApplicationModel.Activation;
+using Windows.System;
 using Xunkong.GenshinData.Achievement;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -18,9 +20,10 @@ namespace Xunkong.Desktop.Pages;
 public sealed partial class ImportAchievementPage : Page
 {
 
-
+    [ObservableProperty]
     private string? dataFrom;
 
+    [ObservableProperty]
     private string? dataParam;
 
     [ObservableProperty]
@@ -31,6 +34,9 @@ public sealed partial class ImportAchievementPage : Page
 
     [ObservableProperty]
     private string? uiafVersion;
+
+    [ObservableProperty]
+    private string? exportTime;
 
 
     private List<AchievementData>? achievementDatas;
@@ -72,14 +78,14 @@ public sealed partial class ImportAchievementPage : Page
             var caller = qc["caller"];
             c_TextBlock_Title.Text = "导入成就";
             c_TextBlock_Caller.Text = $"调用方：{(string.IsNullOrWhiteSpace(caller) ? "未知" : caller)}";
-            dataFrom = qc["from"]?.ToString();
-            if (dataFrom == "file")
+            DataFrom = qc["from"]?.ToString();
+            if (DataFrom == "file")
             {
-                dataParam = qc["path"]?.ToString().Replace("\"", "").Trim();
+                DataParam = qc["path"]?.ToString().Replace("\"", "").Trim();
             }
-            if (dataFrom == "web")
+            if (DataFrom == "web")
             {
-                dataParam = qc["url"]?.ToString().Replace("\"", "").Trim();
+                DataParam = qc["url"]?.ToString().Replace("\"", "").Trim();
             }
         }
     }
@@ -91,20 +97,20 @@ public sealed partial class ImportAchievementPage : Page
         try
         {
             string? text = null;
-            if (dataFrom?.ToLower() is "clipboard")
+            if (DataFrom?.ToLower() is "clipboard")
             {
                 text = await ClipboardHelper.GetTextAsync();
             }
-            if (dataFrom?.ToLower() is "file")
+            if (DataFrom?.ToLower() is "file")
             {
-                if (File.Exists(dataParam))
+                if (File.Exists(DataParam))
                 {
-                    text = await File.ReadAllTextAsync(dataParam);
+                    text = await File.ReadAllTextAsync(DataParam);
                 }
             }
-            if (dataParam?.ToLower() is "web")
+            if (DataFrom?.ToLower() is "web")
             {
-                text = await CreateHttpClient().GetStringAsync(dataParam);
+                text = await CreateHttpClient().GetStringAsync(DataParam);
             }
             ParseJsonString(text);
             if (achievementDatas?.Any() ?? false)
@@ -140,6 +146,19 @@ public sealed partial class ImportAchievementPage : Page
             ExportApp = infoNode?["export_app"]?.ToString();
             ExportAppVersion = infoNode?["export_app_version"]?.ToString();
             UiafVersion = infoNode?["uiaf_version"]?.ToString();
+            if (long.TryParse(infoNode?["export_timestamp"]?.ToString(), out long timestamp))
+            {
+                if (timestamp > int.MaxValue)
+                {
+                    ExportTime = DateTimeOffset.FromUnixTimeMilliseconds(timestamp).ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss");
+
+                }
+                else
+                {
+
+                    ExportTime = DateTimeOffset.FromUnixTimeSeconds(timestamp).ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss");
+                }
+            }
         }
         if (baseNode?["list"] is JsonNode listNode)
         {
@@ -199,6 +218,20 @@ public sealed partial class ImportAchievementPage : Page
                     using var dapper = DatabaseProvider.CreateConnection();
                     dapper.Execute("INSERT OR REPLACE INTO AchievementData (Uid, Id, Current, Status, FinishedTime, LastUpdateTime) VALUES (@Uid, @Id, @Current, @Status, @FinishedTime, @LastUpdateTime);", achievementDatas);
                     c_Button_Import.Content = "导入完成";
+                    var instance = AppInstance.FindOrRegisterForKey("Main");
+                    if (instance.IsCurrent)
+                    {
+                        instance.UnregisterKey();
+                    }
+                    else
+                    {
+                        if (await Launcher.LaunchUriAsync(new Uri($"xunkong://post-message/{ProtocolMessage.ChangeSelectedUidInAchievementPage}?caller=Xunkong&uid={uid}")))
+                        {
+                            await Task.Delay(1000);
+                            Environment.Exit(0);
+                        }
+
+                    }
                 }
             }
         }

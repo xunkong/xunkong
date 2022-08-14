@@ -37,11 +37,16 @@ public sealed partial class ToolWindow : Window
     public DisplayArea DisplayArea => DisplayArea.GetFromWindowId(Win32Interop.GetWindowIdFromWindow(HWND), DisplayAreaFallback.Primary);
 
 
+    /// <summary>
+    /// 参数解析失败
+    /// </summary>
     public ToolWindow()
     {
         Current = this;
         this.InitializeComponent();
         InitializeWindow();
+        ResizeToCenter(360, 480);
+        c_StackPanel_Error.Visibility = Visibility.Visible;
     }
 
     public ToolWindow(AppActivationArguments e)

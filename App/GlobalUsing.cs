@@ -1,5 +1,6 @@
 ﻿global using CommunityToolkit.Mvvm.ComponentModel;
 global using CommunityToolkit.Mvvm.Input;
+global using CommunityToolkit.Mvvm.Messaging;
 global using Dapper;
 global using Mapster;
 global using System;
@@ -10,5 +11,6 @@ global using System.Text.Json;
 global using System.Threading.Tasks;
 global using Xunkong.Core;
 global using Xunkong.Desktop.Helpers;
+global using Xunkong.Desktop.Messages;
 global using Xunkong.Desktop.Models;
 global using Xunkong.Desktop.Services;

@@ -396,7 +396,8 @@
                                                        Foreground="{ThemeResource ItemGridTitleBrush}"
                                                        IsTextSelectionEnabled="True"
                                                        Text="{x:Bind Title}" />
-                                            <TextBlock HorizontalAlignment="Left"
+                                            <TextBlock Margin="0,0,80,0"
+                                                       HorizontalAlignment="Left"
                                                        FontFamily="楷体"
                                                        FontSize="14"
                                                        FontWeight="SemiBold"
@@ -406,7 +407,7 @@
                                                        TextWrapping="Wrap" />
                                         </StackPanel>
                                         <!--  备注  -->
-                                        <TextBlock Margin="0,0,0,4"
+                                        <TextBlock Margin="0,0,80,4"
                                                    HorizontalAlignment="Left"
                                                    VerticalAlignment="Bottom"
                                                    FontFamily="楷体"
@@ -598,7 +599,7 @@
 
                 <StackPanel Grid.Row="1" Spacing="8">
                     <TextBlock FontSize="20">
-                        <Run FontFamily="{ThemeResource SymbolThemeFontFamily}" Text="&#xE118;" />
+                        <Run FontFamily="{ThemeResource SymbolThemeFontFamily}" Text="&#xE72D;" />
                         <Run Text="导入" />
                     </TextBlock>
                     <TextBlock Text="支持统一可交换成就标准 v1.0" />
@@ -612,16 +613,19 @@
                         <Run Text="{x:Bind UiafVersion}" />
                     </TextBlock>
                     <TextBlock>
-                        <Run Text="成就数量：" />
+                        <Run Text="导入的成就数量：" />
                         <Run Text="{x:Bind ImportAchievementCount}" />
                     </TextBlock>
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <TextBlock VerticalAlignment="Center" Text="Uid：" />
+                        <TextBlock VerticalAlignment="Center" Text="导入数据的 Uid：" />
                         <TextBox x:Name="c_TextBox_ImportUid"
                                  Width="120"
                                  PlaceholderText="请输入 uid" />
                     </StackPanel>
-                    <Button Command="{x:Bind ImportAchievementDataCommand}" Content="导入" />
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <Button Command="{x:Bind ImportAchievementDataCommand, Mode=OneTime}" Content="导入" />
+                        <Button Command="{x:Bind ExportAchievementDataCommand, Mode=OneTime}" Content="导出" />
+                    </StackPanel>
                     <Grid Height="200" Margin="0,12,0,0">
                         <Rectangle x:Name="c_Rect_DropFile"
                                    AllowDrop="True"
@@ -647,33 +651,28 @@
                     <MenuFlyoutSeparator Height="40" />
 
                     <TextBlock FontSize="20">
-                        <Run FontFamily="{ThemeResource SymbolThemeFontFamily}" Text="&#xE72D;" />
-                        <Run Text="导出" />
+                        <Run FontFamily="{ThemeResource SymbolThemeFontFamily}" Text="&#xE8FA;" />
+                        <Run Text="添加删除" />
                     </TextBlock>
-                    <Button Command="{x:Bind ExportAchievementDataCommand, Mode=OneTime}" Content="导出" />
-
-                    <MenuFlyoutSeparator Height="40" />
-
-                    <TextBlock FontSize="20">
-                        <Run FontFamily="{ThemeResource SymbolThemeFontFamily}" Text="&#xE74D;" />
-                        <Run Text="删除" />
-                    </TextBlock>
-                    <Button Content="删除">
-                        <Button.Flyout>
-                            <Flyout>
-                                <StackPanel Orientation="Horizontal" Spacing="16">
-                                    <TextBlock VerticalAlignment="Center" Foreground="{ThemeResource SystemFillColorCautionBrush}">
-                                        <Run Text="删除 Uid" />
-                                        <Run Text="{x:Bind SelectedUid}" />
-                                        <Run Text="的所有成就数据？" />
-                                    </TextBlock>
-                                    <Button Command="{x:Bind DeleteCommand}"
-                                            Content="确认删除"
-                                            Foreground="{ThemeResource SystemFillColorCautionBrush}" />
-                                </StackPanel>
-                            </Flyout>
-                        </Button.Flyout>
-                    </Button>
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <Button Command="{x:Bind AddUidCommand, Mode=OneTime}" Content="添加 Uid" />
+                        <Button Content="删除 Uid">
+                            <Button.Flyout>
+                                <Flyout>
+                                    <StackPanel Orientation="Horizontal" Spacing="16">
+                                        <TextBlock VerticalAlignment="Center" Foreground="{ThemeResource SystemFillColorCautionBrush}">
+                                            <Run Text="删除 Uid" />
+                                            <Run Text="{x:Bind SelectedUid}" />
+                                            <Run Text="的所有成就数据？" />
+                                        </TextBlock>
+                                        <Button Command="{x:Bind DeleteCommand}"
+                                                Content="确认删除"
+                                                Foreground="{ThemeResource SystemFillColorCautionBrush}" />
+                                    </StackPanel>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+                    </StackPanel>
                 </StackPanel>
             </ScrollViewer>
 

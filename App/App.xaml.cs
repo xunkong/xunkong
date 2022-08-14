@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
+using System.Web;
 using Windows.ApplicationModel.Activation;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -83,65 +84,89 @@ public partial class App : Application
 
     private async void HandleActivationEvent(AppActivationArguments e, AppInstance? firstInstance = null)
     {
-        bool handled = false;
-        if (e.Kind != ExtendedActivationKind.Launch)
+        if (firstInstance is null)
         {
-            // 启动方式不为 Launch
-
-            if (e.Kind == ExtendedActivationKind.Protocol || e.Kind == ExtendedActivationKind.ProtocolForResults)
+            // 重定向后
+            if (mainWindow is null)
+            {
+                Environment.Exit(0);
+            }
+            else
+            {
+                mainWindow.DispatcherQueue.TryEnqueue(mainWindow.MoveToTop);
+            }
+            if (e.Kind == ExtendedActivationKind.Protocol)
             {
                 // 协议启动
                 if (e.Data is IProtocolActivatedEventArgs args)
                 {
-                    if (args.Uri.Host.ToLower() is "get-cookie" or "import-achievement")
+                    if (args.Uri.Host.ToLower() is "post-message")
                     {
-                        toolWindow = new ToolWindow(e);
-                        toolWindow.Activate();
-                        handled = true;
+                        try
+                        {
+                            var id = args.Uri.AbsolutePath.Replace("/", "");
+                            var query = HttpUtility.ParseQueryString(args.Uri.Query);
+                            var message = new ProtocolMessage { Message = id };
+                            foreach (var key in query.AllKeys)
+                            {
+                                message.Data.Add(key!, query[key]!);
+                            }
+                            mainWindow.DispatcherQueue.TryEnqueue(() => WeakReferenceMessenger.Default.Send(message));
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error(ex, "处理重定向后 post-massage 协议");
+                        }
                     }
                 }
             }
         }
-
-        if (handled)
-        {
-            // 已处理完协议
-            if (firstInstance?.IsCurrent ?? false)
-            {
-                // 如果当前进程为第一个启动的进程，注销主窗口标记
-                firstInstance?.UnregisterKey();
-            }
-        }
         else
         {
-            // 未处理协议，或处理失败
-            if (firstInstance == null)
+            // 重定向前, firstInstance.Key 一定是 Main
+            if (e.Kind == ExtendedActivationKind.Launch)
             {
-                // 通过 OnActived 激活，则当前为已重定向后的进程
-                if (mainWindow is null)
-                {
-                    Environment.Exit(0);
-                }
-                else
-                {
-                    mainWindow.DispatcherQueue.TryEnqueue(mainWindow.SetForeground);
-                }
+                // firstInstance.IsCurrent ，若不是，之前已经重定向过了
+                firstInstance.Activated += OnActivated;
+                mainWindow = new MainWindow();
+                mainWindow.Activate();
+
             }
             else
             {
-                // 通过 OnLaunch 激活，当前进程为重定向前的进程
+                bool handled = false;
                 if (firstInstance.IsCurrent)
                 {
-                    // 是第一次打开的进程
-                    firstInstance.Activated += OnActivated;
-                    mainWindow = new MainWindow();
-                    mainWindow.Activate();
+                    firstInstance.UnregisterKey();
+                }
+                if (e.Kind == ExtendedActivationKind.Protocol)
+                {
+                    // 协议启动
+                    if (e.Data is IProtocolActivatedEventArgs args)
+                    {
+                        if (args.Uri.Host.ToLower() is "get-cookie" or "import-achievement")
+                        {
+                            toolWindow = new ToolWindow(e);
+                            toolWindow.Activate();
+                            handled = true;
+                        }
+                        if (args.Uri.Host.ToLower() is "post-message")
+                        {
+                            await firstInstance.RedirectActivationToAsync(e);
+                            // 直接退出，如果没窗口，还发啥消息
+                            Environment.Exit(0);
+                        }
+                    }
+                }
+                if (handled)
+                {
+                    return;
                 }
                 else
                 {
-                    // 不是第一次打开的进程，重定向到第一次打开的进程
-                    await firstInstance.RedirectActivationToAsync(e);
-                    Environment.Exit(0);
+                    // 协议参数解析失败
+                    toolWindow = new ToolWindow();
+                    toolWindow.Activate();
                 }
             }
         }

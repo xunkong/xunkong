@@ -24,7 +24,7 @@
         <StackPanel HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Spacing="8">
-            <xdc:CachedImage Width="160" Source="{x:Bind Image}" />
+            <xdc:CachedImage Width="160" Source="{x:Bind Goal.IconPath}" />
             <TextBlock HorizontalAlignment="Center"
                        FontSize="20"
                        FontWeight="Bold"
@@ -34,10 +34,22 @@
                        FontSize="28"
                        FontWeight="Bold"
                        Foreground="#FFFFFF"
-                       Text="{x:Bind Title}" />
+                       Text="{x:Bind Goal.Name}" />
             <xdc:CachedImage Width="200"
-                             Margin="0,-16,0,0"
-                             Source="{x:Bind NameCard}" />
+                             Margin="0,-16,0,-32"
+                             Source="{x:Bind Goal.RewardNameCard.Icon}" />
+            <TextBlock HorizontalAlignment="Center"
+                       FontSize="16"
+                       FontWeight="Bold"
+                       Foreground="#DDCBB7"
+                       Text="{x:Bind Goal.RewardNameCard.Name}" />
+            <TextBlock Margin="96,0,96,0"
+                       HorizontalAlignment="Center"
+                       FontSize="14"
+                       FontWeight="Bold"
+                       Foreground="#FFFFFF"
+                       Text="{x:Bind NameCardDescription}"
+                       TextWrapping="Wrap" />
         </StackPanel>
         <TextBlock Margin="0,0,0,48"
                    HorizontalAlignment="Center"

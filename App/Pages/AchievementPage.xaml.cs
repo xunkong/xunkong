@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Numerics;
@@ -15,6 +16,7 @@ using Windows.Storage.Pickers;
 using Windows.UI;
 using WinRT.Interop;
 using Xunkong.Desktop.Controls;
+
 using Xunkong.GenshinData.Achievement;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -38,12 +40,43 @@ public sealed partial class AchievementPage : Page
     public AchievementPage()
     {
         this.InitializeComponent();
+        WeakReferenceMessenger.Default.Register<ProtocolMessage>(this, (_, e) => HandleProtocolMessage(e));
         Loaded += AchievementPage_Loaded;
     }
 
 
+    /// <summary>
+    /// 协议消息处理方法
+    /// </summary>
+    /// <param name="e"></param>
+    private void HandleProtocolMessage(ProtocolMessage e)
+    {
+        if (e.Message == ProtocolMessage.ChangeSelectedUidInAchievementPage)
+        {
+            if (int.TryParse(e.Data.GetValueOrDefault("uid"), out int uid))
+            {
+                if (uid > 0)
+                {
+                    var lastSelctedUid = SelectedUid;
+                    SelectedUid = uid;
+                    if (!Uids.Contains(uid))
+                    {
+                        Uids.Add(uid);
+                    }
+                    c_ComboBox_Uids.SelectedValue = SelectedUid;
+                    // 手动刷新页面
+                    if (lastSelctedUid == SelectedUid)
+                    {
+                        OnSelectedUidChanged(selectedUid);
+                    }
+                }
+            }
+        }
+    }
+
+
     [ObservableProperty]
-    private List<int> uids;
+    private ObservableCollection<int> uids;
 
     [ObservableProperty]
     private int selectedUid;
@@ -98,22 +131,26 @@ public sealed partial class AchievementPage : Page
     {
         try
         {
-            Uids = LoadAchievementUids();
-            if (UserSetting.TryGetValue(SettingKeys.LastSelectedUidInAchievementPage, out int uid))
+            Uids = new(LoadAchievementUids());
+            var lastSelectedUid = SelectedUid;
+            if (UserSetting.TryGetValue(SettingKeys.LastSelectedUidInAchievementPage, out int uid) && Uids.Contains(uid))
             {
-                selectedUid = uid;
+                SelectedUid = uid;
             }
             else
             {
-                selectedUid = Uids.FirstOrDefault();
+                SelectedUid = Uids.FirstOrDefault();
             }
             if (selectedUid > 0)
             {
-                c_ComboBox_Uids.SelectedValue = selectedUid;
+                c_ComboBox_Uids.SelectedValue = SelectedUid;
             }
             // 手动刷新页面
-            OnSelectedUidChanged(selectedUid);
+            if (lastSelectedUid == SelectedUid)
+            {
 
+                OnSelectedUidChanged(selectedUid);
+            }
         }
         catch (Exception ex)
         {
@@ -392,30 +429,14 @@ public sealed partial class AchievementPage : Page
     {
         if (SelectedUid == 0)
         {
-            var text = new TextBox();
-            var dialog = new ContentDialog
+            var uid = await OpenAddUidDialogAsync();
+            if (uid == 0)
             {
-                Title = "请输入 Uid",
-                Content = text,
-                PrimaryButtonText = "确认",
-                SecondaryButtonText = "取消",
-                DefaultButton = ContentDialogButton.Primary,
-                XamlRoot = MainWindow.Current.XamlRoot,
-            };
-            if (await dialog.ShowAsync() == ContentDialogResult.Primary)
-            {
-                if (int.TryParse(text.Text, out int uid))
-                {
-                    SelectedUid = uid;
-                }
-                else
-                {
-                    return;
-                }
+                return;
             }
             else
             {
-                return;
+                SelectedUid = uid;
             }
         }
         editable = !editable;
@@ -425,6 +446,40 @@ public sealed partial class AchievementPage : Page
             {
                 item.Editable = editable;
             }
+        }
+    }
+
+
+    /// <summary>
+    /// 添加Uid的输入窗口
+    /// </summary>
+    /// <returns></returns>
+    private async Task<int> OpenAddUidDialogAsync()
+    {
+        var text = new TextBox();
+        var dialog = new ContentDialog
+        {
+            Title = "请输入 Uid",
+            Content = text,
+            PrimaryButtonText = "确认",
+            SecondaryButtonText = "取消",
+            DefaultButton = ContentDialogButton.Primary,
+            XamlRoot = MainWindow.Current.XamlRoot,
+        };
+        if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+        {
+            if (int.TryParse(text.Text, out int uid))
+            {
+                return uid;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        else
+        {
+            return 0;
         }
     }
 
@@ -635,7 +690,7 @@ public sealed partial class AchievementPage : Page
                     if (goal.Current == goal.Total)
                     {
                         goal.FinishedTime = DateTimeOffset.Now;
-                        MainWindow.Current.SetFullWindowContent(new AchievementGoalFinishedPush(goal.Name, goal.IconPath, goal.RewardNameCard?.Icon));
+                        MainWindow.Current.SetFullWindowContent(new AchievementGoalFinishedPush(goal));
                     }
                     else
                     {
@@ -833,7 +888,7 @@ public sealed partial class AchievementPage : Page
                     }
                     using var dapper = DatabaseProvider.CreateConnection();
                     dapper.Execute("INSERT OR REPLACE INTO AchievementData (Uid, Id, Current, Status, FinishedTime, LastUpdateTime) VALUES (@Uid, @Id, @Current, @Status, @FinishedTime, @LastUpdateTime);", importAchievementDatas);
-                    NotificationProvider.Success("导入完成");
+                    NotificationProvider.Success("导入完成", $"已为 Uid {uid} 导入成就数据 {importAchievementCount} 条");
                 }
             }
         }
@@ -863,23 +918,50 @@ public sealed partial class AchievementPage : Page
             {
                 var obj = new
                 {
-                    export_app = "Xunkong",
-                    export_app_version = XunkongEnvironment.AppVersion.ToString(),
-                    uiaf_version = "v1.0",
-                    export_timestamp = DateTimeOffset.Now.ToUnixTimeSeconds(),
+                    info = new
+                    {
+                        export_app = "Xunkong",
+                        export_app_version = XunkongEnvironment.AppVersion.ToString(),
+                        uiaf_version = "v1.0",
+                        export_timestamp = DateTimeOffset.Now.ToUnixTimeSeconds(),
+                    },
                     list = list
                 };
                 var text = JsonSerializer.Serialize(obj, new JsonSerializerOptions { WriteIndented = true });
-                var filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), $@"Xunkong\Export\Achievement\achievement_{SelectedUid}_{DateTimeOffset.Now:yyyyMMdd_HHmmss}.xlsx");
+                var filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), $@"Xunkong\Export\Achievement\achievement_{SelectedUid}_{DateTimeOffset.Now:yyyyMMdd_HHmmss}.json");
                 Directory.CreateDirectory(Path.GetDirectoryName(filename)!);
                 await File.WriteAllTextAsync(filename, text);
                 Action action = () => Process.Start(new ProcessStartInfo { FileName = Path.GetDirectoryName(filename), UseShellExecute = true });
-                NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "导出完成", null, "打开文件夹", action);
+                NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "导出完成", $"已导出 Uid {SelectedUid} 的所有成就", "打开文件夹", action);
             }
         }
         catch (Exception ex)
         {
             Logger.Error(ex, "导出成就");
+        }
+    }
+
+
+    /// <summary>
+    /// 添加 Uid
+    /// </summary>
+    /// <returns></returns>
+    [RelayCommand]
+    private async Task AddUidAsync()
+    {
+        var uid = await OpenAddUidDialogAsync();
+        if (uid == 0)
+        {
+            return;
+        }
+        else
+        {
+            if (Uids != null && !Uids.Contains(uid))
+            {
+                Uids.Add(uid);
+            }
+            c_ComboBox_Uids.SelectedValue = uid;
+            SelectedUid = uid;
         }
     }
 
@@ -898,7 +980,7 @@ public sealed partial class AchievementPage : Page
             }
             using var dapper = DatabaseProvider.CreateConnection();
             dapper.Execute("DELETE FROM AchievementData WHERE Uid=@Uid;", new { Uid = SelectedUid });
-            NotificationProvider.Success("删除完成");
+            NotificationProvider.Success("删除完成", $"已删除 Uid {SelectedUid} 的所有成就");
         }
         catch (Exception ex)
         {

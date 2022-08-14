@@ -50,7 +50,7 @@
                     Spacing="8"
                     Visibility="{x:Bind Error, Converter={StaticResource StringToVisibilityReversedConverter}}">
             <TextBlock>
-                <Run Text="数据来源：" />
+                <Run Text="导出工具：" />
                 <Run Text="{x:Bind ExportApp}" />
                 <Run Text="{x:Bind ExportAppVersion}" />
             </TextBlock>
@@ -62,12 +62,23 @@
                 <Run Text="成就数量：" />
                 <Run Text="{x:Bind AchievementCount}" />
             </TextBlock>
+            <TextBlock>
+                <Run Text="导出时间：" />
+                <Run Text="{x:Bind ExportTime}" />
+            </TextBlock>
             <AutoSuggestBox x:Name="c_AutoSuggestBox_Uid"
                             Width="160"
                             Height="32"
                             HorizontalAlignment="Left"
                             PlaceholderText="请输入 uid"
                             TextChanged="c_AutoSuggestBox_Uid_TextChanged" />
+            <TextBlock>
+                <Run Text="数据来源：" />
+                <Run Text="{x:Bind DataFrom}" />
+            </TextBlock>
+            <TextBlock FontSize="12"
+                       Text="{x:Bind DataParam}"
+                       TextWrapping="Wrap" />
         </StackPanel>
 
 
