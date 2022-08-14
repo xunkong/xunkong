@@ -10,6 +10,7 @@
 - 快速浏览每日素材，活动攻略
 - 查看你的祈愿，原石摩拉，深境螺旋等数据
 - 启动游戏并解锁帧数上限
+- 成就管理
 - ……
 
 ## 安装
@@ -67,13 +68,17 @@
 - [AngleSharp](https://github.com/AngleSharp/AngleSharp)
 - [WindowsCommunityToolkit](https://github.com/CommunityToolkit/WindowsCommunityToolkit)
 - [Dapper](https://github.com/DapperLib/Dapper)
+- [GenshinData](https://github.com/Dimbreath/GenshinData)
 - [LiteDB](https://github.com/mbdavid/LiteDB)
 - [Mapster](https://github.com/MapsterMapper/Mapster)
 - [WindowsAppSDK](https://github.com/microsoft/WindowsAppSDK)
 - [MiniExcel](https://github.com/MiniExcel/MiniExcel)
 - [Octokit](https://github.com/octokit/octokit.net)
+- [PixivApi](https://github.com/Scighost/PixivApi)
 - [Serilog](https://github.com/serilog/serilog)
+- [Snap Genshin](https://github.com/DGP-Studio/Snap.Genshin)
 - [Vanara](https://github.com/dahall/Vanara)
+- [YaeAchievement](https://github.com/HolographicHat/YaeAchievement)
 
 感谢 [Twitter@心臓弱眞君](https://twitter.com/xinzoruo)、[Pixiv@Sigrixxx](https://www.pixiv.net/users/7861320) 以及所有为原神创作同人图的画师们。
 
