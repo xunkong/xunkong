@@ -27,7 +27,7 @@ internal static class NotificationProvider
         {
             return;
         }
-        _container.DispatcherQueue.TryEnqueue(() =>
+        _container.DispatcherQueue?.TryEnqueue(() =>
         {
             var c = _container.Children;
             foreach (var item in c)
@@ -48,7 +48,7 @@ internal static class NotificationProvider
         {
             return;
         }
-        _container.DispatcherQueue.TryEnqueue(async () =>
+        _container.DispatcherQueue?.TryEnqueue(async () =>
         {
             var infoBar = new InfoBar
             {

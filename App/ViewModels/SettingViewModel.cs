@@ -1,5 +1,4 @@
 ﻿using AngleSharp;
-using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.UI;
 using System.Collections.ObjectModel;
 using System.Net.Http;
@@ -8,7 +7,6 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.System;
 using WinRT.Interop;
-using Xunkong.Desktop.Messages;
 using Xunkong.GenshinData.Character;
 using Xunkong.GenshinData.Weapon;
 
@@ -29,7 +27,7 @@ internal partial class SettingViewModel : ObservableObject
 
 
 
-    public string AppName => XunkongEnvironment.IsStoreVersion ? "寻空 商店版" : "寻空 侧载版";
+    public string AppName => XunkongEnvironment.AppName;
 
     public string AppVersion => XunkongEnvironment.AppVersion.ToString();
 

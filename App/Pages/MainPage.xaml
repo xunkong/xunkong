@@ -222,20 +222,24 @@
                         <BitmapIcon ShowAsMonochrome="True" UriSource="ms-appx:///Assets/Images/Ui_SystemOpenIcon_Gacha_Small.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="角色信息"
-                                    Icon="Contact"
-                                    Tag="CharacterInfoPage" />
-                <NavigationViewItem Content="旅行札记"
-                                    Icon="PhoneBook"
-                                    Tag="TravelNotesPage" />
+                <NavigationViewItem Content="角色信息" Tag="CharacterInfoPage">
+                    <NavigationViewItem.Icon>
+                        <BitmapIcon ShowAsMonochrome="True" UriSource="ms-appx:///Assets/Images/SpriteUI_BagTabIcon_Avatar.png" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="旅行札记" Tag="TravelNotesPage">
+                    <NavigationViewItem.Icon>
+                        <BitmapIcon ShowAsMonochrome="True" UriSource="ms-appx:///Assets/Images/SpriteUI_BtnIcon_CharacterData.png" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItem Content="深境螺旋" Tag="SpiralAbyssPage">
                     <NavigationViewItem.Icon>
-                        <BitmapIcon ShowAsMonochrome="True" UriSource="ms-appx:///Assets/Images/UI_Icon_Tower_Star_Dark.png" />
+                        <BitmapIcon ShowAsMonochrome="True" UriSource="ms-appx:///Assets/Images/SpriteUI_Icon_Tower_Star.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Content="成就管理" Tag="AchievementPage">
                     <NavigationViewItem.Icon>
-                        <BitmapIcon ShowAsMonochrome="True" UriSource="ms-appx:///Assets/Images/UI_Icon_Achievement.png" />
+                        <BitmapIcon ShowAsMonochrome="True" UriSource="ms-appx:///Assets/Images/SpriteUI_Icon_Achievement.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>

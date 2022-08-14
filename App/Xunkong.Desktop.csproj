@@ -13,10 +13,6 @@
 		<DefineConstants>DISABLE_XAML_GENERATED_MAIN</DefineConstants>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)' != 'Debug'">
-		<PublishReadyToRun>True</PublishReadyToRun>
-	</PropertyGroup>
-
 	<ItemGroup>
 		<PackageReference Include="AngleSharp" Version="0.17.1" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />

@@ -30,7 +30,7 @@ internal static class XunkongEnvironment
     {
         PackageId = Package.Current.Id.FullName;
         IsStoreVersion = PackageId.StartsWith("40418Scighost");
-        AppName = $"{Package.Current.DisplayName} {(IsStoreVersion ? " 商店版" : " 侧载版")}";
+        AppName = Package.Current.DisplayName;
         var v = Package.Current.Id.Version;
         AppVersion = new Version(v.Major, v.Minor, v.Build, v.Revision);
         Platform = PlatformType.Desktop;

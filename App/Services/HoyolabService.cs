@@ -221,14 +221,8 @@ internal class HoyolabService
             // 今日已签到，并且有记录
             return false;
         }
-        var signInfo = await _hoyolabClient.GetSignInInfoAsync(role);
-        bool result = false;
-        if (!signInfo.IsSign)
-        {
-            // 签到
-            await _hoyolabClient.SignInAsync(role);
-            result = true;
-        }
+        // 签到
+        bool result = await _hoyolabClient.SignInAsync(role);
         dapper.Execute("INSERT INTO DailySignInHistory (Uid, Date, Time) VALUES (@Uid, @Date, @Time);", new { Uid = role.Uid, Date = nowDate, Time = DateTimeOffset.Now });
         return result;
     }

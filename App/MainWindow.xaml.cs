@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI;
+﻿using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -9,7 +8,6 @@ using System.Runtime.InteropServices;
 using Vanara.PInvoke;
 using Windows.Graphics;
 using WinRT.Interop;
-using Xunkong.Desktop.Messages;
 using Xunkong.Desktop.Pages;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -52,12 +50,12 @@ public sealed partial class MainWindow : Window
         if (shown)
         {
 #endif
-        Navigate(typeof(MainPage));
+        RootFrame.Content = new MainPage();
 #if !DEBUG
         }
         else
         {
-            Navigate(typeof(WelcomPage));
+            RootFrame.Content = new WelcomPage();
         }
 #endif
     }
@@ -206,8 +204,9 @@ public sealed partial class MainWindow : Window
     }
 
 
-    public void SetForeground()
+    public void MoveToTop()
     {
+        User32.ShowWindow(HWND, ShowWindowCommand.SW_SHOWDEFAULT);
         User32.SetForegroundWindow(HWND);
     }
 
