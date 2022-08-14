@@ -9,7 +9,7 @@
         <TextBlock Foreground="{ThemeResource SystemFillColorCriticalBrush}" TextWrapping="Wrap">
             <Run Text="寻空使用" />
             <Hyperlink NavigateUri="https://github.com/HolographicHat/YaeAchievement" UnderlineStyle="None">YaeAchievement</Hyperlink>
-            <Run Text="获取成就数据，此工具将 DLL 注入到原神进程后拦截数据包，有非常高的风险，可能会被检测为第三方工具导致封号。" />
+            <Run Text="获取成就数据，此工具将 DLL 注入到原神进程后转发数据包，有非常高的风险，可能会被检测为第三方工具导致封号。" />
         </TextBlock>
         <TextBlock TextWrapping="Wrap">
             <Run Text="您也可以选择使用其他更安全的支持" />

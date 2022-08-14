@@ -10,10 +10,10 @@
 	<Identity
 	  Name="Xunkong.Desktop.Package"
 	  Publisher="CN=Xunkong by Scighost"
-	  Version="1.0.6.0" />
+	  Version="1.1.0.0" />
 
 	<Properties>
-		<DisplayName>寻空</DisplayName>
+		<DisplayName>寻空 侧载版</DisplayName>
 		<PublisherDisplayName>Scighost</PublisherDisplayName>
 		<Logo>Assets\Logos\StoreLogo.png</Logo>
 	</Properties>
@@ -32,7 +32,7 @@
 		  Executable="$targetnametoken$.exe"
 		  EntryPoint="$targetentrypoint$">
 			<uap:VisualElements
-			  DisplayName="寻空"
+			  DisplayName="寻空 侧载版"
 			  Description="Scighost 的原神工具箱"
 			  BackgroundColor="transparent"
 			  Square150x150Logo="Assets\Logos\Square150x150Logo.png"
@@ -57,6 +57,11 @@
 						<desktop:ParameterGroup GroupId="HoyolabCheckInTask" Parameters="HoyolabCheckInTask"/>
 					</desktop:FullTrustProcess>
 				</desktop:Extension>
+				<uap:Extension Category="windows.protocol">
+					<uap:Protocol Name="xunkong" ReturnResults="optional">
+						<uap:DisplayName>寻空</uap:DisplayName>
+					</uap:Protocol>
+				</uap:Extension>
 			</Extensions>
 		</Application>
 	</Applications>
