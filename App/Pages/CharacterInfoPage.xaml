@@ -228,7 +228,8 @@
 
 
             <!--  左侧角色列表  -->
-            <Grid Grid.Row="1"
+            <Grid x:Name="c_Grid_LeftCharacterPanel"
+                  Grid.Row="1"
                   Width="480"
                   Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
                   Canvas.ZIndex="1"
@@ -240,7 +241,7 @@
 
                 <Grid Grid.Row="1"
                       Height="48"
-                      Margin="24,0,24,0">
+                      Margin="24,0,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
@@ -248,7 +249,7 @@
                     <TextBlock VerticalAlignment="Center" Text="拖动排序：" />
                     <GridView x:Name="c_GridView_Reorder"
                               Grid.Column="1"
-                              Margin="16,2,0,0"
+                              Margin="12,2,0,0"
                               AllowDrop="True"
                               CanDragItems="True"
                               CanReorderItems="True"
@@ -570,7 +571,33 @@
 
         </Grid>
 
-
-
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="c_Grid_LeftCharacterPanel.Width" Value="312" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1280" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="c_Grid_LeftCharacterPanel.Width" Value="400" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1600" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="c_Grid_LeftCharacterPanel.Width" Value="480" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>
