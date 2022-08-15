@@ -79,7 +79,7 @@ public partial class AchievementPageModel_Item : AchievementItem
 
     public string LastUpdateTimeString => LastUpdateTime > StartTime ? LastUpdateTime.ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss") : "";
 
-    public bool ShowNumberBox => !IsDeleteWatcherAfterFinish;
+    public bool ShowNumberBox => IsFinish ? !IsDeleteWatcherAfterFinish : Progress > 1;
 
 
     public string Icon => (MaxStar, CurrentStar, IsFinish) switch
