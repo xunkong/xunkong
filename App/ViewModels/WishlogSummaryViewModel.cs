@@ -414,8 +414,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = MainWindow.Current.XamlRoot,
         };
-        var result = await dialog.ShowAsync();
-        if (result == ContentDialogResult.Primary && !string.IsNullOrWhiteSpace(textBox.Text))
+        if (await dialog.ShowWithZeroMarginAsync() == ContentDialogResult.Primary && !string.IsNullOrWhiteSpace(textBox.Text))
         {
             IsLoading = true;
             await Task.Delay(100);
@@ -472,8 +471,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = MainWindow.Current.XamlRoot,
         };
-        var result = await dialog.ShowAsync();
-        if (result == ContentDialogResult.Primary)
+        if (await dialog.ShowWithZeroMarginAsync() == ContentDialogResult.Primary)
         {
             AppSetting.SetValue(SettingKeys.WishlogBackupAgreement, true);
             return true;
@@ -643,8 +641,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
                     DefaultButton = ContentDialogButton.Close,
                     XamlRoot = MainWindow.Current.XamlRoot,
                 };
-                var dialogResult = await dialog.ShowAsync();
-                if (dialogResult != ContentDialogResult.Primary)
+                if (await dialog.ShowWithZeroMarginAsync() != ContentDialogResult.Primary)
                 {
                     return;
                 }

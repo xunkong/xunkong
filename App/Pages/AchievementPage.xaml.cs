@@ -387,7 +387,7 @@ public sealed partial class AchievementPage : Page
                 DefaultButton = ContentDialogButton.Secondary,
                 XamlRoot = MainWindow.Current.XamlRoot,
             };
-            if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+            if (await dialog.ShowWithZeroMarginAsync() == ContentDialogResult.Primary)
             {
                 if (InvokeService.IsGameRunning())
                 {
@@ -479,7 +479,7 @@ public sealed partial class AchievementPage : Page
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = MainWindow.Current.XamlRoot,
         };
-        if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+        if (await dialog.ShowWithZeroMarginAsync() == ContentDialogResult.Primary)
         {
             if (int.TryParse(text.Text, out int uid))
             {

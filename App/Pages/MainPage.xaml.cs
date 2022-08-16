@@ -487,8 +487,7 @@ public sealed partial class MainPage : Page
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = MainWindow.Current.XamlRoot,
         };
-        var result = await dialog.ShowAsync();
-        if (result is ContentDialogResult.Primary)
+        if (await dialog.ShowWithZeroMarginAsync() is ContentDialogResult.Primary)
         {
             var cookie = textBox.Text;
             if (string.IsNullOrWhiteSpace(cookie))
@@ -596,8 +595,7 @@ public sealed partial class MainPage : Page
                 DefaultButton = ContentDialogButton.Secondary,
                 XamlRoot = MainWindow.Current.XamlRoot,
             };
-            var result = await dialog.ShowAsync();
-            if (result is ContentDialogResult.Primary)
+            if (await dialog.ShowWithZeroMarginAsync() is ContentDialogResult.Primary)
             {
                 try
                 {

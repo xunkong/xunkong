@@ -33,11 +33,14 @@ public sealed partial class TravelNotesPage : Page
     {
         this.InitializeComponent();
         _hoyolabService = ServiceProvider.GetService<HoyolabService>()!;
-        Loaded += async (_, _) => await InitializeDataAsync();
+        Loaded += TravelNotesPage_Loaded;
     }
 
-
-
+    private async void TravelNotesPage_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        await Task.Delay(100);
+        await InitializeDataAsync();
+    }
 
     private void SfCartesianChart_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
     {
@@ -128,7 +131,6 @@ public sealed partial class TravelNotesPage : Page
     public async Task InitializeDataAsync()
     {
         IsLoading = true;
-        await Task.Delay(100);
         try
         {
             var role = _hoyolabService.GetLastSelectedOrFirstGenshinRoleInfo();

@@ -79,14 +79,7 @@ public sealed partial class ImportAchievementPage : Page
             c_TextBlock_Title.Text = "导入成就";
             c_TextBlock_Caller.Text = $"调用方：{(string.IsNullOrWhiteSpace(caller) ? "未知" : caller)}";
             DataFrom = qc["from"]?.ToString();
-            if (DataFrom == "file")
-            {
-                DataParam = qc["path"]?.ToString().Replace("\"", "").Trim();
-            }
-            if (DataFrom == "web")
-            {
-                DataParam = qc["url"]?.ToString().Replace("\"", "").Trim();
-            }
+            DataParam = qc["param"]?.ToString().Replace("\"", "").Trim();
         }
     }
 
