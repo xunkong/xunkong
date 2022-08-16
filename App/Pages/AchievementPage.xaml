@@ -39,7 +39,7 @@
 
 
         <!--  工具栏  -->
-        <Grid Grid.ColumnSpan="2" Margin="48,0,48,0">
+        <Grid Grid.ColumnSpan="2" Margin="24,0,24,0">
             <Image Width="48"
                    Height="48"
                    HorizontalAlignment="Left"
@@ -51,17 +51,33 @@
                        FontSize="20"
                        Foreground="{ThemeResource ItemGridFinishedCountBrush}"
                        Text="成就" />
-            <TextBlock Margin="120,0,0,0"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Center"
-                       FontSize="20"
-                       Foreground="{ThemeResource ItemGridFinishedCountBrush}">
-                <Run Text="{x:Bind FinishedCount}" /><Run Text="/" /><Run Text="{x:Bind TotalCount}" />
-            </TextBlock>
+            <StackPanel Margin="120,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="8"
+                        Visibility="{x:Bind AchievementGoals, Converter={StaticResource ObjectToVisibilityConverter}}">
+                <TextBlock HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           FontSize="20"
+                           Foreground="{ThemeResource ItemGridFinishedCountBrush}">
+                    <Run Text="{x:Bind FinishedCount}" /><Run Text="/" /><Run Text="{x:Bind TotalCount}" />
+                </TextBlock>
+                <Image Width="20"
+                       Margin="4,4,-4,0"
+                       Source="ms-appx:///Assets/Images/UI_ItemIcon_201.png" />
+                <TextBlock Margin="0,4,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           FontSize="14"
+                           Foreground="{ThemeResource ItemGridFinishedCountBrush}">
+                    <Run Text="{x:Bind GotRewardCount}" /><Run Text="/" /><Run Text="{x:Bind TotalRewardCount}" />
+                </TextBlock>
+            </StackPanel>
             <AutoSuggestBox x:Name="c_AutoSuggetBox_Search"
                             Width="300"
                             Height="32"
-                            Margin="300,0,0,0"
+                            Margin="324,0,0,0"
                             HorizontalAlignment="Left"
                             PlaceholderText="请输入成就的名称、说明或 ID"
                             QueryIcon="Find"
@@ -234,7 +250,8 @@
                           Margin="16,0,16,16"
                           Background="{ThemeResource NameCardBackgroundBrush}"
                           BorderBrush="#E0D6CB"
-                          BorderThickness="2">
+                          BorderThickness="2"
+                          Visibility="{x:Bind SelectedGoal, Converter={StaticResource ObjectToVisibilityConverter}}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="100" />
                             <ColumnDefinition />
@@ -283,6 +300,15 @@
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource ItemGridDescriptionBrush}"
                                        Text="达成以下所有成就可领取名片纹饰" />
+                            <TextBlock Margin="0,0,0,12"
+                                       HorizontalAlignment="Right"
+                                       VerticalAlignment="Bottom"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource ItemGridDescriptionBrush}">
+                                <Run FontFamily="楷体" Text="原石奖励" />
+                                <Run Text="{x:Bind SelectedGoal.GotRewardCount}" /><Run Text="/" /><Run Text="{x:Bind SelectedGoal.TotalRewardCount}" />
+                            </TextBlock>
                         </Grid>
 
                         <!--  进度或结果  -->

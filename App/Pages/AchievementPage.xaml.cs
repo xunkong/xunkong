@@ -122,6 +122,18 @@ public sealed partial class AchievementPage : Page
     [ObservableProperty]
     private int finishedCount;
 
+    /// <summary>
+    /// 全部原石奖励
+    /// </summary>
+    [ObservableProperty]
+    private int totalRewardCount;
+
+    /// <summary>
+    /// 已达成的原石奖励
+    /// </summary>
+    [ObservableProperty]
+    private int gotRewardCount;
+
 
     private bool preCached;
 
@@ -189,12 +201,17 @@ public sealed partial class AchievementPage : Page
     }
 
 
-
+    /// <summary>
+    /// Uid 变更时加载新的数据
+    /// </summary>
+    /// <param name="value"></param>
     partial void OnSelectedUidChanged(int value)
     {
         try
         {
             FinishedCount = 0;
+            GotRewardCount = 0;
+            TotalRewardCount = 0;
             editable = false;
             using var liteDb = DatabaseProvider.CreateLiteDB();
             var goals = liteDb.GetCollection<AchievementGoal>().FindAll().Adapt<List<AchievementPageModel_Goal>>();
@@ -262,6 +279,10 @@ public sealed partial class AchievementPage : Page
                 goal.Items = goalItems;
                 goal.Total = goalItems.Count;
                 goal.Current = goalItems.Count(x => x.IsFinish);
+                goal.GotRewardCount = goalItems.Where(x => x.IsFinish).Sum(x => x.RewardCount);
+                goal.TotalRewardCount = goalItems.Sum(x => x.RewardCount);
+                GotRewardCount += goal.GotRewardCount;
+                TotalRewardCount += goal.TotalRewardCount;
                 if (goal.IsFinish)
                 {
                     goal.FinishedTime = goalItems.Max(x => x.FinishedTime)!;
@@ -278,7 +299,6 @@ public sealed partial class AchievementPage : Page
             original_items_dic = items_dic;
             TotalCount = items.Count;
             FinishedCount = items.Count(x => x.IsFinish);
-
         }
         catch (Exception ex)
         {
@@ -515,11 +535,17 @@ public sealed partial class AchievementPage : Page
                 }
                 item.Current = 0;
                 item.Status = newFinish ? 3 : 1;
+                var goal = AchievementGoals.FirstOrDefault(x => x.Id == item.GoalId);
                 if (newFinish)
                 {
                     item.FinishedTime = DateTimeOffset.Now;
                     FinishedCount++;
                     SelectedGoal.Current++;
+                    GotRewardCount += item.RewardCount;
+                    if (goal != null)
+                    {
+                        goal.GotRewardCount += item.RewardCount;
+                    }
                     OnAchievementFinished(item);
                 }
                 else
@@ -527,6 +553,11 @@ public sealed partial class AchievementPage : Page
                     item.FinishedTime = DateTimeOffset.MinValue;
                     FinishedCount--;
                     SelectedGoal.Current--;
+                    GotRewardCount -= item.RewardCount;
+                    if (goal != null)
+                    {
+                        goal.GotRewardCount -= item.RewardCount;
+                    }
                 }
                 SaveAchievementItemStateChanged(item);
             }
@@ -552,7 +583,6 @@ public sealed partial class AchievementPage : Page
                         return;
                     }
 
-                    bool hasNewFinish = false;
 
                     // 找到所有相关成就
                     var list = new List<AchievementPageModel_Item>();
@@ -569,6 +599,8 @@ public sealed partial class AchievementPage : Page
                         list.Add(nextItem);
                         nextId = nextItem.NextAchievementId;
                     }
+
+                    var goal = AchievementGoals.FirstOrDefault(x => x.Id == thisItem.GoalId);
 
                     // 修改属性
                     list = list.OrderBy(x => x.Id).ToList();
@@ -588,7 +620,11 @@ public sealed partial class AchievementPage : Page
                                 item.FinishedTime = DateTimeOffset.Now;
                                 FinishedCount++;
                                 SelectedGoal.Current++;
-                                hasNewFinish = true;
+                                GotRewardCount += item.RewardCount;
+                                if (goal != null)
+                                {
+                                    goal.GotRewardCount += item.RewardCount;
+                                }
                             }
                             else
                             {
@@ -596,15 +632,16 @@ public sealed partial class AchievementPage : Page
                                 item.FinishedTime = DateTimeOffset.MinValue;
                                 FinishedCount--;
                                 SelectedGoal.Current--;
+                                GotRewardCount -= item.RewardCount;
+                                if (goal != null)
+                                {
+                                    goal.GotRewardCount -= item.RewardCount;
+                                }
                             }
                         }
                         SaveAchievementItemStateChanged(item);
                     }
 
-                    if (hasNewFinish)
-                    {
-                        OnAchievementFinished(thisItem);
-                    }
                 }
             }
         }

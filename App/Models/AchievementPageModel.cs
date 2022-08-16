@@ -19,6 +19,12 @@ public partial class AchievementPageModel_Goal : AchievementGoal
     [ObservableProperty]
     private DateTimeOffset finishedTime;
 
+    [ObservableProperty]
+    private int gotRewardCount;
+
+    [ObservableProperty]
+    private int totalRewardCount;
+
     public bool IsFinish => Current >= Total;
 
     public string Progress => $"{(int)((double)Current / Total * 100)}%";
@@ -73,7 +79,7 @@ public partial class AchievementPageModel_Item : AchievementItem
 
     public string FinishedDateString => FinishedTime.ToLocalTime().ToString("yyyy/MM/dd");
 
-    private static DateTimeOffset StartTime = new DateTimeOffset(2020, 9, 1, 0, 0, 0, TimeSpan.Zero);
+    private static DateTimeOffset StartTime = new(2020, 9, 1, 0, 0, 0, TimeSpan.Zero);
 
     public string? FinishedTimeString => FinishedTime > StartTime ? FinishedTime.ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss") : null;
 
