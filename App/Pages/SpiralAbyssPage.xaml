@@ -2,7 +2,6 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:abyss="using:Xunkong.Hoyolab.SpiralAbyss"
-      xmlns:cc="using:CommunityToolkit.WinUI.UI.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="using:Xunkong.Desktop.Pages"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -62,7 +61,7 @@
                   SelectionChanged="_GridView_LeftPanel_SelectionChanged"
                   SelectionMode="Single">
             <GridView.ItemTemplate>
-                <DataTemplate x:DataType="xdm:SpiralAbyssPage_LeftPanel">
+                <DataTemplate x:DataType="xdm:SpiralAbyssPageModel_LeftPanel">
                     <Grid Width="160"
                           Height="80"
                           Padding="8,4,8,4"
@@ -196,16 +195,16 @@
                             <TextBlock Text="承受最多伤害" />
                             <TextBlock Text="元素战技施放数" />
                             <TextBlock Text="元素爆发次数" />
-                            <xdc:CachedImage Source="{x:Bind SelectedAbyssInfo.DefeatRank.AvatarIcon}" />
-                            <xdc:CachedImage Source="{x:Bind SelectedAbyssInfo.DamageRank.AvatarIcon}" />
-                            <xdc:CachedImage Source="{x:Bind SelectedAbyssInfo.TakeDamageRank.AvatarIcon}" />
-                            <xdc:CachedImage Source="{x:Bind SelectedAbyssInfo.NormalSkillRank.AvatarIcon}" />
-                            <xdc:CachedImage Source="{x:Bind SelectedAbyssInfo.EnergySkillRank.AvatarIcon}" />
-                            <TextBlock Text="{x:Bind SelectedAbyssInfo.DefeatRank.Value}" />
-                            <TextBlock Text="{x:Bind SelectedAbyssInfo.DamageRank.Value}" />
-                            <TextBlock Text="{x:Bind SelectedAbyssInfo.TakeDamageRank.Value}" />
-                            <TextBlock Text="{x:Bind SelectedAbyssInfo.NormalSkillRank.Value}" />
-                            <TextBlock Text="{x:Bind SelectedAbyssInfo.EnergySkillRank.Value}" />
+                            <xdc:CachedImage Source="{x:Bind SelectedAbyssInfo.DefeatRank.AvatarIcon, FallbackValue={x:Null}}" />
+                            <xdc:CachedImage Source="{x:Bind SelectedAbyssInfo.DamageRank.AvatarIcon, FallbackValue={x:Null}}" />
+                            <xdc:CachedImage Source="{x:Bind SelectedAbyssInfo.TakeDamageRank.AvatarIcon, FallbackValue={x:Null}}" />
+                            <xdc:CachedImage Source="{x:Bind SelectedAbyssInfo.NormalSkillRank.AvatarIcon, FallbackValue={x:Null}}" />
+                            <xdc:CachedImage Source="{x:Bind SelectedAbyssInfo.EnergySkillRank.AvatarIcon, FallbackValue={x:Null}}" />
+                            <TextBlock Text="{x:Bind SelectedAbyssInfo.DefeatRank.Value, FallbackValue={x:Null}}" />
+                            <TextBlock Text="{x:Bind SelectedAbyssInfo.DamageRank.Value, FallbackValue={x:Null}}" />
+                            <TextBlock Text="{x:Bind SelectedAbyssInfo.TakeDamageRank.Value, FallbackValue={x:Null}}" />
+                            <TextBlock Text="{x:Bind SelectedAbyssInfo.NormalSkillRank.Value, FallbackValue={x:Null}}" />
+                            <TextBlock Text="{x:Bind SelectedAbyssInfo.EnergySkillRank.Value, FallbackValue={x:Null}}" />
                         </VariableSizedWrapGrid>
                     </StackPanel>
                 </Grid>

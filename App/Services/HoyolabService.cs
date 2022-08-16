@@ -264,11 +264,11 @@ internal class HoyolabService
 
 
 
-    public List<SpiralAbyssInfo> GetSpiralAbyssInfos(int uid)
+    public List<SpiralAbyssPageModel_LeftPanel> GetSpiralAbyssInfos(int uid)
     {
         const string sql = "SELECT Id, Uid, ScheduleId, StartTime, EndTime, TotalBattleCount, TotalWinCount, MaxFloor, TotalStar FROM SpiralAbyssInfo WHERE Uid=@Uid AND TotalBattleCount>0 ORDER BY ScheduleId DESC;";
         using var dapper = DatabaseProvider.CreateConnection();
-        return dapper.Query<SpiralAbyssInfo>(sql, new { Uid = uid }).ToList();
+        return dapper.Query<SpiralAbyssPageModel_LeftPanel>(sql, new { Uid = uid }).ToList();
     }
 
 

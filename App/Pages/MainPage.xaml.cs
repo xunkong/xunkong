@@ -411,6 +411,7 @@ public sealed partial class MainPage : Page
                     UserSetting.TrySetValue(SettingKeys.LastSelectUserInfoUid, user.Uid);
                 }
                 _Flyout_ChangeAccount.Hide();
+                WeakReferenceMessenger.Default.Send(new SelectedGameRoleChangedMessage { Uid = role.Uid, Role = role });
             }
         }
         catch (Exception ex)

@@ -16,13 +16,13 @@ public sealed partial class SpiralAbyssPage : Page
 
     static SpiralAbyssPage()
     {
-        TypeAdapterConfig<SpiralAbyssInfo, SpiralAbyssPage_AbyssInfo>.NewConfig()
-                                                                     .Map(dest => dest.DamageRank, src => src.DamageRank.FirstOrDefault())
-                                                                     .Map(dest => dest.DefeatRank, src => src.DefeatRank.FirstOrDefault())
-                                                                     .Map(dest => dest.EnergySkillRank, src => src.EnergySkillRank.FirstOrDefault())
-                                                                     .Map(dest => dest.NormalSkillRank, src => src.NormalSkillRank.FirstOrDefault())
-                                                                     .Map(dest => dest.TakeDamageRank, src => src.TakeDamageRank.FirstOrDefault())
-                                                                     .Map(dest => dest.Floors, src => src.Floors.Where(x => x.Index > 8).ToList());
+        TypeAdapterConfig<SpiralAbyssInfo, SpiralAbyssPageModel_AbyssInfo>.NewConfig()
+                                                                          .Map(dest => dest.DamageRank, src => src.DamageRank.FirstOrDefault())
+                                                                          .Map(dest => dest.DefeatRank, src => src.DefeatRank.FirstOrDefault())
+                                                                          .Map(dest => dest.EnergySkillRank, src => src.EnergySkillRank.FirstOrDefault())
+                                                                          .Map(dest => dest.NormalSkillRank, src => src.NormalSkillRank.FirstOrDefault())
+                                                                          .Map(dest => dest.TakeDamageRank, src => src.TakeDamageRank.FirstOrDefault())
+                                                                          .Map(dest => dest.Floors, src => src.Floors.Where(x => x.Index > 8).ToList());
     }
 
 
@@ -33,23 +33,32 @@ public sealed partial class SpiralAbyssPage : Page
     {
         this.InitializeComponent();
         _hoyolabService = ServiceProvider.GetService<HoyolabService>()!;
+        WeakReferenceMessenger.Default.Register<SelectedGameRoleChangedMessage>(this, (_, e) => InitializeData());
         Loaded += SpiralAbyssPage_Loaded;
+        Unloaded += SpiralAbyssPage_Unloaded;
     }
 
 
 
     [ObservableProperty]
-    private List<SpiralAbyssPage_LeftPanel> leftPanels;
+    private List<SpiralAbyssPageModel_LeftPanel> leftPanels;
 
     [ObservableProperty]
-    private SpiralAbyssPage_AbyssInfo? selectedAbyssInfo;
+    private SpiralAbyssPageModel_AbyssInfo? selectedAbyssInfo;
 
-    private Dictionary<int, SpiralAbyssPage_AbyssInfo> abyssDic = new();
+    private Dictionary<int, SpiralAbyssPageModel_AbyssInfo> abyssDic = new();
 
 
-    private void SpiralAbyssPage_Loaded(object sender, RoutedEventArgs e)
+    private async void SpiralAbyssPage_Loaded(object sender, RoutedEventArgs e)
     {
+        await Task.Delay(100);
         InitializeData();
+    }
+
+
+    private void SpiralAbyssPage_Unloaded(object sender, RoutedEventArgs e)
+    {
+        WeakReferenceMessenger.Default.Unregister<SelectedGameRoleChangedMessage>(this);
     }
 
 
@@ -62,8 +71,14 @@ public sealed partial class SpiralAbyssPage : Page
             {
                 return;
             }
-            var abyssInfos = _hoyolabService.GetSpiralAbyssInfos(role.Uid);
-            LeftPanels = abyssInfos.Adapt<List<SpiralAbyssPage_LeftPanel>>();
+            LeftPanels = _hoyolabService.GetSpiralAbyssInfos(role.Uid);
+            var firstId = LeftPanels?.FirstOrDefault()?.Id ?? 0;
+            SelectedAbyssInfo = _hoyolabService.GetSpiralAbyssInfo(firstId)?.Adapt<SpiralAbyssPageModel_AbyssInfo>();
+            if (SelectedAbyssInfo != null)
+            {
+                abyssDic.TryAdd(firstId, SelectedAbyssInfo);
+                _GridView_LeftPanel.SelectedIndex = 0;
+            }
         }
         catch (Exception ex)
         {
@@ -102,7 +117,7 @@ public sealed partial class SpiralAbyssPage : Page
 
     private void _GridView_LeftPanel_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (_GridView_LeftPanel.SelectedItem is SpiralAbyssPage_LeftPanel leftInfo)
+        if (_GridView_LeftPanel.SelectedItem is SpiralAbyssPageModel_LeftPanel leftInfo)
         {
             try
             {
@@ -113,11 +128,10 @@ public sealed partial class SpiralAbyssPage : Page
                 }
                 else
                 {
-
                     var originInfo = _hoyolabService.GetSpiralAbyssInfo(id);
                     if (originInfo is not null)
                     {
-                        SelectedAbyssInfo = originInfo.Adapt<SpiralAbyssPage_AbyssInfo>();
+                        SelectedAbyssInfo = originInfo.Adapt<SpiralAbyssPageModel_AbyssInfo>();
                         abyssDic.TryAdd(id, SelectedAbyssInfo);
                     }
                 }
