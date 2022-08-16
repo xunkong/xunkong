@@ -8,11 +8,14 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Numerics;
 using System.Text.Json.Nodes;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Pickers;
+using Windows.System;
 using Windows.UI;
 using WinRT.Interop;
 using Xunkong.Desktop.Controls;
@@ -42,7 +45,10 @@ public sealed partial class AchievementPage : Page
         this.InitializeComponent();
         WeakReferenceMessenger.Default.Register<ProtocolMessage>(this, (_, e) => HandleProtocolMessage(e));
         Loaded += AchievementPage_Loaded;
+        Unloaded += AchievementPage_Unloaded;
     }
+
+
 
 
     /// <summary>
@@ -120,9 +126,16 @@ public sealed partial class AchievementPage : Page
     private bool preCached;
 
 
-    private void AchievementPage_Loaded(object sender, RoutedEventArgs e)
+    private async void AchievementPage_Loaded(object sender, RoutedEventArgs e)
     {
+        await Task.Delay(100);
         InitializeData();
+    }
+
+
+    private void AchievementPage_Unloaded(object sender, RoutedEventArgs e)
+    {
+        WeakReferenceMessenger.Default.Unregister<ProtocolMessage>(this);
     }
 
 
@@ -856,6 +869,7 @@ public sealed partial class AchievementPage : Page
         catch (Exception ex)
         {
             Logger.Error(ex, "解析导入的成就");
+            NotificationProvider.Error(ex, "解析成就失败");
         }
 
     }
@@ -916,23 +930,80 @@ public sealed partial class AchievementPage : Page
             var list = LoadAchievementDataItems(SelectedUid);
             if (list.Any())
             {
-                var obj = new
+                object obj;
+                if (c_ComboBox_ExportUiafVersion.SelectedIndex == 0)
                 {
-                    info = new
+                    // UIAF v1.1
+                    obj = new
                     {
-                        export_app = "Xunkong",
-                        export_app_version = XunkongEnvironment.AppVersion.ToString(),
-                        uiaf_version = "v1.0",
-                        export_timestamp = DateTimeOffset.Now.ToUnixTimeSeconds(),
-                    },
-                    list = list
-                };
+                        info = new
+                        {
+                            export_app = "Xunkong",
+                            export_app_version = XunkongEnvironment.AppVersion.ToString(),
+                            uiaf_version = "v1.1",
+                            export_timestamp = DateTimeOffset.Now.ToUnixTimeSeconds(),
+                        },
+                        list = list
+                    };
+                }
+                else
+                {
+                    // UIAF v1.0
+                    obj = new
+                    {
+                        info = new
+                        {
+                            export_app = "Xunkong",
+                            export_app_version = XunkongEnvironment.AppVersion.ToString(),
+                            uiaf_version = "v1.0",
+                            export_timestamp = DateTimeOffset.Now.ToUnixTimeSeconds(),
+                        },
+                        list = list.Where(x => x.Status > 1).Select(x => new { id = x.Id, current = x.Current, timestamp = x.FinishedTime.ToUnixTimeSeconds() }),
+                    };
+                }
+
                 var text = JsonSerializer.Serialize(obj, new JsonSerializerOptions { WriteIndented = true });
-                var filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), $@"Xunkong\Export\Achievement\achievement_{SelectedUid}_{DateTimeOffset.Now:yyyyMMdd_HHmmss}.json");
-                Directory.CreateDirectory(Path.GetDirectoryName(filename)!);
-                await File.WriteAllTextAsync(filename, text);
-                Action action = () => Process.Start(new ProcessStartInfo { FileName = Path.GetDirectoryName(filename), UseShellExecute = true });
-                NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "导出完成", $"已导出 Uid {SelectedUid} 的所有成就", "打开文件夹", action);
+                switch (c_ComboBox_ExportTarget.SelectedIndex)
+                {
+                    case 0:
+                        // 剪贴板
+                        ClipboardHelper.SetText(text);
+                        NotificationProvider.Success("导出完成", $"Uid {SelectedUid} 的所有成就已复制到剪贴板");
+                        break;
+                    case 1:
+                        // json 文件
+                        var filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), $@"Xunkong\Export\Achievement\achievement_{SelectedUid}_{DateTimeOffset.Now:yyyyMMdd_HHmmss}.json");
+                        Directory.CreateDirectory(Path.GetDirectoryName(filename)!);
+                        await File.WriteAllTextAsync(filename, text);
+                        Action action = () => Process.Start(new ProcessStartInfo { FileName = Path.GetDirectoryName(filename), UseShellExecute = true });
+                        NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "导出完成", $"已导出 Uid {SelectedUid} 的所有成就", "打开文件夹", action);
+                        break;
+                    case 2:
+                        // 椰羊
+                        var client = ServiceProvider.GetService<HttpClient>()!;
+                        var result = await client.PostAsJsonAsync("https://77.xyget.cn/v2/memo?source=Xunkong", obj);
+                        var node = await result.Content.ReadFromJsonAsync<JsonNode>();
+                        var key = node?["key"]?.ToString();
+                        if (string.IsNullOrWhiteSpace(key))
+                        {
+                            NotificationProvider.Warning("无法生成椰羊的分享链接");
+                        }
+                        else
+                        {
+                            Process.Start(new ProcessStartInfo { FileName = $"https://cocogoat.work/achievement?memo={key}", UseShellExecute = true });
+                        }
+                        break;
+                    case 3:
+                        // Snap Genshin
+                        ClipboardHelper.SetText(text);
+                        if (!await Launcher.LaunchUriAsync(new("snapgenshin://achievement/import/uiaf"), new LauncherOptions { FallbackUri = new("https://www.snapgenshin.com/") }))
+                        {
+                            NotificationProvider.Warning("启动 Snap Genshin 失败");
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
         }
         catch (Exception ex)

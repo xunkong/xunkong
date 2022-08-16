@@ -599,7 +599,7 @@
 
                 <StackPanel Grid.Row="1" Spacing="8">
                     <TextBlock FontSize="20">
-                        <Run FontFamily="{ThemeResource SymbolThemeFontFamily}" Text="&#xE72D;" />
+                        <Run FontFamily="{ThemeResource SymbolThemeFontFamily}" Text="&#xE118;" />
                         <Run Text="导入" />
                     </TextBlock>
                     <TextBlock Text="支持统一可交换成就标准 v1.0" />
@@ -622,10 +622,7 @@
                                  Width="120"
                                  PlaceholderText="请输入 uid" />
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Spacing="16">
-                        <Button Command="{x:Bind ImportAchievementDataCommand, Mode=OneTime}" Content="导入" />
-                        <Button Command="{x:Bind ExportAchievementDataCommand, Mode=OneTime}" Content="导出" />
-                    </StackPanel>
+                    <Button Command="{x:Bind ImportAchievementDataCommand, Mode=OneTime}" Content="导入" />
                     <Grid Height="200" Margin="0,12,0,0">
                         <Rectangle x:Name="c_Rect_DropFile"
                                    AllowDrop="True"
@@ -649,7 +646,33 @@
                     </Grid>
 
                     <MenuFlyoutSeparator Height="40" />
+                    <TextBlock FontSize="20">
+                        <Run FontFamily="{ThemeResource SymbolThemeFontFamily}" Text="&#xE72D;" />
+                        <Run Text="导出" />
+                    </TextBlock>
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <TextBlock VerticalAlignment="Center" Text="UIAF 版本：" />
+                        <ComboBox x:Name="c_ComboBox_ExportUiafVersion"
+                                  Width="80"
+                                  SelectedIndex="0">
+                            <ComboBoxItem Content="v1.1" />
+                            <ComboBoxItem Content="v1.0" />
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <TextBlock VerticalAlignment="Center" Text="导出至：" />
+                        <ComboBox x:Name="c_ComboBox_ExportTarget"
+                                  Width="140"
+                                  SelectedIndex="0">
+                            <ComboBoxItem Content="剪贴板" />
+                            <ComboBoxItem Content="Json 文件" />
+                            <ComboBoxItem Content="椰羊" />
+                            <ComboBoxItem Content="Snap Genshin" />
+                        </ComboBox>
+                    </StackPanel>
+                    <Button Command="{x:Bind ExportAchievementDataCommand, Mode=OneTime}" Content="导出" />
 
+                    <MenuFlyoutSeparator Height="40" />
                     <TextBlock FontSize="20">
                         <Run FontFamily="{ThemeResource SymbolThemeFontFamily}" Text="&#xE8FA;" />
                         <Run Text="添加删除" />
@@ -673,6 +696,7 @@
                             </Button.Flyout>
                         </Button>
                     </StackPanel>
+                    <TextBlock Text="添加 Uid 后需编辑任意成就，才能把 Uid 保存到数据库。" TextWrapping="Wrap" />
                 </StackPanel>
             </ScrollViewer>
 
