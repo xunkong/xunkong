@@ -46,16 +46,6 @@
                               Command="{x:Bind InitializeDataCommand, Mode=OneTime}"
                               Icon="Refresh"
                               Label="刷新页面" />
-                <AppBarButton Name="_AppBarButton_UpdateMetadata"
-                              Command="{x:Bind GetGenshinDataCommand, Mode=OneTime}"
-                              Icon="ContactInfo"
-                              Label="更新元数据"
-                              ToolTipService.ToolTip="更新角色、武器、卡池等信息" />
-                <TeachingTip Content="元数据更新完毕，请刷新界面"
-                             IsLightDismissEnabled="True"
-                             IsOpen="{x:Bind IsRefreshPageTeachingTipOpen, Mode=TwoWay}"
-                             Target="{x:Bind _AppBarButton_RefreshPage}" />
-
             </StackPanel>
         </Grid>
 

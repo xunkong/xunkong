@@ -426,11 +426,6 @@
                         </MenuFlyout>
                     </AppBarButton.Flyout>
                 </AppBarButton>
-                <AppBarButton Name="_AppBarButton_UpdateMetadata"
-                              Command="{x:Bind vm.GetMetadataCommand, Mode=OneTime}"
-                              Icon="ContactInfo"
-                              Label="更新元数据"
-                              ToolTipService.ToolTip="更新角色、武器、卡池等信息" />
             </StackPanel>
         </Grid>
 

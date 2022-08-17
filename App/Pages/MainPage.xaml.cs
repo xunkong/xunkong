@@ -307,22 +307,25 @@ public sealed partial class MainPage : Page
                     GenshinRoleInfo = selectedRole;
                     GenshinRoleInfoList = new(roles);
                 });
-                foreach (var role in roles)
+                if (UserSetting.GetValue(SettingKeys.ResinAndHomeCoinNotificationWhenStartUp, false, false))
                 {
-                    var note = await _hoyolabService.GetDailyNoteAsync(role);
-                    if (note != null)
+                    foreach (var role in roles)
                     {
-                        var text = (note.IsResinFull, note.IsHomeCoinFull) switch
+                        var note = await _hoyolabService.GetDailyNoteAsync(role);
+                        if (note != null)
                         {
-                            (true, true) => $"{role.Nickname} 的 原粹树脂 和 洞天宝钱 已满",
-                            (true, false) => $"{role.Nickname} 的 原粹树脂 已满",
-                            (false, true) => $"{role.Nickname} 的 洞天宝钱 已满",
-                            (false, false) => "",
-                        };
-                        if (!string.IsNullOrWhiteSpace(text))
-                        {
-                            // 方法内部会切换为UI线程
-                            NotificationProvider.Success("注意了", text, 8000);
+                            var text = (note.IsResinFull, note.IsHomeCoinFull) switch
+                            {
+                                (true, true) => $"{role.Nickname} 的 原粹树脂 和 洞天宝钱 已满",
+                                (true, false) => $"{role.Nickname} 的 原粹树脂 已满",
+                                (false, true) => $"{role.Nickname} 的 洞天宝钱 已满",
+                                (false, false) => "",
+                            };
+                            if (!string.IsNullOrWhiteSpace(text))
+                            {
+                                // 方法内部会切换为UI线程
+                                NotificationProvider.Success("注意了", text, 8000);
+                            }
                         }
                     }
                 }

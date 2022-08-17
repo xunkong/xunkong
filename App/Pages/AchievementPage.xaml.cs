@@ -538,26 +538,11 @@ public sealed partial class AchievementPage : Page
                 var goal = AchievementGoals.FirstOrDefault(x => x.Id == item.GoalId);
                 if (newFinish)
                 {
-                    item.FinishedTime = DateTimeOffset.Now;
-                    FinishedCount++;
-                    SelectedGoal.Current++;
-                    GotRewardCount += item.RewardCount;
-                    if (goal != null)
-                    {
-                        goal.GotRewardCount += item.RewardCount;
-                    }
-                    OnAchievementFinished(item);
+                    OnAchievementFinisheChanged(item, true);
                 }
                 else
                 {
-                    item.FinishedTime = DateTimeOffset.MinValue;
-                    FinishedCount--;
-                    SelectedGoal.Current--;
-                    GotRewardCount -= item.RewardCount;
-                    if (goal != null)
-                    {
-                        goal.GotRewardCount -= item.RewardCount;
-                    }
+                    OnAchievementFinisheChanged(item, false);
                 }
                 SaveAchievementItemStateChanged(item);
             }
@@ -617,26 +602,12 @@ public sealed partial class AchievementPage : Page
                                 currentStar++;
                                 item.CurrentStar = currentStar;
                                 item.Status = 3;
-                                item.FinishedTime = DateTimeOffset.Now;
-                                FinishedCount++;
-                                SelectedGoal.Current++;
-                                GotRewardCount += item.RewardCount;
-                                if (goal != null)
-                                {
-                                    goal.GotRewardCount += item.RewardCount;
-                                }
+                                OnAchievementFinisheChanged(item, true);
                             }
                             else
                             {
                                 item.Status = 1;
-                                item.FinishedTime = DateTimeOffset.MinValue;
-                                FinishedCount--;
-                                SelectedGoal.Current--;
-                                GotRewardCount -= item.RewardCount;
-                                if (goal != null)
-                                {
-                                    goal.GotRewardCount -= item.RewardCount;
-                                }
+                                OnAchievementFinisheChanged(item, false);
                             }
                         }
                         SaveAchievementItemStateChanged(item);
@@ -726,10 +697,10 @@ public sealed partial class AchievementPage : Page
 
 
     /// <summary>
-    /// 成就达成时的提示
+    /// 成就状态变更
     /// </summary>
     /// <param name="item"></param>
-    private async void OnAchievementFinished(AchievementPageModel_Item item)
+    private async void OnAchievementFinisheChanged(AchievementPageModel_Item item, bool isFinished)
     {
         try
         {
@@ -737,23 +708,39 @@ public sealed partial class AchievementPage : Page
             {
                 if (AchievementGoals?.FirstOrDefault(x => x.Id == item.GoalId) is AchievementPageModel_Goal goal)
                 {
-                    if (goal.Current == goal.Total)
+                    if (isFinished)
                     {
-                        goal.FinishedTime = DateTimeOffset.Now;
-                        MainWindow.Current.SetFullWindowContent(new AchievementGoalFinishedPush(goal));
+                        item.FinishedTime = DateTimeOffset.Now;
+                        FinishedCount++;
+                        SelectedGoal.Current++;
+                        GotRewardCount += item.RewardCount;
+                        goal.GotRewardCount += item.RewardCount;
+                        if (goal.Current == goal.Total)
+                        {
+                            goal.FinishedTime = DateTimeOffset.Now;
+                            MainWindow.Current.SetFullWindowContent(new AchievementGoalFinishedPush(goal));
+                        }
+                        else
+                        {
+                            var id = Random.Shared.Next();
+                            randomId = id;
+                            c_Grid_Push.Opacity = 1;
+                            c_TextBlock_Push.Text = item.Title;
+                            c_Image_Push.Source = goal.IconPath;
+                            await Task.Delay(2000);
+                            if (randomId == id)
+                            {
+                                c_Grid_Push.Opacity = 0;
+                            }
+                        }
                     }
                     else
                     {
-                        var id = Random.Shared.Next();
-                        randomId = id;
-                        c_Grid_Push.Opacity = 1;
-                        c_TextBlock_Push.Text = item.Title;
-                        c_Image_Push.Source = goal.IconPath;
-                        await Task.Delay(2000);
-                        if (randomId == id)
-                        {
-                            c_Grid_Push.Opacity = 0;
-                        }
+                        item.FinishedTime = DateTimeOffset.MinValue;
+                        FinishedCount--;
+                        SelectedGoal.Current--;
+                        GotRewardCount -= item.RewardCount;
+                        goal.GotRewardCount -= item.RewardCount;
                     }
                 }
             }

@@ -26,6 +26,9 @@ internal partial class SettingViewModel : ObservableObject
     private readonly BackupService _backupService;
 
 
+    private readonly XunkongApiService _xunkongApiService;
+
+
 
     public string AppName => XunkongEnvironment.AppName;
 
@@ -33,11 +36,12 @@ internal partial class SettingViewModel : ObservableObject
 
 
 
-    public SettingViewModel(HttpClient httpClient, HoyolabService hoyolabService, BackupService backupService)
+    public SettingViewModel(HttpClient httpClient, HoyolabService hoyolabService, BackupService backupService, XunkongApiService xunkongApiService)
     {
         _httpClient = httpClient;
         _hoyolabService = hoyolabService;
         _backupService = backupService;
+        _xunkongApiService = xunkongApiService;
     }
 
 
@@ -582,6 +586,41 @@ internal partial class SettingViewModel : ObservableObject
 
 
     #endregion
+
+
+
+
+    #region Others
+
+
+    [ObservableProperty]
+    private bool resinAndHomeCoinNotificationWhenStartUp = UserSetting.GetValue(SettingKeys.ResinAndHomeCoinNotificationWhenStartUp, false, false);
+
+    partial void OnResinAndHomeCoinNotificationWhenStartUpChanged(bool value)
+    {
+        UserSetting.TrySetValue(SettingKeys.ResinAndHomeCoinNotificationWhenStartUp, value);
+    }
+
+
+
+    [RelayCommand]
+    private async Task UpdateAllGenshinDataAsync()
+    {
+        try
+        {
+            await _xunkongApiService.GetAllGenshinDataFromServerAsync();
+            NotificationProvider.Success("完成", "本地的原神数据已是最新版本");
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "更新原神数据");
+            NotificationProvider.Error(ex, "更新原神数据");
+        }
+    }
+
+
+    #endregion
+
 
 
 
