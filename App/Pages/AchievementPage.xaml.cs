@@ -529,13 +529,12 @@ public sealed partial class AchievementPage : Page
             if (box.Tag is AchievementPageModel_Item item)
             {
                 var newFinish = box.IsChecked ?? false;
+                item.Current = 0;
                 if (item.IsFinish == newFinish)
                 {
                     return;
                 }
-                item.Current = 0;
                 item.Status = newFinish ? 3 : 1;
-                var goal = AchievementGoals.FirstOrDefault(x => x.Id == item.GoalId);
                 if (newFinish)
                 {
                     OnAchievementFinisheChanged(item, true);
@@ -601,15 +600,14 @@ public sealed partial class AchievementPage : Page
                             {
                                 currentStar++;
                                 item.CurrentStar = currentStar;
-                                item.Status = 3;
                                 OnAchievementFinisheChanged(item, true);
                             }
                             else
                             {
-                                item.Status = 1;
                                 OnAchievementFinisheChanged(item, false);
                             }
                         }
+                        item.Status = item.IsFinish ? 3 : 1;
                         SaveAchievementItemStateChanged(item);
                     }
 
@@ -710,6 +708,7 @@ public sealed partial class AchievementPage : Page
                 {
                     if (isFinished)
                     {
+                        item.Status = 3;
                         item.FinishedTime = DateTimeOffset.Now;
                         FinishedCount++;
                         SelectedGoal.Current++;
@@ -736,7 +735,8 @@ public sealed partial class AchievementPage : Page
                     }
                     else
                     {
-                        item.FinishedTime = DateTimeOffset.MinValue;
+                        item.Status = 1;
+                        item.FinishedTime = DateTimeOffset.UnixEpoch;
                         FinishedCount--;
                         SelectedGoal.Current--;
                         GotRewardCount -= item.RewardCount;

@@ -211,20 +211,20 @@ public sealed partial class ImportAchievementPage : Page
                     using var dapper = DatabaseProvider.CreateConnection();
                     dapper.Execute("INSERT OR REPLACE INTO AchievementData (Uid, Id, Current, Status, FinishedTime, LastUpdateTime) VALUES (@Uid, @Id, @Current, @Status, @FinishedTime, @LastUpdateTime);", achievementDatas);
                     c_Button_Import.Content = "导入完成";
-                    var instance = AppInstance.FindOrRegisterForKey("Main");
-                    if (instance.IsCurrent)
+                    if (c_CheckBox_AutoRedirect.IsChecked ?? false)
                     {
-                        instance.UnregisterKey();
-                    }
-                    else
-                    {
-                        if (await Launcher.LaunchUriAsync(new Uri($"xunkong://post-message/{ProtocolMessage.ChangeSelectedUidInAchievementPage}?caller=Xunkong&uid={uid}")))
+                        var instance = AppInstance.FindOrRegisterForKey("Main");
+                        if (instance.IsCurrent)
                         {
-                            await Task.Delay(1000);
-                            Environment.Exit(0);
+                            instance.UnregisterKey();
                         }
-
+                        else
+                        {
+                            await Launcher.LaunchUriAsync(new Uri($"xunkong://post-message/{ProtocolMessage.ChangeSelectedUidInAchievementPage}?caller=Xunkong&uid={uid}"));
+                        }
                     }
+                    await Task.Delay(1000);
+                    Environment.Exit(0);
                 }
             }
         }

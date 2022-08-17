@@ -23,9 +23,13 @@
                     VerticalAlignment="Top"
                     Orientation="Horizontal"
                     Spacing="12">
-            <TextBlock x:Name="c_TextBlock_Title" VerticalAlignment="Bottom" />
+            <TextBlock x:Name="c_TextBlock_Title"
+                       VerticalAlignment="Bottom"
+                       FontSize="20" />
             <TextBlock x:Name="c_TextBlock_Caller"
                        VerticalAlignment="Bottom"
+                       FontSize="14"
+                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                        Style="{ThemeResource CaptionTextBlockStyle}" />
         </StackPanel>
 
@@ -66,19 +70,24 @@
                 <Run Text="导出时间：" />
                 <Run Text="{x:Bind ExportTime}" />
             </TextBlock>
-            <AutoSuggestBox x:Name="c_AutoSuggestBox_Uid"
-                            Width="160"
-                            Height="32"
-                            HorizontalAlignment="Left"
-                            PlaceholderText="请输入 uid"
-                            TextChanged="c_AutoSuggestBox_Uid_TextChanged" />
+
             <TextBlock>
                 <Run Text="数据来源：" />
                 <Run Text="{x:Bind DataFrom}" />
             </TextBlock>
             <TextBlock FontSize="12"
                        Text="{x:Bind DataParam}"
-                       TextWrapping="Wrap" />
+                       TextWrapping="Wrap"
+                       Visibility="{x:Bind DataParam, Converter={StaticResource StringToVisibilityConverter}}" />
+            <AutoSuggestBox x:Name="c_AutoSuggestBox_Uid"
+                            Width="160"
+                            Height="32"
+                            HorizontalAlignment="Left"
+                            PlaceholderText="请输入 uid"
+                            TextChanged="c_AutoSuggestBox_Uid_TextChanged" />
+            <CheckBox x:Name="c_CheckBox_AutoRedirect"
+                      Content="导入完成后自动刷新成就页面"
+                      IsChecked="True" />
         </StackPanel>
 
 

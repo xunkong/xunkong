@@ -21,9 +21,13 @@
                     VerticalAlignment="Top"
                     Orientation="Horizontal"
                     Spacing="12">
-            <TextBlock x:Name="c_TextBlock_Title" VerticalAlignment="Bottom" />
+            <TextBlock x:Name="c_TextBlock_Title"
+                       VerticalAlignment="Bottom"
+                       FontSize="20" />
             <TextBlock x:Name="c_TextBlock_Caller"
                        VerticalAlignment="Bottom"
+                       FontSize="14"
+                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                        Style="{ThemeResource CaptionTextBlockStyle}" />
         </StackPanel>
 
