@@ -1,4 +1,4 @@
-![cover](https://file.xunkong.cc/static/repo/xunkong/cover.webp)
+![烟绯律师](https://file.xunkong.cc/static/repo/xunkong/YanfeiLawyer.webp)
 
 # 寻空
 
@@ -17,7 +17,9 @@
 
 寻空仅支持 x64 和 arm64 架构的 Windows 10 1809 及以上版本的系统，建议升级到最新版获得更稳定的体验。
 
-> 商店版和侧载版可以共存，但是因为公用一个数据库，二者版本不同时可能存在冲突。
+商店版和侧载版可以共存，但是因为公用一个数据库，二者版本不同时可能存在冲突。
+
+但是不建议同时安装商店版和侧载版，在进行某些操作时会频繁弹窗影响体验。
 
 ### 商店版（推荐）
 
@@ -69,9 +71,11 @@
 - [WindowsCommunityToolkit](https://github.com/CommunityToolkit/WindowsCommunityToolkit)
 - [Dapper](https://github.com/DapperLib/Dapper)
 - [GenshinData](https://github.com/Dimbreath/GenshinData)
+- [Github Markdown CSS](https://github.com/sindresorhus/github-markdown-css)
 - [LiteDB](https://github.com/mbdavid/LiteDB)
 - [Mapster](https://github.com/MapsterMapper/Mapster)
 - [WindowsAppSDK](https://github.com/microsoft/WindowsAppSDK)
+- [Markdig](https://github.com/xoofx/markdig)
 - [MiniExcel](https://github.com/MiniExcel/MiniExcel)
 - [Octokit](https://github.com/octokit/octokit.net)
 - [PixivApi](https://github.com/Scighost/PixivApi)
@@ -91,3 +95,7 @@
     <img alt="Syncfusion" src="https://file.xunkong.cc/static/repo/xunkong/syncfusion.png" height="60" />
     <img alt="Cloudflare" src="https://file.xunkong.cc/static/repo/xunkong/Cloudflare_logo.svg" height="60" />
 </div>
+
+<br>
+
+> 头图出自 [空耳狂魔生草视频](https://www.bilibili.com/video/av340612690)
