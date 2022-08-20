@@ -75,7 +75,7 @@ internal partial class SettingViewModel : ObservableObject
             }
             else
             {
-                uri = new("https://go.xunkong.cc/desktop/check-update");
+                uri = new("https://github.com/xunkong/xunkong/releases");
             }
             await Launcher.LaunchUriAsync(uri);
         }
@@ -179,7 +179,7 @@ internal partial class SettingViewModel : ObservableObject
         {
             using var dapper = DatabaseProvider.CreateConnection();
             var list = dapper.Query<WebToolItem>("SELECT * FROM WebToolItem ORDER BY [Order];");
-            _WebToolItemList = new(list);
+            WebToolItemList = new(list);
         }
         catch (Exception ex)
         {
@@ -300,7 +300,7 @@ internal partial class SettingViewModel : ObservableObject
             using var dapper = DatabaseProvider.CreateConnection();
             using var t = dapper.BeginTransaction();
             dapper.Execute("DELETE FROM WebToolItem WHERE TRUE;", t);
-            dapper.Execute("INSERT OR REPLACE INTO WebToolItem (Title, Icon, [Order], Url, JavaScript) VALUES (@Title, @Icon, @Order, @Url, @JavaScript);", list, t);
+            dapper.Execute("INSERT INTO WebToolItem (Title, Icon, [Order], Url, JavaScript) VALUES (@Title, @Icon, @Order, @Url, @JavaScript);", list, t);
             t.Commit();
             WebToolItemList = new(list);
             NotificationProvider.Success("保存成功");

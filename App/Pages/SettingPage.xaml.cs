@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Windows.System;
 using Xunkong.Desktop.Controls;
 using Xunkong.Desktop.ViewModels;
 
@@ -41,5 +42,8 @@ public sealed partial class SettingPage : Page
         MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = "ms-appx:///Assets/Images/96839227_p0.webp" });
     }
 
-
+    private async void Hyperlink_Click(Microsoft.UI.Xaml.Documents.Hyperlink sender, Microsoft.UI.Xaml.Documents.HyperlinkClickEventArgs args)
+    {
+        await Launcher.LaunchUriAsync(new("ms-windows-store://review/?ProductId=9N2SVG0JMT12"));
+    }
 }

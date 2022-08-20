@@ -197,7 +197,7 @@ public sealed partial class WelcomPage : Page
 
     private void _Button_Privacy_Click(object sender, RoutedEventArgs e)
     {
-        const string url = "https://go.xunkong.cc/desktop/privacy-policy";
+        const string url = "https://github.com/xunkong/xunkong/blob/main/privacy-policy.md";
         try
         {
             var startInfo = new ProcessStartInfo

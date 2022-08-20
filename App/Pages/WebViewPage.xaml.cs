@@ -35,7 +35,7 @@ public sealed partial class WebViewPage : Page
                 }
                 else
                 {
-                    _WebView2.Source = new Uri("https://go.xunkong.cc/home");
+                    _WebView2.Source = new Uri("https://xunkong.cc");
                 }
             }
             catch { }

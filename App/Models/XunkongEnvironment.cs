@@ -24,6 +24,9 @@ internal static class XunkongEnvironment
 
     public static readonly string UserDataPath;
 
+    public const string ProductId = "9N2SVG0JMT12";
+
+    public const string StoreProtocolUrl = "ms-windows-store://pdp/?productid=9N2SVG0JMT12";
 
 
     static XunkongEnvironment()

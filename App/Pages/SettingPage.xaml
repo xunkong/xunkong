@@ -62,8 +62,13 @@
                         </Border>
                         <TextBlock Grid.Column="1"
                                    Margin="0,4,0,0"
-                                   Text="Scighost 的原神工具箱，觉得好用就给个「好评」和「Star」吧。"
-                                   TextWrapping="Wrap" />
+                                   TextWrapping="Wrap">
+                            <Run Text="Scighost 的原神工具箱，觉得好用就给个" />
+                            <Hyperlink Click="Hyperlink_Click" UnderlineStyle="None">好评</Hyperlink>
+                            <Run Text="或" />
+                            <Hyperlink NavigateUri="https://github.com/xunkong/xunkong" UnderlineStyle="None">Star</Hyperlink>
+                            <Run Text="吧。" />
+                        </TextBlock>
                         <TextBlock Grid.Column="1"
                                    Margin="0,32,0,0"
                                    TextWrapping="Wrap">
@@ -82,11 +87,10 @@
                             <TextBlock Margin="0,0,4,0"
                                        VerticalAlignment="Center"
                                        Text="相关链接" />
-                            <HyperlinkButton Content="项目主页" NavigateUri="https://go.xunkong.cc/desktop" />
-                            <HyperlinkButton Content="更新记录" NavigateUri="https://go.xunkong.cc/desktop/update-history" />
-                            <HyperlinkButton Content="反馈和建议" NavigateUri="https://go.xunkong.cc/desktop/issues" />
+                            <HyperlinkButton Content="更新记录" NavigateUri="https://github.com/xunkong/xunkong/releases" />
+                            <HyperlinkButton Content="反馈和建议" NavigateUri="https://github.com/xunkong/xunkong/issues/new/choose" />
                             <HyperlinkButton Command="{x:Bind vm.CopyDevelopersMailCommand, Mode=OneTime}" Content="联系开发者" />
-                            <HyperlinkButton Content="隐私策略" NavigateUri="https://go.xunkong.cc/desktop/privacy-policy" />
+                            <HyperlinkButton Content="隐私策略" NavigateUri="https://github.com/xunkong/xunkong/blob/main/privacy-policy.md" />
                         </StackPanel>
                     </Grid>
                     <!--  版本与外观  -->
@@ -311,7 +315,7 @@
                                           AllowDrop="True"
                                           CanDragItems="True"
                                           CanReorderItems="True"
-                                          ItemsSource="{Binding WebToolItemList, Mode=TwoWay}"
+                                          ItemsSource="{x:Bind vm.WebToolItemList, Mode=TwoWay}"
                                           SelectedItem="{x:Bind vm.SelectedWebToolItem, Mode=TwoWay}"
                                           SelectionMode="Single">
                                     <ListView.ItemTemplate>
@@ -549,15 +553,15 @@
                 <TextBox IsSpellCheckEnabled="False"
                          PlaceholderText="不要太长"
                          Text="{x:Bind vm.SelectedWebToolItem.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock Text="图标" />
-                <TextBox IsSpellCheckEnabled="False"
-                         PlaceholderText="图标的网址"
-                         Text="{x:Bind vm.SelectedWebToolItem.Icon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBlock Text="网址" />
                 <TextBox IsSpellCheckEnabled="False"
                          PlaceholderText="优先填这个，然后点下面的按键"
                          Text="{x:Bind vm.SelectedWebToolItem.Url, Mode=TwoWay}" />
-                <Button Command="{x:Bind vm.GetTitleAndIconByUrlCommand}" Content="获取标题和图标" />
+                <TextBlock Text="图标" />
+                <TextBox IsSpellCheckEnabled="False"
+                         PlaceholderText="图标的网址"
+                         Text="{x:Bind vm.SelectedWebToolItem.Icon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <Button Command="{x:Bind vm.GetTitleAndIconByUrlCommand}" Content="获取图标" />
                 <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="高级设置" />
                 <TextBlock Text="JavaScript" />
                 <TextBox MaxHeight="300"

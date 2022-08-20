@@ -470,7 +470,7 @@ public sealed partial class MainPage : Page
     {
         var text = new TextBlock();
         text.Inlines.Add(new Run { Text = "仅支持国服米游社，" });
-        var link = new Hyperlink { NavigateUri = new("https://go.xunkong.cc/how-to-get-cookie"), UnderlineStyle = UnderlineStyle.None };
+        var link = new Hyperlink { NavigateUri = new("https://xunkong.cc/help/xunkong/account.html"), UnderlineStyle = UnderlineStyle.None };
         var linkeText = new Run { Text = "如何获取 Cookie" };
         link.Inlines.Add(linkeText);
         text.Inlines.Add(link);
