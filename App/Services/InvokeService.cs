@@ -167,10 +167,10 @@ internal class InvokeService
 
 
     /// <summary>
-    /// 检查参量质变仪
+    /// 检查参量质变仪和洞天宝钱
     /// </summary>
     /// <returns></returns>
-    public static async Task CheckTransformerReachedAsync()
+    public static async Task CheckTransformerReachedAndHomeCoinFullAsync()
     {
         try
         {
@@ -180,31 +180,45 @@ internal class InvokeService
             {
                 return;
             }
-            var nicknames = new List<string>(users.Count());
+            var sb = new StringBuilder();
             foreach (var user in users)
             {
                 try
                 {
-                    var dailynote = await service.GetDailyNoteAsync(user);
-                    if (dailynote != null && dailynote.Transformer.Obtained && dailynote.Transformer.RecoveryTime.Reached)
+                    var note = await service.GetDailyNoteAsync(user);
+                    if (note != null && (note.Transformer.Obtained && note.Transformer.RecoveryTime.Reached || note.IsHomeCoinFull))
                     {
-                        nicknames.Add(user.Nickname!);
+                        if (note != null)
+                        {
+                            var text = (note.Transformer?.RecoveryTime?.Reached ?? false, note.IsHomeCoinFull) switch
+                            {
+                                (true, true) => $"{user.Nickname} 的 原粹树脂 和 洞天宝钱 已满",
+                                (true, false) => $"{user.Nickname} 的 原粹树脂 已满",
+                                (false, true) => $"{user.Nickname} 的 洞天宝钱 已满",
+                                (false, false) => "",
+                            };
+                            if (!string.IsNullOrWhiteSpace(text))
+                            {
+                                sb.AppendLine(text);
+                            }
+                        }
                     }
                 }
                 catch (Exception ex) when (ex is HoyolabException or HttpRequestException)
                 {
-                    Logger.Error(ex, $"检查参量质变仪 - Uid {user.Uid}");
+                    Logger.Error(ex, $"检查参量质变仪和洞天宝钱 - Uid {user.Uid}");
                 }
             }
-            if (nicknames.Any())
+            var toastString = sb.ToString();
+            if (!string.IsNullOrWhiteSpace(toastString))
             {
-                await ToastProvider.SendAsync("您有以下账号可以使用参量质变仪", string.Join("\n", nicknames));
+                await ToastProvider.SendAsync("注意了", toastString);
             }
         }
         catch (Exception ex)
         {
             await ToastProvider.SendAsync("出错了", ex.Message);
-            Logger.Error(ex, "检查参量质变仪");
+            Logger.Error(ex, "检查参量质变仪和洞天宝钱");
         }
     }
 

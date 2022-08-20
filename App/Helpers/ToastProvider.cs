@@ -10,6 +10,7 @@ internal static class ToastProvider
         try
         {
             var tb = new ToastContentBuilder();
+            tb.AddToastActivationInfo("DoNotClickToast", ToastActivationType.Foreground);
             tb.AddText(title);
             if (!string.IsNullOrWhiteSpace(message))
             {
@@ -29,6 +30,7 @@ internal static class ToastProvider
         try
         {
             var tb = new ToastContentBuilder();
+            tb.AddToastActivationInfo("DoNotClickToast", ToastActivationType.Foreground);
             tb.AddText(title);
             if (!string.IsNullOrWhiteSpace(message))
             {

@@ -10,35 +10,39 @@ public static class Program
     [global::System.STAThreadAttribute]
     static void Main(string[] args)
     {
-        if (args.Any())
-        {
 
-            if (args.FirstOrDefault() == "StartGame")
+        if (args.FirstOrDefault() == "DoNotClickToast")
+        {
+            return;
+        }
+
+        if (args.FirstOrDefault() == "StartGame")
+        {
+            var result = InvokeService.StartGameAsync().GetAwaiter().GetResult();
+            if (result)
             {
-                var result = InvokeService.StartGameAsync().GetAwaiter().GetResult();
-                if (result)
-                {
-                    InvokeService.CheckTransformerReachedAsync().GetAwaiter().GetResult();
-                }
-                return;
+                InvokeService.CheckTransformerReachedAndHomeCoinFullAsync().GetAwaiter().GetResult();
             }
-            if (args.FirstOrDefault() == "dailynote")
+            return;
+        }
+
+        if (args.FirstOrDefault() == "dailynote")
+        {
+            InvokeService.RefreshDailyNoteTilesAsync().GetAwaiter().GetResult();
+            return;
+        }
+
+        if (args.FirstOrDefault() == "/InvokerPRAID:")
+        {
+            if (args[2] == "DailyNoteTask")
             {
                 InvokeService.RefreshDailyNoteTilesAsync().GetAwaiter().GetResult();
-                return;
             }
-            if (args.FirstOrDefault() == "/InvokerPRAID:")
+            if (args[2] == "HoyolabCheckInTask")
             {
-                if (args[2] == "DailyNoteTask")
-                {
-                    InvokeService.RefreshDailyNoteTilesAsync().GetAwaiter().GetResult();
-                }
-                if (args[2] == "HoyolabCheckInTask")
-                {
-                    InvokeService.SignInAllAccountAsync().GetAwaiter().GetResult();
-                }
-                return;
+                InvokeService.SignInAllAccountAsync().GetAwaiter().GetResult();
             }
+            return;
         }
 
         XamlCheckProcessRequirements();

@@ -120,6 +120,13 @@ public partial class App : Application
                     }
                 }
             }
+            if (e.Kind == ExtendedActivationKind.ToastNotification)
+            {
+                if (e.Data is IToastNotificationActivatedEventArgs args)
+                {
+                    // todo
+                }
+            }
         }
         else
         {
@@ -156,6 +163,13 @@ public partial class App : Application
                             // 直接退出，如果没窗口，还发啥消息
                             Environment.Exit(0);
                         }
+                    }
+                }
+                if (e.Kind == ExtendedActivationKind.ToastNotification)
+                {
+                    if (e.Data is IToastNotificationActivatedEventArgs args)
+                    {
+                        // todo
                     }
                 }
                 if (handled)

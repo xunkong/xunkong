@@ -130,7 +130,7 @@
                                 <LineBreak />
                                 <Run FontSize="12"
                                      Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                     Text="建议使用深色模式获取更好的视觉效果" />
+                                     Text="浅色深色都一样" />
                             </TextBlock>
                         </xdc:SettingCard.Content>
                         <xdc:SettingCard.Selector>
@@ -411,7 +411,7 @@
                                     <TextBlock VerticalAlignment="Center"
                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                FontSize="20"
-                                               Text="&#xE81E;" />
+                                               Text="&#xE8B9;" />
                                     <TextBlock Margin="20,0,0,0">
                                         <Run Text="图片缓存" />
                                         <LineBreak />
