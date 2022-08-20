@@ -19,10 +19,8 @@
             </Grid.ColumnDefinitions>
             <TextBlock HorizontalAlignment="Left"
                        VerticalAlignment="Center"
-                       Style="{ThemeResource SubtitleTextBlockStyle}">
-                <Run Text="{x:Bind Tag}" />
-                <Run Text="版本更新内容" />
-            </TextBlock>
+                       Style="{ThemeResource SubtitleTextBlockStyle}"
+                       Text="最近更新内容" />
             <StackPanel Grid.Column="1"
                         HorizontalAlignment="Right"
                         Orientation="Horizontal">
@@ -30,7 +28,7 @@
                               Icon="Refresh"
                               Label="刷新" />
                 <AppBarButton Command="{x:Bind OpenReleaseHistoryPageCommand, Mode=OneTime}"
-                              Icon="Clock"
+                              Icon="More"
                               Label="更多" />
             </StackPanel>
         </Grid>

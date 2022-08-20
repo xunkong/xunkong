@@ -35,7 +35,6 @@ internal static class SettingKeys
     /// <summary>
     /// 上个版本
     /// </summary>
-    [Obsolete("", true)]
     public const string LastVersion = nameof(LastVersion);
 
     /// <summary>

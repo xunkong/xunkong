@@ -51,6 +51,7 @@
 						<Task Type="timer"/>
 					</BackgroundTasks>
 				</Extension>
+				<Extension Category="windows.updateTask" EntryPoint="Xunkong.Desktop.Background.UpdateTask" />
 				<desktop:Extension Category="windows.fullTrustProcess" Executable="Xunkong.Desktop\Xunkong.Desktop.exe">
 					<desktop:FullTrustProcess>
 						<desktop:ParameterGroup GroupId="DailyNoteTask" Parameters="DailyNoteTask"/>
@@ -76,6 +77,7 @@
 				<Path>Xunkong.Desktop\WinRT.Host.dll</Path>
 				<ActivatableClass ActivatableClassId="Xunkong.Desktop.Background.DailyNoteTask" ThreadingModel="both" />
 				<ActivatableClass ActivatableClassId="Xunkong.Desktop.Background.HoyolabCheckInTask" ThreadingModel="both" />
+				<ActivatableClass ActivatableClassId="Xunkong.Desktop.Background.UpdateTask" ThreadingModel="both" />
 			</InProcessServer>
 		</Extension>
 	</Extensions>

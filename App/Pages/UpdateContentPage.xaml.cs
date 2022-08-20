@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Octokit;
+using System.Text;
 using Windows.ApplicationModel;
 using Windows.System;
 
@@ -15,7 +16,9 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
 {
 
 
-    private new string Tag => XunkongEnvironment.AppVersion.ToString(3);
+    private Version? lastVersion;
+
+    private Version thisVersion = XunkongEnvironment.AppVersion;
 
 
     public UpdateContentPage()
@@ -26,6 +29,10 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
 
     private async void UpdateContentPage_Loaded(object sender, RoutedEventArgs e)
     {
+        if (Version.TryParse(AppSetting.GetValue(SettingKeys.LastVersion, "", false), out var version))
+        {
+            lastVersion = version;
+        }
         await InitializeCommand.ExecuteAsync(null);
     }
 
@@ -36,8 +43,37 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
         try
         {
             var client = new GitHubClient(new ProductHeaderValue("xunkong"));
-            var release = await client.Repository.Release.Get("xunkong", "xunkong", Tag);
-            var html = Markdig.Markdown.ToHtml(release.Body);
+            var sb = new StringBuilder();
+            if (lastVersion is null || lastVersion >= thisVersion)
+            {
+                var release = await client.Repository.Release.Get("xunkong", "xunkong", thisVersion.ToString(3));
+                sb.AppendLine($"# {release.TagName} {release.Name}");
+                sb.AppendLine();
+                sb.AppendLine($"> 更新于 {release.PublishedAt:yyyy-MM-dd HH:mm:ss}");
+                sb.AppendLine();
+                sb.AppendLine(release.Body);
+                sb.AppendLine();
+            }
+            else
+            {
+                var releases = await client.Repository.Release.GetAll("xunkong", "xunkong", new ApiOptions { PageCount = 1, PageSize = 10, StartPage = 1 });
+                foreach (var release in releases)
+                {
+                    if (Version.TryParse(release.TagName, out var version))
+                    {
+                        if (lastVersion < version && version <= thisVersion)
+                        {
+                            sb.AppendLine($"# {release.TagName} {release.Name}");
+                            sb.AppendLine();
+                            sb.AppendLine($"> 更新于 {release.PublishedAt:yyyy-MM-dd HH:mm:ss}");
+                            sb.AppendLine();
+                            sb.AppendLine(release.Body);
+                            sb.AppendLine();
+                        }
+                    }
+                }
+            }
+            var html = Markdig.Markdown.ToHtml(sb.ToString());
             var css = await File.ReadAllTextAsync(Path.Combine(Package.Current.InstalledPath, @"Assets\Others\github-markdown_5.1.0.css"));
             html = $$"""
                 <head>
@@ -49,11 +85,11 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
                 </style>
                 </head>
                 <body style="background-color: transparent;">
+                <br>
                 <article class="markdown-body" style="background-color: transparent;">
-                <h1>{{release.Name}}</h1>
-                <blockquote>发布于 {{release.PublishedAt:yyyy-MM-dd HH:mm:ss}}</blockquote>
                 {{html}}
                 </article>
+                <br>
                 </body>
                 """;
             await webview.EnsureCoreWebView2Async();
@@ -62,6 +98,7 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
             webview.CoreWebView2.Settings.AreBrowserAcceleratorKeysEnabled = false;
             webview.NavigateToString(html);
             AppSetting.TrySetValue(SettingKeys.ShowUpdateContentOnLoaded, false);
+            AppSetting.TrySetValue(SettingKeys.LastVersion, thisVersion.ToString());
         }
         catch (Exception ex)
         {
