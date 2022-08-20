@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas.Effects;
+﻿using CommunityToolkit.WinUI.Notifications;
+using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
@@ -8,10 +9,12 @@ using Microsoft.UI.Xaml.Media;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Services.Store;
 using Windows.Storage;
 using Windows.System;
+using Windows.UI.Notifications;
 using Xunkong.ApiClient;
 using Xunkong.Desktop.Controls;
 using Xunkong.Hoyolab;
@@ -105,6 +108,7 @@ public sealed partial class HomePage : Page
         await InitializeActivityAsync();
         _Pivot_Info.Visibility = Visibility.Visible;
         await InitializeInfoBarContentAsync();
+        await CheckUpdateAndShowInfoBarAsync();
     }
 
 
@@ -322,7 +326,6 @@ public sealed partial class HomePage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex, "天赋材料日历");
             Logger.Error(ex, "天赋材料日历");
         }
     }
@@ -372,7 +375,6 @@ public sealed partial class HomePage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex, "活动内容");
             Logger.Error(ex, "活动内容");
         }
     }
@@ -392,75 +394,96 @@ public sealed partial class HomePage : Page
                 _Grid_InfoBar.Visibility = Visibility.Visible;
                 foreach (var item in list)
                 {
-                    var infoBar = new InfoBar
-                    {
-                        Severity = (InfoBarSeverity)item.Severity,
-                        Title = item.Title,
-                        Message = item.Message,
-                        IsOpen = true,
-                    };
+                    InfoBar infoBar;
                     if (!string.IsNullOrWhiteSpace(item.ButtonContent) && !string.IsNullOrWhiteSpace(item.ButtonUri))
                     {
-                        var button = new Button
-                        {
-                            Content = item.ButtonContent,
-                            HorizontalAlignment = HorizontalAlignment.Right,
-                        };
-                        button.Click += async (_, _) =>
-                        {
-                            try
-                            {
-                                // 好像不会有异常
-                                await Launcher.LaunchUriAsync(new Uri(item.ButtonUri));
-                            }
-                            catch (Exception ex)
-                            {
-                                NotificationProvider.Error(ex);
-                                Logger.Error(ex, $"点击主页通知栏按键 - {item.Title}");
-                            }
-                        };
-                        infoBar.ActionButton = button;
+                        infoBar = NotificationProvider.Create((InfoBarSeverity)item.Severity, item.Title, item.Message, item.ButtonContent, async () => await Launcher.LaunchUriAsync(new Uri(item.ButtonUri)));
+                    }
+                    else
+                    {
+                        infoBar = NotificationProvider.Create((InfoBarSeverity)item.Severity, item.Title, item.Message);
                     }
                     _StackPanel_InfoBar.Children.Add(infoBar);
                 }
             }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "主页通知栏内容");
+        }
+    }
+
+
+    /// <summary>
+    /// 检查更新
+    /// </summary>
+    /// <returns></returns>
+    private async Task CheckUpdateAndShowInfoBarAsync()
+    {
+        try
+        {
             if (XunkongEnvironment.IsStoreVersion)
             {
                 // 商店版检查更新
                 var context = StoreContext.GetDefault();
                 // 调用需要在UI线程运行的函数前
-                // WinRT.Interop.InitializeWithWindow.Initialize(context, MainWindow.Current.HWND);
+                WinRT.Interop.InitializeWithWindow.Initialize(context, MainWindow.Current.HWND);
                 var updates = await context.GetAppAndOptionalStorePackageUpdatesAsync();
                 if (updates.Any())
                 {
                     _Grid_InfoBar.Visibility = Visibility.Visible;
-                    var infoBar = new InfoBar
+                    Action action;
+                    if (context.CanSilentlyDownloadStorePackageUpdates)
                     {
-                        Severity = InfoBarSeverity.Success,
-                        Title = "有新版本",
-                        Message = "注意：关闭应用后商店才能安装新版本",
-                        IsOpen = true,
-                    };
-                    var button = new Button
-                    {
-                        Content = "打开商店",
-                        HorizontalAlignment = HorizontalAlignment.Right,
-                    };
-                    button.Click += async (_, _) =>
-                    {
-                        try
+                        action = () =>
                         {
-                            // 好像不会有异常
-                            await Launcher.LaunchUriAsync(new("ms-windows-store://pdp/?productid=9N2SVG0JMT12"));
-                        }
-                        catch (Exception ex)
+                            var operation = context.TrySilentDownloadAndInstallStorePackageUpdatesAsync(updates);
+                            DownloadProgressHandle(operation);
+                        };
+                    }
+                    else
+                    {
+                        action = () =>
                         {
-                            NotificationProvider.Error(ex);
-                            Logger.Error(ex, "点击主页通知栏按键 - 打开商店");
-                        }
-                    };
-                    infoBar.ActionButton = button;
-                    _StackPanel_InfoBar.Children.Insert(0, infoBar);
+                            var operation = context.RequestDownloadAndInstallStorePackageUpdatesAsync(updates);
+                            DownloadProgressHandle(operation);
+                        };
+                    }
+                    if (updates[0].Mandatory)
+                    {
+                        var stack1 = new StackPanel { Spacing = 8 };
+                        stack1.Children.Add(new TextBlock { Text = "这是一个强制更新版本" });
+                        var stack2 = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
+                        stack1.Children.Add(stack2);
+                        var button1 = new Button { Content = "下载并安装" };
+                        button1.Click += (_, _) =>
+                        {
+                            try
+                            {
+                                action();
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error(ex, "下载并安装更新");
+                            }
+                        };
+                        stack2.Children.Add(button1);
+                        var button2 = new Button { Content = "打开商店" };
+                        button2.Click += async (_, _) => await Launcher.LaunchUriAsync(new(XunkongEnvironment.StoreProtocolUrl));
+                        stack2.Children.Add(button2);
+                        var dialog = new ContentDialog
+                        {
+                            Title = "有新版本",
+                            Content = stack1,
+                            XamlRoot = MainWindow.Current.XamlRoot,
+                        };
+                        await dialog.ShowWithZeroMarginAsync();
+                    }
+                    else
+                    {
+                        var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, "有新版本", "商店版无法获取新版本的信息", "下载并安装", action);
+                        _StackPanel_InfoBar.Children.Insert(0, infoBar);
+                    }
                 }
             }
             else
@@ -473,32 +496,7 @@ public sealed partial class HomePage : Page
                     if (version > XunkongEnvironment.AppVersion)
                     {
                         _Grid_InfoBar.Visibility = Visibility.Visible;
-                        var infoBar = new InfoBar
-                        {
-                            Severity = InfoBarSeverity.Success,
-                            Title = $"新版本 {version}",
-                            Message = release.Name,
-                            IsOpen = true,
-                        };
-                        var button = new Button
-                        {
-                            Content = "详细信息",
-                            HorizontalAlignment = HorizontalAlignment.Right,
-                        };
-                        button.Click += async (_, _) =>
-                        {
-                            try
-                            {
-                                // 好像不会有异常
-                                await Launcher.LaunchUriAsync(new Uri(release.HtmlUrl));
-                            }
-                            catch (Exception ex)
-                            {
-                                NotificationProvider.Error(ex);
-                                Logger.Error(ex, $"点击主页通知栏按键 - 新版本 {version}");
-                            }
-                        };
-                        infoBar.ActionButton = button;
+                        var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, $"新版本 {version}", release.Name, "详细信息", async () => await Launcher.LaunchUriAsync(new Uri(release.HtmlUrl)));
                         _StackPanel_InfoBar.Children.Insert(0, infoBar);
                     }
                 }
@@ -506,8 +504,59 @@ public sealed partial class HomePage : Page
         }
         catch (Exception ex)
         {
-            Logger.Error(ex, "主页通知栏内容");
+            Logger.Error(ex, "主页检查更新");
         }
+    }
+
+
+    /// <summary>
+    /// 下载并安装新版本的进度条
+    /// </summary>
+    /// <param name="operation"></param>
+    private static void DownloadProgressHandle(IAsyncOperationWithProgress<StorePackageUpdateResult, StorePackageUpdateStatus> operation)
+    {
+        const string tag = "download new version";
+        const string group = "download";
+        uint index = 0;
+        var content = new ToastContentBuilder().AddText("别点我！").AddVisualChild(new AdaptiveProgressBar()
+        {
+            Title = "下载中",
+            Value = new BindableProgressBarValue("progressValue"),
+            ValueStringOverride = new BindableString("progressValueString"),
+            Status = new BindableString("progressStatus")
+        }).AddToastActivationInfo("DownloadNewVersion", ToastActivationType.Background).GetToastContent();
+
+        var toast = new ToastNotification(content.GetXml());
+        toast.Tag = tag;
+        toast.Group = group;
+        toast.Data = new NotificationData();
+        toast.Data.Values["progressValue"] = "0";
+        toast.Data.Values["progressValueString"] = "0%";
+        toast.Data.Values["progressStatus"] = "0MB / 0MB";
+        toast.Data.SequenceNumber = ++index;
+
+        var manager = ToastNotificationManager.CreateToastNotifier();
+        operation.Progress = (_, status) =>
+        {
+            if (status.PackageUpdateState == StorePackageUpdateState.Pending)
+            {
+                manager.Show(toast);
+            }
+            if (status.PackageUpdateState == StorePackageUpdateState.Downloading)
+            {
+                var progress = status.PackageDownloadProgress;
+                var data = new NotificationData { SequenceNumber = ++index };
+                data.Values["progressValue"] = $"{status.PackageDownloadProgress / 0.95}";
+                data.Values["progressValueString"] = $"{status.PackageDownloadProgress / 0.95:P0}";
+                data.Values["progressStatus"] = $"{status.PackageBytesDownloaded / (double)(1 << 20):F1}MB / {status.PackageDownloadSizeInBytes / (double)(1 << 20):F1}MB";
+                manager.Update(data, tag, group);
+            }
+            if (status.PackageUpdateState == StorePackageUpdateState.Deploying)
+            {
+                manager.Hide(toast);
+                Vanara.PInvoke.Kernel32.RegisterApplicationRestart(null, 0);
+            }
+        };
     }
 
 
