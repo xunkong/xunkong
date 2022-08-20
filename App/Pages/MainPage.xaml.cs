@@ -215,8 +215,15 @@ public sealed partial class MainPage : Page
 
     private void MainPage_Loaded(object sender, RoutedEventArgs e)
     {
+        if (AppSetting.GetValue(SettingKeys.ShowUpdateContentOnLoaded, false, false))
+        {
+            _MainPageFrame.Navigate(typeof(UpdateContentPage));
+        }
+        else
+        {
         _NavigationView.SelectedItem = _NaviItem_HomePage;
         _MainPageFrame.Navigate(typeof(HomePage));
+        }
         InitializeNavigationWebToolItem();
         GetGenshinDataAsync();
         RefreshAllAcountAsync();

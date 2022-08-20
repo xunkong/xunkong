@@ -134,10 +134,14 @@ internal static class SettingKeys
     /// </summary>
     public const string DownloadWallpaperOnMeteredInternet = nameof(DownloadWallpaperOnMeteredInternet);
 
-
     /// <summary>
     /// 启动应用时的原粹树脂和洞天宝钱提醒
     /// </summary>
     public const string ResinAndHomeCoinNotificationWhenStartUp = nameof(ResinAndHomeCoinNotificationWhenStartUp);
+
+    /// <summary>
+    /// 应用启动时打开更新内容界面
+    /// </summary>
+    public const string ShowUpdateContentOnLoaded = nameof(ShowUpdateContentOnLoaded);
 
 }

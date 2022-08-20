@@ -156,7 +156,24 @@ internal static class NotificationProvider
         }
         _container.DispatcherQueue.TryEnqueue(async () =>
         {
-            var button = new Button
+            var infoBar = Create(severity, title, message, buttonContent, buttonAction, closedAction);
+            _container.Children.Add(infoBar);
+            if (delay > 0)
+            {
+                await Task.Delay(delay);
+                infoBar.IsOpen = false;
+            }
+        });
+    }
+
+
+
+    public static InfoBar Create(InfoBarSeverity severity, string? title, string? message, string? buttonContent = null, Action? buttonAction = null, Action? closedAction = null)
+    {
+        Button? button = null;
+        if (!string.IsNullOrWhiteSpace(buttonContent) && buttonAction != null)
+        {
+            button = new Button
             {
                 Content = buttonContent,
                 HorizontalAlignment = HorizontalAlignment.Right,
@@ -172,35 +189,30 @@ internal static class NotificationProvider
                     Logger.Error(ex, $"{title} - {message} - {buttonContent}");
                 }
             };
-            var infoBar = new InfoBar
+        }
+        var infoBar = new InfoBar
+        {
+            Severity = severity,
+            Title = title,
+            Message = message,
+            ActionButton = button,
+            IsOpen = true,
+        };
+        if (closedAction is not null)
+        {
+            infoBar.CloseButtonClick += (_, _) =>
             {
-                Severity = severity,
-                Title = title,
-                Message = message,
-                ActionButton = button,
-                IsOpen = true,
-            };
-            if (closedAction is not null)
-            {
-                infoBar.CloseButtonClick += (_, _) =>
+                try
                 {
-                    try
-                    {
-                        closedAction();
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error(ex, $"{title} - {message}");
-                    }
-                };
-            }
-            _container.Children.Add(infoBar);
-            if (delay > 0)
-            {
-                await Task.Delay(delay);
-                infoBar.IsOpen = false;
-            }
-        });
+                    closedAction();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, $"{title} - {message}");
+                }
+            };
+        }
+        return infoBar;
     }
 
 
