@@ -118,6 +118,9 @@ public sealed partial class MainPage : Page
     #region Natigation Natigate
 
 
+    private readonly Dictionary<string, Type> pageTypeDic = new();
+
+
     private void _NavigationView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
     {
         try
@@ -139,13 +142,31 @@ public sealed partial class MainPage : Page
                 else
                 {
                     var tag = args.InvokedItemContainer.Tag as string;
-                    var asm = typeof(MainPage).Assembly;
-                    var type = asm.GetType($"Xunkong.Desktop.Pages.{tag}");
-                    if (type is not null)
+                    if (string.IsNullOrWhiteSpace(tag))
                     {
-                        _MainPageFrame.Navigate(type);
+                        return;
                     }
-
+                    if (tag == "Help")
+                    {
+                        _MainPageFrame.Navigate(typeof(WebViewPage), "https://xunkong.cc/help/xunkong/");
+                    }
+                    else
+                    {
+                        if (pageTypeDic.TryGetValue(tag, out var type))
+                        {
+                            _MainPageFrame.Navigate(type);
+                        }
+                        else
+                        {
+                            var asm = typeof(MainPage).Assembly;
+                            type = asm.GetType($"Xunkong.Desktop.Pages.{tag}");
+                            if (type is not null)
+                            {
+                                pageTypeDic.TryAdd(tag, type);
+                                _MainPageFrame.Navigate(type);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -221,8 +242,8 @@ public sealed partial class MainPage : Page
         }
         else
         {
-        _NavigationView.SelectedItem = _NaviItem_HomePage;
-        _MainPageFrame.Navigate(typeof(HomePage));
+            _NavigationView.SelectedItem = _NaviItem_HomePage;
+            _MainPageFrame.Navigate(typeof(HomePage));
         }
         InitializeNavigationWebToolItem();
         GetGenshinDataAsync();
@@ -391,7 +412,10 @@ public sealed partial class MainPage : Page
             jumpList.Items.Add(item1);
             await jumpList.SaveAsync();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "JumpList");
+        }
     }
 
 

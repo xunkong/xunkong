@@ -40,6 +40,9 @@
             </Style>
 
 
+            <FontFamily x:Key="FluentSystemIcons">ms-appx:///Assets/Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular</FontFamily>
+
+
             <x:Boolean x:Key="True">True</x:Boolean>
             <x:Boolean x:Key="False">False</x:Boolean>
             <SolidColorBrush x:Key="Rarity5ForegroundBrush">#FFA500</SolidColorBrush>
