@@ -24,7 +24,7 @@
                   ColumnSpacing="48"
                   CornerRadius="4">
                 <Grid.Resources>
-                    <Style TargetType="TextBlock">
+                    <Style BasedOn="{StaticResource BodyTextBlockStyle}" TargetType="TextBlock">
                         <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
                     </Style>
                 </Grid.Resources>
@@ -137,6 +137,7 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate x:DataType="models:WishlogSummaryPage_Rank5Item">
                                     <TextBlock Name="_TextBlock_Rank5Item"
+                                               FontFamily="{ThemeResource CustomFont}"
                                                Foreground="{x:Bind Foreground}"
                                                PointerEntered="_TextBlock_Rank5Item_PointerEntered"
                                                Tag="{Binding ElementName=_ScrollViewer_Rank5Item, Path=DataContext}"

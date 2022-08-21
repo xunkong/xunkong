@@ -79,6 +79,7 @@
         <Grid Grid.Row="2">
             <Grid.Resources>
                 <Style TargetType="TextBlock">
+                    <Setter Property="FontFamily" Value="{ThemeResource CustomFont}" />
                     <Setter Property="HorizontalTextAlignment" Value="Center" />
                 </Style>
             </Grid.Resources>
