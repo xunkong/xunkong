@@ -43,7 +43,7 @@
                     Spacing="8">
             <TextBlock VerticalAlignment="Center" Text="选择Uid" />
             <ComboBox x:Name="_ComboBox_Uid"
-                      Width="120"
+                      MinWidth="124"
                       VerticalAlignment="Center"
                       ItemsSource="{x:Bind UidList}"
                       SelectedItem="{x:Bind SelectedUid, Mode=TwoWay}"
@@ -178,16 +178,16 @@
                     </TextBlock>
                     <TextBlock Text="支持导入 Excel 或 Json 文件" />
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <TextBlock Width="160"
+                        <TextBlock MinWidth="160"
                                    VerticalAlignment="Center"
                                    Text="指定 uid（为 0 时忽略）" />
-                        <TextBox Width="120" Text="{x:Bind OverwriteUid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox Width="160" Text="{x:Bind OverwriteUid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <TextBlock Width="160"
+                        <TextBlock MinWidth="160"
                                    VerticalAlignment="Center"
                                    Text="指定 lang（为空时忽略）" />
-                        <TextBox Width="120" Text="{x:Bind OverwriteLang, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox Width="160" Text="{x:Bind OverwriteLang, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <TextBlock Width="160"

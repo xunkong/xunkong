@@ -271,14 +271,11 @@
                         Orientation="Horizontal"
                         Spacing="16">
                 <TextBlock VerticalAlignment="Center"
-                           Style="{ThemeResource CaptionTextBlockStyle}"
+                           FontSize="14"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                            Text="{x:Bind AppName}" />
             </StackPanel>
         </Border>
-
-
-        <cc:InAppNotification Content="fosfdsf" />
-
 
 
 

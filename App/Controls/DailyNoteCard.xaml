@@ -5,7 +5,7 @@
              xmlns:dn="using:Xunkong.Hoyolab.DailyNote"
              xmlns:local="using:Xunkong.Desktop"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             Width="308"
+             Width="312"
              Height="376"
              x:DefaultBindMode="OneWay"
              mc:Ignorable="d">

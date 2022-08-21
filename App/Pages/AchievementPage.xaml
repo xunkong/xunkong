@@ -84,7 +84,7 @@
                             TextChanged="c_AutoSuggetBox_Search_TextChanged" />
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                 <ComboBox x:Name="c_ComboBox_Uids"
-                          Width="120"
+                          MinWidth="124"
                           Margin="0,0,12,0"
                           VerticalAlignment="Center"
                           ItemsSource="{x:Bind Uids}"

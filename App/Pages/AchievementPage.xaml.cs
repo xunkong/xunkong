@@ -19,7 +19,6 @@ using Windows.System;
 using Windows.UI;
 using WinRT.Interop;
 using Xunkong.Desktop.Controls;
-
 using Xunkong.GenshinData.Achievement;
 
 // To learn more about WinUI, the WinUI project structure,

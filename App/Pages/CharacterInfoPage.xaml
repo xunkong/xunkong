@@ -536,9 +536,9 @@
                     <StackPanel Margin="24,0,0,0"
                                 Orientation="Horizontal"
                                 Visibility="{x:Bind SelectedCharacter.Wishlogs, Converter={StaticResource ObjectToVisibilityConverter}, FallbackValue=Collapsed}">
-                        <TextBlock Width="140" Text="卡池" />
-                        <TextBlock Width="180" Text="时间" />
-                        <TextBlock Width="80" Text="保底内抽数" />
+                        <TextBlock Width="160" Text="卡池" />
+                        <TextBlock Width="200" Text="时间" />
+                        <TextBlock Width="100" Text="保底内抽数" />
                     </StackPanel>
                     <ItemsRepeater Margin="24,0,0,0" ItemsSource="{x:Bind SelectedCharacter.Wishlogs}">
                         <ItemsRepeater.Layout>
@@ -547,9 +547,9 @@
                         <ItemsRepeater.ItemTemplate>
                             <DataTemplate x:DataType="models:WishlogItemEx">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Width="140" Text="{x:Bind VersionAndName}" />
-                                    <TextBlock Width="180" Text="{x:Bind Time, Converter={StaticResource DateTimeOffsetToDateTimeStringConverter}}" />
-                                    <TextBlock Width="80" Text="{x:Bind GuaranteeIndex}" />
+                                    <TextBlock Width="160" Text="{x:Bind VersionAndName}" />
+                                    <TextBlock Width="200" Text="{x:Bind Time, Converter={StaticResource DateTimeOffsetToDateTimeStringConverter}}" />
+                                    <TextBlock Width="100" Text="{x:Bind GuaranteeIndex}" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>

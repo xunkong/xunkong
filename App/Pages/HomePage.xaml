@@ -138,7 +138,7 @@
 
                             <!--  选择日期  -->
                             <StackPanel Orientation="Horizontal">
-                                <Border Width="100"
+                                <Border Width="108"
                                         Height="60"
                                         VerticalAlignment="Top"
                                         Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
@@ -194,7 +194,7 @@
                                               MaxWidth="1200"
                                               ColumnSpacing="8">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="108" />
                                                 <ColumnDefinition />
                                             </Grid.ColumnDefinitions>
                                             <!--  材料名称  -->
