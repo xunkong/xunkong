@@ -1,0 +1,29 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="using:Xunkong.Desktop.Themes"
+                    xmlns:xdc="using:Xunkong.Desktop.Converters">
+
+    <xdc:DateTimeOffsetToDateTimeStringConverter x:Key="DateTimeOffsetToDateTimeStringConverter" />
+    <xdc:DateTimeOffsetToTimeStringConverter x:Key="DateTimeOffsetToTimeStringConverter" />
+    <xdc:DateTimeOffsetToDayStringConverter x:Key="DateTimeOffsetToDayStringConverter" />
+    <xdc:DateTimeOffsetToDateStringConverter x:Key="DateTimeOffsetToDateStringConverter" />
+    <xdc:ExpeditionStatusToColorConverter x:Key="ExpeditionStatusToColorConverter" />
+    <xdc:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" />
+    <xdc:ObjectToVisibilityReversedConverter x:Key="ObjectToVisibilityReversedConverter" />
+    <xdc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    <xdc:BoolToVisibilityReversedConverter x:Key="BoolToVisibilityReversedConverter" />
+    <xdc:QuestEventStatsColorConverter x:Key="QuestEventStatsColorConverter" />
+    <xdc:QuestEventStatsColorForXboxWidgetConverter x:Key="QuestEventStatsColorForXboxWidgetConverter" />
+    <xdc:QuestEventStatsStringConverter x:Key="QuestEventStatsStringConverter" />
+    <xdc:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+    <xdc:StringToVisibilityReversedConverter x:Key="StringToVisibilityReversedConverter" />
+    <xdc:RarityToBackgroundImageConverter x:Key="RarityToBackgroundImageConverter" />
+    <xdc:RarityToIconStarConverter x:Key="RarityToIconStarConverter" />
+    <xdc:ElementToElementImageConverter x:Key="ElementToElementImageConverter" />
+    <xdc:WishTypeToGuaranteeCountNumberConverter x:Key="WishTypeToGuaranteeCountNumberConverter" />
+    <xdc:WishTypeToGuaranteeCountStringConverter x:Key="WishTypeToGuaranteeCountStringConverter" />
+    <xdc:EnumToDescriptionOrStringConverter x:Key="EnumToDescriptionOrStringConverter" />
+    <xdc:WishlogItemRarityToForegroundConverter x:Key="WishlogItemRarityToForegroundConverter" />
+    <xdc:RarityToBackgroundSquareImageBrushConverter x:Key="RarityToBackgroundSquareImageBrushConverter" />
+
+</ResourceDictionary>
