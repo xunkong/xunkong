@@ -246,7 +246,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
             {
                 var stats = group.FirstOrDefault()?.Adapt<WishlogSummaryPage_EventStats>()!;
                 character_eventStats.Add(stats);
-                stats.Name = string.Join(" ", group.Select(x => x.Name));
+                stats.Name = string.Join("\n", group.Select(x => x.Name));
                 stats.UpItems = group.SelectMany(x => x.Rank5UpItems).Join(dic_characters, str => str, dic => dic.Key, (str, dic) => dic.Value).ToList().Adapt<List<WishlogSummaryPage_UpItem>>();
                 stats.UpItems.AddRange(group.FirstOrDefault()!.Rank4UpItems.Join(dic_characters, str => str, dic => dic.Key, (str, dic) => dic.Value).Adapt<IEnumerable<WishlogSummaryPage_UpItem>>());
                 var currentEventItems = wishlogs.Where(x => x.QueryType == WishType.CharacterEvent && stats.StartTime <= x.Time && x.Time <= stats.EndTime).OrderByDescending(x => x.Id).ToList();
@@ -267,7 +267,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
             {
                 var stats = group.FirstOrDefault()?.Adapt<WishlogSummaryPage_EventStats>()!;
                 weapon_eventStats.Add(stats);
-                stats.Name = string.Join(" ", group.Select(x => x.Name));
+                stats.Name = string.Join("\n", group.Select(x => x.Name));
                 stats.UpItems = group.SelectMany(x => x.Rank5UpItems).Join(dic_weapons, str => str, dic => dic.Key, (str, dic) => dic.Value).ToList().Adapt<List<WishlogSummaryPage_UpItem>>();
                 stats.UpItems.AddRange(group.FirstOrDefault()!.Rank4UpItems.Join(dic_weapons, str => str, dic => dic.Key, (str, dic) => dic.Value).Adapt<IEnumerable<WishlogSummaryPage_UpItem>>());
                 var currentEventItems = wishlogs.Where(x => x.QueryType == WishType.WeaponEvent && stats.StartTime <= x.Time && x.Time <= stats.EndTime).OrderByDescending(x => x.Id).ToList();

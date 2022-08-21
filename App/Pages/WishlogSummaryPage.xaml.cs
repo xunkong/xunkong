@@ -85,23 +85,24 @@ public sealed partial class WishlogSummaryPage : Page
                     Storyboard.SetTargetProperty(ani, "Height");
                     if (grid.Tag as string == "HasExpand")
                     {
-                        ani.From = grid.Height;
-                        ani.To = 200;
+                        ani.From = grid.ActualHeight;
+                        ani.To = 240;
                         grid.Tag = "";
                         button.Content = "\xE70D"; //ChevronDown
                     }
                     else
                     {
-                        ani.From = grid.Height;
+                        ani.From = grid.ActualHeight;
                         if (scroll.ExtentHeight <= 152)
                         {
-                            ani.To = 200;
+                            ani.To = 240;
                         }
                         else
                         {
-                            ani.To = 50 + scroll.ExtentHeight;
+                            ani.To = 68 + scroll.ExtentHeight;
                         }
                         grid.Tag = "HasExpand";
+                        grid.MaxHeight = double.PositiveInfinity;
                         button.Content = "\xE70E"; //ChevronUp
                     }
                     sb.Children.Add(ani);
