@@ -16,9 +16,11 @@
 
 
         <ScrollViewer x:Name="_ScrollViewer_Content">
-            <StackPanel Margin="48,0,48,48">
+            <StackPanel Margin="48,0,48,48" Spacing="24">
                 <StackPanel.ChildrenTransitions>
-                    <EntranceThemeTransition />
+                    <TransitionCollection>
+                        <EntranceThemeTransition />
+                    </TransitionCollection>
                 </StackPanel.ChildrenTransitions>
 
                 <Grid x:Name="_Grid_Image"
@@ -36,7 +38,9 @@
                                 VerticalAlignment="Bottom"
                                 Visibility="{x:Bind WallpaperInfo, Converter={StaticResource ObjectToVisibilityConverter}}">
                         <StackPanel.ChildrenTransitions>
-                            <AddDeleteThemeTransition />
+                            <TransitionCollection>
+                                <AddDeleteThemeTransition />
+                            </TransitionCollection>
                         </StackPanel.ChildrenTransitions>
                         <TextBlock FontSize="16"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -75,7 +79,9 @@
                                     Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
                                     ToolTipService.ToolTip="复制">
                                 <Button.ContentTransitions>
-                                    <ContentThemeTransition />
+                                    <TransitionCollection>
+                                        <ContentThemeTransition />
+                                    </TransitionCollection>
                                 </Button.ContentTransitions>
                             </Button>
                             <!--  保存图片  -->
@@ -104,24 +110,41 @@
                     </StackPanel>
                 </Grid>
 
-                <Grid x:Name="_Grid_InfoBar"
-                      Margin="0,24,0,0"
-                      Visibility="Collapsed">
+                <Grid x:Name="_Grid_InfoBar" Visibility="Collapsed">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition MaxWidth="1200" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <StackPanel x:Name="_StackPanel_InfoBar" Spacing="4">
                         <StackPanel.ChildrenTransitions>
-                            <AddDeleteThemeTransition />
+                            <TransitionCollection>
+                                <AddDeleteThemeTransition />
+                            </TransitionCollection>
                         </StackPanel.ChildrenTransitions>
                     </StackPanel>
                 </Grid>
 
 
-                <Pivot x:Name="_Pivot_Info"
+                <!--  快捷操作  -->
+                <StackPanel x:Name="c_StackPanel_QuickAction"
+                            Orientation="Horizontal"
+                            Spacing="16"
+                            Visibility="Collapsed">
+                    <StackPanel.ChildrenTransitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition />
+                        </TransitionCollection>
+                    </StackPanel.ChildrenTransitions>
+                    <TextBlock VerticalAlignment="Center"
+                               FontSize="20"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               Text="快捷操作" />
+                    <Button Command="{x:Bind StartGameCommand, Mode=OneTime}" Content="启动游戏" />
+                </StackPanel>
+
+
+                <Pivot x:Name="_Pivot_MaterialAndActivity"
                        Grid.Row="2"
-                       Margin="0,24,0,0"
                        Visibility="Collapsed">
                     <Pivot.Resources>
                         <Thickness x:Key="PivotItemMargin">0</Thickness>
@@ -129,6 +152,7 @@
                             <Setter Property="FontSize" Value="20" />
                             <Setter Property="Height" Value="38" />
                             <Setter Property="Margin" Value="0,0,0,24" />
+                            <Setter Property="Padding" Value="0,0,24,0" />
                         </Style>
                     </Pivot.Resources>
 
@@ -179,9 +203,12 @@
                                 </GridView>
                             </StackPanel>
 
+                            <!--  素材内容分组  -->
                             <ItemsControl HorizontalAlignment="Left" ItemsSource="{x:Bind MaterialDayData}">
                                 <ItemsControl.ItemContainerTransitions>
-                                    <ContentThemeTransition />
+                                    <TransitionCollection>
+                                        <ContentThemeTransition />
+                                    </TransitionCollection>
                                 </ItemsControl.ItemContainerTransitions>
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>

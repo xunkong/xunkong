@@ -65,13 +65,20 @@ internal class InvokeService
     /// 启动游戏
     /// </summary>
     /// <returns></returns>
-    public static async Task<bool> StartGameAsync()
+    public static async Task<bool> StartGameAsync(bool sendInAppNotification = false)
     {
         try
         {
             if (IsGameRunning())
             {
-                await ToastProvider.SendAsync("出错了", "已有游戏进程在运行");
+                if (sendInAppNotification)
+                {
+                    NotificationProvider.Warning("出错了", "已有游戏进程正在运行");
+                }
+                else
+                {
+                    await ToastProvider.SendAsync("出错了", "已有游戏进程正在运行");
+                }
                 return false;
             }
             var exePath = await GetGameExePathAsync();
@@ -120,7 +127,14 @@ internal class InvokeService
                     return false;
                 }
             }
-            await ToastProvider.SendAsync("出错了", ex.Message);
+            if (sendInAppNotification)
+            {
+                NotificationProvider.Error(ex, "启动游戏");
+            }
+            else
+            {
+                await ToastProvider.SendAsync("出错了", ex.Message);
+            }
             Logger.Error(ex, "启动游戏");
             return false;
         }
@@ -154,7 +168,7 @@ internal class InvokeService
             }
             if (!File.Exists(exePath))
             {
-                throw new XunkongException("没有找到 YuanShen.exe");
+                throw new XunkongException("没有找到 YuanShen.exe，请前往设置页面指定路径。");
             }
         }
         if (!(exePath.EndsWith("YuanShen.exe") || exePath.EndsWith("GenshinImpact.exe")))
@@ -170,7 +184,7 @@ internal class InvokeService
     /// 检查参量质变仪和洞天宝钱
     /// </summary>
     /// <returns></returns>
-    public static async Task CheckTransformerReachedAndHomeCoinFullAsync()
+    public static async Task CheckTransformerReachedAndHomeCoinFullAsync(bool sendInAppNotification = false)
     {
         try
         {
@@ -212,12 +226,26 @@ internal class InvokeService
             var toastString = sb.ToString();
             if (!string.IsNullOrWhiteSpace(toastString))
             {
-                await ToastProvider.SendAsync("注意了", toastString);
+                if (sendInAppNotification)
+                {
+                    NotificationProvider.Warning("注意了", toastString);
+                }
+                else
+                {
+                    await ToastProvider.SendAsync("注意了", toastString);
+                }
             }
         }
         catch (Exception ex)
         {
-            await ToastProvider.SendAsync("出错了", ex.Message);
+            if (sendInAppNotification)
+            {
+                NotificationProvider.Warning("出错了", ex.Message);
+            }
+            else
+            {
+                await ToastProvider.SendAsync("出错了", ex.Message);
+            }
             Logger.Error(ex, "检查参量质变仪和洞天宝钱");
         }
     }

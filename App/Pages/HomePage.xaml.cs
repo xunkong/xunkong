@@ -82,6 +82,24 @@ public sealed partial class HomePage : Page
     private List<Hoyolab.Wiki.Activity>? strategyData;
 
 
+   
+
+
+    private async void HomePage_Loaded(object sender, RoutedEventArgs e)
+    {
+        InitializeWallpaper();
+        await InitializeCalendarAsync();
+        await InitializeActivityAsync();
+        _Pivot_MaterialAndActivity.Visibility = Visibility.Visible;
+        await InitializeInfoBarContentAsync();
+        await CheckUpdateAndShowInfoBarAsync();
+    }
+
+
+
+    #region Wallpaper
+
+
     /// <summary>
     /// 图片最大高度
     /// </summary>
@@ -99,17 +117,6 @@ public sealed partial class HomePage : Page
     private CompositionEffectBrush gradientEffectBrush;
     private CompositionEffectBrush opacityEffectBrush;
     private CompositionEffectBrush maskEffectBrush;
-
-
-    private async void HomePage_Loaded(object sender, RoutedEventArgs e)
-    {
-        InitializeWallpaper();
-        await InitializeCalendarAsync();
-        await InitializeActivityAsync();
-        _Pivot_Info.Visibility = Visibility.Visible;
-        await InitializeInfoBarContentAsync();
-        await CheckUpdateAndShowInfoBarAsync();
-    }
 
 
     /// <summary>
@@ -148,6 +155,7 @@ public sealed partial class HomePage : Page
             imageMaxHeight = MainWindow.Current.Height * 0.75 / MainWindow.Current.UIScale;
             _Grid_Image.MaxHeight = imageMaxHeight;
             await LoadBackgroundImage(file);
+            c_StackPanel_QuickAction.Visibility = Visibility.Visible;
             if (NetworkHelper.IsInternetOnMeteredConnection)
             {
                 if (!AppSetting.GetValue<bool>(SettingKeys.DownloadWallpaperOnMeteredInternet))
@@ -170,6 +178,10 @@ public sealed partial class HomePage : Page
         {
             NotificationProvider.Error(ex, "加载推荐图片");
             Logger.Error(ex, "加载推荐图片");
+        }
+        finally
+        {
+            c_StackPanel_QuickAction.Visibility = Visibility.Visible;
         }
     }
 
@@ -283,102 +295,134 @@ public sealed partial class HomePage : Page
 
 
     /// <summary>
-    /// 初始化天赋材料日历
+    /// 浏览图片大图
     /// </summary>
-    /// <returns></returns>
-    private async Task InitializeCalendarAsync()
+    [RelayCommand]
+    private void OpenImageViewer()
     {
-        try
+        if (WallpaperInfo is not null)
         {
-            var list = await _hoyolabClient.GetTalentCalenarsListAsync();
-            var data = new List<HomePage_DayData>(7);
-            var now = DateTimeOffset.Now;
-            var monday = now.AddDays(-(((int)now.DayOfWeek + 6) % 7));
-            var characters = list.Where(x => x.BreakType == "2").ToList();
-            var weapons = list.Where(x => x.BreakType == "1").ToList();
-            for (int i = 0; i < 7; i++)
+            if (WallpaperInfo == FallbackWallpaper)
             {
-                var day = monday.AddDays(i);
-                var dayData = new HomePage_DayData
-                {
-                    Month = day.Month,
-                    DayOfMonth = day.Day,
-                    DayOfWeekName = DayOfWeekToString(day.DayOfWeek),
-                    Data = new List<HomePage_MaterialData>()
-                };
-                var cs = characters.Where(x => x.DropDay.Contains($"{i + 1}")).GroupBy(x => x.ContentInfos.FirstOrDefault(x => x.Title.Contains("哲学"))).OrderBy(x => x.Key?.ContentId);
-                foreach (var item in cs)
-                {
-                    var materialData = new HomePage_MaterialData { Name = item.Key?.Title!, Icon = item.Key?.Icon!, CharacterOrWeapon = item.OrderBy(x => x.Sort.GetValueOrDefault((int)day.DayOfWeek)).ToList() };
-                    dayData.Data.Add(materialData);
-                }
-                var ws = weapons.Where(x => x.DropDay.Contains($"{i + 1}")).GroupBy(x => x.ContentInfos.MaxBy(x => x.ContentId)).OrderBy(x => x.Key?.ContentId);
-                foreach (var item in ws)
-                {
-                    var materialData = new HomePage_MaterialData { Name = item.Key?.Title!, Icon = item.Key?.Icon!, CharacterOrWeapon = item.OrderBy(x => x.Sort.GetValueOrDefault((int)day.DayOfWeek)).ToList() };
-                    dayData.Data.Add(materialData);
-                }
-                data.Add(dayData);
+                MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = FallbackWallpaperUri });
             }
-            MaterialWeekData = data;
-            var index = ((int)now.DayOfWeek + 6) % 7;
-            _GridView_DaySelction.SelectedIndex = index;
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex, "天赋材料日历");
-        }
-    }
-
-
-    private string DayOfWeekToString(DayOfWeek dayOfWeek)
-    {
-        return dayOfWeek switch
-        {
-            DayOfWeek.Monday => "一",
-            DayOfWeek.Tuesday => "二",
-            DayOfWeek.Wednesday => "三",
-            DayOfWeek.Thursday => "四",
-            DayOfWeek.Friday => "五",
-            DayOfWeek.Saturday => "六",
-            DayOfWeek.Sunday => "日",
-            _ => ""
-        };
-    }
-
-
-    /// <summary>
-    /// 天赋材料日历按日切换
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void _GridView_DaySelction_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        var day = MaterialWeekData?.Skip(_GridView_DaySelction.SelectedIndex).FirstOrDefault();
-        if (day != null)
-        {
-            MonthName = $"{day.Month}月";
-            MaterialDayData = day.Data;
+            else
+            {
+                MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = CacheHelper.GetCacheFilePath(WallpaperInfo.Url) });
+            }
         }
     }
 
 
     /// <summary>
-    /// 初始化活动内容
+    /// 复制图片
     /// </summary>
     /// <returns></returns>
-    private async Task InitializeActivityAsync()
+    [RelayCommand]
+    private async Task CopyImageAsync()
     {
         try
         {
-            (ActivityData, StrategyData) = await _hoyolabClient.GetGameActivitiesListAsync();
+            StorageFile file;
+            if (WallpaperInfo == FallbackWallpaper)
+            {
+                file = await StorageFile.GetFileFromApplicationUriAsync(new Uri(FallbackWallpaperUri));
+            }
+            else
+            {
+                var path = CacheHelper.GetCacheFilePath(WallpaperInfo.Url);
+                if (!File.Exists(path))
+                {
+                    NotificationProvider.Warning("找不到缓存的文件", 3000);
+                    return;
+                }
+                file = await StorageFile.GetFileFromPathAsync(path);
+            }
+            ClipboardHelper.SetBitmap(file);
+            _Button_Copy.Content = "\xE8FB";
+            await Task.Delay(3000);
+            _Button_Copy.Content = "\xE8C8";
         }
         catch (Exception ex)
         {
-            Logger.Error(ex, "活动内容");
+            NotificationProvider.Error(ex, "复制图片");
+            Logger.Error(ex, "复制图片");
         }
     }
 
+
+
+    /// <summary>
+    /// 保存图片
+    /// </summary>
+    [RelayCommand]
+    private void SaveWallpaper()
+    {
+        if (string.IsNullOrWhiteSpace(WallpaperInfo?.Url))
+        {
+            return;
+        }
+        try
+        {
+            string? file = null;
+            if (WallpaperInfo == FallbackWallpaper)
+            {
+                file = StorageFile.GetFileFromApplicationUriAsync(new Uri(FallbackWallpaperUri)).GetAwaiter().GetResult().Path;
+            }
+            else
+            {
+                file = CacheHelper.GetCacheFilePath(WallpaperInfo.Url);
+            }
+            if (!File.Exists(file))
+            {
+                NotificationProvider.Warning("找不到缓存的文件", 3000);
+                return;
+            }
+            var destFolder = Path.Combine(XunkongEnvironment.UserDataPath, "Wallpaper");
+            var fileName = WallpaperInfo.FileName ?? Path.GetFileName(WallpaperInfo.Url);
+            var destPath = Path.Combine(destFolder, fileName);
+            Directory.CreateDirectory(destFolder);
+            File.Copy(file, destPath, true);
+            Action action = () => Process.Start(new ProcessStartInfo { FileName = destPath, UseShellExecute = true });
+            NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "已保存", fileName, "打开文件", action, null, 3000);
+        }
+        catch (Exception ex)
+        {
+            NotificationProvider.Error(ex, "保存图片");
+            Logger.Error(ex, "保存图片");
+        }
+    }
+
+
+    /// <summary>
+    /// 打开图源
+    /// </summary>
+    /// <returns></returns>
+    [RelayCommand]
+    private async Task OpenImageSourceAsync()
+    {
+        if (string.IsNullOrWhiteSpace(WallpaperInfo?.Source))
+        {
+            return;
+        }
+        try
+        {
+            await Launcher.LaunchUriAsync(new Uri(WallpaperInfo.Source));
+        }
+        catch (Exception ex)
+        {
+            NotificationProvider.Error(ex, "打开图源");
+            Logger.Error(ex, "打开图源");
+        }
+    }
+
+
+    #endregion
+
+
+
+
+    #region 通知和检查更新
 
     /// <summary>
     /// 初始化通知栏内容
@@ -559,130 +603,111 @@ public sealed partial class HomePage : Page
         };
     }
 
+    #endregion
 
 
-    /// <summary>
-    /// 浏览图片大图
-    /// </summary>
-    [RelayCommand]
-    private void OpenImageViewer()
-    {
-        if (WallpaperInfo is not null)
-        {
-            if (WallpaperInfo == FallbackWallpaper)
-            {
-                MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = FallbackWallpaperUri });
-            }
-            else
-            {
-                MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = CacheHelper.GetCacheFilePath(WallpaperInfo.Url) });
-            }
-        }
-    }
+
+
+    #region 素材和活动
+
 
 
     /// <summary>
-    /// 复制图片
+    /// 初始化天赋材料日历
     /// </summary>
     /// <returns></returns>
-    [RelayCommand]
-    private async Task CopyImageAsync()
+    private async Task InitializeCalendarAsync()
     {
         try
         {
-            StorageFile file;
-            if (WallpaperInfo == FallbackWallpaper)
+            var list = await _hoyolabClient.GetTalentCalenarsListAsync();
+            var data = new List<HomePage_DayData>(7);
+            var now = DateTimeOffset.Now;
+            var monday = now.AddDays(-(((int)now.DayOfWeek + 6) % 7));
+            var characters = list.Where(x => x.BreakType == "2").ToList();
+            var weapons = list.Where(x => x.BreakType == "1").ToList();
+            for (int i = 0; i < 7; i++)
             {
-                file = await StorageFile.GetFileFromApplicationUriAsync(new Uri(FallbackWallpaperUri));
-            }
-            else
-            {
-                var path = CacheHelper.GetCacheFilePath(WallpaperInfo.Url);
-                if (!File.Exists(path))
+                var day = monday.AddDays(i);
+                var dayData = new HomePage_DayData
                 {
-                    NotificationProvider.Warning("找不到缓存的文件", 3000);
-                    return;
+                    Month = day.Month,
+                    DayOfMonth = day.Day,
+                    DayOfWeekName = DayOfWeekToString(day.DayOfWeek),
+                    Data = new List<HomePage_MaterialData>()
+                };
+                var cs = characters.Where(x => x.DropDay.Contains($"{i + 1}")).GroupBy(x => x.ContentInfos.FirstOrDefault(x => x.Title.Contains("哲学"))).OrderBy(x => x.Key?.ContentId);
+                foreach (var item in cs)
+                {
+                    var materialData = new HomePage_MaterialData { Name = item.Key?.Title!, Icon = item.Key?.Icon!, CharacterOrWeapon = item.OrderBy(x => x.Sort.GetValueOrDefault((int)day.DayOfWeek)).ToList() };
+                    dayData.Data.Add(materialData);
                 }
-                file = await StorageFile.GetFileFromPathAsync(path);
+                var ws = weapons.Where(x => x.DropDay.Contains($"{i + 1}")).GroupBy(x => x.ContentInfos.MaxBy(x => x.ContentId)).OrderBy(x => x.Key?.ContentId);
+                foreach (var item in ws)
+                {
+                    var materialData = new HomePage_MaterialData { Name = item.Key?.Title!, Icon = item.Key?.Icon!, CharacterOrWeapon = item.OrderBy(x => x.Sort.GetValueOrDefault((int)day.DayOfWeek)).ToList() };
+                    dayData.Data.Add(materialData);
+                }
+                data.Add(dayData);
             }
-            ClipboardHelper.SetBitmap(file);
-            _Button_Copy.Content = "\xE8FB";
-            await Task.Delay(3000);
-            _Button_Copy.Content = "\xE8C8";
+            MaterialWeekData = data;
+            var index = ((int)now.DayOfWeek + 6) % 7;
+            _GridView_DaySelction.SelectedIndex = index;
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex, "复制图片");
-            Logger.Error(ex, "复制图片");
+            Logger.Error(ex, "天赋材料日历");
         }
     }
 
 
-
-    /// <summary>
-    /// 保存图片
-    /// </summary>
-    [RelayCommand]
-    private void SaveWallpaper()
+    private string DayOfWeekToString(DayOfWeek dayOfWeek)
     {
-        if (string.IsNullOrWhiteSpace(WallpaperInfo?.Url))
+        return dayOfWeek switch
         {
-            return;
-        }
-        try
+            DayOfWeek.Monday => "一",
+            DayOfWeek.Tuesday => "二",
+            DayOfWeek.Wednesday => "三",
+            DayOfWeek.Thursday => "四",
+            DayOfWeek.Friday => "五",
+            DayOfWeek.Saturday => "六",
+            DayOfWeek.Sunday => "日",
+            _ => ""
+        };
+    }
+
+
+    /// <summary>
+    /// 天赋材料日历按日切换
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void _GridView_DaySelction_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var day = MaterialWeekData?.Skip(_GridView_DaySelction.SelectedIndex).FirstOrDefault();
+        if (day != null)
         {
-            string? file = null;
-            if (WallpaperInfo == FallbackWallpaper)
-            {
-                file = StorageFile.GetFileFromApplicationUriAsync(new Uri(FallbackWallpaperUri)).GetAwaiter().GetResult().Path;
-            }
-            else
-            {
-                file = CacheHelper.GetCacheFilePath(WallpaperInfo.Url);
-            }
-            if (!File.Exists(file))
-            {
-                NotificationProvider.Warning("找不到缓存的文件", 3000);
-                return;
-            }
-            var destFolder = Path.Combine(XunkongEnvironment.UserDataPath, "Wallpaper");
-            var fileName = WallpaperInfo.FileName ?? Path.GetFileName(WallpaperInfo.Url);
-            var destPath = Path.Combine(destFolder, fileName);
-            Directory.CreateDirectory(destFolder);
-            File.Copy(file, destPath, true);
-            Action action = () => Process.Start(new ProcessStartInfo { FileName = destPath, UseShellExecute = true });
-            NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "已保存", fileName, "打开文件", action, null, 3000);
-        }
-        catch (Exception ex)
-        {
-            NotificationProvider.Error(ex, "保存图片");
-            Logger.Error(ex, "保存图片");
+            MonthName = $"{day.Month}月";
+            MaterialDayData = day.Data;
         }
     }
 
 
     /// <summary>
-    /// 打开图源
+    /// 初始化活动内容
     /// </summary>
     /// <returns></returns>
-    [RelayCommand]
-    private async Task OpenImageSourceAsync()
+    private async Task InitializeActivityAsync()
     {
-        if (string.IsNullOrWhiteSpace(WallpaperInfo?.Source))
-        {
-            return;
-        }
         try
         {
-            await Launcher.LaunchUriAsync(new Uri(WallpaperInfo.Source));
+            (ActivityData, StrategyData) = await _hoyolabClient.GetGameActivitiesListAsync();
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex, "打开图源");
-            Logger.Error(ex, "打开图源");
+            Logger.Error(ex, "活动内容");
         }
     }
-
 
 
     /// <summary>
@@ -731,6 +756,31 @@ public sealed partial class HomePage : Page
             await Launcher.LaunchUriAsync(new Uri(activity.Url));
         }
     }
+
+
+    #endregion
+
+
+
+
+    #region 快捷操作
+
+
+    [RelayCommand]
+    private async Task StartGameAsync()
+    {
+        if (await InvokeService.StartGameAsync(true))
+        {
+            await InvokeService.CheckTransformerReachedAndHomeCoinFullAsync(true);
+        }
+    }
+
+
+
+
+    #endregion
+
+
 
 
 }
