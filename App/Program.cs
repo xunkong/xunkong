@@ -8,8 +8,9 @@ public static class Program
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.UI.Xaml.Markup.Compiler", " 1.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.STAThreadAttribute]
-    static async Task Main(string[] args)
+    static void Main(string[] args)
     {
+        // 不要使用 async Task Main，否则 WebView2 会出错
 
         Environment.CurrentDirectory = AppContext.BaseDirectory;
 
@@ -20,28 +21,28 @@ public static class Program
 
         if (args.FirstOrDefault() == "StartGame")
         {
-            if (await InvokeService.StartGameAsync())
+            if (InvokeService.StartGameAsync().GetAwaiter().GetResult())
             {
-                await InvokeService.CheckTransformerReachedAndHomeCoinFullAsync();
+                InvokeService.CheckTransformerReachedAndHomeCoinFullAsync().GetAwaiter().GetResult();
             }
             return;
         }
 
         if (args.FirstOrDefault() == "DailyCheckIn")
         {
-            await InvokeService.SignInAllAccountAsync();
+            InvokeService.SignInAllAccountAsync().GetAwaiter().GetResult();
             return;
         }
 
         if (args.FirstOrDefault() == "RefreshTile")
         {
-            await InvokeService.RefreshDailyNoteTilesAsync();
+            InvokeService.RefreshDailyNoteTilesAsync().GetAwaiter().GetResult();
             return;
         }
 
         if (args.FirstOrDefault() == "dailynote")
         {
-            await InvokeService.RefreshDailyNoteTilesAsync();
+            InvokeService.RefreshDailyNoteTilesAsync().GetAwaiter().GetResult();
             return;
         }
 
@@ -49,11 +50,11 @@ public static class Program
         {
             if (args[2] == "DailyNoteTask")
             {
-                await InvokeService.RefreshDailyNoteTilesAsync();
+                InvokeService.RefreshDailyNoteTilesAsync().GetAwaiter().GetResult();
             }
             if (args[2] == "HoyolabCheckInTask")
             {
-                await InvokeService.SignInAllAccountAsync();
+                InvokeService.SignInAllAccountAsync().GetAwaiter().GetResult();
             }
             return;
         }
