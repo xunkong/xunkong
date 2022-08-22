@@ -8,8 +8,10 @@ public static class Program
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.UI.Xaml.Markup.Compiler", " 1.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.STAThreadAttribute]
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
+
+        Environment.CurrentDirectory = AppContext.BaseDirectory;
 
         if (args.FirstOrDefault() == "DoNotClickToast")
         {
@@ -18,17 +20,28 @@ public static class Program
 
         if (args.FirstOrDefault() == "StartGame")
         {
-            var result = InvokeService.StartGameAsync().GetAwaiter().GetResult();
-            if (result)
+            if (await InvokeService.StartGameAsync())
             {
-                InvokeService.CheckTransformerReachedAndHomeCoinFullAsync().GetAwaiter().GetResult();
+                await InvokeService.CheckTransformerReachedAndHomeCoinFullAsync();
             }
+            return;
+        }
+
+        if (args.FirstOrDefault() == "DailyCheckIn")
+        {
+            await InvokeService.SignInAllAccountAsync();
+            return;
+        }
+
+        if (args.FirstOrDefault() == "RefreshTile")
+        {
+            await InvokeService.RefreshDailyNoteTilesAsync();
             return;
         }
 
         if (args.FirstOrDefault() == "dailynote")
         {
-            InvokeService.RefreshDailyNoteTilesAsync().GetAwaiter().GetResult();
+            await InvokeService.RefreshDailyNoteTilesAsync();
             return;
         }
 
@@ -36,11 +49,11 @@ public static class Program
         {
             if (args[2] == "DailyNoteTask")
             {
-                InvokeService.RefreshDailyNoteTilesAsync().GetAwaiter().GetResult();
+                await InvokeService.RefreshDailyNoteTilesAsync();
             }
             if (args[2] == "HoyolabCheckInTask")
             {
-                InvokeService.SignInAllAccountAsync().GetAwaiter().GetResult();
+                await InvokeService.SignInAllAccountAsync();
             }
             return;
         }
