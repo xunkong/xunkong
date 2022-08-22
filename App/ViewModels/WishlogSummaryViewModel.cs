@@ -47,6 +47,10 @@ internal partial class WishlogSummaryViewModel : ObservableObject
     }
 
 
+    [ObservableProperty]
+    private bool isLoadingUidData;
+
+
     private string _StateText;
     public string StateText
     {
@@ -132,6 +136,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
     {
         try
         {
+            IsLoadingUidData = true;
             Uids = (_wishlogService.GetAllUids()).Select(x => x.ToString()).ToList();
             _SelectedUid = UserSetting.GetValue<int>(SettingKeys.LastSelectedUidInWishlogSummaryPage);
             await Task.Delay(500);
@@ -159,7 +164,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
     /// <returns></returns>
     public void LoadWishlog(bool ignoreWishlogStats = false)
     {
-        IsLoading = true;
+        IsLoadingUidData = true;
         try
         {
             // 卡池信息时区
@@ -290,7 +295,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         }
         finally
         {
-            IsLoading = false;
+            IsLoadingUidData = false;
         }
     }
 

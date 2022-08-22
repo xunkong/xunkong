@@ -125,7 +125,7 @@
                 </Grid>
 
 
-                <!--  快捷操作  -->
+                <!--  快捷指令  -->
                 <StackPanel x:Name="c_StackPanel_QuickAction"
                             Orientation="Horizontal"
                             Spacing="16"
@@ -138,7 +138,7 @@
                     <TextBlock VerticalAlignment="Center"
                                FontSize="20"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               Text="快捷操作" />
+                               Text="快捷指令" />
                     <Button Command="{x:Bind StartGameCommand, Mode=OneTime}" Content="启动游戏" />
                 </StackPanel>
 

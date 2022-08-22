@@ -302,13 +302,10 @@
             <RowDefinition Height="60" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
 
 
 
+        <!--  工具栏  -->
         <Grid Padding="48,0,48,0" CornerRadius="4,0,0,4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -382,7 +379,7 @@
         </Grid>
 
 
-        <Pivot Grid.Row="2">
+        <Pivot Grid.Row="1">
             <Pivot.Resources>
                 <Thickness x:Key="PivotItemMargin">0</Thickness>
                 <Style BasedOn="{StaticResource DefaultPivotHeaderItemStyle}" TargetType="PivotHeaderItem">
@@ -495,6 +492,13 @@
 
         </Pivot>
 
+
+        <ProgressRing Grid.Row="1"
+                      Width="48"
+                      Height="48"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      IsActive="{x:Bind vm.IsLoadingUidData}" />
 
 
     </Grid>

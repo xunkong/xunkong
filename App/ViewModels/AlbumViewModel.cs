@@ -120,7 +120,6 @@ internal partial class AlbumViewModel : ObservableObject
     {
         try
         {
-            await Task.Delay(100);
             if (!string.IsNullOrWhiteSpace(albumFolder))
             {
                 return;

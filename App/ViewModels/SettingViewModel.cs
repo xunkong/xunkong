@@ -7,6 +7,7 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.System;
 using WinRT.Interop;
+using Xunkong.GenshinData.Achievement;
 using Xunkong.GenshinData.Character;
 using Xunkong.GenshinData.Weapon;
 
@@ -574,6 +575,13 @@ internal partial class SettingViewModel : ObservableObject
             list = weapons.Where(x => !string.IsNullOrWhiteSpace(x.Icon)).Select(x => x.Icon).ToList();
             images.AddRange(list!);
             list = weapons.Where(x => !string.IsNullOrWhiteSpace(x.AwakenIcon)).Select(x => x.AwakenIcon).ToList();
+            images.AddRange(list!);
+            var achieveGoals = liteDb.GetCollection<AchievementGoal>().FindAll().ToList();
+            list = achieveGoals.Select(x => x.IconPath).ToList()!;
+            images.AddRange(list!);
+            list = achieveGoals.Select(x => x.SmallIcon).ToList()!;
+            images.AddRange(list!);
+            list = achieveGoals.Where(x => x.RewardNameCard != null).Select(x => x.RewardNameCard!.Icon).ToList()!;
             images.AddRange(list!);
             PrecacheImage_TotalCount = images.Count;
             var parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount * 4 };

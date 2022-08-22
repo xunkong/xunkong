@@ -21,8 +21,17 @@ public sealed partial class AlbumPage : Page
     {
         this.InitializeComponent();
         DataContext = ServiceProvider.GetService<AlbumViewModel>();
-        Loaded += async (_, _) => await vm.InitializeDataAsync();
+        Loaded += AlbumPage_Loaded;
     }
+
+
+
+    private async void AlbumPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        await Task.Delay(100);
+        await vm.InitializeDataAsync();
+    }
+
 
 
     private async void _Button_CopyImage_Click(object sender, RoutedEventArgs e)

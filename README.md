@@ -31,6 +31,7 @@
 
 > 安装侧载版需要信任自签名证书，此证书仅用于寻空相关项目的代码签名。
 
+- 侧载版仅提供 x64 架构的安装包，arm64 架构的设备请使用商店版
 - 首次安装侧载版时请从 [Releases](https://github.com/xunkong/xunkong/releases) 页面下载最新的 zip 文件并解压
 - 脚本安装
   - 在系统设置中打开 [**开发者选项**](ms-settings:developers) 界面，勾选 `开发人员模式` 和 `允许 PowerShell 脚本`
@@ -40,7 +41,7 @@
   - 将 cer 证书文件添加到 `本地计算机/受信任人`
   - 在 `Dependencies` 文件夹下安装符合 CPU 架构的依赖包
   - 双击 msixbundle 文件进行安装
-- 后续更新时下载符合 CPU 架构的 msixbundle 文件即可
+- 后续更新时下载 msixbundle 文件即可
 
 **开发者选项截图**
 
@@ -81,12 +82,13 @@
 - [PixivApi](https://github.com/Scighost/PixivApi)
 - [Serilog](https://github.com/serilog/serilog)
 - [Snap Genshin](https://github.com/DGP-Studio/Snap.Genshin)
+- [TaskScheduler](https://github.com/dahall/TaskScheduler)
 - [Vanara](https://github.com/dahall/Vanara)
 - [YaeAchievement](https://github.com/HolographicHat/YaeAchievement)
 
 感谢 [Twitter@心臓弱眞君](https://twitter.com/xinzoruo)、[Pixiv@Sigrixxx](https://www.pixiv.net/users/7861320) 以及所有为原神创作同人图的画师们。
 
-感谢微软提供的 Visual Studio 社区版 和 Visual Studio Code 开发工具，JetBrains 提供的开源项目许可证，Syncfusion 提供的免费许可证，Cloudflare 提供的免费 CDN。
+感谢微软提供的 Visual Studio 社区版 和 Visual Studio Code 开发工具，JetBrains 提供的开源项目许可证，Syncfusion 提供的免费许可证，Cloudflare 提供的免费 CDN，华为提供的开源字体 HarmonyOS Sans。
 
 <div>
     <img alt="Visual Studio" src="https://file.xunkong.cc/static/repo/xunkong/Visual_Studio_Icon_2019.svg" height="60" />
