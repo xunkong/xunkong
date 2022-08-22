@@ -10,7 +10,7 @@ internal static class XunkongEnvironment
 
     public static readonly string AppName;
 
-    public static readonly string PackageId;
+    public static readonly string FamilyName;
 
     public static readonly bool IsStoreVersion;
 
@@ -31,23 +31,29 @@ internal static class XunkongEnvironment
 
     static XunkongEnvironment()
     {
-        PackageId = Package.Current.Id.FullName;
-        IsStoreVersion = PackageId.StartsWith("40418Scighost");
-        AppName = Package.Current.DisplayName;
-        var v = Package.Current.Id.Version;
-        AppVersion = new Version(v.Major, v.Minor, v.Build, v.Revision);
-        Platform = PlatformType.Desktop;
-        Channel = IsStoreVersion ? ChannelType.Store : ChannelType.Sideload;
+        try
+        {
+            UserDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Xunkong");
 
-        var UserName = Environment.UserName;
-        var MachineGuid = Microsoft.Win32.Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography\", "MachineGuid", UserName);
-        var bytes = Encoding.UTF8.GetBytes(UserName + MachineGuid);
-        var hash = MD5.HashData(bytes);
-        DeviceId = Convert.ToHexString(hash);
+            FamilyName = Package.Current.Id.FamilyName;
+            IsStoreVersion = FamilyName.StartsWith("40418Scighost");
+            AppName = Package.Current.DisplayName;
+            var v = Package.Current.Id.Version;
+            AppVersion = new Version(v.Major, v.Minor, v.Build, v.Revision);
+            Platform = PlatformType.Desktop;
+            Channel = IsStoreVersion ? ChannelType.Store : ChannelType.Sideload;
 
-        UserDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Xunkong");
+            var UserName = Environment.UserName;
+            var MachineGuid = Microsoft.Win32.Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography\", "MachineGuid", UserName);
+            var bytes = Encoding.UTF8.GetBytes(UserName + MachineGuid);
+            var hash = MD5.HashData(bytes);
+            DeviceId = Convert.ToHexString(hash);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "Initialize XunkongEnviroment");
+        }
     }
-
 
 
 }

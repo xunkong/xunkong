@@ -49,13 +49,13 @@ internal class InvokeService
             }
             else
             {
-                SecondaryTileProvider.UnregisterTask();
+                TaskSchedulerService.RegisterForRefreshTile(false);
             }
         }
         catch (Exception ex)
         {
-            await ToastProvider.SendAsync("刷新磁贴时遇到错误", ex.Message);
             Logger.Error(ex, "刷新磁贴");
+            await ToastProvider.SendAsync("刷新磁贴时遇到错误", ex.Message);
         }
     }
 
@@ -127,6 +127,7 @@ internal class InvokeService
                     return false;
                 }
             }
+            Logger.Error(ex, "启动游戏");
             if (sendInAppNotification)
             {
                 NotificationProvider.Error(ex, "启动游戏");
@@ -135,7 +136,6 @@ internal class InvokeService
             {
                 await ToastProvider.SendAsync("出错了", ex.Message);
             }
-            Logger.Error(ex, "启动游戏");
             return false;
         }
     }
@@ -238,6 +238,7 @@ internal class InvokeService
         }
         catch (Exception ex)
         {
+            Logger.Error(ex, "检查参量质变仪和洞天宝钱");
             if (sendInAppNotification)
             {
                 NotificationProvider.Warning("出错了", ex.Message);
@@ -246,7 +247,6 @@ internal class InvokeService
             {
                 await ToastProvider.SendAsync("出错了", ex.Message);
             }
-            Logger.Error(ex, "检查参量质变仪和洞天宝钱");
         }
     }
 
@@ -276,8 +276,8 @@ internal class InvokeService
         }
         catch (Exception ex)
         {
+            Logger.Error(ex, "签到时出现错误");
             await ToastProvider.SendAsync("签到时出现错误", ex.Message);
-            Logger.Error(ex, "检查参量质变仪");
         }
     }
 

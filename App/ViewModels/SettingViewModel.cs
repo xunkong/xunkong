@@ -375,6 +375,23 @@ internal partial class SettingViewModel : ObservableObject
     }
 
 
+    [ObservableProperty]
+    private bool isRegisterCheckInScheduler = TaskSchedulerService.IsDailyCheckInEnable();
+
+
+    partial void OnIsRegisterCheckInSchedulerChanged(bool value)
+    {
+        try
+        {
+            TaskSchedulerService.RegisterForDailyCheckIn(value);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "注册签到任务");
+            NotificationProvider.Error(ex, "注册签到任务");
+        }
+    }
+
 
 
     #endregion

@@ -386,16 +386,28 @@
                                                   IsOn="{x:Bind vm.SignInAllAccountsWhenStartUpApplication, Mode=TwoWay}"
                                                   Style="{ThemeResource RightAlignToggleSwitchStyle}" />
                                 </Grid>
-                                <Grid Padding="44,12,0,12">
+                                <!--<Grid Padding="44,12,0,12">
                                     <TextBlock>
                                         <Run Text="后台定时签到" />
                                         <LineBreak />
                                         <Run FontSize="12"
                                              Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                             Text="请保证每天开机 2 小时以上" />
+                                             Text="请保证每天开机 2 小时以上（不建议使用）" />
                                     </TextBlock>
                                     <ToggleSwitch HorizontalAlignment="Right"
                                                   IsOn="{x:Bind vm.IsRegisterHoyolabCheckInTask, Mode=TwoWay}"
+                                                  Style="{ThemeResource RightAlignToggleSwitchStyle}" />
+                                </Grid>-->
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock>
+                                        <Run Text="新的后台定时签到" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="实验性功能，每日 06:00 ~ 06:15 随机运行，若超出该时间则立刻运行" />
+                                    </TextBlock>
+                                    <ToggleSwitch HorizontalAlignment="Right"
+                                                  IsOn="{x:Bind vm.IsRegisterCheckInScheduler, Mode=TwoWay}"
                                                   Style="{ThemeResource RightAlignToggleSwitchStyle}" />
                                 </Grid>
                             </StackPanel>

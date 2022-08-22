@@ -573,7 +573,7 @@ public sealed partial class MainPage : Page
                     var result = await SecondaryTileProvider.RequestPinTileAsync(note);
                     if (result)
                     {
-                        await SecondaryTileProvider.RegisterTaskAsync();
+                        TaskSchedulerService.RegisterForRefreshTile(result);
                     }
                 }
             }
