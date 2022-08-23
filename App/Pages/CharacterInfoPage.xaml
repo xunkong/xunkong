@@ -260,7 +260,9 @@
                           SelectedItem="{x:Bind SelectedCharacter, Mode=TwoWay}"
                           SelectionChanged="_Character_SelectionChanged">
                     <GridView.Transitions>
-                        <ReorderThemeTransition />
+                        <TransitionCollection>
+                            <ReorderThemeTransition />
+                        </TransitionCollection>
                     </GridView.Transitions>
                     <GridView.ItemContainerStyle>
                         <Style BasedOn="{StaticResource DefaultGridViewItemStyle}" TargetType="GridViewItem">
@@ -319,10 +321,10 @@
                             <RowDefinition />
                             <RowDefinition />
                         </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
+                        <!--<Grid.ColumnDefinitions>
                             <ColumnDefinition Width="9*" />
                             <ColumnDefinition Width="2*" />
-                        </Grid.ColumnDefinitions>
+                        </Grid.ColumnDefinitions>-->
                         <!--  大图片  -->
                         <StackPanel Grid.RowSpan="2"
                                     Grid.ColumnSpan="4"
@@ -335,6 +337,8 @@
                         <ItemsControl Name="_ItemsControl_Talents"
                                       Grid.Row="0"
                                       Grid.Column="1"
+                                      Width="240"
+                                      HorizontalAlignment="Right"
                                       VerticalAlignment="Center"
                                       ItemsSource="{x:Bind SelectedCharacter.Talents}">
                             <ItemsControl.ItemsPanel>
@@ -368,6 +372,11 @@
                                         </StackPanel>
                                         <FlyoutBase.AttachedFlyout>
                                             <Flyout OverlayInputPassThroughElement="{Binding ElementName=_Grid_GachaSplash}" Placement="LeftEdgeAlignedTop">
+                                                <Flyout.FlyoutPresenterStyle>
+                                                    <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
+                                                        <Setter Property="RequestedTheme" Value="Dark" />
+                                                    </Style>
+                                                </Flyout.FlyoutPresenterStyle>
                                                 <TextBlock Text="{x:Bind Description}" TextWrapping="Wrap" />
                                             </Flyout>
                                         </FlyoutBase.AttachedFlyout>
@@ -379,6 +388,8 @@
                         <ItemsControl Name="_ItemsControl_Constellations"
                                       Grid.Row="1"
                                       Grid.Column="1"
+                                      Width="240"
+                                      HorizontalAlignment="Right"
                                       VerticalAlignment="Center"
                                       ItemsSource="{x:Bind SelectedCharacter.Constellations}">
                             <ItemsControl.ItemsPanel>
@@ -413,6 +424,11 @@
                                         <TextBlock VerticalAlignment="Center" Text="{x:Bind Name}" />
                                         <FlyoutBase.AttachedFlyout>
                                             <Flyout OverlayInputPassThroughElement="{Binding ElementName=_Grid_GachaSplash}" Placement="LeftEdgeAlignedTop">
+                                                <Flyout.FlyoutPresenterStyle>
+                                                    <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
+                                                        <Setter Property="RequestedTheme" Value="Dark" />
+                                                    </Style>
+                                                </Flyout.FlyoutPresenterStyle>
                                                 <TextBlock Text="{x:Bind Description}" />
                                             </Flyout>
                                         </FlyoutBase.AttachedFlyout>

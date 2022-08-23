@@ -145,67 +145,77 @@ public sealed partial class CharacterInfoPage : Page
     {
         var stack = sender as StackPanel;
         var flyout = FlyoutBase.GetAttachedFlyout(sender as FrameworkElement);
-        var desc = (stack?.DataContext as CharacterInfoPage_Constellation)?.Description;
-        if (desc is null)
+        ReadOnlySpan<char> desc = ReadOnlySpan<char>.Empty;
+        if (stack?.DataContext is CharacterInfoPage_Constellation constellation)
         {
-            desc = (stack?.DataContext as CharacterTalentInfo)?.Description;
+            desc = constellation.Description.AsSpan();
         }
-        if (desc is not null)
+        if (stack?.DataContext is CharacterTalentInfo talentInfo)
         {
-            // 解析文字颜色
-            try
+            desc = talentInfo.Description.AsSpan();
+        }
+        if (desc.IsEmpty)
+        {
+            return;
+        }
+
+        // 解析技能描述
+        try
+        {
+            // 以倾奇之姿汇聚寒霜，放出持续行进的霜见雪关扉。\n\n<color=#FFD780FF>霜见雪关扉</color>\n·以刀锋般尖锐的霜风持续切割触及的敌人，造成<color=#99FFFFFF>冰元素伤害</color>；\n·持续时间结束时绽放，造成<color=#99FFFFFF>冰元素范围伤害</color>。\n\n<i>「吹雪濡鹭时，积思若霜，胸底思重焉哀怜。」</i>
+            var text = new TextBlock { TextWrapping = TextWrapping.Wrap, MaxWidth = 400 };
+            int lastIndex = 0;
+            for (int i = 0; i < desc.Length; i++)
             {
-                var text = new TextBlock { TextWrapping = TextWrapping.Wrap, MaxWidth = 400 };
-                var subs = desc.Split("\\n");
-                foreach (var sub in subs)
+                // 换行
+                if (desc[i] == '\\' && desc[i + 1] == 'n')
                 {
-                    var matches = Regex.Matches(sub, @"<color=([^>]+)>([^<]+)</color>");
-                    string head, remain = sub;
-                    foreach (Match match in matches)
-                    {
-                        var origin = match.Groups[0].Value;
-                        head = remain.Substring(0, remain.IndexOf(origin));
-                        remain = remain.Substring(remain.IndexOf(origin) + origin.Length);
-                        if (!string.IsNullOrWhiteSpace(head))
-                        {
-                            text.Inlines.Add(new Run { Text = head });
-                        }
-                        var colorStr = match.Groups[1].Value;
-                        var content = match.Groups[2].Value;
-                        var color = System.Drawing.ColorTranslator.FromHtml(colorStr.Substring(0, 7));
-                        text.Inlines.Add(new Run
-                        {
-                            Text = content,
-                            Foreground = new SolidColorBrush(Color.FromArgb(color.A, color.R, color.G, color.B)),
-                        });
-                    }
-                    if (!string.IsNullOrWhiteSpace(remain))
-                    {
-                        if (remain.Contains("<i>"))
-                        {
-                            var quote = remain.Replace("<i>", "").Replace("</i>", "");
-                            text.Inlines.Add(new Run { Text = quote, FontFamily = new FontFamily("楷体") });
-                        }
-                        else
-                        {
-                            text.Inlines.Add(new Run { Text = remain });
-                        }
-                    }
+                    text.Inlines.Add(new Run { Text = desc[lastIndex..i].ToString() });
                     text.Inlines.Add(new LineBreak());
+                    i += 1;
+                    lastIndex = i + 1;
                 }
-                if (text.Inlines.LastOrDefault() is LineBreak @break)
+                // 颜色
+                if (desc[i] == '<' && desc[i + 1] == 'c')
                 {
-                    text.Inlines.Remove(@break);
+                    text.Inlines.Add(new Run { Text = desc[lastIndex..i].ToString() });
+                    var color = Convert.FromHexString(desc.Slice(i + 8, 8));
+                    var length = desc.Slice(i + 17).IndexOf('<');
+                    text.Inlines.Add(new Run
+                    {
+                        Text = desc.Slice(i + 17, length).ToString(),
+                        Foreground = new SolidColorBrush(Color.FromArgb(color[3], color[0], color[1], color[2])),
+                    });
+                    i += length + 24;
+                    lastIndex = i + 1;
                 }
-                if (flyout is Flyout f)
+                // 引用
+                if (desc[i] == '<' && desc[i + 1] == 'i')
                 {
-                    f.Content = text;
+                    text.Inlines.Add(new Run { Text = desc[lastIndex..i].ToString() });
+                    var length = desc.Slice(i + 3).IndexOf('<');
+                    text.Inlines.Add(new Run
+                    {
+                        Text = desc.Slice(i + 3, length).ToString(),
+                        FontFamily = new FontFamily("楷体"),
+                    });
+                    i += length + 6;
+                    lastIndex = i + 1;
+                }
+                // 结尾
+                if (i == desc.Length - 1)
+                {
+                    text.Inlines.Add(new Run { Text = desc.Slice(lastIndex).ToString() });
                 }
             }
-            catch (Exception ex)
+            if (flyout is Flyout f)
             {
-                Logger.Error(ex, "解析文字颜色");
+                f.Content = text;
             }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "解析技能描述");
         }
         FlyoutBase.ShowAttachedFlyout(sender as FrameworkElement);
     }
