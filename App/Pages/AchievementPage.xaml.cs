@@ -923,8 +923,11 @@ public sealed partial class AchievementPage : Page
                             item.Status = 3;
                         }
                     }
-                    using var dapper = DatabaseProvider.CreateConnection();
-                    dapper.Execute("INSERT OR REPLACE INTO AchievementData (Uid, Id, Current, Status, FinishedTime, LastUpdateTime) VALUES (@Uid, @Id, @Current, @Status, @FinishedTime, @LastUpdateTime);", importAchievementDatas);
+                    await Task.Run(() =>
+                    {
+                        using var dapper = DatabaseProvider.CreateConnection();
+                        dapper.Execute("INSERT OR REPLACE INTO AchievementData (Uid, Id, Current, Status, FinishedTime, LastUpdateTime) VALUES (@Uid, @Id, @Current, @Status, @FinishedTime, @LastUpdateTime);", importAchievementDatas);
+                    });
                     NotificationProvider.Success("导入完成", $"已为 Uid {uid} 导入成就数据 {importAchievementCount} 条");
                 }
             }

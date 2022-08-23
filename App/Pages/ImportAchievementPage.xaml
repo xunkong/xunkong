@@ -91,13 +91,19 @@
         </StackPanel>
 
 
-        <Button x:Name="c_Button_Import"
-                Grid.Row="2"
-                Margin="12"
-                HorizontalAlignment="Stretch"
-                Click="c_Button_Import_Click"
-                Content="导入并覆盖已有数据"
-                Visibility="{x:Bind Error, Converter={StaticResource StringToVisibilityReversedConverter}}" />
+        <StackPanel Grid.Row="2"
+                    Margin="12"
+                    Spacing="8">
+            <ProgressBar Margin="12,0,12,0"
+                         HorizontalAlignment="Stretch"
+                         IsIndeterminate="True"
+                         Visibility="{x:Bind ImportAchievementDataCommand.IsRunning}" />
+            <Button x:Name="c_Button_Import"
+                    HorizontalAlignment="Stretch"
+                    Command="{x:Bind ImportAchievementDataCommand}"
+                    Content="导入并覆盖已有数据"
+                    Visibility="{x:Bind Error, Converter={StaticResource StringToVisibilityReversedConverter}}" />
+        </StackPanel>
 
 
 

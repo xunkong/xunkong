@@ -648,7 +648,12 @@
                                  Width="120"
                                  PlaceholderText="请输入 uid" />
                     </StackPanel>
-                    <Button Command="{x:Bind ImportAchievementDataCommand, Mode=OneTime}" Content="导入" />
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <Button Command="{x:Bind ImportAchievementDataCommand, Mode=OneTime}" Content="导入" />
+                        <ProgressRing Width="32"
+                                      Height="32"
+                                      IsActive="{x:Bind ImportAchievementDataCommand.IsRunning}" />
+                    </StackPanel>
                     <Grid Height="200" Margin="0,12,0,0">
                         <Rectangle x:Name="c_Rect_DropFile"
                                    AllowDrop="True"

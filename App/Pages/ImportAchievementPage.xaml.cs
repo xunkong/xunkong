@@ -186,8 +186,8 @@ public sealed partial class ImportAchievementPage : Page
     }
 
 
-
-    private async void c_Button_Import_Click(object sender, RoutedEventArgs e)
+    [RelayCommand]
+    private async Task ImportAchievementDataAsync()
     {
         try
         {
@@ -208,8 +208,11 @@ public sealed partial class ImportAchievementPage : Page
                             item.Status = 3;
                         }
                     }
-                    using var dapper = DatabaseProvider.CreateConnection();
-                    dapper.Execute("INSERT OR REPLACE INTO AchievementData (Uid, Id, Current, Status, FinishedTime, LastUpdateTime) VALUES (@Uid, @Id, @Current, @Status, @FinishedTime, @LastUpdateTime);", achievementDatas);
+                    await Task.Run(() =>
+                    {
+                        using var dapper = DatabaseProvider.CreateConnection();
+                        dapper.Execute("INSERT OR REPLACE INTO AchievementData (Uid, Id, Current, Status, FinishedTime, LastUpdateTime) VALUES (@Uid, @Id, @Current, @Status, @FinishedTime, @LastUpdateTime);", achievementDatas);
+                    });
                     c_Button_Import.Content = "导入完成";
                     if (c_CheckBox_AutoRedirect.IsChecked ?? false)
                     {
