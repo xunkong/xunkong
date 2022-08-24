@@ -70,7 +70,7 @@ internal class WishlogService
         }
         if (!File.Exists(file))
         {
-            throw new FileNotFoundException("没有找到日志文件，请打开游戏内的祈愿记录界面。");
+            throw new FileNotFoundException("请重新获取祈愿记录网址");
         }
         using var stream = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         using var reader = new StreamReader(stream);
@@ -82,7 +82,7 @@ internal class WishlogService
         }
         else
         {
-            throw new FileNotFoundException("没有找到日志文件，请打开游戏内的祈愿记录界面。");
+            throw new FileNotFoundException("请重新获取祈愿记录网址");
         }
     }
 

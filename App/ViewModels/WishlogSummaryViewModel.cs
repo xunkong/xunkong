@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using Xunkong.Desktop.Pages;
 using Xunkong.GenshinData.Character;
@@ -48,8 +49,18 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         try
         {
             var uid = await _wishlogService.GetUidByWishlogUrl(e);
+            MainWindow.Current.DispatcherQueue.TryEnqueue(() =>
+            {
+                if (!Uids.Contains(uid.ToString()))
+                {
+                    Uids.Add(uid.ToString());
+                }
+                SelectedUid = uid.ToString();
+                ClipboardHelper.SetText(e);
+            });
             // 此方法不需要考虑线程问题
-            await ToastProvider.SendAsync("已获取祈愿记录网址", $"已获取 Uid {uid} 的祈愿记录网址");
+            await ToastProvider.SendAsync("完成", $"已获取 Uid {uid} 的祈愿记录网址");
+            NotificationProvider.Success("完成", $"已复制 Uid {uid} 的祈愿记录网址到剪贴板", 5000);
             _proxyService.StopProxy();
         }
         catch (Exception ex)
@@ -90,8 +101,8 @@ internal partial class WishlogSummaryViewModel : ObservableObject
     private Progress<string> progressHandler;
 
 
-    private List<string> _Uids;
-    public List<string> Uids
+    private ObservableCollection<string> _Uids;
+    public ObservableCollection<string> Uids
     {
         get => _Uids;
         set => SetProperty(ref _Uids, value);
@@ -165,7 +176,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         try
         {
             IsLoadingUidData = true;
-            Uids = (_wishlogService.GetAllUids()).Select(x => x.ToString()).ToList();
+            Uids = new ObservableCollection<string>(_wishlogService.GetAllUids().Select(x => x.ToString()));
             _SelectedUid = UserSetting.GetValue<int>(SettingKeys.LastSelectedUidInWishlogSummaryPage);
             await Task.Delay(500);
             OnPropertyChanged(nameof(SelectedUid));
@@ -182,6 +193,10 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         {
             NotificationProvider.Error(ex, "初始化祈愿记录页面");
             Logger.Error(ex, "初始化祈愿记录页面");
+        }
+        finally
+        {
+            IsLoadingUidData = false;
         }
     }
 
@@ -354,11 +369,8 @@ internal partial class WishlogSummaryViewModel : ObservableObject
             }
             else
             {
-                var isSea = uid.ToString()[0] > '5';
-                var wishlogUrl = await _wishlogService.FindWishlogUrlFromLogFileAsync(isSea);
-                uid = await _wishlogService.GetUidByWishlogUrl(wishlogUrl);
-                var addCount = await _wishlogService.GetWishlogByUidAsync(uid, progressHandler, getAll);
-                StateText = $"新增 {addCount} 条祈愿记录";
+                await ShowProxyDialogAsync();
+                return;
             }
             SelectedUid = uid.ToString();
             InitializePageData();
@@ -396,25 +408,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
             StateText = "验证祈愿记录网址的有效性";
             if (!await _wishlogService.CheckWishlogUrlTimeoutAsync(uid))
             {
-                StateText = "";
-                var stackPanel = new StackPanel { Spacing = 8 };
-                stackPanel.Children.Add(new TextBlock { Text = "您需要重新获取祈愿记录网址，点击下方启动代理按键后，在原神游戏中重新打开祈愿记录页面，获取到网址后再次点击获取记录。", TextWrapping = Microsoft.UI.Xaml.TextWrapping.Wrap });
-                stackPanel.Children.Add(new TextBlock { Text = "获取到网址后应用会自动关闭代理，若关闭应用后出现无法连接网络的情况，请在「设置/网络和 Internet/代理/使用代理服务器」中手动关闭代理。", TextWrapping = Microsoft.UI.Xaml.TextWrapping.Wrap });
-                stackPanel.Children.Add(new TextBlock { Text = "首次启动代理时需要信任证书，此证书为软件自动生成。", TextWrapping = Microsoft.UI.Xaml.TextWrapping.Wrap });
-                var dialog = new ContentDialog
-                {
-                    Title = "祈愿记录网址已过期",
-                    Content = stackPanel,
-                    PrimaryButtonText = "启动代理",
-                    SecondaryButtonText = "关闭",
-                    DefaultButton = ContentDialogButton.Primary,
-                    XamlRoot = MainWindow.Current.XamlRoot,
-                };
-                if (await dialog.ShowWithZeroMarginAsync() == ContentDialogResult.Primary)
-                {
-                    _proxyService.StartProxy();
-                    NotificationProvider.Success("已启动代理", "在原神游戏中重新打开祈愿记录页面");
-                }
+                await ShowProxyDialogAsync();
                 return;
             }
             var addCount = await _wishlogService.GetWishlogByUidAsync(uid, progressHandler);
@@ -437,6 +431,31 @@ internal partial class WishlogSummaryViewModel : ObservableObject
             IsLoading = false;
         }
     }
+
+    private async Task ShowProxyDialogAsync()
+    {
+        StateText = "";
+        var stackPanel = new StackPanel { Spacing = 8 };
+        stackPanel.Children.Add(new TextBlock { Text = "您需要重新获取祈愿记录网址，点击下方启动代理按键后，在原神游戏中重新打开祈愿记录页面，获取到网址后再次点击获取记录。", TextWrapping = Microsoft.UI.Xaml.TextWrapping.Wrap });
+        stackPanel.Children.Add(new TextBlock { Text = "获取到网址后应用会自动关闭代理，若关闭应用后出现无法连接网络的情况，请在「设置/网络和 Internet/代理/使用代理服务器」中手动关闭代理。", TextWrapping = Microsoft.UI.Xaml.TextWrapping.Wrap });
+        stackPanel.Children.Add(new TextBlock { Text = "首次启动代理时需要信任证书，此证书为软件自动生成。", TextWrapping = Microsoft.UI.Xaml.TextWrapping.Wrap });
+        var dialog = new ContentDialog
+        {
+            Title = "祈愿记录网址已过期",
+            Content = stackPanel,
+            PrimaryButtonText = "启动代理",
+            SecondaryButtonText = "关闭",
+            DefaultButton = ContentDialogButton.Primary,
+            XamlRoot = MainWindow.Current.XamlRoot,
+        };
+        if (await dialog.ShowWithZeroMarginAsync() == ContentDialogResult.Primary)
+        {
+            _proxyService.StartProxy();
+            NotificationProvider.Success("已启动代理", "在原神游戏中重新打开祈愿记录页面", 10000);
+        }
+    }
+
+
 
 
     [RelayCommand]
