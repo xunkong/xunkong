@@ -18,6 +18,8 @@ internal partial class WishlogSummaryViewModel : ObservableObject
 
     private readonly XunkongApiService _xunkongApiService;
 
+    private readonly ProxyService _proxyService;
+
     private readonly ImmutableList<string> ColorSet = new[] { "#5470C6", "#91CC75", "#FAC858", "#EE6666", "#73C0DE", "#3BA272", "#FC8452", "#9A60B4", "#EA7CCC" }.ToImmutableList();
 
 
@@ -28,13 +30,39 @@ internal partial class WishlogSummaryViewModel : ObservableObject
     }
 
 
-    public WishlogSummaryViewModel(WishlogService wishlogService, XunkongApiService xunkongApiService)
+    public WishlogSummaryViewModel(WishlogService wishlogService, XunkongApiService xunkongApiService, ProxyService proxyService)
     {
         _wishlogService = wishlogService;
         _xunkongApiService = xunkongApiService;
+        _proxyService = proxyService;
+        _proxyService.GotWishlogUrl += _proxyService_GotWishlogUrl;
         progressHandler = new(str => StateText = str);
     }
 
+    private async void _proxyService_GotWishlogUrl(object? sender, string e)
+    {
+        if (string.IsNullOrWhiteSpace(e))
+        {
+            return;
+        }
+        try
+        {
+            var uid = await _wishlogService.GetUidByWishlogUrl(e);
+            // 此方法不需要考虑线程问题
+            await ToastProvider.SendAsync("已获取祈愿记录网址", $"已获取 Uid {uid} 的祈愿记录网址");
+            _proxyService.StopProxy();
+        }
+        catch (Exception ex)
+        {
+            // 内部切换到 UI 线程
+            NotificationProvider.Error(ex, "获取祈愿记录网址的 Uid");
+        }
+    }
+
+    public void Unloaded()
+    {
+        _proxyService.GotWishlogUrl -= _proxyService_GotWishlogUrl;
+    }
 
     private bool _IsLoading;
     /// <summary>
@@ -358,7 +386,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
     /// <param name="isSea"></param>
     /// <returns></returns>
     [RelayCommand]
-    private async Task GetWishlogFromLogFileAsync(bool isSea)
+    private async Task GetWishlogAsync()
     {
         IsLoading = true;
         await Task.Delay(100);
@@ -366,18 +394,28 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         {
             int uid = _SelectedUid;
             StateText = "验证祈愿记录网址的有效性";
-            try
+            if (!await _wishlogService.CheckWishlogUrlTimeoutAsync(uid))
             {
-                var wishlogUrl = await _wishlogService.FindWishlogUrlFromLogFileAsync(isSea);
-                uid = await _wishlogService.GetUidByWishlogUrl(wishlogUrl);
-            }
-            catch (FileNotFoundException)
-            {
-                if (!await _wishlogService.CheckWishlogUrlTimeoutAsync(uid))
+                StateText = "";
+                var stackPanel = new StackPanel { Spacing = 8 };
+                stackPanel.Children.Add(new TextBlock { Text = "您需要重新获取祈愿记录网址，点击下方启动代理按键后，在原神游戏中重新打开祈愿记录页面，获取到网址后再次点击获取记录。", TextWrapping = Microsoft.UI.Xaml.TextWrapping.Wrap });
+                stackPanel.Children.Add(new TextBlock { Text = "获取到网址后应用会自动关闭代理，若关闭应用后出现无法连接网络的情况，请在「设置/网络和 Internet/代理/使用代理服务器」中手动关闭代理。", TextWrapping = Microsoft.UI.Xaml.TextWrapping.Wrap });
+                stackPanel.Children.Add(new TextBlock { Text = "首次启动代理时需要信任证书，此证书为软件自动生成。", TextWrapping = Microsoft.UI.Xaml.TextWrapping.Wrap });
+                var dialog = new ContentDialog
                 {
-                    StateText = "祈愿记录网址已过期，请在游戏中重新打开历史记录页面";
-                    return;
+                    Title = "祈愿记录网址已过期",
+                    Content = stackPanel,
+                    PrimaryButtonText = "启动代理",
+                    SecondaryButtonText = "关闭",
+                    DefaultButton = ContentDialogButton.Primary,
+                    XamlRoot = MainWindow.Current.XamlRoot,
+                };
+                if (await dialog.ShowWithZeroMarginAsync() == ContentDialogResult.Primary)
+                {
+                    _proxyService.StartProxy();
+                    NotificationProvider.Success("已启动代理", "在原神游戏中重新打开祈愿记录页面");
                 }
+                return;
             }
             var addCount = await _wishlogService.GetWishlogByUidAsync(uid, progressHandler);
             StateText = $"新增 {addCount} 条祈愿记录";
@@ -392,11 +430,27 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         {
             StateText = "";
             NotificationProvider.Error(ex);
-            Logger.Error(ex, "从日志文件获取新的祈愿记录");
+            Logger.Error(ex, "获取新的祈愿记录");
         }
         finally
         {
             IsLoading = false;
+        }
+    }
+
+
+    [RelayCommand]
+    private void CloseProxy()
+    {
+        try
+        {
+            _proxyService.StopProxy();
+            NotificationProvider.Success("代理已关闭");
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "关闭代理");
+            NotificationProvider.Error(ex, "关闭代理");
         }
     }
 

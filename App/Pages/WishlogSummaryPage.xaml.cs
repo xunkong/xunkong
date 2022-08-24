@@ -23,6 +23,7 @@ public sealed partial class WishlogSummaryPage : Page
         this.InitializeComponent();
         DataContext = ServiceProvider.GetService<WishlogSummaryViewModel>();
         Loaded += (_, _) => vm.InitializePageData();
+        Unloaded += (_, _) => vm.Unloaded();
     }
 
 

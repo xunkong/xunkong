@@ -113,7 +113,9 @@
                             Tag="{Binding ElementName=_ScrollViewer_Rank5Item}"
                             ToolTipService.ToolTip="展开或收起">
                         <Button.ContentTransitions>
-                            <ContentThemeTransition />
+                            <TransitionCollection>
+                                <ContentThemeTransition />
+                            </TransitionCollection>
                         </Button.ContentTransitions>
                     </Button>
                     <ScrollViewer x:Name="_ScrollViewer_Rank5Item"
@@ -325,12 +327,8 @@
                 <AppBarButton Icon="OpenFile" Label="更新记录">
                     <AppBarButton.Flyout>
                         <MenuFlyout>
-                            <MenuFlyoutItem Command="{x:Bind vm.GetWishlogFromLogFileCommand, Mode=OneTime}"
-                                            CommandParameter="{StaticResource False}"
-                                            Text="国服优先" />
-                            <MenuFlyoutItem Command="{x:Bind vm.GetWishlogFromLogFileCommand, Mode=OneTime}"
-                                            CommandParameter="{StaticResource True}"
-                                            Text="外服优先" />
+                            <MenuFlyoutItem Command="{x:Bind vm.GetWishlogCommand, Mode=OneTime}" Text="获取记录" />
+                            <MenuFlyoutItem Command="{x:Bind vm.CloseProxyCommand, Mode=OneTime}" Text="关闭代理" />
                             <MenuFlyoutSeparator />
                             <MenuFlyoutItem Command="{x:Bind vm.GetWishlogFromSavedWishlogUrlCommand, Mode=OneTime}"
                                             CommandParameter="{StaticResource True}"

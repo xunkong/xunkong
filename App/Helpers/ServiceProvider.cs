@@ -63,6 +63,7 @@ internal static class ServiceProvider
         sc.AddSingleton<WishlogService>();
         sc.AddSingleton<XunkongApiService>();
         sc.AddSingleton<AlbumViewModel>();
+        sc.AddSingleton<ProxyService>();
         sc.AddSingleton(new JsonSerializerOptions { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping, PropertyNameCaseInsensitive = true });
     }
 

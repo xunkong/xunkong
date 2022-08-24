@@ -83,6 +83,7 @@
 - [Serilog](https://github.com/serilog/serilog)
 - [Snap Genshin](https://github.com/DGP-Studio/Snap.Genshin)
 - [TaskScheduler](https://github.com/dahall/TaskScheduler)
+- [Titanium Web Proxy](https://github.com/justcoding121/Titanium-Web-Proxy)
 - [Vanara](https://github.com/dahall/Vanara)
 - [YaeAchievement](https://github.com/HolographicHat/YaeAchievement)
 

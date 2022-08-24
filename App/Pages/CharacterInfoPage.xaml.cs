@@ -6,7 +6,6 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using System.Collections.ObjectModel;
 using System.Numerics;
-using System.Text.RegularExpressions;
 using Windows.Foundation;
 using Windows.UI;
 using Xunkong.GenshinData.Character;
