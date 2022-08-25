@@ -77,15 +77,15 @@
         <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
     </Style>
 
-    <Style TargetType="MenuFlyoutItem">
+    <Style BasedOn="{StaticResource DefaultMenuFlyoutItemStyle}" TargetType="MenuFlyoutItem">
         <Setter Property="FontFamily" Value="{ThemeResource CustomFont}" />
     </Style>
 
-    <Style TargetType="MenuFlyoutSubItem">
+    <Style BasedOn="{StaticResource DefaultMenuFlyoutSubItemStyle}" TargetType="MenuFlyoutSubItem">
         <Setter Property="FontFamily" Value="{ThemeResource CustomFont}" />
     </Style>
 
-    <Style TargetType="ScrollViewer">
+    <Style BasedOn="{StaticResource DefaultScrollViewerStyle}" TargetType="ScrollViewer">
         <Setter Property="FontFamily" Value="{ThemeResource CustomFont}" />
     </Style>
 

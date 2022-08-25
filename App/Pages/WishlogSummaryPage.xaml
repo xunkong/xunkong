@@ -324,15 +324,19 @@
                               Icon="Refresh"
                               Label="刷新页面" />
                 <AppBarSeparator />
-                <AppBarButton Icon="OpenFile" Label="更新记录">
+                <AppBarButton Icon="OpenFile" Label="获取记录">
                     <AppBarButton.Flyout>
                         <MenuFlyout>
-                            <MenuFlyoutItem Command="{x:Bind vm.GetWishlogCommand, Mode=OneTime}" Text="获取记录" />
+                            <MenuFlyoutItem Command="{x:Bind vm.StartProxyCommand, Mode=OneTime}" Text="启动代理" />
                             <MenuFlyoutItem Command="{x:Bind vm.CloseProxyCommand, Mode=OneTime}" Text="关闭代理" />
                             <MenuFlyoutSeparator />
                             <MenuFlyoutItem Command="{x:Bind vm.GetWishlogFromSavedWishlogUrlCommand, Mode=OneTime}"
+                                            CommandParameter="{StaticResource False}"
+                                            Text="增量更新" />
+                            <MenuFlyoutItem Command="{x:Bind vm.GetWishlogFromSavedWishlogUrlCommand, Mode=OneTime}"
                                             CommandParameter="{StaticResource True}"
                                             Text="全量更新" />
+                            <MenuFlyoutSeparator />
                             <MenuFlyoutItem Command="{x:Bind vm.GetWishlogFromInputWishlogUrlCommand, Mode=OneTime}"
                                             CommandParameter="{StaticResource True}"
                                             Text="输入网址" />

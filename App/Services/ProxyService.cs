@@ -28,7 +28,7 @@ internal class ProxyService : IDisposable
     public ProxyService()
     {
         _proxy = new ProxyServer();
-        _endPoint = new ExplicitProxyEndPoint(IPAddress.Any, 10086);
+        _endPoint = new ExplicitProxyEndPoint(IPAddress.Loopback, 10086);
         _proxy.BeforeRequest += ProxyServer_BeforeRequest;
         _proxy.AddEndPoint(_endPoint);
     }
@@ -38,6 +38,7 @@ internal class ProxyService : IDisposable
     private Task ProxyServer_BeforeRequest(object sender, Titanium.Web.Proxy.EventArguments.SessionEventArgs e)
     {
         var request = e.HttpClient.Request;
+        Debug.WriteLine(request.Url);
         if ((request.Host == "webstatic.mihoyo.com" || request.Host == "webstatic-sea.mihoyo.com") && request.RequestUri.AbsolutePath == "/hk4e/event/e20190909gacha-v2/index.html")
         {
             GotWishlogUrl(this, request.Url);
@@ -46,24 +47,30 @@ internal class ProxyService : IDisposable
     }
 
 
-    public void StartProxy()
+    public async Task<bool> StartProxyAsync()
     {
+        bool result = false;
         if (!ProxyRunning)
         {
             _proxy.Start();
+            result = true;
         }
-        SetSystemProxy(true);
+        await SetSystemProxy(true);
+        return result;
     }
 
 
 
-    public void StopProxy()
+    public async Task<bool> StopProxyAsync()
     {
+        bool result = false;
         if (ProxyRunning)
         {
             _proxy.Stop();
+            result = true;
         }
-        SetSystemProxy(false);
+        await SetSystemProxy(false);
+        return result;
     }
 
 
@@ -72,35 +79,45 @@ internal class ProxyService : IDisposable
     private static extern bool InternetSetOption(IntPtr hInternet, int dwOption, IntPtr lpBuffer, int dwBufferLength);
 
 
-    private void SetSystemProxy(bool enable)
+    private async Task SetSystemProxy(bool enable)
     {
         if (enable)
         {
-            Process.Start(new ProcessStartInfo
+            await (Process.Start(new ProcessStartInfo
             {
                 FileName = "reg",
-                Arguments = $@"add ""HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings"" /v ProxyEnable /t REG_DWORD /d 1 /f",
+                Arguments = """add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 1 /f""",
                 CreateNoWindow = true,
-            });
-            Process.Start(new ProcessStartInfo
+            })?.WaitForExitAsync() ?? Task.CompletedTask);
+            await (Process.Start(new ProcessStartInfo
             {
                 FileName = "reg",
-                Arguments = $@"add ""HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings"" /v ProxyServer /d ""127.0.0.1:10086"" /f",
+                Arguments = """add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyServer /d "http=localhost:10086;https=localhost:10086" /f""",
                 CreateNoWindow = true,
-            });
+            })?.WaitForExitAsync() ?? Task.CompletedTask);
         }
         else
         {
-            Process.Start(new ProcessStartInfo
+            await (Process.Start(new ProcessStartInfo
             {
                 FileName = "reg",
-                Arguments = $@"add ""HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings"" /v ProxyEnable /t REG_DWORD /d 0 /f",
+                Arguments = """add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f""",
                 CreateNoWindow = true,
-            });
+            })?.WaitForExitAsync() ?? Task.CompletedTask);
         }
         InternetSetOption(IntPtr.Zero, 39, IntPtr.Zero, 0);
         InternetSetOption(IntPtr.Zero, 37, IntPtr.Zero, 0);
     }
+
+
+
+    public bool CheckSystemProxy()
+    {
+        var enable = Registry.GetValue(@"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings", "ProxyEnable", 0) is 1;
+        var server = Registry.GetValue(@"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings", "ProxyServer", "") is "http=localhost:10086;https=localhost:10086";
+        return enable && server;
+    }
+
 
 
 
@@ -118,7 +135,7 @@ internal class ProxyService : IDisposable
             // TODO: 释放未托管的资源(未托管的对象)并重写终结器
             // TODO: 将大型字段设置为 null
             _proxy.Dispose();
-            _proxy.DisableAllSystemProxies();
+            SetSystemProxy(false).GetAwaiter().GetResult();
             disposedValue = true;
         }
     }

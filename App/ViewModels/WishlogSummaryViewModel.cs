@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using Windows.System;
 using Xunkong.Desktop.Pages;
 using Xunkong.GenshinData.Character;
 using Xunkong.GenshinData.Weapon;
@@ -49,24 +50,22 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         try
         {
             var uid = await _wishlogService.GetUidByWishlogUrl(e);
-            MainWindow.Current.DispatcherQueue.TryEnqueue(() =>
-            {
-                if (!Uids.Contains(uid.ToString()))
-                {
-                    Uids.Add(uid.ToString());
-                }
-                SelectedUid = uid.ToString();
-                ClipboardHelper.SetText(e);
-            });
-            // 此方法不需要考虑线程问题
+            await _proxyService.StopProxyAsync();
             await ToastProvider.SendAsync("完成", $"已获取 Uid {uid} 的祈愿记录网址");
-            NotificationProvider.Success("完成", $"已复制 Uid {uid} 的祈愿记录网址到剪贴板", 5000);
-            _proxyService.StopProxy();
+            MainWindow.Current.DispatcherQueue.TryEnqueue(async () =>
+            {
+                ClipboardHelper.SetText(e);
+                NotificationProvider.Success("完成", $"已复制 Uid {uid} 的祈愿记录网址到剪贴板", 5000);
+                var addCount = await _wishlogService.GetWishlogByUidAsync(uid, progressHandler);
+                StateText = $"新增 {addCount} 条祈愿记录";
+                SelectedUid = uid.ToString();
+            });
         }
         catch (Exception ex)
         {
+            Logger.Error(ex, "获取新的祈愿记录网址");
             // 内部切换到 UI 线程
-            NotificationProvider.Error(ex, "获取祈愿记录网址的 Uid");
+            NotificationProvider.Error(ex, "获取新的祈愿记录网址");
         }
     }
 
@@ -398,39 +397,22 @@ internal partial class WishlogSummaryViewModel : ObservableObject
     /// <param name="isSea"></param>
     /// <returns></returns>
     [RelayCommand]
-    private async Task GetWishlogAsync()
+    private async Task StartProxyAsync()
     {
-        IsLoading = true;
-        await Task.Delay(100);
         try
         {
-            int uid = _SelectedUid;
-            StateText = "验证祈愿记录网址的有效性";
-            if (!await _wishlogService.CheckWishlogUrlTimeoutAsync(uid))
-            {
-                await ShowProxyDialogAsync();
-                return;
-            }
-            var addCount = await _wishlogService.GetWishlogByUidAsync(uid, progressHandler);
-            StateText = $"新增 {addCount} 条祈愿记录";
-            SelectedUid = uid.ToString();
-            InitializePageData();
-        }
-        catch (Exception ex) when (ex is HoyolabException or XunkongException)
-        {
-            StateText = ex.Message;
+            await ShowProxyDialogAsync();
         }
         catch (Exception ex)
         {
             StateText = "";
-            NotificationProvider.Error(ex);
-            Logger.Error(ex, "获取新的祈愿记录");
-        }
-        finally
-        {
-            IsLoading = false;
+            Logger.Error(ex, "启动代理");
+            NotificationProvider.Error(ex, "启动代理");
         }
     }
+
+
+
 
     private async Task ShowProxyDialogAsync()
     {
@@ -438,10 +420,10 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         var stackPanel = new StackPanel { Spacing = 8 };
         stackPanel.Children.Add(new TextBlock { Text = "您需要重新获取祈愿记录网址，点击下方启动代理按键后，在原神游戏中重新打开祈愿记录页面，获取到网址后再次点击获取记录。", TextWrapping = Microsoft.UI.Xaml.TextWrapping.Wrap });
         stackPanel.Children.Add(new TextBlock { Text = "获取到网址后应用会自动关闭代理，若关闭应用后出现无法连接网络的情况，请在「设置/网络和 Internet/代理/使用代理服务器」中手动关闭代理。", TextWrapping = Microsoft.UI.Xaml.TextWrapping.Wrap });
-        stackPanel.Children.Add(new TextBlock { Text = "首次启动代理时需要信任证书，此证书为软件自动生成。", TextWrapping = Microsoft.UI.Xaml.TextWrapping.Wrap });
+        stackPanel.Children.Add(new TextBlock { Text = "首次启动代理时必须按照证书，否则无法获取网址，此证书为软件自动生成。", TextWrapping = Microsoft.UI.Xaml.TextWrapping.Wrap });
         var dialog = new ContentDialog
         {
-            Title = "祈愿记录网址已过期",
+            Title = "启动代理服务器",
             Content = stackPanel,
             PrimaryButtonText = "启动代理",
             SecondaryButtonText = "关闭",
@@ -450,8 +432,21 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         };
         if (await dialog.ShowWithZeroMarginAsync() == ContentDialogResult.Primary)
         {
-            _proxyService.StartProxy();
-            NotificationProvider.Success("已启动代理", "在原神游戏中重新打开祈愿记录页面", 10000);
+            await _proxyService.StartProxyAsync();
+            if (_proxyService.CheckSystemProxy())
+            {
+                NotificationProvider.Success("已启动代理", "代理服务的端口为 localhost:10086，在原神游戏中重新打开祈愿记录页面。", 10000);
+            }
+            else
+            {
+                NotificationProvider.ShowWithButton(InfoBarSeverity.Warning,
+                                                    "有问题",
+                                                    "代理服务的端口为 localhost:10086，但是系统代理设置出错。",
+                                                    "打开代理设置",
+                                                    async () => await Launcher.LaunchUriAsync(new("ms-settings:network-proxy")),
+                                                    null,
+                                                    10000);
+            }
         }
     }
 
@@ -459,12 +454,18 @@ internal partial class WishlogSummaryViewModel : ObservableObject
 
 
     [RelayCommand]
-    private void CloseProxy()
+    private async Task CloseProxyAsync()
     {
         try
         {
-            _proxyService.StopProxy();
-            NotificationProvider.Success("代理已关闭");
+            if (await _proxyService.StopProxyAsync())
+            {
+                NotificationProvider.Success("代理已关闭");
+            }
+            else
+            {
+                NotificationProvider.Success("代理早已关闭");
+            }
         }
         catch (Exception ex)
         {
