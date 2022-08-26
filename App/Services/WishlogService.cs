@@ -303,22 +303,13 @@ internal class WishlogService
         using var dapper = DatabaseProvider.CreateConnection();
         using var liteDb = DatabaseProvider.CreateLiteDB();
         var col = liteDb.GetCollection<WishEventInfo>();
-        var items = dapper.Query<WishlogItem>("SELECT * FROM WishlogItem WHERE Uid=@Uid;", new { Uid = uid });
+        var items = dapper.Query<WishlogItemEx>("SELECT * FROM WishlogItem WHERE Uid=@Uid;", new { Uid = uid }).ToList();
         var events = col.Query().OrderBy(x => x.Id).ToList();
-        var models = items.Adapt<List<WishlogItemEx>>();
-        var groups = models.GroupBy(x => x.QueryType);
-        Parallel.ForEach(groups, group =>
+        var groups = items.GroupBy(x => x.QueryType).ToList();
+        foreach (var group in groups)
         {
-            int guaranteeIndex = 0;
-            foreach (var item in group.OrderBy(x => x.Id))
-            {
-                guaranteeIndex++;
-                item.GuaranteeIndex = guaranteeIndex;
-                if (item.RankType == 5)
-                {
-                    guaranteeIndex = 0;
-                }
-            }
+            var groupList = group.OrderBy(x => x.Id).ToList();
+
             var queryType = group.FirstOrDefault()?.QueryType;
             if (queryType is WishType.Novice or WishType.Permanent)
             {
@@ -328,31 +319,61 @@ internal class WishlogService
                     WishType.Permanent => "常驻祈愿",
                     _ => "",
                 };
-                group.ToList().ForEach(x => x.WishEventName = eventName);
+                groupList.ForEach(x => x.WishEventName = eventName);
             }
+
+            int guaranteeIndex = 0;
+            for (int i = 0; i < groupList.Count; i++)
+            {
+                var item = groupList[i];
+                guaranteeIndex++;
+                item.GuaranteeIndex = guaranteeIndex;
+                if (item.RankType == 5)
+                {
+                    guaranteeIndex = 0;
+                }
+            }
+
             if (queryType is WishType.CharacterEvent or WishType.WeaponEvent)
             {
-                var thisEvents = events.Where(x => x.QueryType == queryType).ToList();
-                Parallel.ForEach(thisEvents, e =>
+                int startIndex = 0, endIndex = 0;
+                foreach (var e in events.Where(x => x.QueryType == queryType))
                 {
-                    var eventItems = group.Where(x => x.WishType == e.WishType && x.Time >= e.StartTime && x.Time <= e.EndTime).ToList();
-                    foreach (var eventItem in eventItems)
+                    var index = endIndex == 0 ? 0 : endIndex - 1;
+                    if (groupList[index].Time < e.StartTime)
                     {
-                        eventItem.Version = e.Version;
-                        eventItem.WishEventName = e.Name;
-                        if (eventItem.RankType == 5 && e.Rank5UpItems.Contains(eventItem.Name))
+                        startIndex = endIndex;
+                    }
+                    for (int i = startIndex; i < groupList.Count; i++)
+                    {
+                        var item = groupList[i];
+                        if (item.Time < e.StartTime)
                         {
-                            eventItem.IsUp = true;
+                            continue;
                         }
-                        if (eventItem.RankType == 4 && e.Rank4UpItems.Contains(eventItem.Name))
+                        if (item.Time > e.EndTime)
                         {
-                            eventItem.IsUp = true;
+                            endIndex = i;
+                            break;
+                        }
+                        if (item.WishType == e.WishType)
+                        {
+                            item.Version = e.Version;
+                            item.WishEventName = e.Name;
+                            if (item.RankType == 5 && e.Rank5UpItems.Contains(item.Name))
+                            {
+                                item.IsUp = true;
+                            }
+                            if (item.RankType == 4 && e.Rank4UpItems.Contains(item.Name))
+                            {
+                                item.IsUp = true;
+                            }
                         }
                     }
-                });
+                }
             }
-        });
-        return models;
+        }
+        return items;
     }
 
 

@@ -30,7 +30,10 @@ public sealed partial class WishlogSummaryPage : Page
 
     private void _ComboBox_Uid_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        vm.LoadWishlog();
+        if (e.AddedItems.Any())
+        {
+            vm.LoadWishlog();
+        }
     }
 
     private void _TextBlock_Rank5Item_PointerEntered(object sender, PointerRoutedEventArgs e)
