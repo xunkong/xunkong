@@ -69,14 +69,16 @@
         </Grid>
 
 
-        <GridView Name="_GridView_Images"
-                  Grid.Row="1"
-                  Padding="48,0,48,24"
-                  animations:ItemsReorderAnimation.Duration="0:0:0.3"
-                  IsItemClickEnabled="True"
-                  ItemClick="_GridView_Images_ItemClick"
-                  ItemsSource="{x:Bind ImageViewSource.View}"
-                  SelectionMode="None">
+        <cc:AdaptiveGridView Name="_GridView_Images"
+                             Grid.Row="1"
+                             Padding="48,0,48,24"
+                             animations:ItemsReorderAnimation.Duration="0:0:0.3"
+                             DesiredWidth="220"
+                             IsItemClickEnabled="True"
+                             ItemClick="_GridView_Images_ItemClick"
+                             ItemHeight="120"
+                             ItemsSource="{x:Bind ImageViewSource.View}"
+                             SelectionMode="None">
             <GridView.Transitions>
                 <TransitionCollection>
                     <ReorderThemeTransition />
@@ -120,7 +122,7 @@
                         <Image Name="_Image_Thumb"
                                ui:VisualExtensions.NormalizedCenterPoint="0.5"
                                Source="{x:Bind FullName}"
-                               Stretch="Uniform">
+                               Stretch="UniformToFill">
                             <animations:Explicit.Animations>
                                 <animations:AnimationSet x:Name="ImageZoomInAnimation">
                                     <animations:ScaleAnimation EasingMode="EaseOut"
@@ -147,7 +149,9 @@
                                     RequestedTheme="Dark"
                                     Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
                                 <Button.ContentTransitions>
-                                    <ContentThemeTransition />
+                                    <TransitionCollection>
+                                        <ContentThemeTransition />
+                                    </TransitionCollection>
                                 </Button.ContentTransitions>
                                 <SymbolIcon Symbol="Copy" />
                             </Button>
@@ -187,7 +191,7 @@
                     </Grid>
                 </DataTemplate>
             </GridView.ItemTemplate>
-        </GridView>
+        </cc:AdaptiveGridView>
 
 
     </Grid>
