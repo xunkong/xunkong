@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Titanium.Web.Proxy.Models;
-using Titanium.Web.Proxy;
-using System.Net;
-using Microsoft.Win32;
-using System.Runtime.InteropServices;
+﻿using Microsoft.Win32;
 using System.Diagnostics;
+using System.Net;
+using System.Runtime.InteropServices;
+using Titanium.Web.Proxy;
+using Titanium.Web.Proxy.Models;
 
 namespace Xunkong.Desktop.Services;
 
@@ -47,7 +42,7 @@ internal class ProxyService : IDisposable
     }
 
 
-    public async Task<bool> StartProxyAsync()
+    public bool StartProxy()
     {
         bool result = false;
         if (!ProxyRunning)
@@ -55,13 +50,13 @@ internal class ProxyService : IDisposable
             _proxy.Start();
             result = true;
         }
-        await SetSystemProxy(true);
+        SetSystemProxy(true);
         return result;
     }
 
 
 
-    public async Task<bool> StopProxyAsync()
+    public bool StopProxy()
     {
         bool result = false;
         if (ProxyRunning)
@@ -69,7 +64,7 @@ internal class ProxyService : IDisposable
             _proxy.Stop();
             result = true;
         }
-        await SetSystemProxy(false);
+        SetSystemProxy(false);
         return result;
     }
 
@@ -79,31 +74,32 @@ internal class ProxyService : IDisposable
     private static extern bool InternetSetOption(IntPtr hInternet, int dwOption, IntPtr lpBuffer, int dwBufferLength);
 
 
-    private async Task SetSystemProxy(bool enable)
+    private void SetSystemProxy(bool enable)
     {
+        // 参考注册表虚拟化 https://docs.microsoft.com/zh-cn/windows/msix/desktop/flexible-virtualization
         if (enable)
         {
-            await (Process.Start(new ProcessStartInfo
+            Process.Start(new ProcessStartInfo
             {
                 FileName = "reg",
                 Arguments = """add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 1 /f""",
                 CreateNoWindow = true,
-            })?.WaitForExitAsync() ?? Task.CompletedTask);
-            await (Process.Start(new ProcessStartInfo
+            })?.WaitForExit();
+            Process.Start(new ProcessStartInfo
             {
                 FileName = "reg",
                 Arguments = """add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyServer /d "http=localhost:10086;https=localhost:10086" /f""",
                 CreateNoWindow = true,
-            })?.WaitForExitAsync() ?? Task.CompletedTask);
+            })?.WaitForExit();
         }
         else
         {
-            await (Process.Start(new ProcessStartInfo
+            Process.Start(new ProcessStartInfo
             {
                 FileName = "reg",
                 Arguments = """add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f""",
                 CreateNoWindow = true,
-            })?.WaitForExitAsync() ?? Task.CompletedTask);
+            })?.WaitForExit();
         }
         InternetSetOption(IntPtr.Zero, 39, IntPtr.Zero, 0);
         InternetSetOption(IntPtr.Zero, 37, IntPtr.Zero, 0);
@@ -134,8 +130,11 @@ internal class ProxyService : IDisposable
 
             // TODO: 释放未托管的资源(未托管的对象)并重写终结器
             // TODO: 将大型字段设置为 null
+            if (CheckSystemProxy())
+            {
+                SetSystemProxy(false);
+            }
             _proxy.Dispose();
-            SetSystemProxy(false).GetAwaiter().GetResult();
             disposedValue = true;
         }
     }

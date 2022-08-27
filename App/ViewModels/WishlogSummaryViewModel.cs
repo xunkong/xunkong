@@ -50,7 +50,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         try
         {
             var uid = await _wishlogService.GetUidByWishlogUrl(e);
-            await _proxyService.StopProxyAsync();
+            _proxyService.StopProxy();
             await ToastProvider.SendAsync("完成", $"已获取 Uid {uid} 的祈愿记录网址");
             MainWindow.Current.DispatcherQueue.TryEnqueue(async () =>
             {
@@ -432,7 +432,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         };
         if (await dialog.ShowWithZeroMarginAsync() == ContentDialogResult.Primary)
         {
-            await _proxyService.StartProxyAsync();
+            _proxyService.StartProxy();
             if (_proxyService.CheckSystemProxy())
             {
                 NotificationProvider.Success("已启动代理", "代理服务的端口为 localhost:10086，在原神游戏中重新打开祈愿记录页面。", 10000);
@@ -454,11 +454,11 @@ internal partial class WishlogSummaryViewModel : ObservableObject
 
 
     [RelayCommand]
-    private async Task CloseProxyAsync()
+    private void CloseProxy()
     {
         try
         {
-            if (await _proxyService.StopProxyAsync())
+            if (_proxyService.StopProxy())
             {
                 NotificationProvider.Success("代理已关闭");
             }

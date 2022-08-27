@@ -13,7 +13,7 @@ internal static class ServiceProvider
 {
 
 
-    private static IServiceProvider _serviceProvider;
+    private static Microsoft.Extensions.DependencyInjection.ServiceProvider _serviceProvider;
 
     private static bool _isInitialized;
 
@@ -76,6 +76,13 @@ internal static class ServiceProvider
             Initialize();
         }
         return ActivatorUtilities.GetServiceOrCreateInstance<T>(_serviceProvider);
+    }
+
+
+
+    public static void Dispose()
+    {
+        _serviceProvider?.Dispose();
     }
 
 
