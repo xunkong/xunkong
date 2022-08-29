@@ -451,7 +451,7 @@
                             </TextBlock>
                         </DataTemplate>
                         <Style x:Key="ToolTipStyle" TargetType="Path">
-                            <Setter Property="Fill" Value="{ThemeResource ControlOnImageFillColorDefaultBrush}" />
+                            <Setter Property="Fill" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
                         </Style>
                     </charts:SfCartesianChart.Resources>
                     <charts:StackedColumnSeries EnableAnimation="True"
@@ -498,18 +498,28 @@
                 <charts:SfCartesianChart ColorModel="{StaticResource PrimogemsMoraColorModel}"
                                          Header="月趋势"
                                          Palette="Custom">
+                    <charts:SfCartesianChart.Resources>
+                        <Style x:Key="ToolTipStyle" TargetType="Path">
+                            <Setter Property="Fill" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                        </Style>
+                    </charts:SfCartesianChart.Resources>
                     <charts:StackedColumnSeries EnableAnimation="True"
                                                 GroupName="Primogems"
                                                 ItemsSource="{x:Bind AllMonthData}"
-                                                Label="原石数量"
-                                                ShowDataLabels="True"
+                                                Label="原石"
+                                                ShowTooltip="True"
                                                 XBindingPath="YearMonth"
                                                 YBindingPath="CurrentPrimogems">
-                        <charts:StackedColumnSeries.DataLabelSettings>
+                        <!--<charts:StackedColumnSeries.DataLabelSettings>
                             <charts:CartesianDataLabelSettings Background="Transparent"
                                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                                Position="Auto" />
-                        </charts:StackedColumnSeries.DataLabelSettings>
+                        </charts:StackedColumnSeries.DataLabelSettings>-->
+                        <charts:StackedColumnSeries.TooltipTemplate>
+                            <DataTemplate>
+                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{Binding Item.CurrentPrimogems}" />
+                            </DataTemplate>
+                        </charts:StackedColumnSeries.TooltipTemplate>
                         <charts:StackedColumnSeries.YAxis>
                             <charts:NumericalAxis Header="原石" />
                         </charts:StackedColumnSeries.YAxis>
@@ -517,71 +527,27 @@
                     <charts:StackedColumnSeries EnableAnimation="True"
                                                 GroupName="Mora"
                                                 ItemsSource="{x:Bind AllMonthData}"
-                                                Label="摩拉数量"
-                                                ShowDataLabels="True"
+                                                Label="摩拉"
+                                                ShowTooltip="True"
                                                 XBindingPath="YearMonth"
                                                 YBindingPath="CurrentMora">
-                        <charts:StackedColumnSeries.DataLabelSettings>
+                        <!--<charts:StackedColumnSeries.DataLabelSettings>
                             <charts:CartesianDataLabelSettings Background="Transparent"
                                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                                Position="Auto" />
-                        </charts:StackedColumnSeries.DataLabelSettings>
+                        </charts:StackedColumnSeries.DataLabelSettings>-->
+                        <charts:StackedColumnSeries.TooltipTemplate>
+                            <DataTemplate>
+                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{Binding Item.CurrentMora}" />
+                            </DataTemplate>
+                        </charts:StackedColumnSeries.TooltipTemplate>
                         <charts:StackedColumnSeries.YAxis>
                             <charts:NumericalAxis Header="摩拉" OpposedPosition="True" />
                         </charts:StackedColumnSeries.YAxis>
                     </charts:StackedColumnSeries>
-                    <charts:SplineSeries EnableAnimation="True"
-                                         ItemsSource="{x:Bind AllMonthData}"
-                                         Label="原石增长率"
-                                         ShowDataLabels="True"
-                                         XBindingPath="YearMonth"
-                                         YBindingPath="PrimogemsChangeRate">
-                        <charts:SplineSeries.DataLabelSettings>
-                            <charts:CartesianDataLabelSettings Context="DataLabelItem" Position="Auto">
-                                <charts:CartesianDataLabelSettings.ContentTemplate>
-                                    <DataTemplate>
-                                        <Border Background="{ThemeResource ControlOnImageFillColorDefaultBrush}" CornerRadius="4">
-                                            <TextBlock Margin="4,2,4,2"
-                                                       FontSize="12"
-                                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                       Text="{Binding Item.PrimogemsChangeRateString}" />
-                                        </Border>
-                                    </DataTemplate>
-                                </charts:CartesianDataLabelSettings.ContentTemplate>
-                            </charts:CartesianDataLabelSettings>
-                        </charts:SplineSeries.DataLabelSettings>
-                        <charts:SplineSeries.YAxis>
-                            <charts:NumericalAxis Maximum="100"
-                                                  Minimum="-100"
-                                                  Visibility="Collapsed" />
-                        </charts:SplineSeries.YAxis>
-                    </charts:SplineSeries>
-                    <charts:SplineSeries EnableAnimation="True"
-                                         ItemsSource="{x:Bind AllMonthData}"
-                                         Label="摩拉增长率"
-                                         ShowDataLabels="True"
-                                         XBindingPath="YearMonth"
-                                         YBindingPath="MoraChangeRate">
-                        <charts:SplineSeries.DataLabelSettings>
-                            <charts:CartesianDataLabelSettings Context="DataLabelItem" Position="Auto">
-                                <charts:CartesianDataLabelSettings.ContentTemplate>
-                                    <DataTemplate>
-                                        <Border Background="{ThemeResource ControlOnImageFillColorDefaultBrush}" CornerRadius="4">
-                                            <TextBlock Margin="4,2,4,2"
-                                                       FontSize="12"
-                                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                       Text="{Binding Item.MoraChangeRateString}" />
-                                        </Border>
-                                    </DataTemplate>
-                                </charts:CartesianDataLabelSettings.ContentTemplate>
-                            </charts:CartesianDataLabelSettings>
-                        </charts:SplineSeries.DataLabelSettings>
-                        <charts:SplineSeries.YAxis>
-                            <charts:NumericalAxis Maximum="100"
-                                                  Minimum="-100"
-                                                  Visibility="Collapsed" />
-                        </charts:SplineSeries.YAxis>
-                    </charts:SplineSeries>
+                    <charts:SfCartesianChart.Behaviors>
+                        <charts:ChartTooltipBehavior Style="{ThemeResource ToolTipStyle}" />
+                    </charts:SfCartesianChart.Behaviors>
                     <charts:SfCartesianChart.Legend>
                         <charts:ChartLegend ToggleSeriesVisibility="True" />
                     </charts:SfCartesianChart.Legend>
@@ -594,7 +560,7 @@
                                          PointerWheelChanged="SfCartesianChart_PointerWheelChanged">
                     <charts:SfCartesianChart.Resources>
                         <Style x:Key="ToolTipStyle" TargetType="Path">
-                            <Setter Property="Fill" Value="{ThemeResource ControlOnImageFillColorDefaultBrush}" />
+                            <Setter Property="Fill" Value="{ThemeResource AcrylicInAppFillColorDefaultInverseBrush}" />
                         </Style>
                     </charts:SfCartesianChart.Resources>
                     <charts:FastScatterBitmapSeries charts:ChartTooltip.EnableAnimation="False"
