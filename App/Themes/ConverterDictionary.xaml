@@ -25,5 +25,8 @@
     <xdc:EnumToDescriptionOrStringConverter x:Key="EnumToDescriptionOrStringConverter" />
     <xdc:WishlogItemRarityToForegroundConverter x:Key="WishlogItemRarityToForegroundConverter" />
     <xdc:RarityToBackgroundSquareImageBrushConverter x:Key="RarityToBackgroundSquareImageBrushConverter" />
+    <xdc:ElementToBrushConverter x:Key="ElementToBrushConverter" />
+    <xdc:BirthDayToBirthDayStringConverter x:Key="BirthDayToBirthDayStringConverter" />
+    <!--<xdc:ElementToGachaShowPanelConverter x:Key="ElementToGachaShowPanelConverter" />-->
 
 </ResourceDictionary>

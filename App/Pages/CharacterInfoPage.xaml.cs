@@ -149,7 +149,7 @@ public sealed partial class CharacterInfoPage : Page
         {
             desc = constellation.Description.AsSpan();
         }
-        if (stack?.DataContext is CharacterTalentInfo talentInfo)
+        if (stack?.DataContext is CharacterTalent talentInfo)
         {
             desc = talentInfo.Description.AsSpan();
         }
@@ -289,9 +289,9 @@ public sealed partial class CharacterInfoPage : Page
                 weaponDic.TryGetValue(item.c.Weapon.Id, out var gachaIcon);
                 item.c.Weapon.AwakenIcon = gachaIcon!;
                 item.c.Reliquaries = item.a.Reliquaries;
-                var cons = item.c.Constellations.OrderBy(x => x.Id).ToList();
-                cons.Take(item.a.ActivedConstellationNumber).ToList().ForEach(x => x.IsActived = true);
-                item.c.Constellations = cons;
+                var cons = item.c.Constellations?.OrderBy(x => x.ConstellationId).ToList();
+                cons?.Take(item.a.ActivedConstellationNumber).ToList().ForEach(x => x.IsActived = true);
+                item.c.Constellations = cons!;
                 var thisWishlog = wishlogs.Where(x => x.Name == item.c.Name).OrderByDescending(x => x.Id).ToList();
                 item.c.Wishlogs = thisWishlog.Any() ? thisWishlog : null;
                 // 哥哥或妹妹，只显示一个

@@ -33,7 +33,7 @@ public class CharacterInfoPage_Character : CharacterInfo
 
 
 [INotifyPropertyChanged]
-public partial class CharacterInfoPage_Talent : CharacterTalentInfo
+public partial class CharacterInfoPage_Talent : CharacterTalent
 {
 
     [ObservableProperty]
@@ -46,7 +46,7 @@ public partial class CharacterInfoPage_Talent : CharacterTalentInfo
 }
 
 
-public class CharacterInfoPage_Constellation : CharacterConstellationInfo
+public class CharacterInfoPage_Constellation : CharacterConstellation
 {
 
     public bool IsActived { get; set; }
