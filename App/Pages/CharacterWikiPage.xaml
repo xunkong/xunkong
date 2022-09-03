@@ -257,7 +257,7 @@
                     <!--  背景名片  -->
                     <xdc:CachedImage Margin="-880,-4,0,-4"
                                      HorizontalAlignment="Left"
-                                     Source="{Binding CharacterInfo.NameCard.GalleryBackground}"
+                                     Source="{x:Bind SelectedCharacter.CharacterInfo.NameCard.GalleryBackground}"
                                      Stretch="UniformToFill" />
 
                     <!--  背景蒙版  -->
@@ -273,7 +273,7 @@
                                      Margin="0,-68,-180,-0"
                                      HorizontalAlignment="Right"
                                      ui:VisualExtensions.NormalizedCenterPoint="0.5"
-                                     Source="{Binding ShowGachaSplash}"
+                                     Source="{x:Bind SelectedCharacter.ShowGachaSplash}"
                                      Stretch="UniformToFill"
                                      Tapped="c_Image_GachaSplash_Tapped">
                         <interactivity:Interaction.Behaviors>
@@ -311,22 +311,22 @@
                             <!--  称号  -->
                             <TextBlock FontSize="24"
                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                       Text="{Binding CharacterInfo.Title}" />
+                                       Text="{x:Bind SelectedCharacter.CharacterInfo.Title}" />
                             <!--  元素图标  -->
-                            <xdc:CachedImage Width="32" Source="{Binding CharacterInfo.Element, Converter={StaticResource ElementToElementImageConverter}}" />
+                            <xdc:CachedImage Width="32" Source="{x:Bind SelectedCharacter.CharacterInfo.Element, Converter={StaticResource ElementToElementImageConverter}}" />
                         </StackPanel>
 
                         <!--  角色名  -->
                         <TextBlock Width="200"
                                    HorizontalAlignment="Left"
                                    FontSize="36"
-                                   Foreground="{Binding CharacterInfo.Element, Converter={StaticResource ElementToBrushConverter}}"
-                                   Text="{Binding CharacterInfo.Name}" />
+                                   Foreground="{x:Bind SelectedCharacter.CharacterInfo.Element, Converter={StaticResource ElementToBrushConverter}}"
+                                   Text="{x:Bind SelectedCharacter.CharacterInfo.Name}" />
 
                         <!--  星级  -->
                         <xdc:CachedImage Height="20"
                                          HorizontalAlignment="Left"
-                                         Source="{Binding CharacterInfo.Rarity, Converter={StaticResource RarityToIconStarConverter}}" />
+                                         Source="{x:Bind SelectedCharacter.CharacterInfo.Rarity, Converter={StaticResource RarityToIconStarConverter}}" />
 
                         <!--  生日 武器  -->
                         <StackPanel Margin="0,24,0,0"
@@ -344,7 +344,7 @@
                                            Text="生日" />
                                 <TextBlock HorizontalAlignment="Right"
                                            VerticalAlignment="Center"
-                                           Text="{Binding CharacterInfo.Birthday, Converter={StaticResource BirthDayToBirthDayStringConverter}}" />
+                                           Text="{x:Bind SelectedCharacter.CharacterInfo.Birthday, Converter={StaticResource BirthDayToBirthDayStringConverter}}" />
                             </Grid>
                             <Grid Width="180"
                                   Padding="8"
@@ -359,7 +359,7 @@
                                 <TextBlock HorizontalAlignment="Right"
                                            VerticalAlignment="Center"
                                            HorizontalTextAlignment="Right"
-                                           Text="{Binding CharacterInfo.WeaponType, Converter={StaticResource EnumToDescriptionOrStringConverter}}" />
+                                           Text="{x:Bind SelectedCharacter.CharacterInfo.WeaponType, Converter={StaticResource EnumToDescriptionOrStringConverter}}" />
                             </Grid>
                         </StackPanel>
 
@@ -379,7 +379,7 @@
                                            Text="所属" />
                                 <TextBlock HorizontalAlignment="Right"
                                            VerticalAlignment="Center"
-                                           Text="{Binding CharacterInfo.Affiliation}" />
+                                           Text="{x:Bind SelectedCharacter.CharacterInfo.Affiliation}" />
                             </Grid>
                             <Grid Width="180"
                                   Padding="8"
@@ -394,12 +394,12 @@
                                 <TextBlock HorizontalAlignment="Right"
                                            VerticalAlignment="Center"
                                            HorizontalTextAlignment="Right"
-                                           Text="{Binding CharacterInfo.ConstllationName}" />
+                                           Text="{x:Bind SelectedCharacter.CharacterInfo.ConstllationName}" />
                             </Grid>
                         </StackPanel>
 
                         <!--  所需材料  -->
-                        <ItemsControl Margin="0,16,0,0" ItemsSource="{Binding PromoteItems}">
+                        <ItemsControl Margin="0,16,0,0" ItemsSource="{x:Bind SelectedCharacter.PromoteItems}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <StackPanel Orientation="Horizontal" Spacing="4" />
@@ -539,15 +539,15 @@
                                     VerticalAlignment="Center"
                                     Maximum="90"
                                     Minimum="1"
-                                    Value="{Binding TargetLevel, Mode=TwoWay}" />
+                                    Value="{x:Bind SelectedCharacter.TargetLevel, Mode=TwoWay}" />
                             <TextBlock Width="40"
                                        VerticalAlignment="Center"
                                        HorizontalTextAlignment="Left">
-                                <Run Text="Lv." /><Run Text="{Binding TargetLevel}" />
+                                <Run Text="Lv." /><Run Text="{x:Bind SelectedCharacter.TargetLevel}" />
                             </TextBlock>
                             <CheckBox MinWidth="20"
                                       MaxWidth="20"
-                                      IsChecked="{Binding IsPromoteChecked, Mode=TwoWay}" />
+                                      IsChecked="{x:Bind SelectedCharacter.IsPromoteChecked, Mode=TwoWay}" />
                             <TextBlock VerticalAlignment="Center" Text="突破后" />
                         </StackPanel>
 
@@ -560,13 +560,13 @@
                                        Text="生命值" />
                             <TextBlock Width="160"
                                        VerticalAlignment="Center"
-                                       Text="{Binding LevelProperty.HpString}" />
+                                       Text="{x:Bind SelectedCharacter.LevelProperty.HpString}" />
                             <TextBlock Width="120"
                                        VerticalAlignment="Center"
                                        Text="防御力" />
                             <TextBlock Width="160"
                                        VerticalAlignment="Center"
-                                       Text="{Binding LevelProperty.DefenseString}" />
+                                       Text="{x:Bind SelectedCharacter.LevelProperty.DefenseString}" />
                         </StackPanel>
 
                         <!--  攻击力 额外属性  -->
@@ -576,13 +576,13 @@
                                        Text="攻击力" />
                             <TextBlock Width="160"
                                        VerticalAlignment="Center"
-                                       Text="{Binding LevelProperty.AttackString}" />
+                                       Text="{x:Bind SelectedCharacter.LevelProperty.AttackString}" />
                             <TextBlock Width="120"
                                        VerticalAlignment="Center"
-                                       Text="{Binding LevelProperty.OtherPropertyString}" />
+                                       Text="{x:Bind SelectedCharacter.LevelProperty.OtherPropertyString}" />
                             <TextBlock Width="160"
                                        VerticalAlignment="Center"
-                                       Text="{Binding LevelProperty.OtherPropertyValueString}" />
+                                       Text="{x:Bind SelectedCharacter.LevelProperty.OtherPropertyValueString}" />
                         </StackPanel>
 
                     </StackPanel>
@@ -592,7 +592,7 @@
                     <ItemsControl Grid.Row="2"
                                   Grid.Column="2"
                                   Margin="8,0,0,0"
-                                  ItemsSource="{Binding TargetLevelCostItems}">
+                                  ItemsSource="{x:Bind SelectedCharacter.TargetLevelCostItems}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="xg:PromotionCostItem">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
@@ -629,7 +629,7 @@
                     <MenuFlyoutSeparator Grid.Row="1" Margin="-16,4,-16,4" />
 
                     <!--  选择天赋  -->
-                    <Pivot Grid.Row="2" ItemsSource="{Binding CharacterInfo.Talents}">
+                    <Pivot Grid.Row="2" ItemsSource="{x:Bind SelectedCharacter.CharacterInfo.Talents}">
                         <Pivot.Resources>
                             <Thickness x:Key="PivotItemMargin">0</Thickness>
                             <Thickness x:Key="PivotHeaderItemMargin">0,0,24,0</Thickness>
@@ -801,7 +801,7 @@
                                Text="命之座" />
                     <MenuFlyoutSeparator Grid.Row="1" Margin="-16,4,-16,0" />
 
-                    <ItemsControl Grid.Row="2" ItemsSource="{Binding CharacterInfo.Constellations}">
+                    <ItemsControl Grid.Row="2" ItemsSource="{x:Bind SelectedCharacter.CharacterInfo.Constellations}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="xgc:CharacterConstellation">
                                 <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
@@ -836,7 +836,7 @@
                 <!--  名片 料理  -->
                 <Grid MinHeight="280"
                       ColumnSpacing="12"
-                      Visibility="{Binding CharacterInfo.NameCard, Converter={StaticResource ObjectToVisibilityConverter}}">
+                      Visibility="{x:Bind SelectedCharacter.CharacterInfo.NameCard, Converter={StaticResource ObjectToVisibilityConverter}}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition />
@@ -937,7 +937,7 @@
 
                         <Grid Grid.Row="2"
                               ColumnSpacing="12"
-                              Visibility="{Binding CharacterInfo.Food, Converter={StaticResource ObjectToVisibilityConverter}}">
+                              Visibility="{x:Bind SelectedCharacter.CharacterInfo.Food, Converter={StaticResource ObjectToVisibilityConverter}}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition />
@@ -954,7 +954,7 @@
                             </StackPanel>
                         </Grid>
 
-                        <StackPanel Grid.Row="2" Visibility="{Binding CharacterInfo.Food, Converter={StaticResource ObjectToVisibilityReversedConverter}}">
+                        <StackPanel Grid.Row="2" Visibility="{x:Bind SelectedCharacter.CharacterInfo.Food, Converter={StaticResource ObjectToVisibilityReversedConverter}}">
                             <xdc:CachedImage Width="160"
                                              Height="160"
                                              Source="ms-appx:///Assets/Images/UI_EmotionIcon5.png" />
@@ -967,17 +967,17 @@
 
 
                 <!--  故事  -->
-                <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Left">
+                <Expander x:Name="c_Expander_Story"
+                          HorizontalAlignment="Stretch"
+                          HorizontalContentAlignment="Left">
                     <Expander.Header>
                         <TextBlock FontSize="20" Text="故事" />
                     </Expander.Header>
-                    <ItemsControl Grid.Row="2" ItemsSource="{Binding CharacterInfo.Stories}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Spacing="8" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
+                    <ItemsRepeater Grid.Row="2" ItemsSource="{x:Bind SelectedCharacter.CharacterInfo.Stories}">
+                        <ItemsRepeater.Layout>
+                            <StackLayout Spacing="8" />
+                        </ItemsRepeater.Layout>
+                        <ItemsRepeater.ItemTemplate>
                             <DataTemplate x:DataType="xgc:CharacterStory">
                                 <Grid Padding="0,0,0,12"
                                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
@@ -994,45 +994,150 @@
                                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                                 </Grid>
                             </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                        </ItemsRepeater.ItemTemplate>
+                    </ItemsRepeater>
                 </Expander>
-
 
 
                 <!--  语音  -->
-                <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Left">
+                <Expander x:Name="c_Expander_Voice"
+                          HorizontalAlignment="Stretch"
+                          HorizontalContentAlignment="Left">
                     <Expander.Header>
                         <TextBlock FontSize="20" Text="语音" />
                     </Expander.Header>
-                    <ItemsControl Grid.Row="2" ItemsSource="{Binding CharacterInfo.Voices}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Spacing="8" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="xgc:CharacterStory">
-                                <Grid Padding="0,0,0,12"
-                                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                      BorderThickness="0,0,0,1">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="32" />
-                                        <RowDefinition />
-                                    </Grid.RowDefinitions>
-                                    <TextBlock VerticalAlignment="Center"
-                                               FontSize="16"
-                                               Text="{x:Bind Title}" />
-                                    <xdc:GenshinDescTextBlock Grid.Row="1"
-                                                              Description="{x:Bind Content}"
-                                                              Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                                </Grid>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="60" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <!--  配音演员  -->
+                        <StackPanel Orientation="Horizontal" Spacing="36">
+                            <StackPanel Spacing="4">
+                                <TextBlock FontSize="16"
+                                           HorizontalTextAlignment="Center"
+                                           Text="汉语 CV" />
+                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           HorizontalTextAlignment="Center"
+                                           Text="{x:Bind SelectedCharacter.CharacterInfo.CvChinese}" />
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock FontSize="16"
+                                           HorizontalTextAlignment="Center"
+                                           Text="英语 CV" />
+                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           HorizontalTextAlignment="Center"
+                                           Text="{x:Bind SelectedCharacter.CharacterInfo.CvEnglish}" />
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock FontSize="16"
+                                           HorizontalTextAlignment="Center"
+                                           Text="日语 CV" />
+                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           HorizontalTextAlignment="Center"
+                                           Text="{x:Bind SelectedCharacter.CharacterInfo.CvJapanese}" />
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock FontSize="16"
+                                           HorizontalTextAlignment="Center"
+                                           Text="韩语 CV" />
+                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           HorizontalTextAlignment="Center"
+                                           Text="{x:Bind SelectedCharacter.CharacterInfo.CvKorean}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <ItemsRepeater Grid.Row="1" ItemsSource="{x:Bind SelectedCharacter.CharacterInfo.Voices}">
+                            <ItemsRepeater.Layout>
+                                <StackLayout Spacing="8" />
+                            </ItemsRepeater.Layout>
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate x:DataType="xgc:CharacterVoice">
+                                    <Grid Padding="0,8,0,8"
+                                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                          BorderThickness="0,1,0,0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="32" />
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <TextBlock Margin="0,0,16,0"
+                                                       VerticalAlignment="Center"
+                                                       FontSize="16"
+                                                       Text="{x:Bind Title}" />
+                                            <!--  汉语语音  -->
+                                            <Button Width="28"
+                                                    Height="28"
+                                                    Padding="0"
+                                                    Click="Button_PlayVoice_Click"
+                                                    Content="&#xE102;"
+                                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                    Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
+                                                    Tag="{x:Bind Chinese}"
+                                                    Visibility="{x:Bind Chinese, Converter={StaticResource StringToVisibilityConverter}}">
+                                                <Button.ContentTransitions>
+                                                    <TransitionCollection>
+                                                        <ContentThemeTransition />
+                                                    </TransitionCollection>
+                                                </Button.ContentTransitions>
+                                            </Button>
+                                            <!--  英语语音  -->
+                                            <Button Width="28"
+                                                    Height="28"
+                                                    Padding="0"
+                                                    Click="Button_PlayVoice_Click"
+                                                    Content="&#xE102;"
+                                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                    Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
+                                                    Tag="{x:Bind English}"
+                                                    Visibility="{x:Bind English, Converter={StaticResource StringToVisibilityConverter}}">
+                                                <Button.ContentTransitions>
+                                                    <TransitionCollection>
+                                                        <ContentThemeTransition />
+                                                    </TransitionCollection>
+                                                </Button.ContentTransitions>
+                                            </Button>
+                                            <!--  日语语音  -->
+                                            <Button Width="28"
+                                                    Height="28"
+                                                    Padding="0"
+                                                    Click="Button_PlayVoice_Click"
+                                                    Content="&#xE102;"
+                                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                    Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
+                                                    Tag="{x:Bind Japanese}"
+                                                    Visibility="{x:Bind Japanese, Converter={StaticResource StringToVisibilityConverter}}">
+                                                <Button.ContentTransitions>
+                                                    <TransitionCollection>
+                                                        <ContentThemeTransition />
+                                                    </TransitionCollection>
+                                                </Button.ContentTransitions>
+                                            </Button>
+                                            <!--  韩语语音  -->
+                                            <Button Width="28"
+                                                    Height="28"
+                                                    Padding="0"
+                                                    Click="Button_PlayVoice_Click"
+                                                    Content="&#xE102;"
+                                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                    Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
+                                                    Tag="{x:Bind Korean}"
+                                                    Visibility="{x:Bind Korean, Converter={StaticResource StringToVisibilityConverter}}">
+                                                <Button.ContentTransitions>
+                                                    <TransitionCollection>
+                                                        <ContentThemeTransition />
+                                                    </TransitionCollection>
+                                                </Button.ContentTransitions>
+                                            </Button>
+                                        </StackPanel>
+                                        <xdc:GenshinDescTextBlock Grid.Row="1"
+                                                                  Description="{x:Bind Content}"
+                                                                  Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                        </ItemsRepeater>
+                    </Grid>
                 </Expander>
-
-
 
             </StackPanel>
 

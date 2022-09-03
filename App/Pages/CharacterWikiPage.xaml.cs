@@ -1,6 +1,9 @@
-﻿using Microsoft.UI.Xaml;
+﻿using CommunityToolkit.WinUI.UI;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using NAudio.Wave;
 using Xunkong.Desktop.Controls;
 using Xunkong.GenshinData.Character;
 
@@ -17,16 +20,30 @@ public sealed partial class CharacterWikiPage : Page
 {
 
 
+    private readonly WaveOutEvent _audioDevice;
+
+
     public CharacterWikiPage()
     {
         this.InitializeComponent();
+        _audioDevice = new WaveOutEvent();
+        _audioDevice.PlaybackStopped += _audioDevice_PlaybackStopped;
         Loaded += CharacterWikiPage_Loaded;
+        Unloaded += CharacterWikiPage_Unloaded;
     }
+
+
 
     private async void CharacterWikiPage_Loaded(object sender, RoutedEventArgs e)
     {
-        await Task.Delay(60);
+        await Task.Delay(30);
         InitializePage();
+    }
+
+
+    private void CharacterWikiPage_Unloaded(object sender, RoutedEventArgs e)
+    {
+        _audioDevice.Dispose();
     }
 
 
@@ -54,8 +71,8 @@ public sealed partial class CharacterWikiPage : Page
         }
         catch (Exception ex)
         {
-            Logger.Error(ex);
-            NotificationProvider.Error(ex);
+            Logger.Error(ex, "初始化角色图鉴页面");
+            NotificationProvider.Error(ex, "初始化角色图鉴页面");
         }
     }
 
@@ -63,6 +80,7 @@ public sealed partial class CharacterWikiPage : Page
 
     partial void OnSelectedCharacterChanged(PM_CharacterWiki_CharacterInfo? value)
     {
+        _audioDevice.Stop();
         value?.Initialize();
         c_ScrollViewer_Base.ScrollToVerticalOffset(0);
         c_GridView_Filter.SelectedItem = null;
@@ -191,6 +209,99 @@ public sealed partial class CharacterWikiPage : Page
                 SelectedCharacter.ShowGachaSplash = outfit.GachaSplash ?? SelectedCharacter.CharacterInfo.GachaSplash;
                 c_Flyout_Outfit.Hide();
             }
+        }
+    }
+
+
+
+    private int randomId;
+
+    private Button? lastPlayedButton;
+
+
+    /// <summary>
+    /// 播放语音
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void Button_PlayVoice_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (sender is Button button)
+            {
+                if (button.Tag is string { Length: > 0 } voice)
+                {
+                    if (button == lastPlayedButton)
+                    {
+                        if (_audioDevice.PlaybackState == PlaybackState.Playing)
+                        {
+                            _audioDevice.Stop();
+                            return;
+                        }
+                        else
+                        {
+                            button.Content = new ProgressRing { Width = 16, Height = 16, Foreground = Application.Current.Resources["TextFillColorSecondaryBrush"] as Brush };
+                            var id = Random.Shared.Next();
+                            randomId = id;
+                            var file = await FileCache.Instance.GetFromCacheAsync(new Uri(voice));
+                            if (file is null || randomId != id)
+                            {
+                                button.Content = "\uE102";
+                                return;
+                            }
+                            using var fr = new AudioFileReader(file.Path);
+                            _audioDevice.Init(fr);
+                            _audioDevice.Play();
+                            button.Content = "\uE103";
+                        }
+                    }
+                    else
+                    {
+                        if (lastPlayedButton != null)
+                        {
+                            lastPlayedButton.Content = "\uE102";
+                        }
+                        _audioDevice.PlaybackStopped -= _audioDevice_PlaybackStopped;
+                        _audioDevice.Stop();
+                        button.Content = new ProgressRing { Width = 16, Height = 16, Foreground = Application.Current.Resources["TextFillColorSecondaryBrush"] as Brush };
+                        var id = Random.Shared.Next();
+                        randomId = id;
+                        var file = await FileCache.Instance.GetFromCacheAsync(new Uri(voice));
+                        if (file is null || randomId != id)
+                        {
+                            button.Content = "\uE102";
+                            _audioDevice.PlaybackStopped += _audioDevice_PlaybackStopped;
+                            return;
+                        }
+                        using var fr = new AudioFileReader(file.Path);
+                        _audioDevice.Init(fr);
+                        _audioDevice.Play();
+                        button.Content = "\uE103";
+                        lastPlayedButton = button;
+                        _audioDevice.PlaybackStopped += _audioDevice_PlaybackStopped;
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "加载语音");
+        }
+    }
+
+
+    /// <summary>
+    /// 播放结束
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    /// <exception cref="NotImplementedException"></exception>
+    private void _audioDevice_PlaybackStopped(object? sender, StoppedEventArgs e)
+    {
+        if (lastPlayedButton != null)
+        {
+            lastPlayedButton.Content = "\uE102";
         }
     }
 

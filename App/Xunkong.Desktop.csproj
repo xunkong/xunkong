@@ -30,6 +30,7 @@
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.4" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.1" />
 		<PackageReference Include="MiniExcel" Version="1.26.5" />
+		<PackageReference Include="NAudio" Version="2.1.0" />
 		<PackageReference Include="Octokit" Version="2.0.1" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageReference Include="TaskScheduler" Version="2.10.1" />

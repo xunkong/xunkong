@@ -223,7 +223,7 @@ public sealed partial class ImportAchievementPage : Page
                         }
                         else
                         {
-                            await Launcher.LaunchUriAsync(new Uri($"xunkong://post-message/{ProtocolMessage.ChangeSelectedUidInAchievementPage}?caller=Xunkong&uid={uid}"));
+                            await Launcher.LaunchUriAsync(new Uri($"xunkong://post-message/{ProtocolMessage.ChangeSelectedUidInAchievementPage}?caller=Xunkong&uid={uid}"), new LauncherOptions { TargetApplicationPackageFamilyName = XunkongEnvironment.FamilyName });
                         }
                     }
                     await Task.Delay(1000);

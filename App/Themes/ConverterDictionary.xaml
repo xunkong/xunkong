@@ -27,6 +27,8 @@
     <xdc:RarityToBackgroundSquareImageBrushConverter x:Key="RarityToBackgroundSquareImageBrushConverter" />
     <xdc:ElementToBrushConverter x:Key="ElementToBrushConverter" />
     <xdc:BirthDayToBirthDayStringConverter x:Key="BirthDayToBirthDayStringConverter" />
+    <xdc:StringToBoolConverter x:Key="StringToBoolConverter" />
+    <xdc:StringToBoolReversedConverter x:Key="StringToBoolReversedConverter" />
     <!--<xdc:ElementToGachaShowPanelConverter x:Key="ElementToGachaShowPanelConverter" />-->
 
 </ResourceDictionary>

@@ -8,10 +8,12 @@
              mc:Ignorable="d">
 
     <TextBlock x:Name="ThisTextBlock"
+               HorizontalAlignment="Left"
                FontFamily="{x:Bind FontFamily}"
                FontSize="{x:Bind FontSize}"
                FontWeight="{x:Bind FontWeight}"
                Foreground="{x:Bind Foreground}"
+               IsTextSelectionEnabled="True"
                TextWrapping="Wrap" />
 
 </UserControl>
