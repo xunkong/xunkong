@@ -1,4 +1,5 @@
-﻿using Xunkong.GenshinData.Character;
+﻿using Xunkong.GenshinData;
+using Xunkong.GenshinData.Character;
 using Xunkong.GenshinData.Material;
 
 namespace Xunkong.Desktop.Models;

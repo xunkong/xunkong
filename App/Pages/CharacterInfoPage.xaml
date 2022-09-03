@@ -372,11 +372,6 @@
                                         </StackPanel>
                                         <FlyoutBase.AttachedFlyout>
                                             <Flyout OverlayInputPassThroughElement="{Binding ElementName=_Grid_GachaSplash}" Placement="LeftEdgeAlignedTop">
-                                                <Flyout.FlyoutPresenterStyle>
-                                                    <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
-                                                        <Setter Property="RequestedTheme" Value="Dark" />
-                                                    </Style>
-                                                </Flyout.FlyoutPresenterStyle>
                                                 <TextBlock Text="{x:Bind Description}" TextWrapping="Wrap" />
                                             </Flyout>
                                         </FlyoutBase.AttachedFlyout>
@@ -424,11 +419,6 @@
                                         <TextBlock VerticalAlignment="Center" Text="{x:Bind Name}" />
                                         <FlyoutBase.AttachedFlyout>
                                             <Flyout OverlayInputPassThroughElement="{Binding ElementName=_Grid_GachaSplash}" Placement="LeftEdgeAlignedTop">
-                                                <Flyout.FlyoutPresenterStyle>
-                                                    <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
-                                                        <Setter Property="RequestedTheme" Value="Dark" />
-                                                    </Style>
-                                                </Flyout.FlyoutPresenterStyle>
                                                 <TextBlock Text="{x:Bind Description}" />
                                             </Flyout>
                                         </FlyoutBase.AttachedFlyout>

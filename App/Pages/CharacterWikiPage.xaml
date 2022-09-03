@@ -11,6 +11,7 @@
       xmlns:ui="using:CommunityToolkit.WinUI.UI"
       xmlns:xdc="using:Xunkong.Desktop.Controls"
       xmlns:xdm="using:Xunkong.Desktop.Models"
+      xmlns:xg="using:Xunkong.GenshinData"
       xmlns:xgc="using:Xunkong.GenshinData.Character"
       xmlns:xgm="using:Xunkong.GenshinData.Material"
       x:DefaultBindMode="OneWay"
@@ -18,16 +19,20 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="120" />
+            <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
 
 
         <!--  顶部角色选择栏  -->
-        <ListView x:Name="c_ListView_CharacterSelection"
-                  Margin="24,12,24,0"
-                  Padding="36,0,0,8"
+        <ListView x:Name="c_ListView_CharacterSelection_Top"
+                  Grid.Column="1"
+                  Margin="72,12,24,0"
+                  Padding="0,0,0,8"
                   ItemsSource="{x:Bind CharacterInfos}"
                   ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                   ScrollViewer.HorizontalScrollMode="Enabled"
@@ -131,21 +136,46 @@
             </ListView.ItemTemplate>
         </ListView>
 
+        <!--  左侧角色选择栏  -->
+        <ListView x:Name="c_ListView_CharacterSelection_Left"
+                  Grid.Row="1"
+                  Margin="24,48,0,12"
+                  Padding="0,0,12,0"
+                  ItemsSource="{x:Bind CharacterInfos}"
+                  SelectedItem="{x:Bind SelectedCharacter, Mode=TwoWay}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="xdm:PM_CharacterWiki_CharacterInfo">
+                    <StackPanel Width="160"
+                                Margin="0,0,12,12"
+                                Orientation="Horizontal"
+                                Spacing="8">
+                        <xdc:CachedImage Width="40"
+                                         Height="40"
+                                         Source="{x:Bind CharacterInfo.SideIcon}" />
+                        <TextBlock Margin="0,0,0,4"
+                                   VerticalAlignment="Bottom"
+                                   Text="{x:Bind CharacterInfo.Name}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
 
         <!--  筛选按键  -->
-        <Button Width="36"
-                Height="48"
-                Margin="24,0,0,0"
-                Padding="4"
+        <Button x:Name="c_Button_Filter"
+                Grid.Column="1"
+                Margin="24,12,0,0"
+                Padding="8"
                 HorizontalAlignment="Left"
-                VerticalAlignment="Center"
+                VerticalAlignment="Top"
                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                 Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
-            <StackPanel Spacing="4">
+            <StackPanel x:Name="c_StackPanel_Filter" Spacing="8">
                 <TextBlock HorizontalAlignment="Center"
                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
                            Text="&#xE14C;" />
                 <TextBlock HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
                            FontSize="12"
                            Text="展开" />
             </StackPanel>
@@ -160,7 +190,7 @@
                         </Grid.RowDefinitions>
                         <!--  搜索框  -->
                         <AutoSuggestBox x:Name="c_AutoSuggestBox_Search"
-                                        PlaceholderText="输入角色名、称号、稀有度、元素类型。。。"
+                                        PlaceholderText="角色名、称号、稀有度、元素类型、武器类型。。。"
                                         QueryIcon="Find"
                                         QuerySubmitted="c_AutoSuggestBox_Search_QuerySubmitted" />
                         <!--  搜索结果列表  -->
@@ -198,10 +228,10 @@
             </Button.Flyout>
         </Button>
 
-
-
         <!--  可滚动内容  -->
-        <ScrollViewer x:Name="c_ScrollViewer_Base" Grid.Row="1">
+        <ScrollViewer x:Name="c_ScrollViewer_Base"
+                      Grid.Row="1"
+                      Grid.Column="1">
 
 
             <StackPanel x:Name="c_StackPanel_Base"
@@ -390,13 +420,13 @@
                     <!--  衣装  -->
                     <Button Width="44"
                             Height="36"
-                            Padding="4"
+                            Padding="8,4,8,4"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Top"
                             Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
                             ToolTipService.ToolTip="衣装">
                         <Button.Content>
-                            <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            <BitmapIcon Foreground="{ThemeResource TextFillColorTertiaryBrush}"
                                         ShowAsMonochrome="True"
                                         UriSource="ms-appx:///Assets/Images/SpriteUI_Icon_Flycloak.png" />
                         </Button.Content>
@@ -564,7 +594,7 @@
                                   Margin="8,0,0,0"
                                   ItemsSource="{Binding TargetLevelCostItems}">
                         <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="xgc:PromotionCostItem">
+                            <DataTemplate x:DataType="xg:PromotionCostItem">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <xdc:CachedImage Width="36"
                                                      Height="36"
@@ -725,7 +755,7 @@
                                                                         BorderThickness="0.5">
                                                                     <ItemsControl ItemsSource="{x:Bind CostItems}">
                                                                         <ItemsControl.ItemTemplate>
-                                                                            <DataTemplate x:DataType="xgc:PromotionCostItem">
+                                                                            <DataTemplate x:DataType="xg:PromotionCostItem">
                                                                                 <StackPanel Orientation="Horizontal">
                                                                                     <xdc:CachedImage Width="36"
                                                                                                      Height="36"
@@ -848,7 +878,7 @@
                         </Grid>
 
                         <Border Grid.Row="3"
-                                Background="#DAD5CB"
+                                Background="#DAD4C9"
                                 CornerRadius="24" />
                         <xdc:CachedImage Grid.Row="3"
                                          HorizontalAlignment="Right"
@@ -1010,5 +1040,33 @@
 
 
 
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="c_ListView_CharacterSelection_Top.Visibility" Value="Visible" />
+                        <Setter Target="c_ListView_CharacterSelection_Left.Visibility" Value="Collapsed" />
+                        <Setter Target="c_Button_Filter.(Grid.Row)" Value="0" />
+                        <Setter Target="c_Button_Filter.(Grid.Column)" Value="1" />
+                        <Setter Target="c_StackPanel_Filter.Orientation" Value="Vertical" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1800" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="c_ListView_CharacterSelection_Top.Visibility" Value="Collapsed" />
+                        <Setter Target="c_ListView_CharacterSelection_Left.Visibility" Value="Visible" />
+                        <Setter Target="c_Button_Filter.(Grid.Row)" Value="1" />
+                        <Setter Target="c_Button_Filter.(Grid.Column)" Value="0" />
+                        <Setter Target="c_StackPanel_Filter.Orientation" Value="Horizontal" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>

@@ -17,10 +17,36 @@ public sealed partial class GenshinDescTextBlock : UserControl
     private string description;
 
 
+    /// <summary>
+    /// 浅色模式下的颜色映射
+    /// </summary>
+    private readonly static Dictionary<string, string> ColorMap = new Dictionary<string, string>
+    {
+        // 技能名称 RGBA
+        {"FFD780FF","C5904EFF" },
+        // 火
+        {"FF9999FF","EE6946FF" },
+        // 水
+        {"80C0FFFF","478DCDFF" },
+        // 风
+        {"80FFD7FF","59A4A7FF" },
+        // 雷
+        {"FFACFFFF","8575CBFF" },
+        // 草
+        {"99FF88FF","7FB345FF" },
+        // 冰
+        {"99FFFFFF","47C1D9FF" },
+        // 岩
+        {"FFE699FF","CF9A58FF" },
+    };
+
+
+
     public GenshinDescTextBlock()
     {
         this.InitializeComponent();
     }
+
 
 
     partial void OnDescriptionChanged(string value)
@@ -35,6 +61,7 @@ public sealed partial class GenshinDescTextBlock : UserControl
             }
             var desc = value.AsSpan();
             int lastIndex = 0;
+            bool mapColor = this.ActualTheme == Microsoft.UI.Xaml.ElementTheme.Light;
             for (int i = 0; i < desc.Length; i++)
             {
                 // 换行
@@ -50,7 +77,12 @@ public sealed partial class GenshinDescTextBlock : UserControl
                 {
                     text.Inlines.Add(new Run { Text = desc[lastIndex..i].ToString() });
                     var colorLength = desc.Slice(i + 8).IndexOf('>');
-                    var color = Convert.FromHexString(desc.Slice(i + 8, colorLength));
+                    var colorString = desc.Slice(i + 8, colorLength);
+                    if (mapColor)
+                    {
+                        colorString = ColorMap.GetValueOrDefault(colorString.ToString());
+                    }
+                    var color = Convert.FromHexString(colorString);
                     var textLength = desc.Slice(i + 9 + colorLength).IndexOf('<');
                     if (colorLength == 8)
                     {

@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Numerics;
 using Windows.Foundation;
 using Windows.UI;
+using Xunkong.Desktop.Controls;
 using Xunkong.GenshinData.Character;
 using Xunkong.GenshinData.Weapon;
 using Xunkong.Hoyolab.Account;
@@ -144,16 +145,16 @@ public sealed partial class CharacterInfoPage : Page
     {
         var stack = sender as StackPanel;
         var flyout = FlyoutBase.GetAttachedFlyout(sender as FrameworkElement);
-        ReadOnlySpan<char> desc = ReadOnlySpan<char>.Empty;
+        string? desc = null;
         if (stack?.DataContext is CharacterInfoPage_Constellation constellation)
         {
-            desc = constellation.Description.AsSpan();
+            desc = constellation.Description;
         }
         if (stack?.DataContext is CharacterTalent talentInfo)
         {
-            desc = talentInfo.Description.AsSpan();
+            desc = talentInfo.Description;
         }
-        if (desc.IsEmpty)
+        if (string.IsNullOrWhiteSpace(desc))
         {
             return;
         }
@@ -162,51 +163,7 @@ public sealed partial class CharacterInfoPage : Page
         try
         {
             // 以倾奇之姿汇聚寒霜，放出持续行进的霜见雪关扉。\n\n<color=#FFD780FF>霜见雪关扉</color>\n·以刀锋般尖锐的霜风持续切割触及的敌人，造成<color=#99FFFFFF>冰元素伤害</color>；\n·持续时间结束时绽放，造成<color=#99FFFFFF>冰元素范围伤害</color>。\n\n<i>「吹雪濡鹭时，积思若霜，胸底思重焉哀怜。」</i>
-            var text = new TextBlock { TextWrapping = TextWrapping.Wrap, MaxWidth = 400 };
-            int lastIndex = 0;
-            for (int i = 0; i < desc.Length; i++)
-            {
-                // 换行
-                if (desc[i] == '\\' && desc[i + 1] == 'n')
-                {
-                    text.Inlines.Add(new Run { Text = desc[lastIndex..i].ToString() });
-                    text.Inlines.Add(new LineBreak());
-                    i += 1;
-                    lastIndex = i + 1;
-                }
-                // 颜色
-                if (desc[i] == '<' && desc[i + 1] == 'c')
-                {
-                    text.Inlines.Add(new Run { Text = desc[lastIndex..i].ToString() });
-                    var color = Convert.FromHexString(desc.Slice(i + 8, 8));
-                    var length = desc.Slice(i + 17).IndexOf('<');
-                    text.Inlines.Add(new Run
-                    {
-                        Text = desc.Slice(i + 17, length).ToString(),
-                        Foreground = new SolidColorBrush(Color.FromArgb(color[3], color[0], color[1], color[2])),
-                    });
-                    i += length + 24;
-                    lastIndex = i + 1;
-                }
-                // 引用
-                if (desc[i] == '<' && desc[i + 1] == 'i')
-                {
-                    text.Inlines.Add(new Run { Text = desc[lastIndex..i].ToString() });
-                    var length = desc.Slice(i + 3).IndexOf('<');
-                    text.Inlines.Add(new Run
-                    {
-                        Text = desc.Slice(i + 3, length).ToString(),
-                        FontFamily = new FontFamily("楷体"),
-                    });
-                    i += length + 6;
-                    lastIndex = i + 1;
-                }
-                // 结尾
-                if (i == desc.Length - 1)
-                {
-                    text.Inlines.Add(new Run { Text = desc.Slice(lastIndex).ToString() });
-                }
-            }
+            var text = new GenshinDescTextBlock { Description = desc, MaxWidth = 400 };
             if (flyout is Flyout f)
             {
                 f.Content = text;
