@@ -29,6 +29,7 @@
     <xdc:BirthDayToBirthDayStringConverter x:Key="BirthDayToBirthDayStringConverter" />
     <xdc:StringToBoolConverter x:Key="StringToBoolConverter" />
     <xdc:StringToBoolReversedConverter x:Key="StringToBoolReversedConverter" />
+    <xdc:NumberIncreaseConverter x:Key="NumberIncreaseConverter" />
     <!--<xdc:ElementToGachaShowPanelConverter x:Key="ElementToGachaShowPanelConverter" />-->
 
 </ResourceDictionary>
