@@ -32,4 +32,8 @@
     <xdc:NumberIncreaseConverter x:Key="NumberIncreaseConverter" />
     <!--<xdc:ElementToGachaShowPanelConverter x:Key="ElementToGachaShowPanelConverter" />-->
 
+    <xdc:GrowthSchedulePage_DayNumberStringToDayStringConverter x:Key="GrowthSchedulePage_DayNumberStringToDayStringConverter" />
+    <xdc:GrowthSchedulePage_IsToday x:Key="GrowthSchedulePage_IsToday" />
+
+
 </ResourceDictionary>
