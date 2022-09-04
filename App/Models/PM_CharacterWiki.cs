@@ -14,6 +14,29 @@ public partial class PM_CharacterWiki_CharacterInfo
     [ObservableProperty]
     private CharacterInfo characterInfo;
 
+
+    private string birthday;
+
+    public string Birthday
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(birthday))
+            {
+                if (CharacterInfo.Birthday?.Contains("/") ?? false)
+                {
+                    birthday = $"{CharacterInfo.Birthday.Split("/").FirstOrDefault()}月{CharacterInfo.Birthday.Split("/").LastOrDefault()}日";
+                }
+                else
+                {
+                    birthday = "——";
+                }
+            }
+            return birthday;
+        }
+    }
+
+
     [ObservableProperty]
     private PM_CharacterWiki_LevelProperty levelProperty;
 
@@ -31,6 +54,8 @@ public partial class PM_CharacterWiki_CharacterInfo
 
     [ObservableProperty]
     private string showGachaSplash;
+
+    public string PromotePropString { get; set; }
 
     public void Initialize()
     {

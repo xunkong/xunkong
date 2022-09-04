@@ -32,6 +32,7 @@ public partial class PM_WeaponWiki_WeaponInfo
     [ObservableProperty]
     private List<PromotionCostItem>? targetLevelCostItems;
 
+    public string PromotePropString { get; set; }
 
     public void Initialize()
     {

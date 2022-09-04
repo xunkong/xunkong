@@ -65,7 +65,16 @@ public sealed partial class CharacterWikiPage : Page
         try
         {
             using var liteDb = DatabaseProvider.CreateLiteDB();
-            CharacterInfos = liteDb.GetCollection<CharacterInfo>().FindAll().OrderByDescending(x => x.BeginTime).ThenBy(x => x.SortId).Select(x => new PM_CharacterWiki_CharacterInfo { CharacterInfo = x }).ToList();
+            CharacterInfos = liteDb.GetCollection<CharacterInfo>()
+                                   .FindAll()
+                                   .OrderByDescending(x => x.BeginTime)
+                                   .ThenBy(x => x.SortId)
+                                   .Select(x => new PM_CharacterWiki_CharacterInfo
+                                   {
+                                       CharacterInfo = x,
+                                       PromotePropString = PropertyType.GetDescription(x.Promotions?.LastOrDefault()?.AddProps?.LastOrDefault()?.PropType)
+                                   })
+                                   .ToList();
             SelectedCharacter = CharacterInfos.FirstOrDefault();
             FilterCharacters = CharacterInfos;
         }
@@ -82,7 +91,6 @@ public sealed partial class CharacterWikiPage : Page
     {
         _audioDevice.Stop();
         value?.Initialize();
-        c_ScrollViewer_Base.ScrollToVerticalOffset(0);
         c_GridView_Filter.SelectedItem = null;
         c_GridView_Filter.SelectedItem = value;
     }
@@ -157,10 +165,26 @@ public sealed partial class CharacterWikiPage : Page
                         result = result.Where(x => x.CharacterInfo.Element == ElementType.Rock);
                         continue;
                     }
-                    result = result.Where(x => x.CharacterInfo.Name.Contains(query)
-                                               || x.CharacterInfo.Title.Contains(query)
-                                               || x.CharacterInfo.ConstllationName.Contains(query)
-                                               || x.CharacterInfo.WeaponType.ToDescription().Contains(query));
+                    var word = query;
+                    if (query.Length == 2 && query[1] == '伤')
+                    {
+                        word = $"{query[0]}元素伤害加成";
+                    }
+                    if (query is "爆伤")
+                    {
+                        word = "暴击伤害";
+                    }
+                    if (query is "物伤")
+                    {
+                        word = "物理伤害加成";
+                    }
+                    result = result.Where(x => x.Birthday.Contains(word)
+                                               || x.PromotePropString.Contains(word)
+                                               || x.CharacterInfo.Name.Contains(word)
+                                               || x.CharacterInfo.Title.Contains(word)
+                                               || x.CharacterInfo.Affiliation.Contains(word)
+                                               || x.CharacterInfo.ConstllationName.Contains(word)
+                                               || x.CharacterInfo.WeaponType.ToDescription().Contains(word));
                 }
                 FilterCharacters = result.ToList();
             }

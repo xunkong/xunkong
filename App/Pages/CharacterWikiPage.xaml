@@ -190,7 +190,7 @@
                         </Grid.RowDefinitions>
                         <!--  搜索框  -->
                         <AutoSuggestBox x:Name="c_AutoSuggestBox_Search"
-                                        PlaceholderText="角色名、称号、稀有度、元素类型、武器类型。。。"
+                                        PlaceholderText="名称、稀有度、元素类型、突破属性、武器类型。。。"
                                         QueryIcon="Find"
                                         QuerySubmitted="c_AutoSuggestBox_Search_QuerySubmitted" />
                         <!--  搜索结果列表  -->
@@ -202,12 +202,14 @@
                                   SelectionMode="Single">
                             <GridView.ItemTemplate>
                                 <DataTemplate x:DataType="xdm:PM_CharacterWiki_CharacterInfo">
-                                    <Grid Width="80" CornerRadius="4">
+                                    <Grid Width="80"
+                                          Height="98"
+                                          CornerRadius="4">
                                         <xdc:CachedImage Source="{x:Bind CharacterInfo.Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}" />
                                         <xdc:CachedImage VerticalAlignment="Top"
                                                          CornerRadius="4,4,16,0"
                                                          Source="{x:Bind CharacterInfo.FaceIcon}" />
-                                        <TextBlock Margin="0,0,0,1"
+                                        <TextBlock Margin="0,0,0,2"
                                                    HorizontalAlignment="Center"
                                                    VerticalAlignment="Bottom"
                                                    FontSize="12"
@@ -228,7 +230,7 @@
             </Button.Flyout>
         </Button>
 
-        <!--  可滚动内容  -->
+        <!--  主要内容  -->
         <ScrollViewer x:Name="c_ScrollViewer_Base"
                       Grid.Row="1"
                       Grid.Column="1">
@@ -257,7 +259,7 @@
                     <!--  背景名片  -->
                     <xdc:CachedImage Margin="-880,-4,0,-4"
                                      HorizontalAlignment="Left"
-                                     Source="{x:Bind SelectedCharacter.CharacterInfo.NameCard.GalleryBackground}"
+                                     Source="{x:Bind SelectedCharacter.CharacterInfo.NameCard.GalleryBackground, FallbackValue={x:Null}}"
                                      Stretch="UniformToFill" />
 
                     <!--  背景蒙版  -->
@@ -344,7 +346,7 @@
                                            Text="生日" />
                                 <TextBlock HorizontalAlignment="Right"
                                            VerticalAlignment="Center"
-                                           Text="{x:Bind SelectedCharacter.CharacterInfo.Birthday, Converter={StaticResource BirthDayToBirthDayStringConverter}}" />
+                                           Text="{x:Bind SelectedCharacter.Birthday}" />
                             </Grid>
                             <Grid Width="180"
                                   Padding="8"
@@ -426,7 +428,7 @@
                             Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
                             ToolTipService.ToolTip="衣装">
                         <Button.Content>
-                            <BitmapIcon Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                            <BitmapIcon Foreground="{x:Bind SelectedCharacter.CharacterInfo.Element, Converter={StaticResource ElementToBrushConverter}}"
                                         ShowAsMonochrome="True"
                                         UriSource="ms-appx:///Assets/Images/SpriteUI_Icon_Flycloak.png" />
                         </Button.Content>
@@ -492,6 +494,15 @@
 
 
                 </Grid>
+
+
+                <TextBlock Margin="4,0,4,0"
+                           HorizontalAlignment="Left"
+                           FontSize="12"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                           IsTextSelectionEnabled="True"
+                           Text="{x:Bind SelectedCharacter.CharacterInfo.Description}"
+                           TextWrapping="Wrap" />
 
 
                 <!--  基础属性  -->

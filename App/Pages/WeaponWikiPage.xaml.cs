@@ -49,7 +49,13 @@ public sealed partial class WeaponWikiPage : Page
         try
         {
             using var liteDb = DatabaseProvider.CreateLiteDB();
-            WeaponInfos = liteDb.GetCollection<WeaponInfo>().FindAll().OrderByDescending(x => x.SortId).Select(x => new PM_WeaponWiki_WeaponInfo { WeaponInfo = x }).ToList();
+            WeaponInfos = liteDb.GetCollection<WeaponInfo>().FindAll().OrderByDescending(x => x.SortId)
+                                .Select(x => new PM_WeaponWiki_WeaponInfo
+                                {
+                                    WeaponInfo = x,
+                                    PromotePropString = x.Properties?.Count > 1 ? PropertyType.GetDescription(x.Properties.LastOrDefault()?.PropertyType) : ""
+                                })
+                                .ToList();
             SelectedWeapon = WeaponInfos.FirstOrDefault();
             FilterWeapons = WeaponInfos;
         }
@@ -92,7 +98,7 @@ public sealed partial class WeaponWikiPage : Page
                         result = result.Where(x => x.WeaponInfo.Rarity == rarity);
                         continue;
                     }
-                    result = result.Where(x => x.WeaponInfo.Name.Contains(query) || x.WeaponInfo.WeaponType.ToDescription().Contains(query));
+                    result = result.Where(x => x.WeaponInfo.Name.Contains(query) || x.WeaponInfo.WeaponType.ToDescription().Contains(query) || x.PromotePropString.Contains(query));
                 }
                 FilterWeapons = result.ToList();
             }
