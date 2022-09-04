@@ -39,7 +39,7 @@
             <StackPanel x:Name="Tip_1" Spacing="8">
                 <TextBlock FontSize="24" Text="寻空" />
                 <TextBlock Text="Scighost 的原神工具箱" />
-                <TextBlock Text="本软件使用 MIT 许可证协议开源，并免费发布。" />
+                <TextBlock Text="本应用使用 MIT 许可证协议开源，并免费发布，但是不提供任何可用性保证。" />
                 <TextBlock Text="在使用之前，您需要了解以下内容：" />
             </StackPanel>
 
@@ -96,16 +96,6 @@
                             Click="_Button_InstallFont_Click"
                             Content="安装 Segoe Fluent Icons" />
                 </StackPanel>
-            </StackPanel>
-
-            <StackPanel x:Name="Tip_5"
-                        Spacing="8"
-                        Visibility="Collapsed">
-                <TextBlock FontSize="24" Text="数据库迁移" />
-                <TextBlock Text="检测到您的设备上存在寻空 0.x 版本的数据库，正在迁移数据库适应新版本。" TextWrapping="Wrap" />
-                <ProgressRing x:Name="_ProgressRing_MigrateDatabase"
-                              HorizontalAlignment="Left"
-                              IsActive="True" />
             </StackPanel>
 
             <StackPanel Margin="0,48,0,0"

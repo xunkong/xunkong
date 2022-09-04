@@ -1,5 +1,4 @@
-﻿using DatabaseMigration;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
 using System.Diagnostics;
@@ -30,11 +29,6 @@ public sealed partial class WelcomPage : Page
     {
         try
         {
-            needToMigrateDatabase = Migration.NeedToMigrate();
-        }
-        catch { }
-        try
-        {
             var version = CoreWebView2Environment.GetAvailableBrowserVersionString();
             WebView2State = $"已安装 ({version})";
         }
@@ -44,8 +38,6 @@ public sealed partial class WelcomPage : Page
         }
     }
 
-
-    private bool needToMigrateDatabase;
 
 
     [ObservableProperty]
@@ -135,32 +127,9 @@ public sealed partial class WelcomPage : Page
             case 4:
                 Tip_3.Visibility = Visibility.Collapsed;
                 Tip_4.Visibility = Visibility.Visible;
-                if (!needToMigrateDatabase)
-                {
-                    _Button_Next.Content = "已完成";
-                    showIndex++;
-                }
-                await ClockDown();
-                break;
-            case 5:
-                Tip_4.Visibility = Visibility.Collapsed;
-                Tip_5.Visibility = Visibility.Visible;
                 _Button_Next.Content = "已完成";
-                _Button_Next.IsEnabled = false;
-                await Task.Delay(100);
-                try
-                {
-                    Migration.Migrate();
-                }
-                catch (Exception ex)
-                {
-                    NotificationProvider.Error(ex);
-                }
-                finally
-                {
-                    _ProgressRing_MigrateDatabase.IsActive = false;
-                    _Button_Next.IsEnabled = true;
-                }
+                showIndex++;
+                await ClockDown();
                 break;
             default:
                 try

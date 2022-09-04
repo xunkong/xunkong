@@ -44,7 +44,6 @@
 		<ProjectReference Include="..\..\Common\Xunkong.GenshinData\Xunkong.GenshinData.csproj" />
 		<ProjectReference Include="..\..\Common\Xunkong.Hoyolab\Xunkong.Hoyolab.csproj" />
 		<ProjectReference Include="..\..\Server\ApiClient\Xunkong.ApiClient.csproj" />
-		<ProjectReference Include="..\..\Tool\DatabaseMigration\DatabaseMigration.csproj" />
 		<ProjectReference Include="..\..\YaeAchievement\YaeAchievement.csproj" />
 		<ProjectReference Include="..\Background\Xunkong.Desktop.Background.csproj" />
 	</ItemGroup>
