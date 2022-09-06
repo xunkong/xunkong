@@ -4,6 +4,7 @@ using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Media;
 using System.Diagnostics;
@@ -18,6 +19,8 @@ using Windows.UI.Notifications;
 using Xunkong.ApiClient;
 using Xunkong.Desktop.Controls;
 using Xunkong.Hoyolab;
+using Xunkong.Hoyolab.Account;
+using Xunkong.Hoyolab.Activity;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -30,7 +33,6 @@ namespace Xunkong.Desktop.Pages;
 [INotifyPropertyChanged]
 public sealed partial class HomePage : Page
 {
-
 
     private const string FallbackWallpaperUri = "ms-appx:///Assets/Images/96839227_p0.webp";
     private static WallpaperInfo FallbackWallpaper = new WallpaperInfo
@@ -45,6 +47,8 @@ public sealed partial class HomePage : Page
 
     private readonly XunkongApiService _xunkongApiService;
 
+    private readonly HoyolabService _hoyolabService;
+
     private readonly HoyolabClient _hoyolabClient;
 
 
@@ -52,11 +56,10 @@ public sealed partial class HomePage : Page
     {
         this.InitializeComponent();
         _xunkongApiService = ServiceProvider.GetService<XunkongApiService>()!;
+        _hoyolabService = ServiceProvider.GetService<HoyolabService>()!;
         _hoyolabClient = ServiceProvider.GetService<HoyolabClient>()!;
         Loaded += HomePage_Loaded;
     }
-
-
 
 
 
@@ -65,34 +68,16 @@ public sealed partial class HomePage : Page
 
 
     [ObservableProperty]
-    private string monthName;
-
-    [ObservableProperty]
-    private List<HomePage_DayData>? materialWeekData;
-
-
-    [ObservableProperty]
-    private List<HomePage_MaterialData>? materialDayData;
-
-
-    [ObservableProperty]
-    private List<Hoyolab.Wiki.Activity>? activityData;
-
-    [ObservableProperty]
-    private List<Hoyolab.Wiki.Activity>? strategyData;
-
-
-   
+    private List<Announcement> finishingActivities;
 
 
     private async void HomePage_Loaded(object sender, RoutedEventArgs e)
     {
-        InitializeWallpaper();
-        await InitializeCalendarAsync();
-        await InitializeActivityAsync();
-        _Pivot_MaterialAndActivity.Visibility = Visibility.Visible;
-        await InitializeInfoBarContentAsync();
-        await CheckUpdateAndShowInfoBarAsync();
+        await InitializeWallpaperAsync();
+        await GetDailyNotesAsync();
+        await GetFinishingActivityAsync();
+        await GetNotificationContentAsync();
+        await CheckUpdateAsync();
     }
 
 
@@ -108,21 +93,16 @@ public sealed partial class HomePage : Page
     /// 图片高宽比
     /// </summary>
     private double heightDivWidth;
-    private Compositor _compositor;
+    /// <summary>
+    /// 图片 Visual
+    /// </summary>
     private SpriteVisual imageVisual;
-    private LoadedImageSurface imageSurface;
-    private CompositionSurfaceBrush imageBrush;
-    private CompositionLinearGradientBrush linearGradientBrush1;
-    private CompositionLinearGradientBrush linearGradientBrush2;
-    private CompositionEffectBrush gradientEffectBrush;
-    private CompositionEffectBrush opacityEffectBrush;
-    private CompositionEffectBrush maskEffectBrush;
 
 
     /// <summary>
     /// 初始化推荐图片，并且下载新的
     /// </summary>
-    private async void InitializeWallpaper()
+    private async Task InitializeWallpaperAsync()
     {
         try
         {
@@ -155,7 +135,6 @@ public sealed partial class HomePage : Page
             imageMaxHeight = MainWindow.Current.Height * 0.75 / MainWindow.Current.UIScale;
             _Grid_Image.MaxHeight = imageMaxHeight;
             await LoadBackgroundImage(file);
-            c_StackPanel_QuickAction.Visibility = Visibility.Visible;
             if (NetworkHelper.IsInternetOnMeteredConnection)
             {
                 if (!AppSetting.GetValue<bool>(SettingKeys.DownloadWallpaperOnMeteredInternet))
@@ -164,25 +143,26 @@ public sealed partial class HomePage : Page
                     return;
                 }
             }
-            var maxage = AppSetting.GetValue<int>(SettingKeys.WallpaperRefreshTime) switch
-            {
-                0 => 5,
-                1 => 3600 * 1,
-                2 => 3600 * 4,
-                3 => 3600 * 12,
-                _ => 5,
-            };
-            await _xunkongApiService.PrepareNextWallpaperAsync(maxage);
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex, "加载推荐图片");
             Logger.Error(ex, "加载推荐图片");
         }
         finally
         {
             c_StackPanel_QuickAction.Visibility = Visibility.Visible;
         }
+        Task.Run(() =>
+        {
+            try
+            {
+                _xunkongApiService.PrepareNextWallpaperAsync().GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "下载新图片");
+            }
+        }).ConfigureAwait(false).GetAwaiter();
     }
 
 
@@ -195,28 +175,28 @@ public sealed partial class HomePage : Page
     {
         try
         {
-            _compositor = ElementCompositionPreview.GetElementVisual(_Border_BackgroundImage).Compositor;
+            var compositor = ElementCompositionPreview.GetElementVisual(_Border_BackgroundImage).Compositor;
             using var stream = File.OpenRead(file);
             var decoder = await BitmapDecoder.CreateAsync(stream.AsRandomAccessStream());
             heightDivWidth = (double)decoder.PixelHeight / decoder.PixelWidth;
 
-            imageSurface = LoadedImageSurface.StartLoadFromUri(new(file));
-            imageBrush = _compositor.CreateSurfaceBrush();
+            var imageSurface = LoadedImageSurface.StartLoadFromUri(new(file));
+            var imageBrush = compositor.CreateSurfaceBrush();
             imageBrush.Surface = imageSurface;
             imageBrush.Stretch = CompositionStretch.UniformToFill;
             imageBrush.VerticalAlignmentRatio = 0;
 
-            linearGradientBrush1 = _compositor.CreateLinearGradientBrush();
+            var linearGradientBrush1 = compositor.CreateLinearGradientBrush();
             linearGradientBrush1.StartPoint = Vector2.Zero;
             linearGradientBrush1.EndPoint = Vector2.UnitY;
-            linearGradientBrush1.ColorStops.Add(_compositor.CreateColorGradientStop(0, Colors.White));
-            linearGradientBrush1.ColorStops.Add(_compositor.CreateColorGradientStop(0.95f, Colors.Black));
+            linearGradientBrush1.ColorStops.Add(compositor.CreateColorGradientStop(0, Colors.White));
+            linearGradientBrush1.ColorStops.Add(compositor.CreateColorGradientStop(0.95f, Colors.Black));
 
-            linearGradientBrush2 = _compositor.CreateLinearGradientBrush();
+            var linearGradientBrush2 = compositor.CreateLinearGradientBrush();
             linearGradientBrush2.StartPoint = new Vector2(0.5f, 0);
             linearGradientBrush2.EndPoint = Vector2.UnitY;
-            linearGradientBrush2.ColorStops.Add(_compositor.CreateColorGradientStop(0, Colors.White));
-            linearGradientBrush2.ColorStops.Add(_compositor.CreateColorGradientStop(1, Colors.Black));
+            linearGradientBrush2.ColorStops.Add(compositor.CreateColorGradientStop(0, Colors.White));
+            linearGradientBrush2.ColorStops.Add(compositor.CreateColorGradientStop(1, Colors.Black));
 
             var blendEffect = new BlendEffect
             {
@@ -225,8 +205,8 @@ public sealed partial class HomePage : Page
                 Foreground = new CompositionEffectSourceParameter("Foreground"),
             };
 
-            var blendEffectFactory = _compositor.CreateEffectFactory(blendEffect);
-            gradientEffectBrush = blendEffectFactory.CreateBrush();
+            var blendEffectFactory = compositor.CreateEffectFactory(blendEffect);
+            var gradientEffectBrush = blendEffectFactory.CreateBrush();
             gradientEffectBrush.SetSourceParameter("Background", linearGradientBrush2);
             gradientEffectBrush.SetSourceParameter("Foreground", linearGradientBrush1);
 
@@ -236,8 +216,8 @@ public sealed partial class HomePage : Page
                 Source = new CompositionEffectSourceParameter("Source"),
             };
 
-            var invertEffectFactory = _compositor.CreateEffectFactory(invertEffect);
-            opacityEffectBrush = invertEffectFactory.CreateBrush();
+            var invertEffectFactory = compositor.CreateEffectFactory(invertEffect);
+            var opacityEffectBrush = invertEffectFactory.CreateBrush();
             opacityEffectBrush.SetSourceParameter("Source", gradientEffectBrush);
 
             var maskEffect = new AlphaMaskEffect
@@ -246,12 +226,12 @@ public sealed partial class HomePage : Page
                 Source = new CompositionEffectSourceParameter("Source"),
             };
 
-            var maskFactory = _compositor.CreateEffectFactory(maskEffect);
-            maskEffectBrush = maskFactory.CreateBrush();
+            var maskFactory = compositor.CreateEffectFactory(maskEffect);
+            var maskEffectBrush = maskFactory.CreateBrush();
             maskEffectBrush.SetSourceParameter("Mask", opacityEffectBrush);
             maskEffectBrush.SetSourceParameter("Source", imageBrush);
 
-            imageVisual = _compositor.CreateSpriteVisual();
+            imageVisual = compositor.CreateSpriteVisual();
             imageVisual.Brush = maskEffectBrush;
 
             var width = _Border_BackgroundImage.ActualWidth;
@@ -263,12 +243,15 @@ public sealed partial class HomePage : Page
         }
         catch (COMException ex)
         {
-            // 部分设备会出现 COMExeption 组件初始化失败。（0x88982F8B）
+            // 部分设备会因为缺少 Webp 解码器而出现 COMExeption 组件初始化失败。（0x88982F8B）
             // 还有可能会出现其他不知道的错误
-            // 原因不明，使用无透明度效果的图片代替
-            _Image_BackgroundImage.Source = file;
-            _StackPanel_BackgroundImage.Visibility = Visibility.Visible;
+            // 使用无透明度效果的图片代替，这个代替方法也没有用
+            // 应该去应用商店更新解码组件
             Logger.Error(ex, "使用 Win2D 加载背景图片");
+            if (ex.HResult == unchecked((int)0x88982F8B))
+            {
+                NotificationProvider.Warning("出错了", "缺少 Webp 图片解码组件");
+            }
         }
     }
 
@@ -280,16 +263,23 @@ public sealed partial class HomePage : Page
     /// <param name="e"></param>
     private void _Border_BackgroundImage_SizeChanged(object sender, SizeChangedEventArgs e)
     {
-        if (e.NewSize == e.PreviousSize)
+        try
         {
-            return;
+            if (e.NewSize == e.PreviousSize)
+            {
+                return;
+            }
+            var width = _Border_BackgroundImage.ActualWidth;
+            var height = Math.Clamp(width * heightDivWidth, 0, imageMaxHeight);
+            if (imageVisual is not null)
+            {
+                imageVisual.Size = new Vector2((float)width, (float)height);
+                _Border_BackgroundImage.Height = height;
+            }
         }
-        var width = _Border_BackgroundImage.ActualWidth;
-        var height = Math.Clamp(width * heightDivWidth, 0, imageMaxHeight);
-        if (imageVisual is not null)
+        catch (Exception ex)
         {
-            imageVisual.Size = new Vector2((float)width, (float)height);
-            _Border_BackgroundImage.Height = height;
+            Logger.Error(ex, "改变背景图片大小");
         }
     }
 
@@ -422,13 +412,101 @@ public sealed partial class HomePage : Page
 
 
 
+    /// <summary>
+    /// 实时便笺
+    /// </summary>
+    /// <returns></returns>
+    private async Task GetDailyNotesAsync()
+    {
+        try
+        {
+            var users = _hoyolabService.GetHoyolabUserInfoList();
+            var roles = _hoyolabService.GetGenshinRoleInfoList();
+            foreach (var user in users)
+            {
+                if (roles.FirstOrDefault(x => x.Cookie == user.Cookie) is GenshinRoleInfo role)
+                {
+                    DailyNoteThumbCard card;
+                    try
+                    {
+                        var dailynote = await _hoyolabClient.GetDailyNoteAsync(role);
+                        var travelnote = await _hoyolabClient.GetTravelNotesSummaryAsync(role);
+                        card = new DailyNoteThumbCard { HoyolabUserInfo = user, GenshinRoleInfo = role, DailyNoteInfo = dailynote, TravelNotesDayData = travelnote.DayData };
+                    }
+                    catch (HoyolabException ex)
+                    {
+                        card = new DailyNoteThumbCard { HoyolabUserInfo = user, GenshinRoleInfo = role, Error = true, ErrorMessage = ex.Message };
+                    }
+                    c_TextBlock_DailyNote.Visibility = Visibility.Visible;
+                    c_GridView_DailyNotes.Visibility = Visibility.Visible;
+                    c_GridView_DailyNotes.Items.Add(card);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+    }
+
+
+    /// <summary>
+    /// 即将结束的活动
+    /// </summary>
+    /// <returns></returns>
+    private async Task GetFinishingActivityAsync()
+    {
+        try
+        {
+            var announces = await _hoyolabClient.GetGameAnnouncementsAsync();
+            var activities = announces.Where(x => x.Type == 1 && x.IsFinishing).OrderBy(x => x.EndTime).ToList();
+            if (activities.Any())
+            {
+                c_TextBlock_FinishingActivity.Visibility = Visibility.Visible;
+                c_GridView_FinishingActivity.Visibility = Visibility.Visible;
+                FinishingActivities = activities;
+            }
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+
+
+    /// <summary>
+    /// 显示活动内容
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void c_Grid_FinishingActivity_Tapped(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
+    {
+        try
+        {
+            if (sender is Grid grid)
+            {
+                if (grid.DataContext is Announcement announce)
+                {
+                    c_AnnouncementContentViewer.Announce = announce;
+                    FlyoutBase.ShowAttachedFlyout(c_Grid_Base);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "显示活动内容");
+        }
+    }
+
+
+
     #region 通知和检查更新
 
     /// <summary>
     /// 初始化通知栏内容
     /// </summary>
     /// <returns></returns>
-    private async Task InitializeInfoBarContentAsync()
+    private async Task GetNotificationContentAsync()
     {
         try
         {
@@ -462,7 +540,7 @@ public sealed partial class HomePage : Page
     /// 检查更新
     /// </summary>
     /// <returns></returns>
-    private async Task CheckUpdateAndShowInfoBarAsync()
+    private async Task CheckUpdateAsync()
     {
         try
         {
@@ -608,161 +686,6 @@ public sealed partial class HomePage : Page
 
 
 
-    #region 素材和活动
-
-
-
-    /// <summary>
-    /// 初始化天赋材料日历
-    /// </summary>
-    /// <returns></returns>
-    private async Task InitializeCalendarAsync()
-    {
-        try
-        {
-            var list = await _hoyolabClient.GetTalentCalenarsListAsync();
-            var data = new List<HomePage_DayData>(7);
-            var now = DateTimeOffset.Now;
-            var monday = now.AddDays(-(((int)now.DayOfWeek + 6) % 7));
-            var characters = list.Where(x => x.BreakType == "2").ToList();
-            var weapons = list.Where(x => x.BreakType == "1").ToList();
-            for (int i = 0; i < 7; i++)
-            {
-                var day = monday.AddDays(i);
-                var dayData = new HomePage_DayData
-                {
-                    Month = day.Month,
-                    DayOfMonth = day.Day,
-                    DayOfWeekName = DayOfWeekToString(day.DayOfWeek),
-                    Data = new List<HomePage_MaterialData>()
-                };
-                var cs = characters.Where(x => x.DropDay.Contains($"{i + 1}")).GroupBy(x => x.ContentInfos.FirstOrDefault(x => x.Title.Contains("哲学"))).OrderBy(x => x.Key?.ContentId);
-                foreach (var item in cs)
-                {
-                    var materialData = new HomePage_MaterialData { Name = item.Key?.Title!, Icon = item.Key?.Icon!, CharacterOrWeapon = item.OrderBy(x => x.Sort.GetValueOrDefault((int)day.DayOfWeek)).ToList() };
-                    dayData.Data.Add(materialData);
-                }
-                var ws = weapons.Where(x => x.DropDay.Contains($"{i + 1}")).GroupBy(x => x.ContentInfos.MaxBy(x => x.ContentId)).OrderBy(x => x.Key?.ContentId);
-                foreach (var item in ws)
-                {
-                    var materialData = new HomePage_MaterialData { Name = item.Key?.Title!, Icon = item.Key?.Icon!, CharacterOrWeapon = item.OrderBy(x => x.Sort.GetValueOrDefault((int)day.DayOfWeek)).ToList() };
-                    dayData.Data.Add(materialData);
-                }
-                data.Add(dayData);
-            }
-            MaterialWeekData = data;
-            var index = ((int)now.DayOfWeek + 6) % 7;
-            _GridView_DaySelction.SelectedIndex = index;
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex, "天赋材料日历");
-        }
-    }
-
-
-    private string DayOfWeekToString(DayOfWeek dayOfWeek)
-    {
-        return dayOfWeek switch
-        {
-            DayOfWeek.Monday => "一",
-            DayOfWeek.Tuesday => "二",
-            DayOfWeek.Wednesday => "三",
-            DayOfWeek.Thursday => "四",
-            DayOfWeek.Friday => "五",
-            DayOfWeek.Saturday => "六",
-            DayOfWeek.Sunday => "日",
-            _ => ""
-        };
-    }
-
-
-    /// <summary>
-    /// 天赋材料日历按日切换
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void _GridView_DaySelction_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        var day = MaterialWeekData?.Skip(_GridView_DaySelction.SelectedIndex).FirstOrDefault();
-        if (day != null)
-        {
-            MonthName = $"{day.Month}月";
-            MaterialDayData = day.Data;
-        }
-    }
-
-
-    /// <summary>
-    /// 初始化活动内容
-    /// </summary>
-    /// <returns></returns>
-    private async Task InitializeActivityAsync()
-    {
-        try
-        {
-            (ActivityData, StrategyData) = await _hoyolabClient.GetGameActivitiesListAsync();
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex, "活动内容");
-        }
-    }
-
-
-    /// <summary>
-    /// 天赋材料列表左移
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void _Button_MaterialLeft_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement button)
-        {
-            if (button.Tag is ScrollViewer scroll)
-            {
-                scroll.ChangeView(scroll.HorizontalOffset - 216, null, null);
-            }
-        }
-    }
-
-
-    /// <summary>
-    /// 天赋材料列表右移
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void _Button_MaterialRight_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement button)
-        {
-            if (button.Tag is ScrollViewer scroll)
-            {
-                scroll.ChangeView(scroll.HorizontalOffset + 216, null, null);
-            }
-        }
-    }
-
-
-    /// <summary>
-    /// 打开活动链接
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private async void HyperlinkButton_Click(object sender, RoutedEventArgs e)
-    {
-        if ((sender as HyperlinkButton)?.DataContext is Hoyolab.Wiki.Activity activity)
-        {
-            await Launcher.LaunchUriAsync(new Uri(activity.Url));
-        }
-    }
-
-
-    #endregion
-
-
-
-
     #region 快捷操作
 
 
@@ -778,9 +701,10 @@ public sealed partial class HomePage : Page
 
 
 
+
+
+
     #endregion
-
-
 
 
 }

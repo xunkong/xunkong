@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System.Collections.ObjectModel;
 using Windows.UI.StartScreen;
+using Xunkong.Hoyolab;
 using Xunkong.Hoyolab.Account;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -109,6 +110,7 @@ public sealed partial class MainPage : Page
     private void _Border_AccountImage_Tapped(object sender, TappedRoutedEventArgs e)
     {
         _NavigationView.IsPaneOpen = !_NavigationView.IsPaneOpen;
+        AppSetting.TrySetValue(SettingKeys.NavigationViewPaneClose, !_NavigationView.IsPaneOpen);
     }
 
 
@@ -245,10 +247,14 @@ public sealed partial class MainPage : Page
             _NavigationView.SelectedItem = _NaviItem_HomePage;
             _MainPageFrame.Navigate(typeof(HomePage));
         }
+        if (AppSetting.TryGetValue<bool>(SettingKeys.NavigationViewPaneClose, out var isClosed))
+        {
+            _NavigationView.IsPaneOpen = !isClosed;
+        }
         InitializeNavigationWebToolItem();
-        GetGenshinDataAsync();
-        RefreshAllAcountAsync();
-        SignInAsync();
+        GetGenshinData();
+        RefreshAllAcount();
+        SignInAllAccount();
         InitializeJumpList();
         // todo 壁纸浏览页
     }
@@ -290,7 +296,6 @@ public sealed partial class MainPage : Page
         }
         catch (Exception ex)
         {
-            NotificationProvider.Error(ex, "加载网页小工具");
             Logger.Error(ex, "加载网页小工具");
         }
     }
@@ -299,17 +304,21 @@ public sealed partial class MainPage : Page
     /// <summary>
     /// 获取原神数据
     /// </summary>
-    public async void GetGenshinDataAsync()
+    public void GetGenshinData()
     {
-        try
+        Task.Run(() =>
         {
-            await _xunkongApiService.GetAllGenshinDataFromServerAsync();
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex, "获取原神数据");
-        }
+            try
+            {
+                _xunkongApiService.GetAllGenshinDataFromServerAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "获取原神数据");
+            }
+        }).ConfigureAwait(false);
     }
+
 
 
 
@@ -320,83 +329,66 @@ public sealed partial class MainPage : Page
     /// 刷新所有账号
     /// </summary>
     [RelayCommand]
-    private async void RefreshAllAcountAsync()
+    private void RefreshAllAcount()
     {
-        await Task.Run(async () =>
+        try
+        {
+            HoyolabUserInfo = _hoyolabService.GetLastSelectedOrFirstHoyolabUserInfo();
+            GenshinRoleInfo = _hoyolabService.GetLastSelectedOrFirstGenshinRoleInfo();
+            GenshinRoleInfoList = new(_hoyolabService.GetGenshinRoleInfoList());
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "获取所有账号信息");
+        }
+        Task.Run(() =>
         {
             try
             {
-                var selectedUser = _hoyolabService.GetLastSelectedOrFirstHoyolabUserInfo();
-                var selectedRole = _hoyolabService.GetLastSelectedOrFirstGenshinRoleInfo();
-                var roles = _hoyolabService.GetGenshinRoleInfoList().ToList();
-                DispatcherQueue.TryEnqueue(() =>
-                {
-                    HoyolabUserInfo = selectedUser;
-                    GenshinRoleInfo = selectedRole;
-                    GenshinRoleInfoList = new(roles);
-                });
-                if (UserSetting.GetValue(SettingKeys.ResinAndHomeCoinNotificationWhenStartUp, false, false))
-                {
-                    foreach (var role in roles)
-                    {
-                        var note = await _hoyolabService.GetDailyNoteAsync(role);
-                        if (note != null)
-                        {
-                            var text = (note.IsResinFull, note.IsHomeCoinFull) switch
-                            {
-                                (true, true) => $"{role.Nickname} 的 原粹树脂 和 洞天宝钱 已满",
-                                (true, false) => $"{role.Nickname} 的 原粹树脂 已满",
-                                (false, true) => $"{role.Nickname} 的 洞天宝钱 已满",
-                                (false, false) => "",
-                            };
-                            if (!string.IsNullOrWhiteSpace(text))
-                            {
-                                // 方法内部会切换为UI线程
-                                NotificationProvider.Success("注意了", text, 8000);
-                            }
-                        }
-                    }
-                }
-                await _hoyolabService.UpdateAllAccountsAsync();
+                _hoyolabService.UpdateAllAccountsAsync().ConfigureAwait(false).GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
                 Logger.Error(ex, "刷新所有账号信息");
             }
-        });
+        }).ConfigureAwait(false);
     }
 
 
     /// <summary>
     /// 签到
     /// </summary>
-    private async void SignInAsync()
+    private void SignInAllAccount()
     {
-        try
+
+        Task.Run(() =>
         {
-            if (!UserSetting.GetValue<bool>(SettingKeys.SignInAllAccountsWhenStartUpApplication))
+            try
             {
-                return;
+                if (!UserSetting.GetValue<bool>(SettingKeys.SignInAllAccountsWhenStartUpApplication))
+                {
+                    return;
+                }
+                var roles = _hoyolabService.GetGenshinRoleInfoList();
+                foreach (var role in roles)
+                {
+                    try
+                    {
+                        _hoyolabService.SignInAsync(role).ConfigureAwait(false).GetAwaiter().GetResult();
+                    }
+                    catch (HoyolabException e)
+                    {
+                        NotificationProvider.Error(e, $"签到 {role.Nickname}");
+                        Logger.Error(e, $"签到 {role.Nickname}");
+                    }
+                }
             }
-            var roles = _hoyolabService.GetGenshinRoleInfoList();
-            foreach (var role in roles)
+            catch (Exception ex)
             {
-                try
-                {
-                    await _hoyolabService.SignInAsync(role);
-                }
-                catch (Exception e)
-                {
-                    NotificationProvider.Error(e, $"签到 {role.Nickname}");
-                    Logger.Error(e, $"签到 {role.Nickname}");
-                }
+                NotificationProvider.Error(ex, "签到");
+                Logger.Error(ex, "签到");
             }
-        }
-        catch (Exception ex)
-        {
-            NotificationProvider.Error(ex, "签到");
-            Logger.Error(ex, "签到");
-        }
+        }).ConfigureAwait(false);
     }
 
 

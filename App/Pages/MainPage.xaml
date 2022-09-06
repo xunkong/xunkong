@@ -18,7 +18,7 @@
                         IsBackEnabled="{x:Bind _MainPageFrame.CanGoBack}"
                         IsPaneToggleButtonVisible="False"
                         ItemInvoked="_NavigationView_ItemInvoked"
-                        OpenPaneLength="280"
+                        OpenPaneLength="260"
                         PaneClosing="_NavigationView_PaneClosing"
                         PaneOpening="_NavigationView_PaneOpening">
             <NavigationView.Resources>
@@ -27,8 +27,14 @@
 
             <!--  导航栏左上部那一块  -->
             <NavigationView.PaneCustomContent>
-                <StackPanel Margin="0,8,0,8" Orientation="Horizontal">
+                <Grid Margin="0,8,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
                     <Border x:Name="_Border_AccountImage"
+                            Grid.Column="0"
                             Width="44"
                             Height="44"
                             Margin="16,0,0,0"
@@ -36,8 +42,10 @@
                             Tapped="_Border_AccountImage_Tapped">
                         <Image Source="{x:Bind HoyolabUserInfo.AvatarUrl, FallbackValue=ms-appx:///Assets/Logos/StoreLogo.png}" />
                     </Border>
-                    <TextBlock Width="140"
+                    <TextBlock Grid.Column="1"
+                               Width="140"
                                Margin="16,0,0,0"
+                               HorizontalAlignment="Left"
                                VerticalAlignment="Center"
                                Visibility="{x:Bind GenshinRoleInfo, Converter={StaticResource ObjectToVisibilityConverter}}">
                         <Run Text="{x:Bind GenshinRoleInfo.Nickname}" />
@@ -56,14 +64,17 @@
                              Text="级" />
                     </TextBlock>
                     <Button x:Name="_Button_AddAccount"
+                            Grid.Column="1"
                             Width="100"
                             Margin="16,0,40,0"
+                            HorizontalAlignment="Left"
                             Command="{x:Bind ShowChangeAccountFlyoutCommand}"
                             Content="添加账号"
                             Visibility="{x:Bind GenshinRoleInfo, Converter={StaticResource ObjectToVisibilityReversedConverter}}" />
                     <!--  上下箭头展开图标，切换账号  -->
                     <Button Grid.Column="2"
                             Width="28"
+                            Margin="0,0,16,0"
                             Padding="0"
                             VerticalAlignment="Stretch"
                             Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
@@ -76,12 +87,11 @@
                         <Button.Flyout>
                             <Flyout x:Name="_Flyout_ChangeAccount" Placement="BottomEdgeAlignedRight">
                                 <Flyout.FlyoutPresenterStyle>
-                                    <Style TargetType="FlyoutPresenter">
-                                        <Setter Property="CornerRadius" Value="8" />
+                                    <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
                                         <Setter Property="Padding" Value="4" />
                                     </Style>
                                 </Flyout.FlyoutPresenterStyle>
-                                <Grid Width="268">
+                                <Grid Width="250">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition />
@@ -93,7 +103,7 @@
                                     <!--  全部刷新  -->
                                     <Button Grid.Column="0"
                                             HorizontalAlignment="Center"
-                                            Command="{x:Bind RefreshAllAcountAsyncCommand}"
+                                            Command="{x:Bind RefreshAllAcountCommand}"
                                             Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <TextBlock VerticalAlignment="Center"
@@ -126,14 +136,14 @@
                                     <ListView x:Name="_ListView_Account"
                                               Grid.Row="1"
                                               Grid.ColumnSpan="2"
-                                              Margin="12,0,12,0"
+                                              Margin="8,0,8,0"
                                               ItemsSource="{x:Bind GenshinRoleInfoList}"
                                               SelectionChanged="_ListView_Account_SelectionChanged"
                                               SelectionMode="Single">
                                         <ListView.ItemTemplate>
                                             <DataTemplate x:DataType="xha:GenshinRoleInfo">
                                                 <StackPanel Margin="0,4,0,4" Orientation="Horizontal">
-                                                    <TextBlock Width="188" VerticalAlignment="Center">
+                                                    <TextBlock Width="176" VerticalAlignment="Center">
                                                         <Run Text="{x:Bind Nickname}" />
                                                         <LineBreak />
                                                         <Run FontSize="12"
@@ -182,34 +192,12 @@
                             </Flyout>
                         </Button.Flyout>
                     </Button>
-                    <!--  右侧箭头，显示便笺  -->
-                    <Button Grid.Column="3"
-                            Width="28"
-                            Padding="0"
-                            VerticalAlignment="Stretch"
-                            Content="&#xE76C;"
-                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                            Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
-                        <Button.Flyout>
-                            <Flyout Placement="RightEdgeAlignedTop">
-                                <Flyout.FlyoutPresenterStyle>
-                                    <Style TargetType="FlyoutPresenter">
-                                        <Setter Property="CornerRadius" Value="8" />
-                                        <Setter Property="Padding" Value="12" />
-                                    </Style>
-                                </Flyout.FlyoutPresenterStyle>
-                                <controls:DailyNoteCard GenshinRoleInfo="{x:Bind GenshinRoleInfo}" HoyolabUserInfo="{x:Bind HoyolabUserInfo}" />
-                            </Flyout>
-                        </Button.Flyout>
-                    </Button>
-                </StackPanel>
+                </Grid>
             </NavigationView.PaneCustomContent>
 
 
             <NavigationView.MenuItems>
                 <NavigationViewItemSeparator />
-                <!--<NavigationViewItemHeader Content="主要功能" />-->
                 <NavigationViewItem x:Name="_NaviItem_HomePage"
                                     Content="主页"
                                     Icon="Home"
@@ -224,37 +212,42 @@
                                     Tag="AlbumPage" />
                 <NavigationViewItem Content="祈愿记录" Tag="WishlogSummaryPage">
                     <NavigationViewItem.Icon>
-                        <BitmapIcon ShowAsMonochrome="True" UriSource="ms-appx:///Assets/Images/Ui_SystemOpenIcon_Gacha_Small.png" />
+                        <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}" UriSource="ms-appx:///Assets/Images/SpriteUI_BtnIcon_Gacha.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="角色信息" Tag="CharacterInfoPage">
+                <NavigationViewItem Content="我的角色" Tag="CharacterInfoPage">
                     <NavigationViewItem.Icon>
-                        <BitmapIcon ShowAsMonochrome="True" UriSource="ms-appx:///Assets/Images/SpriteUI_BagTabIcon_Avatar.png" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="角色图鉴" Tag="CharacterWikiPage">
-                    <NavigationViewItem.Icon>
-                        <BitmapIcon ShowAsMonochrome="True" UriSource="ms-appx:///Assets/Images/SpriteUI_BagTabIcon_Avatar.png" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="武器图鉴" Tag="WeaponWikiPage">
-                    <NavigationViewItem.Icon>
-                        <BitmapIcon ShowAsMonochrome="True" UriSource="ms-appx:///Assets/Images/SpriteUI_BagTabIcon_Weapon.png" />
+                        <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}" UriSource="ms-appx:///Assets/Images/SpriteUI_BtnIcon_PlayerGirl.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Content="旅行札记" Tag="TravelNotesPage">
                     <NavigationViewItem.Icon>
-                        <BitmapIcon ShowAsMonochrome="True" UriSource="ms-appx:///Assets/Images/SpriteUI_BtnIcon_CharacterData.png" />
+                        <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}" UriSource="ms-appx:///Assets/Images/SpriteUI_BtnIcon_CharacterData.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Content="深境螺旋" Tag="SpiralAbyssPage">
                     <NavigationViewItem.Icon>
-                        <BitmapIcon ShowAsMonochrome="True" UriSource="ms-appx:///Assets/Images/SpriteUI_Icon_Tower_Star.png" />
+                        <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}" UriSource="ms-appx:///Assets/Images/SpriteUI_Icon_Tower_Star.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Content="成就管理" Tag="AchievementPage">
                     <NavigationViewItem.Icon>
-                        <BitmapIcon ShowAsMonochrome="True" UriSource="ms-appx:///Assets/Images/SpriteUI_Icon_Achievement.png" />
+                        <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}" UriSource="ms-appx:///Assets/Images/SpriteUI_Icon_Achievement.png" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="角色图鉴" Tag="CharacterWikiPage">
+                    <NavigationViewItem.Icon>
+                        <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}" UriSource="ms-appx:///Assets/Images/SpriteUI_BagTabIcon_Avatar.png" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="武器图鉴" Tag="WeaponWikiPage">
+                    <NavigationViewItem.Icon>
+                        <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}" UriSource="ms-appx:///Assets/Images/SpriteUI_BagTabIcon_Weapon.png" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="养成计划" Tag="GrowthSchedulePage">
+                    <NavigationViewItem.Icon>
+                        <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}" UriSource="ms-appx:///Assets/Images/SpriteUI_BtnIcon_Wiki.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>

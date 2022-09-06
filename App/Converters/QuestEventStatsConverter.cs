@@ -10,7 +10,7 @@ namespace Xunkong.Desktop.Converters
 
         private static SolidColorBrush green = new SolidColorBrush(Colors.Green);
         private static SolidColorBrush orangeRed = new SolidColorBrush(Colors.OrangeRed);
-        private static SolidColorBrush gray = new SolidColorBrush(Colors.Gray);
+        private static SolidColorBrush gray = (Microsoft.UI.Xaml.Application.Current.Resources["TextFillColorSecondaryBrush"] as SolidColorBrush)!;
 
 
 
