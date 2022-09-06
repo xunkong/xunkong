@@ -214,6 +214,11 @@
                                     Content="主页"
                                     Icon="Home"
                                     Tag="HomePage" />
+                <NavigationViewItem Content="公告" Tag="AnnouncementPage">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE789;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItem Content="相册"
                                     Icon="Camera"
                                     Tag="AlbumPage" />
