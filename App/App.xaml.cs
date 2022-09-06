@@ -125,7 +125,11 @@ public partial class App : Application
             {
                 if (e.Data is IToastNotificationActivatedEventArgs args)
                 {
-                    // todo
+                    if (args.Argument == "CancelPreCacheAllFiles")
+                    {
+                        // 停止下载图片
+                        PreCacheService.StopPreCache();
+                    }
                 }
             }
         }
@@ -170,7 +174,11 @@ public partial class App : Application
                 {
                     if (e.Data is IToastNotificationActivatedEventArgs args)
                     {
-                        // todo
+                        if (!firstInstance.IsCurrent)
+                        {
+                            await firstInstance.RedirectActivationToAsync(e);
+                        }
+                        Environment.Exit(0);
                     }
                 }
                 if (handled)

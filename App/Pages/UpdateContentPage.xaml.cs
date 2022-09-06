@@ -29,7 +29,7 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
 
     private async void UpdateContentPage_Loaded(object sender, RoutedEventArgs e)
     {
-        if (Version.TryParse(AppSetting.GetValue(SettingKeys.LastVersion, "", false), out var version))
+        if (Version.TryParse(AppSetting.GetValue(SettingKeys.LastVersion, ""), out var version))
         {
             lastVersion = version;
         }

@@ -13,7 +13,7 @@ internal static class AppSetting
     }
 
 
-    public static T? GetValue<T>(string key, T? defaultValue = default, bool throwError = true)
+    public static T? GetValue<T>(string key, T? defaultValue = default, bool throwError = false)
     {
         try
         {

@@ -7,7 +7,7 @@ internal static class CacheHelper
 {
 
 
-    private static string _cacheBaseDir = ApplicationData.Current.TemporaryFolder.Path;
+    private static readonly string _cacheBaseDir = ApplicationData.Current.TemporaryFolder.Path;
 
 
     public static string GetCacheFileName(string url)
@@ -29,6 +29,12 @@ internal static class CacheHelper
     public static string GetCacheFilePath(string url, string cacheFolderName = "FileCache")
     {
         return Path.Combine(_cacheBaseDir, cacheFolderName, GetCacheFileName(url));
+    }
+
+
+    public static string GetFileCacheFolder()
+    {
+        return Path.Combine(_cacheBaseDir, "FileCache");
     }
 
 

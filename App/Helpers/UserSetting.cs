@@ -5,7 +5,7 @@ namespace Xunkong.Desktop.Helpers;
 internal static class UserSetting
 {
 
-    public static T? GetValue<T>(string key, T? defaultValue = default, bool throwError = true)
+    public static T? GetValue<T>(string key, T? defaultValue = default, bool throwError = false)
     {
         try
         {

@@ -238,7 +238,7 @@ public sealed partial class MainPage : Page
 
     private void MainPage_Loaded(object sender, RoutedEventArgs e)
     {
-        if (AppSetting.GetValue(SettingKeys.ShowUpdateContentOnLoaded, false, false))
+        if (AppSetting.GetValue(SettingKeys.ShowUpdateContentOnLoaded, false))
         {
             _MainPageFrame.Navigate(typeof(UpdateContentPage));
         }

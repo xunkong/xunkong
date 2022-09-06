@@ -121,6 +121,7 @@ internal static class SettingKeys
     /// <summary>
     /// 主页图片刷新时间
     /// </summary>
+    [Obsolete("固定为 5s", true)]
     public const string WallpaperRefreshTime = nameof(WallpaperRefreshTime);
 
     /// <summary>
@@ -136,6 +137,7 @@ internal static class SettingKeys
     /// <summary>
     /// 启动应用时的原粹树脂和洞天宝钱提醒
     /// </summary>
+    [Obsolete("不再使用", true)]
     public const string ResinAndHomeCoinNotificationWhenStartUp = nameof(ResinAndHomeCoinNotificationWhenStartUp);
 
     /// <summary>
