@@ -327,6 +327,8 @@
                 <AppBarButton Icon="OpenFile" Label="获取记录">
                     <AppBarButton.Flyout>
                         <MenuFlyout>
+                            <MenuFlyoutItem Command="{x:Bind vm.GetWishlogFromCacheFileCommand, Mode=OneTime}" Text="从缓存文件" />
+                            <MenuFlyoutSeparator />
                             <MenuFlyoutItem Command="{x:Bind vm.StartProxyCommand, Mode=OneTime}" Text="启动代理" />
                             <MenuFlyoutItem Command="{x:Bind vm.CloseProxyCommand, Mode=OneTime}" Text="关闭代理" />
                             <MenuFlyoutSeparator />
