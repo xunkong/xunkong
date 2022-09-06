@@ -11,6 +11,10 @@ internal static class UserSetting
         {
             using var dapper = DatabaseProvider.CreateConnection();
             var value = dapper.QuerySingleOrDefault<string>("SELECT Value FROM Setting WHERE Key=@Key LIMIT 1;", new { Key = key });
+            if (value is null)
+            {
+                return defaultValue;
+            }
             try
             {
                 var converter = TypeDescriptor.GetConverter(typeof(T));
@@ -50,6 +54,10 @@ internal static class UserSetting
         {
             using var dapper = DatabaseProvider.CreateConnection();
             var value = dapper.QuerySingleOrDefault<string>("SELECT Value FROM Setting WHERE Key=@Key LIMIT 1;", new { Key = key });
+            if (value is null)
+            {
+                return false;
+            }
             try
             {
                 var converter = TypeDescriptor.GetConverter(typeof(T));

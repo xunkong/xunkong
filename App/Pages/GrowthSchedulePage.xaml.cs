@@ -43,7 +43,7 @@ public sealed partial class GrowthSchedulePage : Page
     {
         try
         {
-            var calendars = await _hoyolabClient.GetTalentCalendarsListAsync();
+            var calendars = await _hoyolabClient.GetCalendarInfosAsync();
             var talentGroup = calendars.Where(x => x.Kind == "2" && x.BreakType == "2")
                                        .GroupBy(x => x.ContentInfos.FirstOrDefault(x => x.Title.Contains("哲学")))
                                        .Where(x => x.Key != null)

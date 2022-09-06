@@ -171,7 +171,12 @@ public sealed partial class MainWindow : Window
 
 
 
-
+    /// <summary>
+    /// 窗口 Root Frame 导航
+    /// </summary>
+    /// <param name="sourcePageType"></param>
+    /// <param name="param"></param>
+    /// <param name="infoOverride"></param>
     public void Navigate(Type sourcePageType, object? param = null, NavigationTransitionInfo? infoOverride = null)
     {
         if (param is null)
@@ -189,6 +194,10 @@ public sealed partial class MainWindow : Window
     }
 
 
+    /// <summary>
+    /// 设置覆盖于窗口上的内容
+    /// </summary>
+    /// <param name="content"></param>
     public void SetFullWindowContent(Control content)
     {
         FullWindowContent.Visibility = Visibility.Visible;
@@ -196,7 +205,9 @@ public sealed partial class MainWindow : Window
     }
 
 
-
+    /// <summary>
+    /// 清除覆盖于窗口上的内容
+    /// </summary>
     public void CloseFullWindowContent()
     {
         FullWindowContent.Content = null;

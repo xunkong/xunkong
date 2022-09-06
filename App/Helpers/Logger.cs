@@ -26,6 +26,16 @@ internal static class Logger
     }
 
 
+    public static void CloseAndFlush()
+    {
+        if (_initialized)
+        {
+            Log.CloseAndFlush();
+            _initialized = false;
+        }
+    }
+
+
 
     public static void Info(string message, [CallerMemberName] string callerMemberName = "")
     {

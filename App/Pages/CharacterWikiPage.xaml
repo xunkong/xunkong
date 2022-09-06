@@ -205,8 +205,12 @@
                                     <Grid Width="80"
                                           Height="98"
                                           CornerRadius="4">
-                                        <xdc:CachedImage Source="{x:Bind CharacterInfo.Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}" />
-                                        <xdc:CachedImage VerticalAlignment="Top"
+                                        <xdc:CachedImage Width="80"
+                                                         VerticalAlignment="Top"
+                                                         Source="{x:Bind CharacterInfo.Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}" />
+                                        <xdc:CachedImage Width="80"
+                                                         Height="80"
+                                                         VerticalAlignment="Top"
                                                          CornerRadius="4,4,16,0"
                                                          Source="{x:Bind CharacterInfo.FaceIcon}" />
                                         <TextBlock Margin="0,0,0,2"
@@ -965,11 +969,16 @@
                             </StackPanel>
                         </Grid>
 
-                        <StackPanel Grid.Row="2" Visibility="{x:Bind SelectedCharacter.CharacterInfo.Food, Converter={StaticResource ObjectToVisibilityReversedConverter}}">
-                            <xdc:CachedImage Width="160"
-                                             Height="160"
-                                             Source="ms-appx:///Assets/Images/UI_EmotionIcon5.png" />
-                            <TextBlock HorizontalAlignment="Center" Text="无法参与料理" />
+                        <StackPanel Grid.Row="2"
+                                    VerticalAlignment="Center"
+                                    Spacing="8"
+                                    Visibility="{x:Bind SelectedCharacter.CharacterInfo.Food, Converter={StaticResource ObjectToVisibilityReversedConverter}}">
+                            <xdc:CachedImage Width="140"
+                                             Height="140"
+                                             Source="ms-appx:///Assets/Images/UI_EmotionIcon131.png" />
+                            <TextBlock HorizontalAlignment="Center"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                       Text="无法参与料理" />
                         </StackPanel>
 
                     </Grid>
@@ -1019,10 +1028,15 @@
                     </Expander.Header>
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="60" />
+                            <RowDefinition Height="80" />
                             <RowDefinition />
                         </Grid.RowDefinitions>
                         <!--  配音演员  -->
+                        <TextBlock Margin="0,52,0,0"
+                                   HorizontalAlignment="Left"
+                                   FontSize="12"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   Text="音频文件来自米游社观测枢，可能会出现部分语音缺失的情况。" />
                         <StackPanel Orientation="Horizontal" Spacing="36">
                             <StackPanel Spacing="4">
                                 <TextBlock FontSize="16"
@@ -1084,6 +1098,7 @@
                                                     FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                     Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
                                                     Tag="{x:Bind Chinese}"
+                                                    ToolTipService.ToolTip="汉语"
                                                     Visibility="{x:Bind Chinese, Converter={StaticResource StringToVisibilityConverter}}">
                                                 <Button.ContentTransitions>
                                                     <TransitionCollection>
@@ -1100,6 +1115,7 @@
                                                     FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                     Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
                                                     Tag="{x:Bind English}"
+                                                    ToolTipService.ToolTip="英语"
                                                     Visibility="{x:Bind English, Converter={StaticResource StringToVisibilityConverter}}">
                                                 <Button.ContentTransitions>
                                                     <TransitionCollection>
@@ -1116,6 +1132,7 @@
                                                     FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                     Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
                                                     Tag="{x:Bind Japanese}"
+                                                    ToolTipService.ToolTip="日语"
                                                     Visibility="{x:Bind Japanese, Converter={StaticResource StringToVisibilityConverter}}">
                                                 <Button.ContentTransitions>
                                                     <TransitionCollection>
@@ -1132,6 +1149,7 @@
                                                     FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                     Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
                                                     Tag="{x:Bind Korean}"
+                                                    ToolTipService.ToolTip="韩语"
                                                     Visibility="{x:Bind Korean, Converter={StaticResource StringToVisibilityConverter}}">
                                                 <Button.ContentTransitions>
                                                     <TransitionCollection>

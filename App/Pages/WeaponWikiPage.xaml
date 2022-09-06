@@ -40,8 +40,12 @@
                     <Grid Width="80"
                           Height="98"
                           CornerRadius="4">
-                        <xdc:CachedImage Source="{x:Bind WeaponInfo.Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}" />
-                        <xdc:CachedImage VerticalAlignment="Top"
+                        <xdc:CachedImage Width="80"
+                                         VerticalAlignment="Top"
+                                         Source="{x:Bind WeaponInfo.Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}" />
+                        <xdc:CachedImage Width="80"
+                                         Height="80"
+                                         VerticalAlignment="Top"
                                          CornerRadius="4,4,16,0"
                                          Source="{x:Bind WeaponInfo.Icon}" />
                         <TextBlock Margin="0,0,0,2"
@@ -282,7 +286,7 @@
                             <Thickness x:Key="PivotItemMargin">0</Thickness>
                             <Thickness x:Key="PivotHeaderItemMargin">0,0,24,0</Thickness>
                             <Style BasedOn="{StaticResource DefaultPivotHeaderItemStyle}" TargetType="PivotHeaderItem">
-                                <Setter Property="Height" Value="36" />
+                                <Setter Property="Height" Value="32" />
                             </Style>
                         </Pivot.Resources>
                         <Pivot.HeaderTemplate>

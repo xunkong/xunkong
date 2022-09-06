@@ -38,4 +38,20 @@ internal class ElementToBrushConverter : IValueConverter
     }
 
 
+    public static Brush Covert(ElementType type)
+    {
+        return type switch
+        {
+            ElementType.Pyro => Element_Fire,
+            ElementType.Hydro => Element_Water,
+            ElementType.Anemo => Element_Wind,
+            ElementType.Electro => Element_Electro,
+            ElementType.Dendro => Element_Grass,
+            ElementType.Cryo => Element_Ice,
+            ElementType.Geo => Element_Rock,
+            _ => (Application.Current.Resources["TextFillColorSecondaryBrush"] as Brush)!,
+        };
+    }
+
+
 }

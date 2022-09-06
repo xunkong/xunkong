@@ -1,4 +1,4 @@
-﻿using Xunkong.Hoyolab.Wiki;
+﻿using Xunkong.Hoyolab.Activity;
 
 namespace Xunkong.Desktop.Models;
 
@@ -21,6 +21,6 @@ public class HomePage_MaterialData
 
     public string Icon { get; set; }
 
-    public List<TalentCalendar> CharacterOrWeapon { get; set; }
+    public List<CalendarInfo> CharacterOrWeapon { get; set; }
 
 }

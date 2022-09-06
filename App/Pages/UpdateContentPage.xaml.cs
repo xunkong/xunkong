@@ -115,4 +115,12 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
     }
 
 
+    [RelayCommand]
+    private void NotShowThisVersion()
+    {
+        AppSetting.TrySetValue(SettingKeys.ShowUpdateContentOnLoaded, false);
+        NotificationProvider.Success("此版本不再显示此页面");
+    }
+
+
 }

@@ -30,7 +30,7 @@ internal class GrowthSchedulePage_IsToday : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-        var today = ((int)DateTimeOffset.Now.AddHours(-4).DayOfWeek);
+        var today = ((int)DateTimeOffset.UtcNow.AddHours(4).DayOfWeek);
         today = today == 0 ? 7 : today;
         return value as string == today.ToString();
     }

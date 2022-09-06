@@ -274,7 +274,7 @@ public sealed partial class CharacterWikiPage : Page
                                 button.Content = "\uE102";
                                 return;
                             }
-                            using var fr = new AudioFileReader(file.Path);
+                            using var fr = new MediaFoundationReader(file.Path);
                             _audioDevice.Init(fr);
                             _audioDevice.Play();
                             button.Content = "\uE103";
@@ -298,7 +298,7 @@ public sealed partial class CharacterWikiPage : Page
                             _audioDevice.PlaybackStopped += _audioDevice_PlaybackStopped;
                             return;
                         }
-                        using var fr = new AudioFileReader(file.Path);
+                        using var fr = new MediaFoundationReader(file.Path);
                         _audioDevice.Init(fr);
                         _audioDevice.Play();
                         button.Content = "\uE103";

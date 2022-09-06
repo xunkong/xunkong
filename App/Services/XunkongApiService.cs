@@ -255,9 +255,9 @@ internal class XunkongApiService
 
 
 
-    public async Task<WallpaperInfo> GetRandomWallpaperAsync(int maxage = 0)
+    public async Task<WallpaperInfo> GetRandomWallpaperAsync()
     {
-        return await _xunkongClient.GetRandomWallpaperAsync(maxage);
+        return await _xunkongClient.GetRandomWallpaperAsync();
     }
 
 
@@ -297,11 +297,11 @@ internal class XunkongApiService
 
 
 
-    public async Task PrepareNextWallpaperAsync(int maxage = 0, bool throwError = false)
+    public async Task PrepareNextWallpaperAsync(bool throwError = false)
     {
         try
         {
-            var wallpaper = await GetRandomWallpaperAsync(maxage);
+            var wallpaper = await GetRandomWallpaperAsync();
             if (wallpaper is not null)
             {
                 var file = CacheHelper.GetCacheFilePath(wallpaper.Url);

@@ -7,7 +7,7 @@
       xmlns:xdc="using:Xunkong.Desktop.Controls"
       xmlns:xdm="using:Xunkong.Desktop.Models"
       xmlns:xgc="using:Xunkong.GenshinData.Character"
-      xmlns:xhw="using:Xunkong.Hoyolab.Wiki"
+      xmlns:xha="using:Xunkong.Hoyolab.Activity"
       x:DefaultBindMode="OneWay"
       mc:Ignorable="d">
 
@@ -49,40 +49,26 @@
 
             <!--  天赋  -->
             <PivotItem Header="天赋培养">
-                <GridView Padding="36,0,24,0"
-                          ItemsSource="{x:Bind TalentMaterialGroup.View}"
-                          SelectionMode="None">
-                    <!--  分组标题  -->
-                    <GridView.GroupStyle>
-                        <GroupStyle HidesIfEmpty="True">
-                            <GroupStyle.HeaderContainerStyle>
-                                <Style TargetType="GridViewHeaderItem">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <!--  Remove default rectangle border  -->
-                                            <ControlTemplate TargetType="ContentControl">
-                                                <ContentPresenter HorizontalAlignment="Left"
-                                                                  VerticalAlignment="Center"
-                                                                  Content="{TemplateBinding Content}" />
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </GroupStyle.HeaderContainerStyle>
-                            <GroupStyle.HeaderTemplate>
-                                <DataTemplate x:DataType="xdm:PM_GrowthSchedule_TalentMaterialGroup">
+                <SemanticZoom Padding="36,0,12,0">
+                    <SemanticZoom.ZoomedOutView>
+                        <ListView Margin="0,0,-12,0"
+                                  Padding="0,0,24,0"
+                                  ItemsSource="{x:Bind TalentMaterialGroup.View.CollectionGroups}"
+                                  SelectionMode="None">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
                                     <StackPanel Margin="0,8,0,8"
                                                 Orientation="Horizontal"
                                                 Spacing="8">
                                         <xdc:CachedImage Width="40"
                                                          Height="40"
                                                          CornerRadius="4"
-                                                         Source="{x:Bind Material.Icon}" />
+                                                         Source="{Binding Group.Material.Icon}" />
                                         <TextBlock Margin="0,0,0,2"
                                                    VerticalAlignment="Bottom"
                                                    FontSize="16"
-                                                   Text="{x:Bind Material.Title}" />
-                                        <ItemsControl Margin="12,0,0,0" ItemsSource="{x:Bind Days}">
+                                                   Text="{Binding Group.Material.Title}" />
+                                        <ItemsControl Margin="12,0,0,0" ItemsSource="{Binding Group.Days}">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
                                                     <StackPanel Orientation="Horizontal" Spacing="8" />
@@ -101,79 +87,127 @@
                                         </ItemsControl>
                                     </StackPanel>
                                 </DataTemplate>
-                            </GroupStyle.HeaderTemplate>
-                        </GroupStyle>
-                    </GridView.GroupStyle>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </SemanticZoom.ZoomedOutView>
+                    <SemanticZoom.ZoomedInView>
+                        <GridView Padding="0,0,24,0"
+                                  ItemsSource="{x:Bind TalentMaterialGroup.View}"
+                                  SelectionMode="None">
+                            <!--  分组标题  -->
+                            <GridView.GroupStyle>
+                                <GroupStyle HidesIfEmpty="True">
+                                    <GroupStyle.HeaderContainerStyle>
+                                        <Style TargetType="GridViewHeaderItem">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <!--  Remove default rectangle border  -->
+                                                    <ControlTemplate TargetType="ContentControl">
+                                                        <ContentPresenter HorizontalAlignment="Left"
+                                                                          VerticalAlignment="Center"
+                                                                          Content="{TemplateBinding Content}" />
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </GroupStyle.HeaderContainerStyle>
+                                    <GroupStyle.HeaderTemplate>
+                                        <DataTemplate x:DataType="xdm:PM_GrowthSchedule_TalentMaterialGroup">
+                                            <StackPanel MinWidth="400"
+                                                        Margin="0,8,0,8"
+                                                        Background="Transparent"
+                                                        Orientation="Horizontal"
+                                                        Spacing="8">
+                                                <xdc:CachedImage Width="40"
+                                                                 Height="40"
+                                                                 CornerRadius="4"
+                                                                 Source="{x:Bind Material.Icon}" />
+                                                <TextBlock Margin="0,0,0,2"
+                                                           VerticalAlignment="Bottom"
+                                                           FontSize="16"
+                                                           Text="{x:Bind Material.Title}" />
+                                                <ItemsControl Margin="12,0,0,0" ItemsSource="{x:Bind Days}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Horizontal" Spacing="8" />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate x:DataType="x:String">
+                                                            <ToggleButton Padding="8,4,8,4"
+                                                                          VerticalAlignment="Bottom"
+                                                                          Content="{x:Bind Converter={StaticResource GrowthSchedulePage_DayNumberStringToDayStringConverter}}"
+                                                                          FontSize="12"
+                                                                          IsChecked="{x:Bind Converter={StaticResource GrowthSchedulePage_IsToday}}"
+                                                                          IsHitTestVisible="False" />
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GroupStyle.HeaderTemplate>
+                                </GroupStyle>
+                            </GridView.GroupStyle>
 
-                    <GridView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <ItemsWrapGrid AreStickyGroupHeadersEnabled="False" Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </GridView.ItemsPanel>
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsWrapGrid AreStickyGroupHeadersEnabled="False" Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
 
-                    <!--  角色  -->
-                    <GridView.ItemTemplate>
-                        <DataTemplate x:DataType="xhw:TalentCalendar">
-                            <Grid Width="80"
-                                  Height="98"
-                                  Margin="0,0,8,8"
-                                  CornerRadius="4">
-                                <xdc:CachedImage Width="80"
-                                                 VerticalAlignment="Top"
-                                                 Source="ms-appx:///Assets/Images/Rarity_1_Background.png" />
-                                <xdc:CachedImage Width="80"
-                                                 Height="80"
-                                                 VerticalAlignment="Top"
-                                                 CornerRadius="4,4,12,0"
-                                                 Source="{x:Bind ImgUrl}" />
-                                <TextBlock Margin="0,0,0,2"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Bottom"
-                                           FontSize="12"
-                                           Foreground="#84603D"
-                                           Text="{x:Bind Title}" />
-                            </Grid>
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
+                            <!--  角色  -->
+                            <GridView.ItemTemplate>
+                                <DataTemplate x:DataType="xha:CalendarInfo">
+                                    <Grid Width="80"
+                                          Height="98"
+                                          Margin="0,0,8,8"
+                                          CornerRadius="4">
+                                        <xdc:CachedImage Width="80"
+                                                         VerticalAlignment="Top"
+                                                         Source="ms-appx:///Assets/Images/Rarity_1_Background.png" />
+                                        <xdc:CachedImage Width="80"
+                                                         Height="80"
+                                                         VerticalAlignment="Top"
+                                                         CornerRadius="4,4,12,0"
+                                                         Source="{x:Bind ImgUrl}" />
+                                        <TextBlock Margin="0,0,0,2"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Bottom"
+                                                   FontSize="12"
+                                                   Foreground="#84603D"
+                                                   Text="{x:Bind Title}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
 
-                </GridView>
+                        </GridView>
+                    </SemanticZoom.ZoomedInView>
+                </SemanticZoom>
             </PivotItem>
 
             <!--  武器  -->
             <PivotItem Header="武器突破">
-                <GridView Padding="36,0,24,0"
-                          ItemsSource="{x:Bind WeaponMaterialGroup.View}"
-                          SelectionMode="None">
-                    <GridView.GroupStyle>
-                        <GroupStyle HidesIfEmpty="True">
-                            <GroupStyle.HeaderContainerStyle>
-                                <Style TargetType="GridViewHeaderItem">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <!--  Remove default rectangle border  -->
-                                            <ControlTemplate TargetType="ContentControl">
-                                                <ContentPresenter HorizontalAlignment="Left"
-                                                                  VerticalAlignment="Center"
-                                                                  Content="{TemplateBinding Content}" />
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </GroupStyle.HeaderContainerStyle>
-                            <GroupStyle.HeaderTemplate>
-                                <DataTemplate x:DataType="xdm:PM_GrowthSchedule_TalentMaterialGroup">
+                <SemanticZoom Padding="36,0,12,0">
+                    <SemanticZoom.ZoomedOutView>
+                        <ListView Margin="0,0,-12,0"
+                                  Padding="0,0,24,0"
+                                  ItemsSource="{x:Bind WeaponMaterialGroup.View.CollectionGroups}"
+                                  SelectionMode="None">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
                                     <StackPanel Margin="0,8,0,8"
+                                                Background="Transparent"
                                                 Orientation="Horizontal"
                                                 Spacing="8">
                                         <xdc:CachedImage Width="40"
                                                          Height="40"
                                                          CornerRadius="4"
-                                                         Source="{x:Bind Material.Icon}" />
-                                        <TextBlock Margin="8,0,0,2"
+                                                         Source="{Binding Group.Material.Icon}" />
+                                        <TextBlock Margin="0,0,0,2"
                                                    VerticalAlignment="Bottom"
                                                    FontSize="16"
-                                                   Text="{x:Bind Material.Title}" />
-                                        <ItemsControl Margin="12,0,0,0" ItemsSource="{x:Bind Days}">
+                                                   Text="{Binding Group.Material.Title}" />
+                                        <ItemsControl Margin="12,0,0,0" ItemsSource="{Binding Group.Days}">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
                                                     <StackPanel Orientation="Horizontal" Spacing="8" />
@@ -192,120 +226,210 @@
                                         </ItemsControl>
                                     </StackPanel>
                                 </DataTemplate>
-                            </GroupStyle.HeaderTemplate>
-                        </GroupStyle>
-                    </GridView.GroupStyle>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </SemanticZoom.ZoomedOutView>
+                    <SemanticZoom.ZoomedInView>
+                        <GridView Padding="0,0,24,0"
+                                  ItemsSource="{x:Bind WeaponMaterialGroup.View}"
+                                  SelectionMode="None">
+                            <!--  分组标题  -->
+                            <GridView.GroupStyle>
+                                <GroupStyle HidesIfEmpty="True">
+                                    <GroupStyle.HeaderContainerStyle>
+                                        <Style TargetType="GridViewHeaderItem">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <!--  Remove default rectangle border  -->
+                                                    <ControlTemplate TargetType="ContentControl">
+                                                        <ContentPresenter HorizontalAlignment="Left"
+                                                                          VerticalAlignment="Center"
+                                                                          Content="{TemplateBinding Content}" />
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </GroupStyle.HeaderContainerStyle>
+                                    <GroupStyle.HeaderTemplate>
+                                        <DataTemplate x:DataType="xdm:PM_GrowthSchedule_TalentMaterialGroup">
+                                            <StackPanel MinWidth="400"
+                                                        Margin="0,8,0,8"
+                                                        Background="Transparent"
+                                                        Orientation="Horizontal"
+                                                        Spacing="8">
+                                                <xdc:CachedImage Width="40"
+                                                                 Height="40"
+                                                                 CornerRadius="4"
+                                                                 Source="{x:Bind Material.Icon}" />
+                                                <TextBlock Margin="0,0,0,2"
+                                                           VerticalAlignment="Bottom"
+                                                           FontSize="16"
+                                                           Text="{x:Bind Material.Title}" />
+                                                <ItemsControl Margin="12,0,0,0" ItemsSource="{x:Bind Days}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Horizontal" Spacing="8" />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate x:DataType="x:String">
+                                                            <ToggleButton Padding="8,4,8,4"
+                                                                          VerticalAlignment="Bottom"
+                                                                          Content="{x:Bind Converter={StaticResource GrowthSchedulePage_DayNumberStringToDayStringConverter}}"
+                                                                          FontSize="12"
+                                                                          IsChecked="{x:Bind Converter={StaticResource GrowthSchedulePage_IsToday}}"
+                                                                          IsHitTestVisible="False" />
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GroupStyle.HeaderTemplate>
+                                </GroupStyle>
+                            </GridView.GroupStyle>
 
-                    <GridView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <ItemsWrapGrid AreStickyGroupHeadersEnabled="False" Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </GridView.ItemsPanel>
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsWrapGrid AreStickyGroupHeadersEnabled="False" Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
 
-                    <GridView.ItemTemplate>
-                        <DataTemplate x:DataType="xhw:TalentCalendar">
-                            <Grid Width="80"
-                                  Height="98"
-                                  Margin="0,0,8,8"
-                                  CornerRadius="4">
-                                <xdc:CachedImage Width="80"
-                                                 VerticalAlignment="Top"
-                                                 Source="ms-appx:///Assets/Images/Rarity_1_Background.png" />
-                                <xdc:CachedImage Width="80"
-                                                 Height="80"
-                                                 VerticalAlignment="Top"
-                                                 CornerRadius="4,4,12,0"
-                                                 Source="{x:Bind ImgUrl}" />
-                                <TextBlock Margin="0,0,0,2"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Bottom"
-                                           FontSize="12"
-                                           Foreground="#84603D"
-                                           Text="{x:Bind Title}" />
-                            </Grid>
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
+                            <!--  角色  -->
+                            <GridView.ItemTemplate>
+                                <DataTemplate x:DataType="xha:CalendarInfo">
+                                    <Grid Width="80"
+                                          Height="98"
+                                          Margin="0,0,8,8"
+                                          CornerRadius="4">
+                                        <xdc:CachedImage Width="80"
+                                                         VerticalAlignment="Top"
+                                                         Source="ms-appx:///Assets/Images/Rarity_1_Background.png" />
+                                        <xdc:CachedImage Width="80"
+                                                         Height="80"
+                                                         VerticalAlignment="Top"
+                                                         CornerRadius="4,4,12,0"
+                                                         Source="{x:Bind ImgUrl}" />
+                                        <TextBlock Margin="0,0,0,2"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Bottom"
+                                                   FontSize="12"
+                                                   Foreground="#84603D"
+                                                   Text="{x:Bind Title}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
 
-                </GridView>
+                        </GridView>
+                    </SemanticZoom.ZoomedInView>
+                </SemanticZoom>
             </PivotItem>
 
             <!--  周本  -->
             <PivotItem Header="周本掉落">
-                <GridView Padding="36,0,24,0"
-                          ItemsSource="{x:Bind BossMaterialGroup.View}"
-                          SelectionMode="None">
-                    <GridView.GroupStyle>
-                        <GroupStyle HidesIfEmpty="True">
-                            <GroupStyle.HeaderContainerStyle>
-                                <Style TargetType="GridViewHeaderItem">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <!--  Remove default rectangle border  -->
-                                            <ControlTemplate TargetType="ContentControl">
-                                                <ContentPresenter HorizontalAlignment="Left"
-                                                                  VerticalAlignment="Center"
-                                                                  Content="{TemplateBinding Content}" />
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </GroupStyle.HeaderContainerStyle>
-                            <GroupStyle.HeaderTemplate>
-                                <DataTemplate x:DataType="xdm:PM_GrowthSchedule_BossMaterialGroup">
+                <SemanticZoom Padding="36,0,12,0">
+                    <SemanticZoom.ZoomedOutView>
+                        <ListView Margin="0,0,-12,0"
+                                  Padding="0,0,24,0"
+                                  ItemsSource="{x:Bind BossMaterialGroup.View.CollectionGroups}"
+                                  SelectionMode="None">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
                                     <StackPanel Margin="0,8,0,8"
                                                 Orientation="Horizontal"
                                                 Spacing="8">
                                         <xdc:CachedImage Width="40"
                                                          Height="40"
                                                          CornerRadius="4"
-                                                         Source="{x:Bind Material.Icon}" />
+                                                         Source="{Binding Group.Material.Icon}" />
                                         <TextBlock Margin="8,0,0,2"
                                                    VerticalAlignment="Bottom"
                                                    FontSize="16"
-                                                   Text="{x:Bind Material.Name}" />
+                                                   Text="{Binding Group.Material.Name}" />
                                     </StackPanel>
                                 </DataTemplate>
-                            </GroupStyle.HeaderTemplate>
-                        </GroupStyle>
-                    </GridView.GroupStyle>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </SemanticZoom.ZoomedOutView>
+                    <SemanticZoom.ZoomedInView>
+                        <GridView Padding="0,0,24,0"
+                                  ItemsSource="{x:Bind BossMaterialGroup.View}"
+                                  SelectionMode="None">
+                            <GridView.GroupStyle>
+                                <GroupStyle HidesIfEmpty="True">
+                                    <GroupStyle.HeaderContainerStyle>
+                                        <Style TargetType="GridViewHeaderItem">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <!--  Remove default rectangle border  -->
+                                                    <ControlTemplate TargetType="ContentControl">
+                                                        <ContentPresenter HorizontalAlignment="Left"
+                                                                          VerticalAlignment="Center"
+                                                                          Content="{TemplateBinding Content}" />
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </GroupStyle.HeaderContainerStyle>
+                                    <GroupStyle.HeaderTemplate>
+                                        <DataTemplate x:DataType="xdm:PM_GrowthSchedule_BossMaterialGroup">
+                                            <StackPanel MinWidth="400"
+                                                        Margin="0,8,0,8"
+                                                        Background="Transparent"
+                                                        Orientation="Horizontal"
+                                                        Spacing="8">
+                                                <xdc:CachedImage Width="40"
+                                                                 Height="40"
+                                                                 CornerRadius="4"
+                                                                 Source="{x:Bind Material.Icon}" />
+                                                <TextBlock Margin="8,0,0,2"
+                                                           VerticalAlignment="Bottom"
+                                                           FontSize="16"
+                                                           Text="{x:Bind Material.Name}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GroupStyle.HeaderTemplate>
+                                </GroupStyle>
+                            </GridView.GroupStyle>
 
-                    <GridView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <ItemsWrapGrid AreStickyGroupHeadersEnabled="False" Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </GridView.ItemsPanel>
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsWrapGrid AreStickyGroupHeadersEnabled="False" Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
 
-                    <GridView.ItemTemplate>
-                        <DataTemplate x:DataType="xgc:CharacterInfo">
-                            <Grid Width="80"
-                                  Height="98"
-                                  Margin="0,0,8,8"
-                                  CornerRadius="4">
-                                <xdc:CachedImage Width="80"
-                                                 VerticalAlignment="Top"
-                                                 Source="{x:Bind Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}" />
-                                <xdc:CachedImage Width="80"
-                                                 Height="80"
-                                                 VerticalAlignment="Top"
-                                                 CornerRadius="4,4,16,0"
-                                                 Source="{x:Bind FaceIcon}" />
-                                <xdc:CachedImage Width="20"
-                                                 Height="20"
-                                                 Margin="1"
-                                                 HorizontalAlignment="Left"
-                                                 VerticalAlignment="Top"
-                                                 Source="{x:Bind Element, Converter={StaticResource ElementToElementImageConverter}}" />
-                                <TextBlock Margin="0,0,0,2"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Bottom"
-                                           FontSize="12"
-                                           Foreground="#84603D"
-                                           Text="{x:Bind Name}" />
-                            </Grid>
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
+                            <GridView.ItemTemplate>
+                                <DataTemplate x:DataType="xgc:CharacterInfo">
+                                    <Grid Width="80"
+                                          Height="98"
+                                          Margin="0,0,8,8"
+                                          CornerRadius="4">
+                                        <xdc:CachedImage Width="80"
+                                                         VerticalAlignment="Top"
+                                                         Source="{x:Bind Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}" />
+                                        <xdc:CachedImage Width="80"
+                                                         Height="80"
+                                                         VerticalAlignment="Top"
+                                                         CornerRadius="4,4,16,0"
+                                                         Source="{x:Bind FaceIcon}" />
+                                        <xdc:CachedImage Width="20"
+                                                         Height="20"
+                                                         Margin="1"
+                                                         HorizontalAlignment="Left"
+                                                         VerticalAlignment="Top"
+                                                         Source="{x:Bind Element, Converter={StaticResource ElementToElementImageConverter}}" />
+                                        <TextBlock Margin="0,0,0,2"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Bottom"
+                                                   FontSize="12"
+                                                   Foreground="#84603D"
+                                                   Text="{x:Bind Name}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
 
-                </GridView>
+                        </GridView>
+                    </SemanticZoom.ZoomedInView>
+                </SemanticZoom>
             </PivotItem>
 
         </Pivot>

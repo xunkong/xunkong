@@ -30,6 +30,9 @@
                 <AppBarButton Command="{x:Bind OpenReleaseHistoryPageCommand, Mode=OneTime}"
                               Icon="More"
                               Label="更多" />
+                <AppBarButton Command="{x:Bind NotShowThisVersionCommand, Mode=OneTime}"
+                              Icon="Cancel"
+                              Label="忽略" />
             </StackPanel>
         </Grid>
 
