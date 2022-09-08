@@ -277,7 +277,14 @@ internal class HoyolabService
         const string sql = "SELECT Value FROM SpiralAbyssInfo WHERE Id=@Id LIMIT 1;";
         using var dapper = DatabaseProvider.CreateConnection();
         var value = dapper.QueryFirstOrDefault<string>(sql, new { Id = id });
-        return JsonSerializer.Deserialize<SpiralAbyssInfo>(value);
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+        else
+        {
+            return JsonSerializer.Deserialize<SpiralAbyssInfo>(value);
+        }
     }
 
 

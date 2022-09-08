@@ -9,7 +9,9 @@
              mc:Ignorable="d">
 
     <UserControl.Transitions>
-        <EntranceThemeTransition />
+        <TransitionCollection>
+            <EntranceThemeTransition />
+        </TransitionCollection>
     </UserControl.Transitions>
 
 

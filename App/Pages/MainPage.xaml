@@ -22,7 +22,7 @@
                         PaneClosing="_NavigationView_PaneClosing"
                         PaneOpening="_NavigationView_PaneOpening">
             <NavigationView.Resources>
-                <!--<SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />-->
+                <SolidColorBrush x:Key="NavigationViewContentBackground" Color="{ThemeResource LayerOnAcrylicFillColorDefault}" />
             </NavigationView.Resources>
 
             <!--  导航栏左上部那一块  -->

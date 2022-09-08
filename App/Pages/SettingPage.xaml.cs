@@ -30,6 +30,8 @@ public sealed partial class SettingPage : Page
 
     public string AppVersion => XunkongEnvironment.AppVersion.ToString();
 
+    public string UserDataPath => XunkongEnvironment.UserDataPath;
+
 
 
     public SettingPage()
@@ -486,6 +488,30 @@ public sealed partial class SettingPage : Page
 
 
     #region Data
+
+
+
+    /// <summary>
+    /// 打开用户数据文件夹
+    /// </summary>
+    /// <returns></returns>
+    [RelayCommand]
+    private async Task OpenUserDataPath()
+    {
+        try
+        {
+            if (Directory.Exists(UserDataPath))
+            {
+                await Launcher.LaunchFolderPathAsync(UserDataPath);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "打开用户数据文件夹");
+        }
+    }
+
+
 
 
     /// <summary>

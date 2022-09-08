@@ -284,13 +284,10 @@
                                      Tapped="c_Image_GachaSplash_Tapped">
                         <interactivity:Interaction.Behaviors>
                             <interactions:EventTriggerBehavior EventName="PointerEntered">
-                                <behaviors:StartAnimationAction Animation="{Binding ElementName=GachaSplashPointEnteredAnimation}" />
+                                <behaviors:StartAnimationAction Animation="{x:Bind GachaSplashPointEnteredAnimation}" />
                             </interactions:EventTriggerBehavior>
                             <interactions:EventTriggerBehavior EventName="PointerExited">
-                                <behaviors:StartAnimationAction Animation="{Binding ElementName=GachaSplashPointExitedAnimation}" />
-                            </interactions:EventTriggerBehavior>
-                            <interactions:EventTriggerBehavior EventName="PointerPressed">
-                                <behaviors:StartAnimationAction Animation="{Binding ElementName=GachaSplashPointEnteredAnimation}" />
+                                <behaviors:StartAnimationAction Animation="{x:Bind GachaSplashPointExitedAnimation}" />
                             </interactions:EventTriggerBehavior>
                         </interactivity:Interaction.Behaviors>
                         <ani:Explicit.Animations>
@@ -673,7 +670,9 @@
                                     <!--  文本描述  -->
                                     <xdc:GenshinDescTextBlock Margin="0,16,0,16" Description="{x:Bind Description}" />
                                     <!--  详细属性展开  -->
-                                    <Expander HorizontalAlignment="Stretch" Visibility="{x:Bind Levels, Converter={StaticResource ObjectToVisibilityConverter}}">
+                                    <Expander HorizontalAlignment="Stretch"
+                                              HorizontalContentAlignment="Left"
+                                              Visibility="{x:Bind Levels, Converter={StaticResource ObjectToVisibilityConverter}}">
                                         <Expander.Header>
                                             <TextBlock Text="详细属性" />
                                         </Expander.Header>

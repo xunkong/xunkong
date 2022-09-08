@@ -432,6 +432,27 @@
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                Text="数据" />
 
+                    <!--  用户数据文件夹  -->
+                    <xdc:SettingCard>
+                        <xdc:SettingCard.Icon>
+                            <FontIcon Glyph="&#xE8B7;" />
+                        </xdc:SettingCard.Icon>
+                        <xdc:SettingCard.Content>
+                            <TextBlock>
+                                <Run Text="用户数据文件夹" />
+                                <LineBreak />
+                                <Run FontSize="12"
+                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                     Text="{x:Bind UserDataPath}" />
+                            </TextBlock>
+                        </xdc:SettingCard.Content>
+                        <xdc:SettingCard.Selector>
+                            <Button HorizontalAlignment="Right"
+                                    Command="{x:Bind OpenUserDataPathCommand, Mode=OneTime}"
+                                    Content="打开文件夹" />
+                        </xdc:SettingCard.Selector>
+                    </xdc:SettingCard>
+
                     <!--  文件缓存  -->
                     <xdc:SettingCard>
                         <xdc:SettingCard.Icon>

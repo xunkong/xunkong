@@ -115,14 +115,13 @@ internal static class PreCacheService
 
                 manager.Hide(toast);
 
-                await ToastProvider.SendAsync("预缓存完成", $"总共下载图片 {downloadCount} 张，数据量 {(double)downloadSize / (1 << 20):F2} MB，耗时 {sw.Elapsed.TotalSeconds:N0} 秒。");
+                await ToastProvider.SendAsync("预缓存完成", $"总共下载文件 {downloadCount} 个，数据量 {(double)downloadSize / (1 << 20):F2} MB，耗时 {sw.Elapsed.TotalSeconds:N0} 秒。");
 
             }
             else
             {
-                await ToastProvider.SendAsync("所有图片均已缓存");
+                NotificationProvider.Success("所有图片均已缓存");
             }
-
         }
         catch (TaskCanceledException)
         {

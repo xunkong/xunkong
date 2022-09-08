@@ -1,6 +1,4 @@
 ﻿using Microsoft.UI.Xaml;
-using Windows.UI.Text;
-using Xunkong.GenshinData.Material;
 
 namespace Xunkong.Desktop.Models;
 

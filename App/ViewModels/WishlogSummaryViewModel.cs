@@ -409,12 +409,19 @@ internal partial class WishlogSummaryViewModel : ObservableObject
                 NotificationProvider.Warning("没有找到祈愿记录网址，请在游戏中打开历史记录页面后再重试。");
                 return;
             }
-            StateText = $"检查祈愿记录网址的有效性";
-            var uid = await _wishlogService.GetUidByWishlogUrl(url);
-            var addCount = await _wishlogService.GetWishlogByUidAsync(uid, progressHandler);
-            StateText = $"新增 {addCount} 条祈愿记录";
-            SelectedUid = uid.ToString();
-            InitializePageData();
+            try
+            {
+                StateText = $"检查祈愿记录网址的有效性";
+                var uid = await _wishlogService.GetUidByWishlogUrl(url);
+                var addCount = await _wishlogService.GetWishlogByUidAsync(uid, progressHandler);
+                StateText = $"新增 {addCount} 条祈愿记录";
+                SelectedUid = uid.ToString();
+                InitializePageData();
+            }
+            catch (Exception ex) when (ex is HoyolabException or XunkongException)
+            {
+                StateText = ex.Message;
+            }
         }
         catch (Exception ex)
         {

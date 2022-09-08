@@ -39,7 +39,7 @@ public sealed partial class AnnouncementPage : Page
         try
         {
             var announces = await _hoyolabClient.GetGameAnnouncementsAsync();
-            ActivityAnnouncements = announces.Where(x => x.Type == 1).OrderBy(x => x.EndTime).ToList();
+            ActivityAnnouncements = announces.Where(x => x.Type == 1).ToList();
             GameAnnouncements = announces.Where(x => x.Type == 2).ToList();
         }
         catch (Exception ex)
