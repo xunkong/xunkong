@@ -8,5 +8,6 @@ public sealed class UpdateTask : IBackgroundTask
     public void Run(IBackgroundTaskInstance taskInstance)
     {
         ApplicationData.Current.LocalSettings.Values["ShowUpdateContentOnLoaded"] = true;
+        ApplicationData.Current.LocalSettings.Values["HasShownWelcomePage"] = false;
     }
 }

@@ -10,7 +10,9 @@
 - 快速浏览每日素材，活动攻略
 - 查看你的祈愿，原石摩拉，深境螺旋等数据
 - 启动游戏并解锁帧数上限
-- 成就管理
+- 管理成就
+- 查看角色和武器图鉴
+- 规划养成计划
 - ……
 
 ## 安装
@@ -30,6 +32,8 @@
 ### 侧载版
 
 > 安装侧载版需要信任自签名证书，此证书仅用于寻空相关项目的代码签名。
+
+如果你看不懂以下内容，请安装商店版。
 
 - 侧载版仅提供 x64 架构的安装包，arm64 架构的设备请使用商店版
 - 首次安装侧载版时请从 [Releases](https://github.com/xunkong/xunkong/releases) 页面下载最新的 zip 文件并解压
@@ -59,6 +63,10 @@
 
 </details>
 
+## 应用截图
+
+![screenshot-home-yelan](https://file.xunkong.cc/static/repo/xunkong/screenshot-home-yelan.webp)
+
 ## 开发指南
 
 请移步 https://github.com/xunkong/dev
@@ -78,6 +86,7 @@
 - [WindowsAppSDK](https://github.com/microsoft/WindowsAppSDK)
 - [Markdig](https://github.com/xoofx/markdig)
 - [MiniExcel](https://github.com/MiniExcel/MiniExcel)
+- [NAudio](https://github.com/naudio/NAudio)
 - [Octokit](https://github.com/octokit/octokit.net)
 - [PixivApi](https://github.com/Scighost/PixivApi)
 - [Serilog](https://github.com/serilog/serilog)
@@ -87,7 +96,7 @@
 - [Vanara](https://github.com/dahall/Vanara)
 - [YaeAchievement](https://github.com/HolographicHat/YaeAchievement)
 
-感谢 [Twitter@心臓弱眞君](https://twitter.com/xinzoruo)、[Pixiv@Sigrixxx](https://www.pixiv.net/users/7861320) 以及所有为原神创作同人图的画师们。
+感谢 [米游社@朱成碧](https://bbs.mihoyo.com/ys/accountCenter/postList?id=74552206)、[Twitter@心臓弱眞君](https://twitter.com/xinzoruo) 以及所有为原神创作同人图的画师们。
 
 感谢微软提供的 Visual Studio 社区版 和 Visual Studio Code 开发工具，JetBrains 提供的开源项目许可证，Syncfusion 提供的免费许可证，Cloudflare 提供的免费 CDN，华为提供的开源字体 HarmonyOS Sans。
 
