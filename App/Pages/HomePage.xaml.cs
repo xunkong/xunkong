@@ -35,13 +35,13 @@ namespace Xunkong.Desktop.Pages;
 public sealed partial class HomePage : Page
 {
 
-    private const string FallbackWallpaperUri = "ms-appx:///Assets/Images/98004277_p0.webp";
+    private const string FallbackWallpaperUri = "ms-appx:///Assets/Images/98004277_p0.jpg";
     private readonly static WallpaperInfo FallbackWallpaper = new WallpaperInfo
     {
         Title = "夜兰",
         Author = "朱成碧",
         Description = "：D",
-        FileName = "[朱成碧] 夜兰 [98004277_p0].webp",
+        FileName = "[朱成碧] 夜兰 [98004277_p0].jpg",
         Source = "https://www.pixiv.net/artworks/98004277",
         Url = "https://file.xunkong.cc/wallpaper/98004277_p0.webp"
     };

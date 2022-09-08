@@ -38,7 +38,7 @@
             <TextBlock HorizontalAlignment="Left"
                        VerticalAlignment="Center"
                        Style="{ThemeResource SubtitleTextBlockStyle}"
-                       Text="角色信息" />
+                       Text="我的角色" />
             <StackPanel Grid.Column="1"
                         HorizontalAlignment="Right"
                         Orientation="Horizontal">
@@ -223,6 +223,7 @@
                   Width="480"
                   Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
                   Canvas.ZIndex="1"
+                  CornerRadius="0,8,0,0"
                   Visibility="{x:Bind _ToggleButton_LeftPanel.IsChecked, Converter={StaticResource BoolToVisibilityConverter}}">
                 <Grid.RowDefinitions>
                     <RowDefinition />

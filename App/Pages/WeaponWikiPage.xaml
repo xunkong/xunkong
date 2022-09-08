@@ -21,7 +21,7 @@
 
         <!--  搜索框  -->
         <AutoSuggestBox x:Name="c_AutoSuggestBox_Search"
-                        Margin="24,24,28,0"
+                        Margin="24,24,20,0"
                         VerticalAlignment="Top"
                         PlaceholderText="名称、稀有度、副属性、武器类型。。。"
                         QueryIcon="Find"
@@ -31,7 +31,7 @@
         <!--  搜索结果列表  -->
         <GridView x:Name="c_GridView_Filter"
                   Grid.Row="1"
-                  Margin="24,68,24,0"
+                  Margin="24,68,0,0"
                   ItemsSource="{x:Bind FilterWeapons}"
                   SelectedItem="{x:Bind SelectedWeapon, Mode=TwoWay}"
                   SelectionMode="Single">
@@ -347,7 +347,7 @@
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="GridFirstColumn.Width" Value="320" />
+                        <Setter Target="GridFirstColumn.Width" Value="300" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState>
@@ -355,7 +355,7 @@
                         <AdaptiveTrigger MinWindowWidth="1400" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="GridFirstColumn.Width" Value="400" />
+                        <Setter Target="GridFirstColumn.Width" Value="380" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState>
@@ -363,7 +363,7 @@
                         <AdaptiveTrigger MinWindowWidth="1600" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="GridFirstColumn.Width" Value="480" />
+                        <Setter Target="GridFirstColumn.Width" Value="460" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

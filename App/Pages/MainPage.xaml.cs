@@ -592,8 +592,17 @@ public sealed partial class MainPage : Page
     {
         if (((FrameworkElement)sender).DataContext is GenshinRoleInfo role)
         {
-            ClipboardHelper.SetText(role.Cookie);
-            NotificationProvider.Success("已复制", 1500);
+            try
+            {
+                ClipboardHelper.SetText(role.Cookie);
+                NotificationProvider.Success("已复制", 1500);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "复制 cookie");
+                NotificationProvider.Error(ex, "复制 cookie");
+            }
+
         }
     }
 

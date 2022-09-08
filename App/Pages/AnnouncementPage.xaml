@@ -18,7 +18,7 @@
         <DataTemplate x:Key="AnnouncementCardTemplate" x:DataType="xha:Announcement">
             <Grid x:Name="c_Grid_FinishingActivity"
                   Width="300"
-                  Height="200"
+                  Height="180"
                   HorizontalAlignment="Left"
                   Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                   BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
@@ -53,17 +53,11 @@
                     </xdc:CachedImage>
                 </Border>
                 <TextBlock Grid.Row="1"
-                           Margin="8,4,8,0"
+                           Margin="8,6,8,0"
                            FontSize="20"
                            Text="{x:Bind Subtitle}" />
                 <TextBlock Grid.Row="1"
-                           Margin="8,8,8,0"
-                           VerticalAlignment="Center"
-                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                           Text="{x:Bind Title}"
-                           TextTrimming="CharacterEllipsis" />
-                <TextBlock Grid.Row="1"
-                           Margin="8,0,8,4"
+                           Margin="8,0,8,6"
                            HorizontalAlignment="Left"
                            VerticalAlignment="Bottom"
                            FontSize="12"
@@ -75,7 +69,7 @@
                 <Border Padding="8,4,8,4"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top"
-                        Background="{ThemeResource ControlOnImageFillColorDefaultBrush}"
+                        Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
                         CornerRadius="0,8,0,8"
                         Visibility="{x:Bind RemainTimeString, Converter={StaticResource ObjectToVisibilityConverter}}">
                     <TextBlock FontSize="12"
@@ -102,9 +96,12 @@
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                            Text="活动公告" />
                 <GridView Margin="0,-12,0,0"
-                          ItemContainerStyle="{StaticResource BlankGridViewItemStyle}"
                           ItemTemplate="{StaticResource AnnouncementCardTemplate}"
                           ItemsSource="{x:Bind ActivityAnnouncements}"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                          ScrollViewer.HorizontalScrollMode="Disabled"
+                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                          ScrollViewer.VerticalScrollMode="Disabled"
                           SelectionMode="None" />
 
                 <TextBlock VerticalAlignment="Center"
@@ -115,6 +112,10 @@
                           ItemContainerStyle="{StaticResource BlankGridViewItemStyle}"
                           ItemTemplate="{StaticResource AnnouncementCardTemplate}"
                           ItemsSource="{x:Bind GameAnnouncements}"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                          ScrollViewer.HorizontalScrollMode="Disabled"
+                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                          ScrollViewer.VerticalScrollMode="Disabled"
                           SelectionMode="None" />
             </StackPanel>
         </ScrollViewer>
@@ -126,6 +127,8 @@
                     <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
                         <Setter Property="Padding" Value="0" />
                         <Setter Property="MaxWidth" Value="680" />
+                        <Setter Property="CornerRadius" Value="8" />
+                        <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
                     </Style>
                 </Flyout.FlyoutPresenterStyle>
                 <xdc:AnnouncementContentViewer x:Name="c_AnnouncementContentViewer" />

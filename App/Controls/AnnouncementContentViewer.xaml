@@ -6,6 +6,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d">
 
+    <UserControl.Transitions>
+        <TransitionCollection>
+            <EntranceThemeTransition />
+        </TransitionCollection>
+    </UserControl.Transitions>
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" CornerRadius="8">
         <WebView2 x:Name="webview"
                   Margin="12"

@@ -156,6 +156,29 @@
         </StackPanel>
 
 
+        <Button Margin="0,-12,-12,0"
+                Padding="4,2,4,2"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Content="&#xE712;"
+                CornerRadius="0,4,0,4"
+                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
+                Visibility="{x:Bind Error, Converter={StaticResource BoolToVisibilityReversedConverter}}">
+            <Button.Flyout>
+                <MenuFlyout Placement="RightEdgeAlignedTop">
+                    <MenuFlyoutItem Command="{x:Bind PinToStartMenuCommand, Mode=OneTime}"
+                                    Icon="Pin"
+                                    Text="固定到开始屏幕" />
+                    <MenuFlyoutItem Command="{x:Bind CopyCookieCommand, Mode=OneTime}"
+                                    Icon="Copy"
+                                    Text="复制 Cookie" />
+                </MenuFlyout>
+            </Button.Flyout>
+        </Button>
+
+
         <!--  出错了  -->
         <StackPanel Grid.Row="1"
                     HorizontalAlignment="Center"

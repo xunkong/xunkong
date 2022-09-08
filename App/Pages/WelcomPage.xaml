@@ -4,60 +4,64 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="using:Xunkong.Desktop.Pages"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:xdc="using:Xunkong.Desktop.Controls"
       x:DefaultBindMode="OneWay"
-      RequestedTheme="Light"
       mc:Ignorable="d">
 
     <Page.Resources>
         <Style BasedOn="{StaticResource BodyTextBlockStyle}" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{ThemeResource SystemFillColorCautionBrush}" />
+            <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="FontSize" Value="16" />
         </Style>
     </Page.Resources>
 
-    <Grid Background="#F1E0CE" RequestedTheme="Light">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="3*" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*" />
-            <ColumnDefinition Width="2*" />
-        </Grid.ColumnDefinitions>
-        <StackPanel Grid.RowSpan="2"
-                    Grid.ColumnSpan="2"
-                    Orientation="Horizontal">
-            <Image Source="ms-appx:///Assets/Images/WelcomBackground.png" />
-        </StackPanel>
+    <Grid>
+
+        <xdc:CachedImage HorizontalAlignment="Center"
+                         VerticalAlignment="Top"
+                         Source="ms-appx:///Assets/Images/98004277_p0.jpg"
+                         Stretch="UniformToFill" />
+
+        <Rectangle HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch"
+                   Fill="{ThemeResource ControlOnImageFillColorDefaultBrush}" />
 
 
+        <StackPanel Margin="96,48,96,48"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
 
-        <StackPanel Grid.Row="1"
-                    Grid.Column="1"
-                    Margin="0,0,48,0"
-                    HorizontalAlignment="Left">
-
-            <StackPanel x:Name="Tip_1" Spacing="8">
-                <TextBlock FontSize="24" Text="寻空" />
-                <TextBlock Text="Scighost 的原神工具箱" />
+            <StackPanel x:Name="Tip_1" Spacing="16">
+                <TextBlock FontSize="32" Text="寻空" />
+                <TextBlock Margin="0,0,0,16"
+                           FontSize="20"
+                           Text="Scighost 的原神工具箱" />
                 <TextBlock Text="本应用使用 MIT 许可证协议开源，并免费发布，但是不提供任何可用性保证。" />
                 <TextBlock Text="在使用之前，您需要了解以下内容：" />
             </StackPanel>
 
             <StackPanel x:Name="Tip_2"
-                        Spacing="8"
+                        Spacing="16"
                         Visibility="Collapsed">
-                <TextBlock FontSize="24" Text="风险提醒" />
-                <TextBlock Text="「寻空」是原神的第三方工具，本应用严格遵守相关法律，不会新增、修改、删除您的个人账号的数据，但是任何第三方工具都可能会有一定的风险。" TextWrapping="Wrap" />
-                <TextBlock Text="点击下一步则代表您理解并接受未知的风险，如不接受请关闭并卸载本应用。" TextWrapping="Wrap" />
+                <TextBlock Margin="0,0,0,16"
+                           FontSize="32"
+                           Text="风险提醒" />
+                <TextBlock Text="「寻空」是原神的第三方工具，本应用严格遵守相关法律，不会新增、修改、删除您的个人账号的数据，但是任何第三方工具都可能会有一定的风险。" />
+                <TextBlock Text="点击下一步则代表您理解并接受未知的风险，如不接受请关闭并卸载本应用。" />
             </StackPanel>
 
             <StackPanel x:Name="Tip_3"
-                        Spacing="8"
+                        Spacing="16"
                         Visibility="Collapsed">
-                <TextBlock FontSize="24" Text="隐私 &amp; 用户数据" />
-                <TextBlock Text="「寻空」充分尊重您的隐私，在进行网络通信时，会向服务器发送您的IP和匿名设备ID。" TextWrapping="Wrap" />
-                <TextBlock Text="除此之外，未经您同意的情况下，不会上传您的其他个人信息。" TextWrapping="Wrap" />
-                <TextBlock Text="您的个人数据和其他文件保存在「我的文档\Xunkong」文件夹中。" TextWrapping="Wrap" />
+                <TextBlock Margin="0,0,0,16"
+                           FontSize="32"
+                           Text="隐私 &amp; 用户数据" />
+                <TextBlock Text="「寻空」充分尊重您的隐私，除了在进行网络通信时需要发送的必要数据外，未经您同意的情况下，不会上传您的其他个人信息。" />
+                <TextBlock Margin="0,-8,0,0"
+                           FontSize="14"
+                           Text="* 必要数据指您的 IP 和匿名设备 ID。" />
+                <TextBlock Text="您的个人数据和其他文件保存在「我的文档\Xunkong」文件夹中。" />
                 <TextBlock>
                     <Run Text="存储位置：" />
                     <Run Text="{x:Bind GetXunkongDataPath()}" />
@@ -68,10 +72,12 @@
             </StackPanel>
 
             <StackPanel x:Name="Tip_4"
-                        Spacing="8"
+                        Spacing="16"
                         Visibility="Collapsed">
-                <TextBlock FontSize="24" Text="依赖组件" />
-                <TextBlock TextWrapping="Wrap">
+                <TextBlock Margin="0,0,0,16"
+                           FontSize="32"
+                           Text="依赖组件" />
+                <TextBlock>
                     <Run Text="「寻空」的部分功能依赖 WebView2，您的设备上需要存在" />
                     <Hyperlink NavigateUri="https://developer.microsoft.com/zh-cn/microsoft-edge/webview2/">WebView2 Runtime</Hyperlink>
                     <Run Text="。" />
@@ -86,12 +92,10 @@
                             Click="_Button_RefreshStats_Click"
                             Content="刷新状态" />
                 </StackPanel>
-                <TextBlock Text="「寻空」使用了 Windows 11 系统上的图标字体，在 Windows 10 系统上可能会出现乱码问题。" TextWrapping="Wrap" />
-                <TextBlock Text="下行左侧是一个点赞图标，如果不是，您需要安装缺失的字体。" TextWrapping="Wrap" />
+                <TextBlock Text="「寻空」使用了 Windows 11 系统上的图标字体，在 Windows 10 系统上可能会出现乱码问题。" />
+                <TextBlock Text="下行左侧是一个点赞图标，如果不是，您需要安装缺失的字体。" />
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <SymbolIcon HorizontalAlignment="Left"
-                                Foreground="{ThemeResource SystemFillColorCautionBrush}"
-                                Symbol="Like" />
+                    <SymbolIcon HorizontalAlignment="Left" Symbol="Like" />
                     <Button Name="_Button_InstallFont"
                             Click="_Button_InstallFont_Click"
                             Content="安装 Segoe Fluent Icons" />
@@ -117,8 +121,8 @@
                    Margin="0,0,12,8"
                    HorizontalAlignment="Right"
                    VerticalAlignment="Bottom"
-                   FontSize="12"
-                   Text="图片来源：Twitter@心臓弱眞君" />
+                   FontSize="14"
+                   Text="图片来源：朱成碧" />
 
     </Grid>
 

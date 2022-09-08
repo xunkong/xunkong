@@ -106,11 +106,10 @@ public class SystemBackdropHelper
 
             backdropController = backDropType switch
             {
-                BackDropType.Mica => new MicaController(),
+                BackDropType.Mica => new MicaController { Kind = MicaKind.BaseAlt },
                 BackDropType.Acrylic => new DesktopAcrylicController(),
                 _ => throw new ArgumentException("backDropType invalid"),
             };
-
             backdropController.AddSystemBackdropTarget(window.As<ICompositionSupportsSystemBackdrop>());
             backdropController.SetSystemBackdropConfiguration(configurationSource);
 
@@ -122,7 +121,7 @@ public class SystemBackdropHelper
     {
         if (configurationSource is not null)
         {
-            configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
+            configurationSource.IsInputActive = true; // args.WindowActivationState != WindowActivationState.Deactivated;
         }
     }
 

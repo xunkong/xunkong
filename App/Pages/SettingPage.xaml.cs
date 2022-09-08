@@ -58,7 +58,7 @@ public sealed partial class SettingPage : Page
     /// <param name="e"></param>
     private void _Image_RecommendWallpaper_Tapped(object sender, TappedRoutedEventArgs e)
     {
-        MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = "ms-appx:///Assets/Images/96839227_p0.webp" });
+        MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = "ms-appx:///Assets/Images/98004277_p0.jpg" });
     }
 
     /// <summary>
@@ -164,7 +164,7 @@ public sealed partial class SettingPage : Page
     /// 游戏 exe 文件路径
     /// </summary>
     [ObservableProperty]
-    private string? _GameExePath = AppSetting.GetValue(SettingKeys.GameExePath, "不指定具体文件则会从注册表查找");
+    private string? _GameExePath = AppSetting.GetValue(SettingKeys.GameExePath, "不指定具体文件则会从注册表查找文件路径");
 
     /// <summary>
     /// 解锁 fps 上限

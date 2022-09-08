@@ -443,6 +443,7 @@
                         <Setter Property="Padding" Value="0" />
                         <Setter Property="MaxWidth" Value="680" />
                         <Setter Property="CornerRadius" Value="8" />
+                        <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
                     </Style>
                 </Flyout.FlyoutPresenterStyle>
                 <xdc:AnnouncementContentViewer x:Name="c_AnnouncementContentViewer" />
