@@ -166,7 +166,7 @@ public partial class PM_GrowthSchedule_CharacterComputer
         {
             if (talent.TargetLevel - talent.StartLevel > 0)
             {
-                foreach (var level in talent.Talent.Levels.Skip(talent.StartLevel).Take(talent.TargetLevel))
+                foreach (var level in talent.Talent.Levels.Skip(talent.StartLevel).Take(talent.TargetLevel - talent.StartLevel))
                 {
                     costMora += level.CoinCost;
                     costItems.AddRange(level.CostItems);
