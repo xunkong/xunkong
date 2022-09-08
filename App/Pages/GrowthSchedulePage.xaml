@@ -1,12 +1,16 @@
 ﻿<Page x:Class="Xunkong.Desktop.Pages.GrowthSchedulePage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:cc="using:CommunityToolkit.WinUI.UI.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="using:Xunkong.Desktop.Pages"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
       xmlns:xdc="using:Xunkong.Desktop.Controls"
       xmlns:xdm="using:Xunkong.Desktop.Models"
+      xmlns:xg="using:Xunkong.GenshinData"
       xmlns:xgc="using:Xunkong.GenshinData.Character"
+      xmlns:xgm="using:Xunkong.GenshinData.Material"
       xmlns:xha="using:Xunkong.Hoyolab.Activity"
       x:DefaultBindMode="OneWay"
       mc:Ignorable="d">
@@ -17,7 +21,9 @@
         <CollectionViewSource x:Name="BossMaterialGroup" IsSourceGrouped="True" />
     </Page.Resources>
 
-    <Grid>
+    <Grid x:Name="c_Grid_Base">
+
+
         <Pivot Margin="0,12,0,0">
             <Pivot.Resources>
                 <Thickness x:Key="PivotItemMargin">0,8,0,0</Thickness>
@@ -30,22 +36,118 @@
             <Pivot.LeftHeader>
                 <Border Width="24" />
             </Pivot.LeftHeader>
-            <Pivot.RightHeader>
-                <!--  添加计划按键  -->
-                <Button Margin="0,0,36,0"
-                        Padding="12,8,12,8"
-                        Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <TextBlock VerticalAlignment="Center"
-                                   FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                   Text="&#xE109;" />
-                        <TextBlock VerticalAlignment="Center" Text="添加计划" />
-                    </StackPanel>
-                </Button>
-            </Pivot.RightHeader>
 
-
-            <PivotItem Header="养成计划" />
+            <!--  养成计划  -->
+            <PivotItem Header="养成计划">
+                <GridView x:Name="c_GridView_GrowthSchduleItem"
+                          Padding="24,0,12,0"
+                          AllowDrop="True"
+                          CanDragItems="True"
+                          CanReorderItems="True"
+                          ItemsSource="{x:Bind GrowthScheduleItems}"
+                          SelectionMode="None">
+                    <GridView.Resources>
+                        <!--  卡片每一行材料内容  -->
+                        <DataTemplate x:Key="CostItemDataTemplate" x:DataType="xdm:GrowthScheduleCostItem">
+                            <Grid Width="188"
+                                  Height="28"
+                                  HorizontalAlignment="Left">
+                                <xdc:CachedImage Width="28"
+                                                 Height="28"
+                                                 HorizontalAlignment="Left"
+                                                 Source="{x:Bind Icon}" />
+                                <Button x:Name="c_Button_CostItem"
+                                        Width="160"
+                                        Margin="28,0,0,0"
+                                        HorizontalContentAlignment="Left"
+                                        Click="c_Button_CostItem_Click"
+                                        Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
+                                    <TextBlock VerticalAlignment="Center">
+                                        <Run Text="{x:Bind Name}" />
+                                        <Run Text="x" /><Run Text="{x:Bind CostCount}" />
+                                    </TextBlock>
+                                </Button>
+                                <Line IsHitTestVisible="False"
+                                      Stroke="{ThemeResource TextFillColorPrimaryBrush}"
+                                      StrokeThickness="1"
+                                      Visibility="{x:Bind IsFinish, Converter={StaticResource BoolToVisibilityConverter}}"
+                                      X1="36"
+                                      X2="180"
+                                      Y1="14"
+                                      Y2="14" />
+                            </Grid>
+                        </DataTemplate>
+                    </GridView.Resources>
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="xdm:GrowthScheduleItem">
+                            <Grid Width="420"
+                                  Height="408"
+                                  Padding="12,8,12,8"
+                                  Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                  BorderThickness="1"
+                                  ColumnSpacing="8"
+                                  CornerRadius="8">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="40" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <!--  图片和名称  -->
+                                <StackPanel Grid.ColumnSpan="2"
+                                            Orientation="Horizontal"
+                                            Spacing="16">
+                                    <xdc:CachedImage Width="36"
+                                                     Height="36"
+                                                     CornerRadius="4"
+                                                     Source="{x:Bind Icon}" />
+                                    <TextBlock VerticalAlignment="Center"
+                                               FontSize="20"
+                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                               Text="{x:Bind Name}" />
+                                </StackPanel>
+                                <MenuFlyoutSeparator Grid.Row="1"
+                                                     Grid.ColumnSpan="2"
+                                                     Margin="0,0,0,4" />
+                                <!--  角色或武器等级素材  -->
+                                <ItemsControl Grid.Row="2"
+                                              Grid.Column="0"
+                                              ItemTemplate="{StaticResource CostItemDataTemplate}"
+                                              ItemsSource="{x:Bind LevelCostItems}" />
+                                <!--  天赋素材  -->
+                                <ItemsControl Grid.Row="2"
+                                              Grid.Column="1"
+                                              ItemTemplate="{StaticResource CostItemDataTemplate}"
+                                              ItemsSource="{x:Bind TalentCostItems}"
+                                              Visibility="{x:Bind TalentCostItems, Converter={StaticResource ObjectToVisibilityConverter}}" />
+                                <!--  删除键  -->
+                                <Button Grid.ColumnSpan="2"
+                                        Margin="0,-8,-12,0"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top"
+                                        Content="&#xE10C;"
+                                        CornerRadius="0,0,0,8"
+                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                        Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
+                                    <Button.Flyout>
+                                        <MenuFlyout Placement="LeftEdgeAlignedTop">
+                                            <MenuFlyoutItem x:Name="c_Button_DeleteGrowthItem"
+                                                            Click="c_Button_DeleteGrowthItem_Click"
+                                                            Icon="Delete"
+                                                            Tag="{x:Bind}"
+                                                            Text="删除" />
+                                        </MenuFlyout>
+                                    </Button.Flyout>
+                                </Button>
+                            </Grid>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
+            </PivotItem>
 
             <!--  天赋  -->
             <PivotItem Header="天赋培养">
@@ -433,5 +535,456 @@
             </PivotItem>
 
         </Pivot>
+
+
+        <!--  添加计划按键  -->
+        <Button Grid.ColumnSpan="2"
+                Margin="0,16,36,0"
+                Padding="12,8,12,8"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Command="{x:Bind OpenGrowthScheduleEditGridCommand, Mode=OneTime}"
+                Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock VerticalAlignment="Center"
+                           FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                           Text="&#xE109;" />
+                <TextBlock VerticalAlignment="Center" Text="添加计划" />
+            </StackPanel>
+        </Button>
+
+
+
+        <!--  添加养成计划  -->
+        <Grid x:Name="c_Grid_Edit"
+              Grid.Column="1"
+              Width="440"
+              Margin="0,60,0,0"
+              HorizontalAlignment="Right"
+              Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
+              CornerRadius="8,0,0,0"
+              Visibility="Collapsed">
+            <TextBlock Margin="16,16,0,0"
+                       FontSize="20"
+                       Text="添加养成计划" />
+            <ScrollViewer Margin="0,48,0,48">
+                <StackPanel Margin="16" Spacing="8">
+
+                    <!--  选择角色和等级  -->
+                    <Grid HorizontalAlignment="Left" ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <!--  选择角色按键  -->
+                        <Button Width="80"
+                                Height="98"
+                                Padding="0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                Command="{x:Bind OpenCharacterSelectionFlyoutCommand}"
+                                CornerRadius="4"
+                                FontSize="20"
+                                Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
+                            <Grid>
+                                <FontIcon HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          FontSize="20"
+                                          Glyph="&#xE109;" />
+                                <xdc:CachedImage Width="80"
+                                                 VerticalAlignment="Top"
+                                                 Source="{x:Bind CharacterComputer.CharacterInfo.Rarity, Converter={StaticResource RarityToBackgroundImageConverter}, FallbackValue={x:Null}, TargetNullValue={x:Null}}" />
+                                <xdc:CachedImage Width="80"
+                                                 Height="80"
+                                                 VerticalAlignment="Top"
+                                                 CornerRadius="4,4,16,0"
+                                                 Source="{x:Bind CharacterComputer.CharacterInfo.FaceIcon, FallbackValue={x:Null}, TargetNullValue={x:Null}}" />
+                                <xdc:CachedImage Width="20"
+                                                 Height="20"
+                                                 Margin="2"
+                                                 HorizontalAlignment="Left"
+                                                 VerticalAlignment="Top"
+                                                 Source="{x:Bind CharacterComputer.CharacterInfo.Element, Converter={StaticResource ElementToElementImageConverter}, FallbackValue={x:Null}, TargetNullValue={x:Null}}" />
+                                <TextBlock Margin="0,0,0,2"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Bottom"
+                                           FontSize="12"
+                                           Foreground="#84603D"
+                                           Visibility="{x:Bind CharacterComputer, Converter={StaticResource ObjectToVisibilityConverter}}">
+                                    <Run Text="Lv." /><Run Text="{x:Bind CharacterComputer.CurrentLevel}" />
+                                </TextBlock>
+                            </Grid>
+                        </Button>
+                        <!--  等级范围  -->
+                        <StackPanel Grid.Column="1"
+                                    HorizontalAlignment="Left"
+                                    Spacing="4">
+                            <TextBlock FontSize="16" Text="{x:Bind CharacterComputer.CharacterInfo.Name, FallbackValue=选择角色, TargetNullValue=选择角色}" />
+                            <TextBlock Margin="0,16,0,0"
+                                       Text="等级范围"
+                                       Visibility="{x:Bind CharacterComputer, Converter={StaticResource ObjectToVisibilityConverter}}" />
+                            <StackPanel Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal"
+                                        Spacing="16"
+                                        Visibility="{x:Bind CharacterComputer, Converter={StaticResource ObjectToVisibilityConverter}}">
+                                <NumberBox LargeChange="10"
+                                           Maximum="90"
+                                           Minimum="1"
+                                           SmallChange="1"
+                                           SpinButtonPlacementMode="Compact"
+                                           Value="{x:Bind CharacterComputer.StartLevel, Mode=TwoWay}" />
+                                <TextBlock VerticalAlignment="Center" Text="-" />
+                                <NumberBox LargeChange="10"
+                                           Maximum="90"
+                                           Minimum="1"
+                                           SmallChange="1"
+                                           SpinButtonPlacementMode="Compact"
+                                           Value="{x:Bind CharacterComputer.TargetLevel, Mode=TwoWay}" />
+                            </StackPanel>
+                        </StackPanel>
+
+                    </Grid>
+
+                    <!--  天赋等级  -->
+                    <ItemsControl Height="120"
+                                  ItemsSource="{x:Bind CharacterComputer.Talents}"
+                                  Visibility="{x:Bind CharacterComputer, Converter={StaticResource ObjectToVisibilityConverter}}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="xdm:PM_GrowthSchedule_CharacterComputer_Talent">
+                                <StackPanel Height="40"
+                                            Orientation="Horizontal"
+                                            Spacing="8">
+                                    <xdc:CachedImage Width="36"
+                                                     Height="36"
+                                                     VerticalAlignment="Center"
+                                                     Background="#40000000"
+                                                     CornerRadius="36"
+                                                     Source="{x:Bind Talent.Icon}" />
+                                    <TextBlock Width="180"
+                                               VerticalAlignment="Center"
+                                               HorizontalTextAlignment="Left"
+                                               TextLineBounds="TrimToBaseline">
+                                        <Run Text="{x:Bind Talent.Name}" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="Lv." /><Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="{x:Bind CurrentLevel}" />
+                                    </TextBlock>
+                                    <NumberBox VerticalAlignment="Center"
+                                               LargeChange="1"
+                                               Maximum="10"
+                                               Minimum="1"
+                                               SmallChange="1"
+                                               SpinButtonPlacementMode="Compact"
+                                               Value="{x:Bind StartLevel, Mode=TwoWay}" />
+                                    <TextBlock VerticalAlignment="Center" Text="-" />
+                                    <NumberBox VerticalAlignment="Center"
+                                               LargeChange="1"
+                                               Maximum="10"
+                                               Minimum="1"
+                                               SmallChange="1"
+                                               SpinButtonPlacementMode="Compact"
+                                               Value="{x:Bind TargetLevel, Mode=TwoWay}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+
+                    <!--  角色等级消耗材料  -->
+                    <TextBlock Margin="0,8,0,-8"
+                               FontSize="16"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               Text="角色等级消耗"
+                               Visibility="{x:Bind CharacterComputer, Converter={StaticResource ObjectToVisibilityConverter}}" />
+                    <ItemsControl ItemsSource="{x:Bind CharacterComputer.LevelCostItems}" Visibility="{x:Bind CharacterComputer, Converter={StaticResource ObjectToVisibilityConverter}}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="xg:PromotionCostItem">
+                                <StackPanel Width="200"
+                                            Height="36"
+                                            Orientation="Horizontal"
+                                            Spacing="8">
+                                    <xdc:CachedImage Width="36"
+                                                     Height="36"
+                                                     Source="{x:Bind Item.Icon}" />
+                                    <TextBlock VerticalAlignment="Center">
+                                        <Run Text="{x:Bind Item.Name}" />
+                                        <Run Text="x" /><Run Text="{x:Bind Count}" />
+                                    </TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+
+                    <!--  角色天赋消耗材料  -->
+                    <TextBlock Margin="0,8,0,-8"
+                               FontSize="16"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               Text="角色天赋消耗"
+                               Visibility="{x:Bind CharacterComputer, Converter={StaticResource ObjectToVisibilityConverter}}" />
+                    <ItemsControl ItemsSource="{x:Bind CharacterComputer.TalentCostItems}" Visibility="{x:Bind CharacterComputer, Converter={StaticResource ObjectToVisibilityConverter}}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="xg:PromotionCostItem">
+                                <StackPanel Width="200"
+                                            Height="36"
+                                            Orientation="Horizontal"
+                                            Spacing="8">
+                                    <xdc:CachedImage Width="36"
+                                                     Height="36"
+                                                     Source="{x:Bind Item.Icon}" />
+                                    <TextBlock VerticalAlignment="Center">
+                                        <Run Text="{x:Bind Item.Name}" />
+                                        <Run Text="x" /><Run Text="{x:Bind Count}" />
+                                    </TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <MenuFlyoutSeparator />
+
+                    <!--  选择武器和等级  -->
+                    <Grid HorizontalAlignment="Left" ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <!--  选择武器按键  -->
+                        <Button Width="80"
+                                Height="98"
+                                Padding="0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                Command="{x:Bind OpenWeaponSelectionFlyoutCommand}"
+                                CornerRadius="4"
+                                FontSize="20"
+                                Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
+                            <Grid>
+                                <FontIcon HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          FontSize="20"
+                                          Glyph="&#xE109;" />
+                                <xdc:CachedImage Width="80"
+                                                 VerticalAlignment="Top"
+                                                 Source="{x:Bind WeaponComputer.WeaponInfo.Rarity, Converter={StaticResource RarityToBackgroundImageConverter}, FallbackValue={x:Null}, TargetNullValue={x:Null}}" />
+                                <xdc:CachedImage Width="80"
+                                                 Height="80"
+                                                 VerticalAlignment="Top"
+                                                 CornerRadius="4,4,16,0"
+                                                 Source="{x:Bind WeaponComputer.WeaponInfo.AwakenIcon, FallbackValue={x:Null}, TargetNullValue={x:Null}}" />
+                                <TextBlock Margin="0,0,0,2"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Bottom"
+                                           FontSize="12"
+                                           Foreground="#84603D"
+                                           Visibility="{x:Bind WeaponComputer, Converter={StaticResource ObjectToVisibilityConverter}}">
+                                    <Run Text="Lv." /><Run Text="{x:Bind WeaponComputer.CurrentLevel}" />
+                                </TextBlock>
+                            </Grid>
+                        </Button>
+                        <!--  等级范围  -->
+                        <StackPanel Grid.Column="1"
+                                    HorizontalAlignment="Left"
+                                    Spacing="4">
+                            <TextBlock FontSize="16" Text="{x:Bind WeaponComputer.WeaponInfo.Name, FallbackValue=选择武器, TargetNullValue=选择武器}" />
+                            <TextBlock Margin="0,16,0,0"
+                                       Text="等级范围"
+                                       Visibility="{x:Bind WeaponComputer, Converter={StaticResource ObjectToVisibilityConverter}}" />
+                            <StackPanel Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal"
+                                        Spacing="16"
+                                        Visibility="{x:Bind WeaponComputer, Converter={StaticResource ObjectToVisibilityConverter}}">
+                                <NumberBox LargeChange="10"
+                                           Maximum="{x:Bind WeaponComputer.MaxLevel}"
+                                           Minimum="1"
+                                           SmallChange="1"
+                                           SpinButtonPlacementMode="Compact"
+                                           Value="{x:Bind WeaponComputer.StartLevel, Mode=TwoWay}" />
+                                <TextBlock VerticalAlignment="Center" Text="-" />
+                                <NumberBox LargeChange="10"
+                                           Maximum="{x:Bind WeaponComputer.MaxLevel}"
+                                           Minimum="1"
+                                           SmallChange="1"
+                                           SpinButtonPlacementMode="Compact"
+                                           Value="{x:Bind WeaponComputer.TargetLevel, Mode=TwoWay}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+
+
+                    <!--  武器等级消耗材料  -->
+                    <TextBlock Margin="0,8,0,-8"
+                               FontSize="16"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               Text="武器等级消耗"
+                               Visibility="{x:Bind WeaponComputer, Converter={StaticResource ObjectToVisibilityConverter}}" />
+                    <ItemsControl ItemsSource="{x:Bind WeaponComputer.LevelCostItems}" Visibility="{x:Bind WeaponComputer, Converter={StaticResource ObjectToVisibilityConverter}}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="xg:PromotionCostItem">
+                                <StackPanel Width="200"
+                                            Height="36"
+                                            Orientation="Horizontal"
+                                            Spacing="8">
+                                    <xdc:CachedImage Width="36"
+                                                     Height="36"
+                                                     Source="{x:Bind Item.Icon}" />
+                                    <TextBlock VerticalAlignment="Center">
+                                        <Run Text="{x:Bind Item.Name}" />
+                                        <Run Text="x" /><Run Text="{x:Bind Count}" />
+                                    </TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+
+                </StackPanel>
+
+            </ScrollViewer>
+
+            <Button Margin="12"
+                    Padding="8"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Command="{x:Bind CloseGrowthScheduleEditGridCommand, Mode=OneTime}"
+                    Content="&#xE106;"
+                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                    FontSize="16" />
+            <Button Margin="16,8,16,8"
+                    Padding="8"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Bottom"
+                    Command="{x:Bind AddToGrowthScheduleListCommand, Mode=OneTime}"
+                    Content="添加到计划" />
+        </Grid>
+
+
+        <!--  选择角色  -->
+        <Border x:Name="c_Border_SelectCharacter"
+                IsHitTestVisible="False"
+                Visibility="Collapsed">
+            <FlyoutBase.AttachedFlyout>
+                <Flyout x:Name="c_Flyout_SelectCharacter" Placement="Full">
+                    <Flyout.FlyoutPresenterStyle>
+                        <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
+                            <Setter Property="Padding" Value="12" />
+                        </Style>
+                    </Flyout.FlyoutPresenterStyle>
+                    <GridView x:Name="c_GridView_SelectCharacter"
+                              Width="420"
+                              IsItemClickEnabled="True"
+                              ItemClick="c_GridView_SelectCharacter_ItemClick"
+                              ItemsSource="{x:Bind SelectCharacters}"
+                              SelectionMode="None">
+                        <GridView.ItemTemplate>
+                            <DataTemplate x:DataType="xdm:PM_GrowthSchedule_SelectCharacterOrWeapon">
+                                <Grid Width="80"
+                                      Height="98"
+                                      CornerRadius="4">
+                                    <xdc:CachedImage Width="80"
+                                                     VerticalAlignment="Top"
+                                                     Source="{x:Bind Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}" />
+                                    <xdc:CachedImage Width="80"
+                                                     Height="80"
+                                                     VerticalAlignment="Top"
+                                                     CornerRadius="4,4,16,0"
+                                                     Source="{x:Bind Icon}" />
+                                    <xdc:CachedImage Width="20"
+                                                     Height="20"
+                                                     Margin="2"
+                                                     HorizontalAlignment="Left"
+                                                     VerticalAlignment="Top"
+                                                     Source="{x:Bind Element, Converter={StaticResource ElementToElementImageConverter}}" />
+                                    <TextBlock Margin="0,0,0,2"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Bottom"
+                                               FontSize="12"
+                                               Foreground="#84603D">
+                                        <Run Text="Lv." /><Run Text="{x:Bind Level}" />
+                                    </TextBlock>
+                                </Grid>
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                    </GridView>
+                </Flyout>
+            </FlyoutBase.AttachedFlyout>
+        </Border>
+
+        <!--  选择武器  -->
+        <Border x:Name="c_Border_SelectWeapon"
+                IsHitTestVisible="False"
+                Visibility="Collapsed">
+            <FlyoutBase.AttachedFlyout>
+                <Flyout Placement="Full">
+                    <Flyout.FlyoutPresenterStyle>
+                        <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
+                            <Setter Property="Padding" Value="12" />
+                        </Style>
+                    </Flyout.FlyoutPresenterStyle>
+                    <GridView x:Name="c_GridView_SelectWeapon"
+                              Width="420"
+                              IsItemClickEnabled="True"
+                              ItemClick="c_GridView_SelectWeapon_ItemClick"
+                              ItemsSource="{x:Bind SelectWeapons}"
+                              SelectionMode="Single">
+                        <GridView.ItemTemplate>
+                            <DataTemplate x:DataType="xdm:PM_GrowthSchedule_SelectCharacterOrWeapon">
+                                <Grid Width="80"
+                                      Height="98"
+                                      CornerRadius="4">
+                                    <xdc:CachedImage Width="80"
+                                                     VerticalAlignment="Top"
+                                                     Source="{x:Bind Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}" />
+                                    <xdc:CachedImage Width="80"
+                                                     Height="80"
+                                                     VerticalAlignment="Top"
+                                                     CornerRadius="4,4,16,0"
+                                                     Source="{x:Bind Icon}" />
+                                    <TextBlock Margin="0,0,0,2"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Bottom"
+                                               FontSize="12"
+                                               Foreground="#84603D"
+                                               Text="{x:Bind Name}" />
+                                </Grid>
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                    </GridView>
+                </Flyout>
+            </FlyoutBase.AttachedFlyout>
+        </Border>
+
+
+
+
+
+
+
     </Grid>
 </Page>

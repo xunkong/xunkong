@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Media;
 using System.Diagnostics;
+using System.Net.Http;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Windows.Foundation;
@@ -34,15 +35,15 @@ namespace Xunkong.Desktop.Pages;
 public sealed partial class HomePage : Page
 {
 
-    private const string FallbackWallpaperUri = "ms-appx:///Assets/Images/96839227_p0.webp";
-    private static WallpaperInfo FallbackWallpaper = new WallpaperInfo
+    private const string FallbackWallpaperUri = "ms-appx:///Assets/Images/98004277_p0.webp";
+    private readonly static WallpaperInfo FallbackWallpaper = new WallpaperInfo
     {
-        Title = "Rest",
-        Author = "Sigrixxx",
-        Description = "她们太般配了啊！！！",
-        FileName = "[Sigrixxx] Rest [96839227_p0].webp",
-        Source = "https://www.pixiv.net/artworks/96839227",
-        Url = "https://file.xunkong.cc/wallpaper/96839227_p0.webp"
+        Title = "夜兰",
+        Author = "朱成碧",
+        Description = "：D",
+        FileName = "[朱成碧] 夜兰 [98004277_p0].webp",
+        Source = "https://www.pixiv.net/artworks/98004277",
+        Url = "https://file.xunkong.cc/wallpaper/98004277_p0.webp"
     };
 
     private readonly XunkongApiService _xunkongApiService;
@@ -68,15 +69,26 @@ public sealed partial class HomePage : Page
 
 
     [ObservableProperty]
+    private List<GrowthScheduleItem> growthScheduleItems;
+
+
+    [ObservableProperty]
     private List<Announcement> finishingActivities;
 
 
     private async void HomePage_Loaded(object sender, RoutedEventArgs e)
     {
+        // 推荐图片
         await InitializeWallpaperAsync();
+        // 实时便笺
         await GetDailyNotesAsync();
+        // 今天刷什么
+        await GetCalendarAndGrowthScheduleAsync();
+        // 即将结束的活动
         await GetFinishingActivityAsync();
+        // 通知
         await GetNotificationContentAsync();
+        // 更新
         await CheckUpdateAsync();
     }
 
@@ -445,7 +457,110 @@ public sealed partial class HomePage : Page
         }
         catch (Exception ex)
         {
-            Logger.Error(ex);
+            Logger.Error(ex, "实时便笺");
+        }
+    }
+
+
+    /// <summary>
+    /// 养成计划
+    /// </summary>
+    /// <returns></returns>
+    private async Task GetCalendarAndGrowthScheduleAsync()
+    {
+        try
+        {
+            using var docDb = DatabaseProvider.CreateDocDb();
+            var col = docDb.GetCollection<GrowthScheduleItem>();
+            var growthItems = col.FindAll().OrderBy(x => x.Order).ToList();
+            if (!growthItems.Any())
+            {
+                return;
+            }
+            var todayTitles = new List<string>();
+            try
+            {
+                var calendars = await _hoyolabClient.GetCalendarInfosAsync();
+                var day = (int)DateTimeOffset.UtcNow.AddHours(4).DayOfWeek;
+                day = day == 0 ? 7 : day;
+                var dayString = day.ToString();
+                var todayCalendars = calendars.Where(x => x.Kind == "2" && x.DropDay.Contains(dayString)).ToList();
+                todayTitles = todayCalendars.Select(x => x.Title).ToList();
+                foreach (var growItem in growthItems)
+                {
+                    if (todayCalendars.FirstOrDefault(x => x.Title == growItem.Name) is CalendarInfo info)
+                    {
+                        var materials = info.ContentInfos.Select(x => x.Title).ToList();
+                        if (growItem.LevelCostItems?.Any() ?? false)
+                        {
+                            foreach (var costItem in growItem.LevelCostItems)
+                            {
+                                if (materials.Contains(costItem.Name))
+                                {
+                                    costItem.IsToday = true;
+                                }
+                            }
+                        }
+                        if (growItem.TalentCostItems?.Any() ?? false)
+                        {
+                            foreach (var costItem in growItem.TalentCostItems)
+                            {
+                                if (materials.Contains(costItem.Name))
+                                {
+                                    costItem.IsToday = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Logger.Error(ex, "养成计划");
+            }
+            GrowthScheduleItems = growthItems.OrderBy(x => x.HasTodayMaterial()).ThenBy(x => x.Order).ToList();
+            c_TextBlock_GrowthSchedule.Visibility = Visibility.Visible;
+            c_GridView_GrowthSchedule.Visibility = Visibility.Visible;
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "养成计划");
+        }
+    }
+
+
+    /// <summary>
+    /// 单个材料完成
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void c_Button_CostItem_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (sender is Button button)
+            {
+                if (button.Content is TextBlock textBlock)
+                {
+                    if (textBlock.DataContext is GrowthScheduleCostItem costItem)
+                    {
+                        costItem.IsFinish = !costItem.IsFinish;
+                    }
+                    if (VisualTreeHelper.GetParent(VisualTreeHelper.GetParent(VisualTreeHelper.GetParent(button))) is StackPanel stackPanel)
+                    {
+                        if (stackPanel.DataContext is GrowthScheduleItem item)
+                        {
+                            using var docDb = DatabaseProvider.CreateDocDb();
+                            var col = docDb.GetCollection<GrowthScheduleItem>();
+                            col.Upsert(item);
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "单个材料完成");
         }
     }
 
@@ -469,7 +584,7 @@ public sealed partial class HomePage : Page
         }
         catch (Exception ex)
         {
-
+            Logger.Error(ex, "即将结束的活动");
         }
     }
 
@@ -697,6 +812,7 @@ public sealed partial class HomePage : Page
             await InvokeService.CheckTransformerReachedAndHomeCoinFullAsync(true);
         }
     }
+
 
 
 

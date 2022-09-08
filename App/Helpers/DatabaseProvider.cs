@@ -11,9 +11,13 @@ internal class DatabaseProvider
 
     private static readonly string _liteDbPath;
 
+    private static readonly string _docDbPath;
+
     private static readonly string _sqliteConnectionString;
 
     private static readonly string _liteDbConnectionString;
+
+    private static readonly string _docDbConnectionString;
 
     private static bool _initialized;
 
@@ -29,9 +33,11 @@ internal class DatabaseProvider
     {
         Directory.CreateDirectory(Path.Combine(XunkongEnvironment.UserDataPath, "Database"));
         _liteDbPath = Path.Combine(XunkongEnvironment.UserDataPath, @"Database\GenshinData.db");
+        _docDbPath = Path.Combine(XunkongEnvironment.UserDataPath, @"Database\Document.db");
         _sqlitePath = Path.Combine(XunkongEnvironment.UserDataPath, @"Database\XunkongData.db");
         _sqliteConnectionString = $"Data Source={_sqlitePath};";
         _liteDbConnectionString = $"Filename={_liteDbPath};Connection=shared;";
+        _docDbConnectionString = $"Filename={_docDbPath};Connection=shared;";
 
         SqlMapper.AddTypeHandler(new DapperSqlMapper.DateTimeOffsetHandler());
         SqlMapper.AddTypeHandler(new DapperSqlMapper.TravelNotesPrimogemsMonthGroupStatsListHandler());
@@ -88,6 +94,11 @@ internal class DatabaseProvider
     }
 
 
+
+    public static LiteDatabase CreateDocDb()
+    {
+        return new LiteDatabase(_docDbConnectionString);
+    }
 
 
 

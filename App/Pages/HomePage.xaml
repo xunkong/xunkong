@@ -20,7 +20,7 @@
 
 
         <ScrollViewer x:Name="_ScrollViewer_Content">
-            <StackPanel Margin="48,0,48,48" Spacing="24">
+            <StackPanel Margin="48,0,48,48">
                 <StackPanel.ChildrenTransitions>
                     <TransitionCollection>
                         <EntranceThemeTransition />
@@ -28,7 +28,7 @@
                 </StackPanel.ChildrenTransitions>
 
                 <Grid x:Name="_Grid_Image"
-                      Margin="-48,0,-48,-72"
+                      Margin="-48,0,-48,-48"
                       Visibility="Collapsed">
                     <Border x:Name="_Border_BackgroundImage"
                             SizeChanged="_Border_BackgroundImage_SizeChanged"
@@ -130,6 +130,7 @@
 
                 <!--  快捷指令  -->
                 <StackPanel x:Name="c_StackPanel_QuickAction"
+                            Margin="0,24,0,0"
                             Orientation="Horizontal"
                             Spacing="16"
                             Visibility="Collapsed">
@@ -148,34 +149,217 @@
 
                 <!--  实时便笺  -->
                 <TextBlock x:Name="c_TextBlock_DailyNote"
+                           Margin="0,24,0,0"
                            VerticalAlignment="Center"
                            FontSize="20"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                            Text="实时便笺"
                            Visibility="Collapsed" />
                 <GridView x:Name="c_GridView_DailyNotes"
-                          Margin="0,-12,0,0"
+                          Margin="0,12,0,0"
+                          ItemContainerStyle="{StaticResource BlankGridViewItemStyle}"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                          ScrollViewer.HorizontalScrollMode="Disabled"
+                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                          ScrollViewer.VerticalScrollMode="Disabled"
                           SelectionMode="None"
                           Visibility="Collapsed" />
 
+
+                <!--  养成计划  -->
+                <TextBlock x:Name="c_TextBlock_GrowthSchedule"
+                           Margin="0,24,0,0"
+                           VerticalAlignment="Center"
+                           FontSize="20"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                           Text="养成计划"
+                           Visibility="Collapsed" />
+                <GridView x:Name="c_GridView_GrowthSchedule"
+                          Margin="0,12,0,0"
+                          ItemContainerStyle="{StaticResource BlankGridViewItemStyle}"
+                          ItemsSource="{x:Bind GrowthScheduleItems}"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                          ScrollViewer.HorizontalScrollMode="Disabled"
+                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                          ScrollViewer.VerticalScrollMode="Disabled"
+                          SelectionMode="None"
+                          Visibility="Collapsed">
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="xdm:GrowthScheduleItem">
+                            <Button Width="280" Padding="8">
+                                <Grid ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <!--  角色或武器头像  -->
+                                    <Grid Width="80"
+                                          Height="98"
+                                          CornerRadius="4">
+                                        <xdc:CachedImage Width="80"
+                                                         VerticalAlignment="Top"
+                                                         Source="{x:Bind Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}" />
+                                        <xdc:CachedImage Width="80"
+                                                         Height="80"
+                                                         VerticalAlignment="Top"
+                                                         CornerRadius="4,4,16,0"
+                                                         Source="{x:Bind Icon}" />
+                                        <TextBlock Margin="0,0,0,2"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Bottom"
+                                                   FontSize="12"
+                                                   Foreground="#84603D"
+                                                   Text="{x:Bind Name}" />
+                                    </Grid>
+                                    <!--  尚未完成的材料  -->
+                                    <ItemsControl Grid.Column="1" ItemsSource="{x:Bind GetUnFinishedMaterialItems()}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <ItemsWrapGrid Orientation="Horizontal" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="xdm:GrowthScheduleCostItem">
+                                                <xdc:CachedImage Width="32"
+                                                                 Height="32"
+                                                                 Source="{x:Bind Icon}">
+                                                    <ToolTipService.ToolTip>
+                                                        <TextBlock>
+                                                            <Run Text="{x:Bind Name}" />
+                                                            <Run Text="x" /><Run Text="{x:Bind CostCount}" />
+                                                        </TextBlock>
+                                                    </ToolTipService.ToolTip>
+                                                </xdc:CachedImage>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <Border Grid.Column="1"
+                                            Margin="0,-8,-12,0"
+                                            Padding="2"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Top"
+                                            Background="{ThemeResource AccentFillColorDefaultBrush}"
+                                            CornerRadius="0,4,0,4"
+                                            Visibility="{x:Bind HasTodayMaterial()}">
+                                        <FontIcon HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"
+                                                  FontSize="10"
+                                                  Foreground="{ThemeResource TextFillColorInverseBrush}"
+                                                  Glyph="&#xEDB1;" />
+                                    </Border>
+                                </Grid>
+                                <!--  点击后内容  -->
+                                <Button.Flyout>
+                                    <Flyout>
+                                        <Flyout.FlyoutPresenterStyle>
+                                            <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
+                                                <Setter Property="Padding" Value="0" />
+                                            </Style>
+                                        </Flyout.FlyoutPresenterStyle>
+                                        <Grid Padding="12,8,12,8"
+                                              ColumnSpacing="8"
+                                              CornerRadius="8">
+                                            <Grid.Resources>
+                                                <DataTemplate x:Key="CostItemDataTemplate" x:DataType="xdm:GrowthScheduleCostItem">
+                                                    <Grid Width="188"
+                                                          Height="28"
+                                                          HorizontalAlignment="Left">
+                                                        <xdc:CachedImage Width="28"
+                                                                         Height="28"
+                                                                         HorizontalAlignment="Left"
+                                                                         Source="{x:Bind Icon}" />
+                                                        <Button x:Name="c_Button_CostItem"
+                                                                Width="160"
+                                                                Margin="28,0,0,0"
+                                                                HorizontalContentAlignment="Left"
+                                                                Click="c_Button_CostItem_Click"
+                                                                Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
+                                                            <TextBlock VerticalAlignment="Center">
+                                                                <Run Text="{x:Bind Name}" />
+                                                                <Run Text="x" /><Run Text="{x:Bind CostCount}" />
+                                                            </TextBlock>
+                                                        </Button>
+                                                        <Line IsHitTestVisible="False"
+                                                              Stroke="{ThemeResource TextFillColorPrimaryBrush}"
+                                                              StrokeThickness="1"
+                                                              Visibility="{x:Bind IsFinish, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                              X1="36"
+                                                              X2="180"
+                                                              Y1="14"
+                                                              Y2="14" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </Grid.Resources>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="40" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <!--  图片和名称  -->
+                                            <StackPanel Grid.ColumnSpan="2"
+                                                        Orientation="Horizontal"
+                                                        Spacing="16">
+                                                <xdc:CachedImage Width="36"
+                                                                 Height="36"
+                                                                 CornerRadius="4"
+                                                                 Source="{x:Bind Icon}" />
+                                                <TextBlock VerticalAlignment="Center"
+                                                           FontSize="20"
+                                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                           Text="{x:Bind Name}" />
+                                                <TextBlock VerticalAlignment="Center"
+                                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                           Text="今日可获取秘境材料"
+                                                           Visibility="{x:Bind HasTodayMaterial()}" />
+                                            </StackPanel>
+                                            <MenuFlyoutSeparator Grid.Row="1"
+                                                                 Grid.ColumnSpan="2"
+                                                                 Margin="0,0,0,4" />
+                                            <!--  角色或武器等级素材  -->
+                                            <ItemsControl Grid.Row="2"
+                                                          Grid.Column="0"
+                                                          ItemTemplate="{StaticResource CostItemDataTemplate}"
+                                                          ItemsSource="{x:Bind LevelCostItems}" />
+                                            <!--  天赋素材  -->
+                                            <ItemsControl Grid.Row="2"
+                                                          Grid.Column="1"
+                                                          ItemTemplate="{StaticResource CostItemDataTemplate}"
+                                                          ItemsSource="{x:Bind TalentCostItems}"
+                                                          Visibility="{x:Bind TalentCostItems, Converter={StaticResource ObjectToVisibilityConverter}}" />
+                                        </Grid>
+                                    </Flyout>
+                                </Button.Flyout>
+                            </Button>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
+
                 <!--  即将结束的活动  -->
                 <TextBlock x:Name="c_TextBlock_FinishingActivity"
+                           Margin="0,24,0,0"
                            VerticalAlignment="Center"
                            FontSize="20"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                            Text="即将结束的活动"
                            Visibility="Collapsed" />
                 <GridView x:Name="c_GridView_FinishingActivity"
-                          Margin="0,-12,0,0"
+                          Margin="0,12,0,0"
                           ItemContainerStyle="{StaticResource BlankGridViewItemStyle}"
                           ItemsSource="{x:Bind FinishingActivities}"
-                          SelectionMode="None"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                          ScrollViewer.HorizontalScrollMode="Disabled"
+                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                          ScrollViewer.VerticalScrollMode="Disabled"
                           Visibility="Collapsed">
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="xha:Announcement">
                             <Grid x:Name="c_Grid_FinishingActivity"
                                   Width="300"
-                                  Height="200"
+                                  Height="180"
                                   HorizontalAlignment="Left"
                                   Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                                   BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
@@ -198,29 +382,23 @@
                                                 <ani:ScaleAnimation EasingMode="EaseOut"
                                                                     EasingType="Circle"
                                                                     To="1.1"
-                                                                    Duration="0:0:0.6" />
+                                                                    Duration="0:0:1" />
                                             </ani:AnimationSet>
                                             <ani:AnimationSet x:Name="BannerPointerExitedAnimation">
                                                 <ani:ScaleAnimation EasingMode="EaseOut"
                                                                     EasingType="Circle"
                                                                     To="1"
-                                                                    Duration="0:0:0.6" />
+                                                                    Duration="0:0:1" />
                                             </ani:AnimationSet>
                                         </ani:Explicit.Animations>
                                     </xdc:CachedImage>
                                 </Border>
                                 <TextBlock Grid.Row="1"
-                                           Margin="8,4,8,0"
+                                           Margin="8,6,8,0"
                                            FontSize="20"
                                            Text="{x:Bind Subtitle}" />
                                 <TextBlock Grid.Row="1"
-                                           Margin="8,8,8,0"
-                                           VerticalAlignment="Center"
-                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                           Text="{x:Bind Title}"
-                                           TextTrimming="CharacterEllipsis" />
-                                <TextBlock Grid.Row="1"
-                                           Margin="8,0,8,4"
+                                           Margin="8,0,8,6"
                                            HorizontalAlignment="Left"
                                            VerticalAlignment="Bottom"
                                            FontSize="12"
@@ -232,7 +410,7 @@
                                 <Border Padding="8,4,8,4"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Top"
-                                        Background="{ThemeResource ControlOnImageFillColorDefaultBrush}"
+                                        Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
                                         CornerRadius="0,8,0,8">
                                     <TextBlock FontSize="12"
                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -264,6 +442,7 @@
                     <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
                         <Setter Property="Padding" Value="0" />
                         <Setter Property="MaxWidth" Value="680" />
+                        <Setter Property="CornerRadius" Value="8" />
                     </Style>
                 </Flyout.FlyoutPresenterStyle>
                 <xdc:AnnouncementContentViewer x:Name="c_AnnouncementContentViewer" />
