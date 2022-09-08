@@ -186,7 +186,10 @@
                           Visibility="Collapsed">
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="xdm:GrowthScheduleItem">
-                            <Button Width="280" Padding="8">
+                            <Button Width="280"
+                                    Padding="8"
+                                    HorizontalContentAlignment="Stretch"
+                                    VerticalContentAlignment="Stretch">
                                 <Grid ColumnSpacing="12">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
@@ -234,8 +237,8 @@
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
                                     <Border Grid.Column="1"
-                                            Margin="0,-8,-12,0"
-                                            Padding="2"
+                                            Margin="0,-8,-8,0"
+                                            Padding="4,2,4,2"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Top"
                                             Background="{ThemeResource AccentFillColorDefaultBrush}"
