@@ -7,7 +7,47 @@
              x:DefaultBindMode="OneWay"
              mc:Ignorable="d">
 
-    <Grid Padding="12"
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Name="Light">
+                    <Color x:Key="CardCaution">#D3FFF4CE</Color>
+                </ResourceDictionary>
+                <ResourceDictionary x:Name="Dark">
+                    <Color x:Key="CardCaution">#4CFCE100</Color>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+            <SineEase x:Key="EasingFunction" EasingMode="EaseInOut" />
+            <Storyboard x:Name="CautionStoryBoard">
+                <ColorAnimationUsingKeyFrames Storyboard.TargetName="c_Grid_Base" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+                    <EasingColorKeyFrame EasingFunction="{StaticResource EasingFunction}"
+                                         KeyTime="0:0:0"
+                                         Value="{ThemeResource CardBackgroundFillColorDefault}" />
+                    <EasingColorKeyFrame EasingFunction="{StaticResource EasingFunction}"
+                                         KeyTime="0:0:0.5"
+                                         Value="{ThemeResource CardCaution}" />
+                    <EasingColorKeyFrame EasingFunction="{StaticResource EasingFunction}"
+                                         KeyTime="0:0:1"
+                                         Value="{ThemeResource CardBackgroundFillColorDefault}" />
+                    <EasingColorKeyFrame EasingFunction="{StaticResource EasingFunction}"
+                                         KeyTime="0:0:1.5"
+                                         Value="{ThemeResource CardCaution}" />
+                    <EasingColorKeyFrame EasingFunction="{StaticResource EasingFunction}"
+                                         KeyTime="0:0:2"
+                                         Value="{ThemeResource CardBackgroundFillColorDefault}" />
+                    <EasingColorKeyFrame EasingFunction="{StaticResource EasingFunction}"
+                                         KeyTime="0:0:2.5"
+                                         Value="{ThemeResource CardCaution}" />
+                    <EasingColorKeyFrame EasingFunction="{StaticResource EasingFunction}"
+                                         KeyTime="0:0:3"
+                                         Value="{ThemeResource CardBackgroundFillColorDefault}" />
+                </ColorAnimationUsingKeyFrames>
+            </Storyboard>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid x:Name="c_Grid_Base"
+          Padding="12"
           Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
           BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
           BorderThickness="1"
