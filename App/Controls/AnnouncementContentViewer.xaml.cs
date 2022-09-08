@@ -42,9 +42,18 @@ public sealed partial class AnnouncementContentViewer : UserControl
             var sb = new StringBuilder();
             if (css is null)
             {
-                css = await File.ReadAllTextAsync(Path.Combine(Package.Current.InstalledPath, @"Assets\Others\github-markdown_5.1.0.css"));
+                var theme = AppSetting.GetValue<int>(SettingKeys.ApplicationTheme);
+                var path = theme switch
+                {
+                    1 => Path.Combine(Package.Current.InstalledPath, @"Assets\Others\github-markdown-light_5.1.0.css"),
+                    2 => Path.Combine(Package.Current.InstalledPath, @"Assets\Others\github-markdown-dark_5.1.0.css"),
+                    _ => Path.Combine(Package.Current.InstalledPath, @"Assets\Others\github-markdown_5.1.0.css"),
+                };
+                css = await File.ReadAllTextAsync(path);
             }
             sb.AppendLine("""
+                <!DOCTYPE html>
+                <html>
                 <head>
                 <base target="_blank">
                 <meta name="color-scheme" content="light dark">
@@ -55,19 +64,24 @@ public sealed partial class AnnouncementContentViewer : UserControl
             sb.AppendLine("""
                 </style>
                 </head>
-                <body>
+                <body style="background-color: transparent;">
                 <article class="markdown-body" style="background-color: transparent;">
                 """);
             sb.AppendLine($"<h3>{announce.Title}</h3>");
             if (!string.IsNullOrWhiteSpace(announce.Banner))
             {
-                sb.AppendLine($"""<img width="100%" src="{announce.Banner}" />""");
-                sb.AppendLine("<br>");
-                sb.AppendLine("<br>");
+                sb.AppendLine($"""
+                    <img width="100%" src="{announce.Banner}" />
+                    <br>
+                    <br>
+                    """);
             }
             sb.AppendLine(announce.Content);
-            sb.AppendLine("</article>");
-            sb.AppendLine("</body>");
+            sb.AppendLine("""
+                </article>
+                </body>
+                </html>
+                """);
             sb.Replace("style=\"color:rgba(85,85,85,1)\"", "");
             sb.Replace("style=\"background-color: rgb(255, 215, 185);\"", "");
             sb.Replace("style=\"background-color: rgb(254, 245, 231);\"", "");
