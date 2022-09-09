@@ -3,6 +3,7 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using Vanara.PInvoke;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using WinRT.Interop;
 using Xunkong.Desktop.Pages;
@@ -68,6 +69,7 @@ public sealed partial class ToolWindow : Window
         HWND = WindowNative.GetWindowHandle(this);
         var windowId = Win32Interop.GetWindowIdFromWindow(HWND);
         AppWindow = AppWindow.GetFromWindowId(windowId);
+        AppWindow.SetIcon(Path.Combine(Package.Current.InstalledLocation.Path, "Assets/Logos/logo.ico"));
         Title = XunkongEnvironment.AppName;
         TitleName.Text = XunkongEnvironment.AppName;
         ExtendsContentIntoTitleBar = true;

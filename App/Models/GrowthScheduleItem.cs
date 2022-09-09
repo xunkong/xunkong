@@ -78,6 +78,7 @@ public partial class GrowthScheduleCostItem
 
     public int CostCount { get; set; }
 
+    [LiteDB.BsonIgnore]
     public bool IsToday { get; set; }
 
     [ObservableProperty]

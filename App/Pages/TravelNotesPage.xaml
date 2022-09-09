@@ -560,7 +560,7 @@
                                          PointerWheelChanged="SfCartesianChart_PointerWheelChanged">
                     <charts:SfCartesianChart.Resources>
                         <Style x:Key="ToolTipStyle" TargetType="Path">
-                            <Setter Property="Fill" Value="{ThemeResource AcrylicInAppFillColorDefaultInverseBrush}" />
+                            <Setter Property="Fill" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
                         </Style>
                     </charts:SfCartesianChart.Resources>
                     <charts:FastScatterBitmapSeries charts:ChartTooltip.EnableAnimation="False"

@@ -122,7 +122,7 @@
                    HorizontalAlignment="Right"
                    VerticalAlignment="Bottom"
                    FontSize="14"
-                   Text="图片来源：朱成碧" />
+                   Text="图片作者：朱成碧" />
 
     </Grid>
 

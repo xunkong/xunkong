@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.Windows.AppLifecycle;
 using System.Runtime.InteropServices;
 using Vanara.PInvoke;
+using Windows.ApplicationModel;
 using Windows.Graphics;
 using WinRT.Interop;
 using Xunkong.Desktop.Pages;
@@ -87,6 +88,7 @@ public sealed partial class MainWindow : Window
         HWND = WindowNative.GetWindowHandle(this);
         var windowId = Win32Interop.GetWindowIdFromWindow(HWND);
         _appWindow = AppWindow.GetFromWindowId(windowId);
+        _appWindow.SetIcon(Path.Combine(Package.Current.InstalledLocation.Path, "Assets/Logos/logo.ico"));
         // AppWindowTitleBar 的体验不是很好
         //if (AppWindowTitleBar.IsCustomizationSupported())
         //{

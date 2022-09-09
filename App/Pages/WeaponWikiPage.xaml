@@ -76,7 +76,7 @@
                     <!--  背景  -->
                     <xdc:CachedImage Width="600"
                                      Height="300"
-                                     Source="ms-appx:///Assets/Images/SpriteUI_GachaShowPanel_Bg_Weapon.png" />
+                                     Source="ms-appx:///Assets/Images/UI_GachaShowPanel_Bg_Weapon.png" />
                     <!--  抽卡大图  -->
                     <xdc:CachedImage Width="180"
                                      Margin="268,16,0,0"

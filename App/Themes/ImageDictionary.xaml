@@ -23,6 +23,6 @@
     <BitmapImage x:Key="Image_Primogems" UriSource="ms-appx:///Assets/Images/UI_ItemIcon_201.png" />
     <BitmapImage x:Key="Image_Mora" UriSource="ms-appx:///Assets/Images/UI_ItemIcon_202.png" />
     <BitmapImage x:Key="Image_Paimon" UriSource="ms-appx:///Assets/Images/UI_EmotionIcon5.png" />
-    <BitmapImage x:Key="Image_Explore" UriSource="ms-appx:///Assets/Images/DUI_Icon_Intee_Explore_1.png" />
+    <BitmapImage x:Key="Image_Explore" UriSource="ms-appx:///Assets/Images/UI_Icon_Intee_Explore_1.png" />
 
 </ResourceDictionary>

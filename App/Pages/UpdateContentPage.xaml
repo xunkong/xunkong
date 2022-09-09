@@ -17,10 +17,19 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <TextBlock HorizontalAlignment="Left"
-                       VerticalAlignment="Center"
-                       Style="{ThemeResource SubtitleTextBlockStyle}"
-                       Text="最近更新内容" />
+            <StackPanel Orientation="Horizontal">
+                <TextBlock VerticalAlignment="Center"
+                           Style="{ThemeResource SubtitleTextBlockStyle}"
+                           Text="最近更新内容" />
+                <TextBlock Margin="16,4,0,0"
+                           VerticalAlignment="Center"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                           Text="当前版本" />
+                <TextBlock Margin="8,4,0,0"
+                           VerticalAlignment="Center"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                           Text="{x:Bind ThisVersion}" />
+            </StackPanel>
             <StackPanel Grid.Column="1"
                         HorizontalAlignment="Right"
                         Orientation="Horizontal">

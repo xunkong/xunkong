@@ -11,6 +11,7 @@
 		<Nullable>enable</Nullable>
 		<LangVersion>preview</LangVersion>
 		<DefineConstants>DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+		<ApplicationIcon>..\Package\Assets\Logos\logo.ico</ApplicationIcon>
 	</PropertyGroup>
 
 	<ItemGroup>

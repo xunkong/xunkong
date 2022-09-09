@@ -236,6 +236,7 @@
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
+                                    <!--  今日可获取秘境材料提醒  -->
                                     <Border Grid.Column="1"
                                             Margin="0,-8,-8,0"
                                             Padding="4,2,4,2"

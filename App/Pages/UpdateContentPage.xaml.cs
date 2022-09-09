@@ -18,7 +18,7 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
 
     private Version? lastVersion;
 
-    private Version thisVersion = XunkongEnvironment.AppVersion;
+    private Version ThisVersion = XunkongEnvironment.AppVersion;
 
 
     public UpdateContentPage()
@@ -44,9 +44,9 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
         {
             var client = new GitHubClient(new ProductHeaderValue("xunkong"));
             var sb = new StringBuilder();
-            if (lastVersion is null || lastVersion >= thisVersion)
+            if (lastVersion is null || lastVersion >= ThisVersion)
             {
-                var release = await client.Repository.Release.Get("xunkong", "xunkong", thisVersion.ToString(3));
+                var release = await client.Repository.Release.Get("xunkong", "xunkong", ThisVersion.ToString(3));
                 sb.AppendLine($"# {release.TagName} {release.Name}");
                 sb.AppendLine();
                 sb.AppendLine($"> 更新于 {release.PublishedAt:yyyy-MM-dd HH:mm:ss}");
@@ -61,7 +61,7 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
                 {
                     if (Version.TryParse(release.TagName, out var version))
                     {
-                        if (lastVersion < version && version <= thisVersion)
+                        if (lastVersion < version && version <= ThisVersion)
                         {
                             sb.AppendLine($"# {release.TagName} {release.Name}");
                             sb.AppendLine();
@@ -108,7 +108,7 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
             webview.CoreWebView2.Settings.AreBrowserAcceleratorKeysEnabled = false;
             webview.NavigateToString(html);
             AppSetting.TrySetValue(SettingKeys.ShowUpdateContentOnLoaded, false);
-            AppSetting.TrySetValue(SettingKeys.LastVersion, thisVersion.ToString());
+            AppSetting.TrySetValue(SettingKeys.LastVersion, ThisVersion.ToString());
         }
         catch (Exception ex)
         {
