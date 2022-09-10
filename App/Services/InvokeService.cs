@@ -206,9 +206,9 @@ internal class InvokeService
                         {
                             var text = (note.Transformer?.RecoveryTime?.Reached ?? false, note.IsHomeCoinFull) switch
                             {
-                                (true, true) => $"{user.Nickname} 的 原粹树脂 和 洞天宝钱 已满",
-                                (true, false) => $"{user.Nickname} 的 原粹树脂 已满",
-                                (false, true) => $"{user.Nickname} 的 洞天宝钱 已满",
+                                (true, true) => $"{user.Nickname} 的洞天宝钱已满，参量质变仪可使用",
+                                (true, false) => $"{user.Nickname} 的参量质变仪可使用",
+                                (false, true) => $"{user.Nickname} 的洞天宝钱已满",
                                 (false, false) => "",
                             };
                             if (!string.IsNullOrWhiteSpace(text))
@@ -218,9 +218,9 @@ internal class InvokeService
                         }
                     }
                 }
-                catch (Exception ex) when (ex is HoyolabException or HttpRequestException)
+                catch (HoyolabException ex)
                 {
-                    Logger.Error(ex, $"检查参量质变仪和洞天宝钱 - Uid {user.Uid}");
+                    Logger.Error(ex, $"检查洞天宝钱和参量质变仪 - Uid {user.Uid}");
                 }
             }
             var toastString = sb.ToString();
@@ -238,7 +238,7 @@ internal class InvokeService
         }
         catch (Exception ex)
         {
-            Logger.Error(ex, "检查参量质变仪和洞天宝钱");
+            Logger.Error(ex, "检查洞天宝钱和参量质变仪");
             if (sendInAppNotification)
             {
                 NotificationProvider.Warning("出错了", ex.Message);

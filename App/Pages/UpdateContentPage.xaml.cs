@@ -49,7 +49,7 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
                 var release = await client.Repository.Release.Get("xunkong", "xunkong", ThisVersion.ToString(3));
                 sb.AppendLine($"# {release.TagName} {release.Name}");
                 sb.AppendLine();
-                sb.AppendLine($"> 更新于 {release.PublishedAt:yyyy-MM-dd HH:mm:ss}");
+                sb.AppendLine($"> 更新于 {release.PublishedAt?.LocalDateTime:yyyy-MM-dd HH:mm:ss}");
                 sb.AppendLine();
                 sb.AppendLine(release.Body);
                 sb.AppendLine();
