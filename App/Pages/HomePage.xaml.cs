@@ -262,7 +262,8 @@ public sealed partial class HomePage : Page
             Logger.Error(ex, "使用 Win2D 加载背景图片");
             if (ex.HResult == unchecked((int)0x88982F8B))
             {
-                NotificationProvider.Warning("出错了", "缺少 Webp 图片解码组件");
+                NotificationProvider.ShowWithButton(InfoBarSeverity.Warning, "出错了", "缺少 Webp 图像解码组件，请在应用商店中下载「Webp 图像扩展」", "打开商店",
+                    async () => await Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?productid=9PG2DK419DRG&mode=mini")));
             }
         }
     }
