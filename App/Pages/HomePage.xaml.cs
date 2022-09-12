@@ -435,9 +435,9 @@ public sealed partial class HomePage : Page
         {
             var users = _hoyolabService.GetHoyolabUserInfoList();
             var roles = _hoyolabService.GetGenshinRoleInfoList();
-            foreach (var user in users)
+            foreach (var role in roles)
             {
-                if (roles.FirstOrDefault(x => x.Cookie == user.Cookie) is GenshinRoleInfo role)
+                if (users.FirstOrDefault(x => x.Cookie == role.Cookie) is HoyolabUserInfo user)
                 {
                     DailyNoteThumbCard card;
                     try
