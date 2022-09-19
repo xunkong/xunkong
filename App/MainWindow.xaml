@@ -7,7 +7,12 @@
         xmlns:xdc="using:Xunkong.Desktop.Controls"
         mc:Ignorable="d">
 
-    <Grid x:Name="RootGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid x:Name="RootGrid">
+
+        <Rectangle x:Name="windowBackground"
+                   HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch"
+                   Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
 
         <Frame x:Name="RootFrame" />
 
@@ -35,7 +40,9 @@
                 <ScalarTransition />
             </StackPanel.OpacityTransition>
             <StackPanel.Transitions>
-                <AddDeleteThemeTransition />
+                <TransitionCollection>
+                    <AddDeleteThemeTransition />
+                </TransitionCollection>
             </StackPanel.Transitions>
         </StackPanel>
 

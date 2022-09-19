@@ -156,6 +156,48 @@ public sealed partial class SettingPage : Page
     }
 
 
+
+    /// <summary>
+    /// 窗口背景材质
+    /// </summary>
+    [ObservableProperty]
+    private int _WindowBackdropIndex = AppSetting.GetValue<int>(SettingKeys.WindowBackdrop) & 0xF;
+    partial void OnWindowBackdropIndexChanged(int value)
+    {
+        ChangeWindowBackdrop((AlwaysActiveBackdrop ? 0x80000000 : 0) | (uint)value);
+    }
+
+
+    /// <summary>
+    /// 始终激活背景
+    /// </summary>
+    [ObservableProperty]
+    private bool _AlwaysActiveBackdrop = (AppSetting.GetValue<uint>(SettingKeys.WindowBackdrop) & 0x80000000) > 0;
+    partial void OnAlwaysActiveBackdropChanged(bool value)
+    {
+        ChangeWindowBackdrop((value ? 0x80000000 : 0) | (uint)WindowBackdropIndex);
+    }
+
+
+    /// <summary>
+    /// 修改背景材质
+    /// </summary>
+    /// <param name="value"></param>
+    private void ChangeWindowBackdrop(uint value)
+    {
+        if (MainWindow.Current.TryChangeBackdrop(value))
+        {
+            AppSetting.TrySetValue(SettingKeys.WindowBackdrop, value);
+        }
+        else
+        {
+            AppSetting.TrySetValue(SettingKeys.WindowBackdrop, 0);
+            NotificationProvider.Warning("不支持此操作");
+        }
+    }
+
+
+
     #endregion
 
 

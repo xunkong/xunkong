@@ -61,7 +61,7 @@ public sealed partial class ToolWindow : Window
 
     private void InitializeWindow()
     {
-        _backdrop = new SystemBackdropHelper(this, BackbdropFallBackBehavior.None);
+        _backdrop = new SystemBackdropHelper(this);
         if (_backdrop.TrySetBackdrop())
         {
             Grid_Root.Background = null;

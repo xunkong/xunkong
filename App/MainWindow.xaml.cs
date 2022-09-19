@@ -72,10 +72,10 @@ public sealed partial class MainWindow : Window
 
     private void InitializeWindow()
     {
-        _backdrop = new SystemBackdropHelper(this, BackbdropFallBackBehavior.None);
+        _backdrop = new SystemBackdropHelper(this);
         if (_backdrop.TrySetBackdrop())
         {
-            RootGrid.Background = null;
+            windowBackground.Visibility = Visibility.Collapsed;
         }
         InitializeWindowState();
         InitializeMessage();
@@ -223,6 +223,20 @@ public sealed partial class MainWindow : Window
         User32.SetForegroundWindow(HWND);
     }
 
+
+    public bool TryChangeBackdrop(uint value)
+    {
+        var result = _backdrop.TryChangeBackdrop(value);
+        if (result && (value & 0xF) > 0)
+        {
+            windowBackground.Visibility = Visibility.Collapsed;
+        }
+        else
+        {
+            windowBackground.Visibility = Visibility.Visible;
+        }
+        return result;
+    }
 
 
 

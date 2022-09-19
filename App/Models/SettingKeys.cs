@@ -145,4 +145,9 @@ internal static class SettingKeys
     /// </summary>
     public const string ShowUpdateContentOnLoaded = nameof(ShowUpdateContentOnLoaded);
 
+    /// <summary>
+    /// 窗口背景材质
+    /// </summary>
+    public const string WindowBackdrop = nameof(WindowBackdrop);
+
 }

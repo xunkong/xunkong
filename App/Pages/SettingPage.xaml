@@ -183,6 +183,51 @@
                         </xdc:SettingCard.Selector>
                     </xdc:SettingCard>
 
+                    <!--  窗口背景材质  -->
+                    <Expander Name="_Expander_WindowBackdrop"
+                              HorizontalAlignment="Stretch"
+                              HorizontalContentAlignment="Stretch">
+                        <Expander.Header>
+                            <Grid>
+                                <StackPanel Padding="4,16,0,16" Orientation="Horizontal">
+                                    <FontIcon FontSize="20" Glyph="&#xE7F8;" />
+                                    <TextBlock Margin="20,0,0,0">
+                                        <Run Text="窗口背景材质" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="暂时只可在 Windows 11 上使用" />
+                                    </TextBlock>
+                                </StackPanel>
+                                <ComboBox MinWidth="104"
+                                          HorizontalAlignment="Right"
+                                          VerticalAlignment="Center"
+                                          SelectedIndex="{x:Bind WindowBackdropIndex, Mode=TwoWay}">
+                                    <ComboBoxItem Content="None" />
+                                    <ComboBoxItem Content="Mica" />
+                                    <ComboBoxItem Content="Acrylic" />
+                                    <ComboBoxItem Content="Mica Alt" />
+                                </ComboBox>
+                            </Grid>
+                        </Expander.Header>
+                        <Expander.Content>
+                            <StackPanel Margin="0,-16,44,-16">
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock>
+                                        <Run Text="始终激活背景" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="窗口失去焦点时不会回退为纯色" />
+                                    </TextBlock>
+                                    <ToggleSwitch HorizontalAlignment="Right"
+                                                  IsOn="{x:Bind AlwaysActiveBackdrop, Mode=TwoWay}"
+                                                  Style="{ThemeResource RightAlignToggleSwitchStyle}" />
+                                </Grid>
+                            </StackPanel>
+                        </Expander.Content>
+                    </Expander>
+
                     <!--  主页壁纸  -->
                     <Expander Name="_Expander_HomePageWallpaper"
                               HorizontalAlignment="Stretch"
