@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.WinUI.Notifications;
-using CommunityToolkit.WinUI.UI;
+using Scighost.WinUILib.Cache;
 using System.Diagnostics;
 using System.Threading;
 using Windows.UI.Notifications;
@@ -15,6 +15,7 @@ internal static class PreCacheService
     const string tag = "PreCacheAllFiles";
     const string group = "precache";
 
+    private static FileCache _fileCache;
 
     private static CancellationTokenSource _cancellationTokenSource;
 
@@ -53,7 +54,7 @@ internal static class PreCacheService
         try
         {
             IsRunning = true;
-            var folder = CacheHelper.GetFileCacheFolder();
+            var folder = (await ImageCache.Instance.GetCacheFolderAsync()).Path;
             if (Directory.Exists(folder))
             {
                 foreach (var file in new DirectoryInfo(folder).GetFiles())
@@ -76,6 +77,12 @@ internal static class PreCacheService
 
             if (list.Any())
             {
+                if (_fileCache is null)
+                {
+                    _fileCache = new FileCache();
+                    _fileCache.Initialize(await ImageCache.Instance.GetCacheFolderAsync());
+                }
+
                 var sw = Stopwatch.StartNew();
                 long lastMs = 0;
                 int total = list.Count;
@@ -87,7 +94,7 @@ internal static class PreCacheService
                 uint index = 0;
                 await Parallel.ForEachAsync(list, new ParallelOptions { CancellationToken = token, MaxDegreeOfParallelism = Environment.ProcessorCount * 4 }, async (url, t) =>
                 {
-                    var file = await FileCache.Instance.GetFromCacheAsync(new Uri(url), cancellationToken: t);
+                    var file = await _fileCache.GetFromCacheAsync(new Uri(url), cancellationToken: t);
                     ulong size = 0;
                     if (file is not null)
                     {
@@ -115,7 +122,7 @@ internal static class PreCacheService
 
                 manager.Hide(toast);
 
-                await ToastProvider.SendAsync("预缓存完成", $"总共下载文件 {downloadCount} 个，数据量 {(double)downloadSize / (1 << 20):F2} MB，耗时 {sw.Elapsed.TotalSeconds:N0} 秒。");
+                await ToastProvider.SendAsync("预缓存完成", $"下载文件 {downloadCount} 个，数据量 {(double)downloadSize / (1 << 20):F2} MB，耗时 {sw.Elapsed.TotalSeconds:N0} 秒。");
 
             }
             else
@@ -182,7 +189,7 @@ internal static class PreCacheService
         list.AddRange(goals.Select(x => x.RewardNameCard?.ProfileImage));
         list.AddRange(goals.Select(x => x.RewardNameCard?.GalleryBackground));
 
-        return list.Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().Where(x => !File.Exists(CacheHelper.GetCacheFilePath(x!))).ToList()!;
+        return list.Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().Where(x => !File.Exists(ImageCache.Instance.GetCacheFilePath(new Uri(x!)))).ToList()!;
     }
 
 

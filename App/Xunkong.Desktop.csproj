@@ -34,7 +34,7 @@
 		<PackageReference Include="NAudio.Wasapi" Version="2.1.0" />
 		<PackageReference Include="NAudio.WinMM" Version="2.1.0" />
 		<PackageReference Include="Octokit" Version="2.0.1" />
-		<PackageReference Include="Scighost.WinUILib" Version="0.1.0-beta3" />
+		<PackageReference Include="Scighost.WinUILib" Version="0.1.0-beta8" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageReference Include="TaskScheduler" Version="2.10.1" />
 		<PackageReference Include="Titanium.Web.Proxy" Version="3.1.1450" />

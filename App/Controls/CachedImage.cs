@@ -1,7 +1,7 @@
-﻿using CommunityToolkit.WinUI.UI;
-using CommunityToolkit.WinUI.UI.Controls;
+﻿using CommunityToolkit.WinUI.UI.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Scighost.WinUILib.Cache;
 using System.Threading;
 
 namespace Xunkong.Desktop.Controls;
@@ -10,11 +10,10 @@ internal class CachedImage : ImageEx
 {
 
 
-
     static CachedImage()
     {
-        FileCache.Instance.CacheDuration = TimeSpan.FromDays(30);
-        FileCache.Instance.RetryCount = 3;
+        ImageCache.Instance.CacheDuration = TimeSpan.FromDays(30);
+        ImageCache.Instance.RetryCount = 3;
     }
 
 
@@ -26,20 +25,24 @@ internal class CachedImage : ImageEx
             {
                 return new BitmapImage(imageUri);
             }
-            var file = await FileCache.Instance.GetFromCacheAsync(imageUri, false, token);
+            var image = await ImageCache.Instance.GetFromCacheAsync(imageUri, false, token);
             if (token.IsCancellationRequested)
             {
                 throw new TaskCanceledException("Image source has changed.");
             }
-            return new BitmapImage(new Uri(file.Path));
+            if (image is null)
+            {
+                throw new FileNotFoundException(imageUri.ToString());
+            }
+            return image;
         }
         catch (TaskCanceledException)
         {
             throw;
         }
-        catch
+        catch (Exception)
         {
-            await FileCache.Instance.RemoveAsync(new[] { imageUri });
+            await ImageCache.Instance.RemoveAsync(new[] { imageUri });
             throw;
         }
 

@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Scighost.WinUILib.Cache;
 using System.Collections.ObjectModel;
 using System.Net.Http;
 using Windows.Storage;
@@ -161,7 +162,7 @@ public sealed partial class SettingPage : Page
     /// 窗口背景材质
     /// </summary>
     [ObservableProperty]
-    private int _WindowBackdropIndex = AppSetting.GetValue<int>(SettingKeys.WindowBackdrop) & 0xF;
+    private int _WindowBackdropIndex = (int)AppSetting.GetValue<uint>(SettingKeys.WindowBackdrop) & 0xF;
     partial void OnWindowBackdropIndexChanged(int value)
     {
         ChangeWindowBackdrop((AlwaysActiveBackdrop ? 0x80000000 : 0) | (uint)value);
@@ -570,11 +571,24 @@ public sealed partial class SettingPage : Page
     {
         try
         {
-            var folder = CacheHelper.GetFileCacheFolder();
-            if (Directory.Exists(folder))
+            long totalSize = 0;
+            var fileFolder = FileCache.Instance.GetCacheFolderAsync().GetAwaiter().GetResult().Path;
+            if (Directory.Exists(fileFolder))
             {
-                var files = new DirectoryInfo(folder).GetFiles();
-                var totalSize = files.Sum(x => x.Length);
+                var files = new DirectoryInfo(fileFolder).GetFiles();
+                totalSize += files.Sum(x => x.Length);
+            }
+
+            var imageFolder = ImageCache.Instance.GetCacheFolderAsync().GetAwaiter().GetResult().Path;
+            if (Directory.Exists(imageFolder))
+            {
+                var files = new DirectoryInfo(imageFolder).GetFiles();
+                totalSize += files.Sum(x => x.Length);
+            }
+
+            if (totalSize > 0)
+            {
+
                 CachedFileSizeString = $"已缓存 {(double)totalSize / (1 << 20):F2} MB";
             }
             else
@@ -599,16 +613,15 @@ public sealed partial class SettingPage : Page
     {
         try
         {
-            await Task.Run(() =>
-            {
-                var tempState = ApplicationData.Current.TemporaryFolder.Path;
-                var fileCacheFolder = Path.Combine(tempState, "FileCache");
-                if (Directory.Exists(fileCacheFolder))
-                {
-                    Directory.Delete(fileCacheFolder, true);
-                }
-                Directory.CreateDirectory(fileCacheFolder);
-            });
+
+            var fileFolder = await FileCache.Instance.GetCacheFolderAsync();
+            await fileFolder.DeleteAsync(StorageDeleteOption.PermanentDelete);
+            Directory.CreateDirectory(fileFolder.Path);
+
+            var imageFolder = await ImageCache.Instance.GetCacheFolderAsync();
+            await imageFolder.DeleteAsync(StorageDeleteOption.PermanentDelete);
+            Directory.CreateDirectory(imageFolder.Path);
+
             NotificationProvider.Success($"完成");
         }
         catch (Exception ex)

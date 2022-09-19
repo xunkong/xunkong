@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using Scighost.WinUILib.Cache;
+using System.Net.Http;
 using Xunkong.ApiClient;
 using Xunkong.ApiClient.Xunkong;
 using Xunkong.GenshinData.Achievement;
@@ -304,7 +305,7 @@ internal class XunkongApiService
             var wallpaper = await GetRandomWallpaperAsync();
             if (wallpaper is not null)
             {
-                var file = CacheHelper.GetCacheFilePath(wallpaper.Url);
+                var file = ImageCache.Instance.GetCacheFilePath(new Uri(wallpaper.Url));
                 if (!File.Exists(file))
                 {
                     var bytes = await _httpClient.GetByteArrayAsync(wallpaper.Url);
