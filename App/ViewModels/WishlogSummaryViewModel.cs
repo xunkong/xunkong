@@ -460,7 +460,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         var stackPanel = new StackPanel { Spacing = 8 };
         stackPanel.Children.Add(new TextBlock { Text = "您需要重新获取祈愿记录网址，点击下方启动代理按键后，在原神游戏中重新打开祈愿记录页面，获取到网址后再次点击获取记录。", TextWrapping = Microsoft.UI.Xaml.TextWrapping.Wrap });
         stackPanel.Children.Add(new TextBlock { Text = "获取到网址后应用会自动关闭代理，若关闭应用后出现无法连接网络的情况，请在「设置/网络和 Internet/代理/使用代理服务器」中手动关闭代理。", TextWrapping = Microsoft.UI.Xaml.TextWrapping.Wrap });
-        stackPanel.Children.Add(new TextBlock { Text = "首次启动代理时必须按照证书，否则无法获取网址，此证书为软件自动生成。", TextWrapping = Microsoft.UI.Xaml.TextWrapping.Wrap });
+        stackPanel.Children.Add(new TextBlock { Text = "首次启动代理时必须安装证书，否则无法获取网址，此证书为软件自动生成。", TextWrapping = Microsoft.UI.Xaml.TextWrapping.Wrap });
         var dialog = new ContentDialog
         {
             Title = "启动代理服务器",
