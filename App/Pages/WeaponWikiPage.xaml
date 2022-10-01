@@ -23,7 +23,7 @@
         <AutoSuggestBox x:Name="c_AutoSuggestBox_Search"
                         Margin="24,24,20,0"
                         VerticalAlignment="Top"
-                        PlaceholderText="名称、稀有度、副属性、武器类型。。。"
+                        PlaceholderText="名称、稀有度、副属性、武器类型……"
                         QueryIcon="Find"
                         QuerySubmitted="c_AutoSuggestBox_Search_QuerySubmitted" />
 
