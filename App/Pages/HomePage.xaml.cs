@@ -382,13 +382,27 @@ public sealed partial class HomePage : Page
                 NotificationProvider.Warning("找不到缓存的文件", 3000);
                 return;
             }
-            var destFolder = Path.Combine(XunkongEnvironment.UserDataPath, "Wallpaper");
+            var destFolder = AppSetting.GetValue<string>(SettingKeys.WallpaperSaveFolder) ?? Path.Combine(XunkongEnvironment.UserDataPath, "Wallpaper");
             var fileName = WallpaperInfo.FileName ?? Path.GetFileName(WallpaperInfo.Url);
             var destPath = Path.Combine(destFolder, fileName);
-            Directory.CreateDirectory(destFolder);
-            File.Copy(file, destPath, true);
-            Action action = () => Process.Start(new ProcessStartInfo { FileName = destPath, UseShellExecute = true });
-            NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "已保存", fileName, "打开文件", action, null, 3000);
+            Action openImageAction = () => Process.Start(new ProcessStartInfo { FileName = destPath, UseShellExecute = true });
+            if (File.Exists(destPath))
+            {
+                Action overwriteAction = () =>
+                {
+                    Directory.CreateDirectory(destFolder);
+                    File.Copy(file, destPath, true);
+                    NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "已保存", fileName, "打开文件", openImageAction, null, 3000);
+                };
+                NotificationProvider.ShowWithButton(InfoBarSeverity.Warning, "文件已存在", null, "覆盖文件", overwriteAction, null, 3000);
+                return;
+            }
+            else
+            {
+                Directory.CreateDirectory(destFolder);
+                File.Copy(file, destPath, true);
+                NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "已保存", fileName, "打开文件", openImageAction, null, 3000);
+            }
         }
         catch (Exception ex)
         {
@@ -424,6 +438,9 @@ public sealed partial class HomePage : Page
     #endregion
 
 
+
+
+    #region Content
 
 
     /// <summary>
@@ -614,6 +631,10 @@ public sealed partial class HomePage : Page
             Logger.Error(ex, "显示活动内容");
         }
     }
+
+
+    #endregion
+
 
 
 

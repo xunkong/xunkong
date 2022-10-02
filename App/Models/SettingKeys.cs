@@ -150,4 +150,9 @@ internal static class SettingKeys
     /// </summary>
     public const string WindowBackdrop = nameof(WindowBackdrop);
 
+    /// <summary>
+    /// 壁纸存储位置
+    /// </summary>
+    public const string WallpaperSaveFolder = nameof(WallpaperSaveFolder);
+
 }

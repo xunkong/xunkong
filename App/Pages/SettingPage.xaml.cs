@@ -199,6 +199,44 @@ public sealed partial class SettingPage : Page
 
 
 
+    /// <summary>
+    /// 壁纸保存位置
+    /// </summary>
+    [ObservableProperty]
+    private string _WallpaperSaveFolder = AppSetting.GetValue<string>(SettingKeys.WallpaperSaveFolder) ?? Path.Combine(XunkongEnvironment.UserDataPath, "Wallpaper");
+
+
+
+    /// <summary>
+    /// 修改壁纸保存位置
+    /// </summary>
+    /// <returns></returns>
+    [RelayCommand]
+    private async Task ChangeWallpaperSaveFolderAsync()
+    {
+        try
+        {
+            var folderPicker = new FolderPicker();
+            folderPicker.SuggestedStartLocation = PickerLocationId.Desktop;
+            folderPicker.FileTypeFilter.Add("*");
+            InitializeWithWindow.Initialize(folderPicker, MainWindow.Current.HWND);
+            var folder = await folderPicker.PickSingleFolderAsync();
+            if (folder is not null)
+            {
+                WallpaperSaveFolder = folder.Path;
+                AppSetting.SetValue(SettingKeys.WallpaperSaveFolder, folder.Path);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "修改壁纸保存位置");
+            NotificationProvider.Error(ex, "修改壁纸保存位置");
+        }
+    }
+
+
+
+
     #endregion
 
 

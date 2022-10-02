@@ -263,6 +263,18 @@
                                                   IsOn="{x:Bind DownloadWallpaperOnMeteredInternet, Mode=TwoWay}"
                                                   Style="{ThemeResource RightAlignToggleSwitchStyle}" />
                                 </Grid>
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock>
+                                        <Run Text="保存位置" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="{x:Bind WallpaperSaveFolder}" />
+                                    </TextBlock>
+                                    <Button HorizontalAlignment="Right"
+                                            Command="{x:Bind ChangeWallpaperSaveFolderCommand, Mode=OneTime}"
+                                            Content="修改路径" />
+                                </Grid>
                             </StackPanel>
                         </Expander.Content>
                     </Expander>
