@@ -77,20 +77,20 @@ public sealed partial class HomePage : Page
     private List<Announcement> finishingActivities;
 
 
-    private async void HomePage_Loaded(object sender, RoutedEventArgs e)
+    private void HomePage_Loaded(object sender, RoutedEventArgs e)
     {
         // 推荐图片
-        await InitializeWallpaperAsync();
+        InitializeWallpaperAsync();
         // 实时便笺
-        await GetDailyNotesAsync();
+        GetDailyNotesAsync();
         // 今天刷什么
-        await GetCalendarAndGrowthScheduleAsync();
+        GetCalendarAndGrowthScheduleAsync();
         // 即将结束的活动
-        await GetFinishingActivityAsync();
+        GetFinishingActivityAsync();
         // 通知
-        await GetNotificationContentAsync();
+        GetNotificationContentAsync();
         // 更新
-        await CheckUpdateAsync();
+        CheckUpdateAsync();
     }
 
 
@@ -115,7 +115,7 @@ public sealed partial class HomePage : Page
     /// <summary>
     /// 初始化推荐图片，并且下载新的
     /// </summary>
-    private async Task InitializeWallpaperAsync()
+    private async void InitializeWallpaperAsync()
     {
         try
         {
@@ -447,7 +447,7 @@ public sealed partial class HomePage : Page
     /// 实时便笺
     /// </summary>
     /// <returns></returns>
-    private async Task GetDailyNotesAsync()
+    private async void GetDailyNotesAsync()
     {
         try
         {
@@ -485,7 +485,7 @@ public sealed partial class HomePage : Page
     /// 养成计划
     /// </summary>
     /// <returns></returns>
-    private async Task GetCalendarAndGrowthScheduleAsync()
+    private async void GetCalendarAndGrowthScheduleAsync()
     {
         try
         {
@@ -588,7 +588,7 @@ public sealed partial class HomePage : Page
     /// 即将结束的活动
     /// </summary>
     /// <returns></returns>
-    private async Task GetFinishingActivityAsync()
+    private async void GetFinishingActivityAsync()
     {
         try
         {
@@ -644,7 +644,7 @@ public sealed partial class HomePage : Page
     /// 初始化通知栏内容
     /// </summary>
     /// <returns></returns>
-    private async Task GetNotificationContentAsync()
+    private async void GetNotificationContentAsync()
     {
         try
         {
@@ -678,7 +678,7 @@ public sealed partial class HomePage : Page
     /// 检查更新
     /// </summary>
     /// <returns></returns>
-    private async Task CheckUpdateAsync()
+    private async void CheckUpdateAsync()
     {
         try
         {
