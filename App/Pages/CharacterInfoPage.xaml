@@ -475,13 +475,18 @@
 
                     <MenuFlyoutSeparator Visibility="{x:Bind SelectedCharacter.IsOwn, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}" />
 
-                    <!--  武器  -->
-                    <StackPanel Height="100"
-                                Margin="24,0,0,0"
-                                Orientation="Horizontal"
-                                Spacing="16"
-                                Visibility="{x:Bind SelectedCharacter.IsOwn, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}">
-                        <Grid VerticalAlignment="Center">
+                    <Grid Height="100"
+                          ColumnSpacing="12"
+                          Visibility="{x:Bind SelectedCharacter.IsOwn, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <!--  武器  -->
+                        <Grid Margin="24,0,0,0"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Center">
                             <xdc:CachedImage Width="80"
                                              VerticalAlignment="Top"
                                              Source="{x:Bind SelectedCharacter.Weapon.Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}" />
@@ -495,7 +500,7 @@
                                 <Run Text="Lv." /><Run Text="{x:Bind SelectedCharacter.Weapon.Level}" />
                             </TextBlock>
                         </Grid>
-                        <StackPanel Width="480">
+                        <StackPanel Margin="120,0,0,0">
                             <TextBlock>
                                 <Run FontSize="16" Text="{x:Bind SelectedCharacter.Weapon.Name}" />
                                 <LineBreak />
@@ -506,11 +511,14 @@
                             <xdc:CachedImage Height="20"
                                              HorizontalAlignment="Left"
                                              Source="{x:Bind SelectedCharacter.Weapon.Rarity, Converter={StaticResource RarityToIconStarConverter}}" />
-                            <TextBlock Text="{x:Bind SelectedCharacter.Weapon.Description}" TextWrapping="Wrap" />
+                            <TextBlock MaxLines="2"
+                                       Text="{x:Bind SelectedCharacter.Weapon.Description}"
+                                       TextTrimming="WordEllipsis"
+                                       TextWrapping="Wrap" />
                         </StackPanel>
-                        <AppBarSeparator />
+                        <AppBarSeparator Grid.Column="1" />
                         <!--  圣遗物  -->
-                        <ItemsControl ItemsSource="{x:Bind SelectedCharacter.Reliquaries}">
+                        <ItemsControl Grid.Column="2" ItemsSource="{x:Bind SelectedCharacter.Reliquaries}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <StackPanel Orientation="Horizontal" Spacing="16" />
@@ -535,7 +543,8 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-                    </StackPanel>
+                    </Grid>
+
 
                     <MenuFlyoutSeparator Visibility="{x:Bind SelectedCharacter.IsOwn, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Collapsed}" />
 

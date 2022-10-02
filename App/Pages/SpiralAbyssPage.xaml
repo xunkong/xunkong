@@ -105,7 +105,9 @@
         <ScrollViewer x:Name="_ScrollViewer_Abyss"
                       Grid.Row="2"
                       Grid.Column="1"
-                      Visibility="{x:Bind SelectedAbyssInfo, Converter={StaticResource ObjectToVisibilityConverter}}">
+                      HorizontalScrollBarVisibility="Auto"
+                      Visibility="{x:Bind SelectedAbyssInfo, Converter={StaticResource ObjectToVisibilityConverter}}"
+                      ZoomMode="Enabled">
             <StackPanel Margin="0,0,0,24" Spacing="8">
                 <!--  上半部分每期统计  -->
                 <Grid ColumnSpacing="48">
