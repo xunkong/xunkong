@@ -873,7 +873,7 @@ public sealed partial class AchievementPage : Page
         try
         {
             var text = await File.ReadAllTextAsync(path);
-            var baseNode = JsonNode.Parse(text);
+            var baseNode = JsonNode.Parse(text, new JsonNodeOptions { PropertyNameCaseInsensitive = true });
             if (baseNode?["info"] is JsonNode infoNode)
             {
                 ExportApp = infoNode?["export_app"]?.ToString();
@@ -882,7 +882,7 @@ public sealed partial class AchievementPage : Page
             }
             if (baseNode?["list"] is JsonNode listNode)
             {
-                importAchievementDatas = JsonSerializer.Deserialize<List<AchievementData>>(listNode);
+                importAchievementDatas = JsonSerializer.Deserialize<List<AchievementData>>(listNode, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             }
             if (importAchievementDatas?.Any() ?? false)
             {
@@ -969,7 +969,7 @@ public sealed partial class AchievementPage : Page
                             uiaf_version = "v1.1",
                             export_timestamp = DateTimeOffset.Now.ToUnixTimeSeconds(),
                         },
-                        list = list
+                        list,
                     };
                 }
                 else

@@ -16,5 +16,10 @@
             <Hyperlink NavigateUri="https://www.snapgenshin.com/development/UIAF.html" UnderlineStyle="None">统一可交换成就标准</Hyperlink>
             <Run Text="的成就导出工具。" />
         </TextBlock>
+        <TextBlock TextWrapping="Wrap">
+            <Run Text="若在获取成就的过程中出现原神闪退的情况，请" />
+            <Hyperlink NavigateUri="https://github.com/HolographicHat/YaeAchievement/releases/latest" UnderlineStyle="None">下载最新版本</Hyperlink>
+            <Run Text="。" />
+        </TextBlock>
     </StackPanel>
 </UserControl>

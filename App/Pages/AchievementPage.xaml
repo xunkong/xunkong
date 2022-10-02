@@ -628,7 +628,7 @@
                         <Run FontFamily="{ThemeResource SymbolThemeFontFamily}" Text="&#xE118;" />
                         <Run Text="导入" />
                     </TextBlock>
-                    <TextBlock Text="支持统一可交换成就标准 v1.0" />
+                    <TextBlock Text="支持统一可交换成就标准 v1.1" />
                     <TextBlock>
                         <Run Text="数据来源：" />
                         <Run Text="{x:Bind ExportApp}" />
