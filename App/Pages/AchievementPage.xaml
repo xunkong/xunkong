@@ -75,13 +75,13 @@
                 </TextBlock>
             </StackPanel>
             <AutoSuggestBox x:Name="c_AutoSuggetBox_Search"
-                            Width="300"
+                            Width="340"
                             Height="32"
                             Margin="324,0,0,0"
                             HorizontalAlignment="Left"
-                            PlaceholderText="请输入成就的名称、说明或 ID"
+                            PlaceholderText="请输入成就的名称、介绍、ID 。。。"
                             QueryIcon="Find"
-                            TextChanged="c_AutoSuggetBox_Search_TextChanged" />
+                            QuerySubmitted="c_AutoSuggetBox_Search_QuerySubmitted" />
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                 <ComboBox x:Name="c_ComboBox_Uids"
                           MinWidth="124"
@@ -164,8 +164,13 @@
                                     <TextBlock Margin="0,2,0,0"
                                                FontSize="14"
                                                FontWeight="Bold"
-                                               Foreground="{ThemeResource GoalNonSelectedProgressBrush}"
-                                               Text="{x:Bind Progress}" />
+                                               Foreground="{ThemeResource GoalNonSelectedProgressBrush}">
+                                        <Run Text="{x:Bind Progress}" />
+                                        <Run Text="" />
+                                        <Run Text="{x:Bind Current}" /><Run Text="/" /><Run Text="{x:Bind Total}" />
+                                        <Run Text="" />
+                                        <Run Text="{x:Bind GotRewardCount}" /><Run Text="/" /><Run Text="{x:Bind TotalRewardCount}" />
+                                    </TextBlock>
                                 </StackPanel>
                                 <Image Height="28"
                                        Margin="12,8,0,0"
@@ -243,7 +248,7 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
 
-
+                    <!--  成就组详细内容  -->
                     <Grid x:Name="c_Grid_GoalReward"
                           Grid.Row="0"
                           Height="80"
@@ -410,6 +415,7 @@
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center"
                                            Source="{x:Bind Icon}" />
+
                                     <!--  介绍  -->
                                     <Grid Grid.Column="1">
                                         <StackPanel Margin="0,12,0,0"
@@ -420,8 +426,13 @@
                                                        FontSize="16"
                                                        FontWeight="Bold"
                                                        Foreground="{ThemeResource ItemGridTitleBrush}"
-                                                       IsTextSelectionEnabled="True"
-                                                       Text="{x:Bind Title}" />
+                                                       IsTextSelectionEnabled="True">
+                                                <Run Text="{Binding Title}" />
+                                                <Run Text="" />
+                                                <Run FontSize="14"
+                                                     Foreground="{ThemeResource ItemGridDescriptionBrush}"
+                                                     Text="{x:Bind Version}" />
+                                            </TextBlock>
                                             <TextBlock Margin="0,0,80,0"
                                                        HorizontalAlignment="Left"
                                                        FontFamily="楷体"

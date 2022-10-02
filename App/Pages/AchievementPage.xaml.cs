@@ -215,6 +215,10 @@ public sealed partial class AchievementPage : Page
             using var liteDb = DatabaseProvider.CreateLiteDB();
             var goals = liteDb.GetCollection<AchievementGoal>().FindAll().Adapt<List<AchievementPageModel_Goal>>();
             var items = liteDb.GetCollection<AchievementItem>().FindAll().Adapt<List<AchievementPageModel_Item>>();
+            if (!string.IsNullOrWhiteSpace(items.FirstOrDefault()?.Version))
+            {
+                c_AutoSuggetBox_Search.PlaceholderText = "请输入成就的名称、介绍、版本、ID 。。。";
+            }
             var items_dic = items.ToDictionary(x => x.Id);
 
             if (!preCached)
@@ -350,35 +354,32 @@ public sealed partial class AchievementPage : Page
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="args"></param>
-    private void c_AutoSuggetBox_Search_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    private void c_AutoSuggetBox_Search_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
         try
         {
-            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            if (string.IsNullOrWhiteSpace(sender.Text))
             {
-                if (string.IsNullOrWhiteSpace(sender.Text))
+                c_Grid_GoalReward.Visibility = Visibility.Visible;
+                Achievements = SelectedGoal.Items;
+            }
+            else
+            {
+                var splitText = sender.Text.Split(" ");
+                var result = original_items;
+                foreach (var text in splitText)
                 {
-                    c_Grid_GoalReward.Visibility = Visibility.Visible;
-                    Achievements = SelectedGoal.Items;
-                }
-                else
-                {
-                    var splitText = sender.Text.Split(" ");
-                    var result = original_items;
-                    foreach (var text in splitText)
+                    if (int.TryParse(text, out int id))
                     {
-                        if (int.TryParse(text, out int id))
-                        {
-                            result = result.Where(x => x.Id == id).ToList();
-                        }
-                        else
-                        {
-                            result = result.Where(x => x.Title.Contains(text) || x.Description.Contains(text)).ToList();
-                        }
+                        result = result.Where(x => x.Id == id).ToList();
                     }
-                    c_Grid_GoalReward.Visibility = Visibility.Collapsed;
-                    Achievements = result.OrderBy(x => x.IsFinish).ThenBy(x => x.OrderId).ToList();
+                    else
+                    {
+                        result = result.Where(x => x.Title.Contains(text) || x.Description.Contains(text) || (x.Version?.Contains(text) ?? false)).ToList();
+                    }
                 }
+                c_Grid_GoalReward.Visibility = Visibility.Collapsed;
+                Achievements = result.OrderBy(x => x.IsFinish).ThenBy(x => x.OrderId).ToList();
             }
         }
         catch (Exception ex)
@@ -1290,6 +1291,7 @@ public sealed partial class AchievementPage : Page
             }
         }
     }
+
 
 
 
