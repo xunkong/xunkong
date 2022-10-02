@@ -54,12 +54,19 @@ internal partial class WishlogSummaryViewModel : ObservableObject
             await ToastProvider.SendAsync("完成", $"已获取 Uid {uid} 的祈愿记录网址");
             MainWindow.Current.DispatcherQueue.TryEnqueue(async () =>
             {
-                ClipboardHelper.SetText(e);
-                NotificationProvider.Success("完成", $"已复制 Uid {uid} 的祈愿记录网址到剪贴板", 5000);
-                var addCount = await _wishlogService.GetWishlogByUidAsync(uid, progressHandler);
-                StateText = $"新增 {addCount} 条祈愿记录";
-                SelectedUid = uid.ToString();
-                InitializePageData();
+                try
+                {
+                    ClipboardHelper.SetText(e);
+                    NotificationProvider.Success("完成", $"已复制 Uid {uid} 的祈愿记录网址到剪贴板", 5000);
+                    var addCount = await _wishlogService.GetWishlogByUidAsync(uid, progressHandler);
+                    StateText = $"新增 {addCount} 条祈愿记录";
+                    SelectedUid = uid.ToString();
+                    InitializePageData();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
             });
         }
         catch (Exception ex)

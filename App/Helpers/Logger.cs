@@ -87,7 +87,7 @@ internal static class Logger
             var callerName = $"{stack.GetMethod()?.DeclaringType?.FullName}.{callerMemberName}";
             using (LogContext.PushProperty("CallerName", callerName))
             {
-                Log.Error(ex, message);
+                Log.Error(ex, message ?? "--->");
             }
         }
         catch { }
