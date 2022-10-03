@@ -217,7 +217,7 @@ public sealed partial class AchievementPage : Page
             var items = liteDb.GetCollection<AchievementItem>().FindAll().Adapt<List<AchievementPageModel_Item>>();
             if (!string.IsNullOrWhiteSpace(items.FirstOrDefault()?.Version))
             {
-                c_AutoSuggetBox_Search.PlaceholderText = "请输入成就的名称、介绍、版本、ID 。。。";
+                c_AutoSuggetBox_Search.PlaceholderText = "请输入成就的名称、描述、版本、ID 。。。";
             }
             var items_dic = items.ToDictionary(x => x.Id);
 

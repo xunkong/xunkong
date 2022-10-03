@@ -1,5 +1,4 @@
 ﻿using Microsoft.UI.Xaml;
-using Octokit;
 using System.Text;
 using Windows.ApplicationModel;
 using Windows.System;
@@ -42,7 +41,7 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
     {
         try
         {
-            var client = new GitHubClient(new ProductHeaderValue("xunkong"));
+            var client = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("xunkong"));
             var sb = new StringBuilder();
             if (lastVersion is null || lastVersion >= ThisVersion)
             {
@@ -56,7 +55,7 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
             }
             else
             {
-                var releases = await client.Repository.Release.GetAll("xunkong", "xunkong", new ApiOptions { PageCount = 1, PageSize = 10, StartPage = 1 });
+                var releases = await client.Repository.Release.GetAll("xunkong", "xunkong", new Octokit.ApiOptions { PageCount = 1, PageSize = 10, StartPage = 1 });
                 foreach (var release in releases)
                 {
                     if (Version.TryParse(release.TagName, out var version))

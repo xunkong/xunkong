@@ -40,7 +40,7 @@ internal class InvokeService
                             }
                         }
                     }
-                    catch (Exception ex) when (ex is HoyolabException or HttpRequestException)
+                    catch (HoyolabException ex)
                     {
                         await ToastProvider.SendAsync("刷新磁贴时遇到错误", $"Uid {uid}\n{ex.Message}");
                         Logger.Error(ex, $"刷新磁贴 - Uid {uid}");
