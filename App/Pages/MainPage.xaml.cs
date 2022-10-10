@@ -550,11 +550,11 @@ public sealed partial class MainPage : Page
     /// <param name="e"></param>
     private async void _Button_PinTile_Click(object sender, RoutedEventArgs e)
     {
-        if (Environment.OSVersion.Version >= new Version("10.0.22000.0"))
-        {
-            NotificationProvider.Warning("您的操作系统不支持开始菜单磁贴", 3000);
-            return;
-        }
+        //if (Environment.OSVersion.Version >= new Version("10.0.22000.0"))
+        //{
+        //    NotificationProvider.Warning("您的操作系统不支持开始菜单磁贴", 3000);
+        //    return;
+        //}
         try
         {
             if (((FrameworkElement)sender).DataContext is GenshinRoleInfo role)

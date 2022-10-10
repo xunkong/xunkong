@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.WinUI.Notifications;
+using Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel.Background;
 using Windows.UI.Notifications;
 using Windows.UI.StartScreen;
@@ -30,6 +31,23 @@ internal static class SecondaryTileProvider
 
     public static async Task<bool> RequestPinTileAsync(DailyNoteInfo info)
     {
+        if (Environment.OSVersion.Version >= new Version("10.0.22000.0"))
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "提示",
+                Content = "您的操作系统不支持开始菜单磁贴",
+                IsPrimaryButtonEnabled = true,
+                PrimaryButtonText = "仍要固定",
+                CloseButtonText = "取消",
+                DefaultButton = ContentDialogButton.Close,
+                XamlRoot = MainWindow.Current.XamlRoot,
+            };
+            if (await dialog.ShowWithZeroMarginAsync() is ContentDialogResult.None)
+            {
+                return false;
+            }
+        }
         SecondaryTile tile = new SecondaryTile($"DailyNote_{info.Uid}",
                                                "寻空",
                                                "dailynote",

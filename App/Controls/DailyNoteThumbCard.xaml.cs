@@ -73,11 +73,11 @@ public sealed partial class DailyNoteThumbCard : UserControl
     [RelayCommand]
     private async Task PinToStartMenuAsync()
     {
-        if (Environment.OSVersion.Version >= new Version("10.0.22000.0"))
-        {
-            NotificationProvider.Warning("您的操作系统不支持开始菜单磁贴", 3000);
-            return;
-        }
+        //if (Environment.OSVersion.Version >= new Version("10.0.22000.0"))
+        //{
+        //    NotificationProvider.Warning("您的操作系统不支持开始菜单磁贴", 3000);
+        //    return;
+        //}
         try
         {
             if (DailyNoteInfo is not null)
