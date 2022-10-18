@@ -148,9 +148,20 @@
                         Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
                         ToolTipService.ToolTip="复制">
                     <Button.ContentTransitions>
-                        <ContentThemeTransition />
+                        <TransitionCollection>
+                            <ContentThemeTransition />
+                        </TransitionCollection>
                     </Button.ContentTransitions>
                 </Button>
+                <!--  保存  -->
+                <Button x:Name="_Button_Save"
+                        Width="36"
+                        Height="36"
+                        Command="{x:Bind SaveImageCommand}"
+                        Content="&#xE105;"
+                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                        Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
+                        ToolTipService.ToolTip="保存" />
                 <!--  关闭  -->
                 <Button Width="36"
                         Height="36"

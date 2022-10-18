@@ -1,8 +1,11 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Scighost.WinUILib.Cache;
 using Windows.Foundation;
 using Windows.Storage;
+using Windows.Storage.Pickers;
+using Windows.System;
 using Windows.UI.Core;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -148,30 +151,86 @@ public sealed partial class ImageViewer : UserControl
     {
         try
         {
-
-            StorageFile file;
-            if (Source.StartsWith("ms-appx"))
+            StorageFile? file = null;
+            var uri = new Uri(Source);
+            if (uri.Scheme is "ms-appx")
             {
-                file = await StorageFile.GetFileFromApplicationUriAsync(new Uri(Source));
+                file = await StorageFile.GetFileFromApplicationUriAsync(uri);
+            }
+            else if (uri.Scheme is "file")
+            {
+                file = await StorageFile.GetFileFromPathAsync(uri.ToString());
             }
             else
             {
-                if (!File.Exists(Source))
-                {
-                    NotificationProvider.Warning("找不到缓存的文件", 3000);
-                    return;
-                }
-                file = await StorageFile.GetFileFromPathAsync(Source);
+                file = await ImageCache.Instance.GetFileFromCacheAsync(uri);
             }
-            ClipboardHelper.SetBitmap(file);
-            _Button_Copy.Content = "\xE8FB";
-            await Task.Delay(3000);
-            _Button_Copy.Content = "\xE8C8";
+            if (file is null)
+            {
+                NotificationProvider.Warning("找不到缓存的文件", 3000);
+            }
+            else
+            {
+                ClipboardHelper.SetBitmap(file);
+                _Button_Copy.Content = "\xE8FB";
+                await Task.Delay(3000);
+                _Button_Copy.Content = "\xE8C8";
+            }
         }
         catch (Exception ex)
         {
             NotificationProvider.Error(ex);
             Logger.Error(ex, "复制图片");
+        }
+    }
+
+
+    /// <summary>
+    /// 保存图片
+    /// </summary>
+    /// <returns></returns>
+    [RelayCommand]
+    private async Task SaveImageAsync()
+    {
+        try
+        {
+            StorageFile? file = null;
+            var uri = new Uri(Source);
+            if (uri.Scheme is "ms-appx")
+            {
+                file = await StorageFile.GetFileFromApplicationUriAsync(uri);
+            }
+            else if (uri.Scheme is "file")
+            {
+                file = await StorageFile.GetFileFromPathAsync(uri.ToString());
+            }
+            else
+            {
+                file = await ImageCache.Instance.GetFileFromCacheAsync(uri);
+            }
+            if (file is null)
+            {
+                NotificationProvider.Warning("找不到缓存的文件", 3000);
+            }
+            else
+            {
+                var picker = new FileSavePicker();
+                picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+                picker.FileTypeChoices.Add("Image", new List<string>() { ".png", ".webp" });
+                picker.SuggestedFileName = Path.GetFileName(Source);
+                WinRT.Interop.InitializeWithWindow.Initialize(picker, MainWindow.Current.HWND);
+                var saveFile = await picker.PickSaveFileAsync();
+                if (saveFile != null)
+                {
+                    await file.CopyAndReplaceAsync(saveFile);
+                    NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "已保存", saveFile.Name, "打开文件", async () => await Launcher.LaunchFileAsync(saveFile), null, 3000);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            NotificationProvider.Error(ex);
+            Logger.Error(ex, "保存图片");
         }
     }
 
