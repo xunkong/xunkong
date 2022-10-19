@@ -8,6 +8,13 @@
              x:DefaultBindMode="OneWay"
              mc:Ignorable="d">
 
+    <UserControl.Resources>
+        <AcrylicBrush x:Key="ImageViewerAcrylicBrush"
+                      FallbackColor="{ThemeResource ControlOnImageFillColorDefault}"
+                      TintColor="{ThemeResource ControlOnImageFillColorDefault}"
+                      TintOpacity="0.6" />
+    </UserControl.Resources>
+
     <UserControl.Transitions>
         <TransitionCollection>
             <EntranceThemeTransition />
@@ -16,7 +23,7 @@
 
 
 
-    <Grid Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}">
+    <Grid Background="{ThemeResource ImageViewerAcrylicBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="4*" />
@@ -64,7 +71,7 @@
                   Padding="8"
                   HorizontalAlignment="Center"
                   VerticalAlignment="Bottom"
-                  Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
+                  Background="{ThemeResource ImageViewerAcrylicBrush}"
                   BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                   BorderThickness="1"
                   CornerRadius="8"
@@ -100,7 +107,7 @@
                 Padding="8"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Top"
-                Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
+                Background="{ThemeResource ImageViewerAcrylicBrush}"
                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                 BorderThickness="1"
                 CornerRadius="8">
