@@ -2,7 +2,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Scighost.WinUILib.Cache;
 using System.Collections.ObjectModel;
 using System.Net.Http;
 using Windows.Storage;
@@ -610,17 +609,10 @@ public sealed partial class SettingPage : Page
         try
         {
             long totalSize = 0;
-            var fileFolder = FileCache.Instance.GetCacheFolderAsync().GetAwaiter().GetResult().Path;
-            if (Directory.Exists(fileFolder))
+            var folder = ApplicationData.Current.TemporaryFolder.Path;
+            if (Directory.Exists(folder))
             {
-                var files = new DirectoryInfo(fileFolder).GetFiles();
-                totalSize += files.Sum(x => x.Length);
-            }
-
-            var imageFolder = ImageCache.Instance.GetCacheFolderAsync().GetAwaiter().GetResult().Path;
-            if (Directory.Exists(imageFolder))
-            {
-                var files = new DirectoryInfo(imageFolder).GetFiles();
+                var files = new DirectoryInfo(folder).GetFiles("*", SearchOption.AllDirectories);
                 totalSize += files.Sum(x => x.Length);
             }
 
@@ -651,14 +643,17 @@ public sealed partial class SettingPage : Page
     {
         try
         {
+            var folder = ApplicationData.Current.TemporaryFolder.Path;
 
-            var fileFolder = await FileCache.Instance.GetCacheFolderAsync();
-            await fileFolder.DeleteAsync(StorageDeleteOption.PermanentDelete);
-            Directory.CreateDirectory(fileFolder.Path);
-
-            var imageFolder = await ImageCache.Instance.GetCacheFolderAsync();
-            await imageFolder.DeleteAsync(StorageDeleteOption.PermanentDelete);
-            Directory.CreateDirectory(imageFolder.Path);
+            if (Directory.Exists(folder))
+            {
+                await Task.Run(() =>
+                {
+                    Directory.Delete(folder, true);
+                    Directory.CreateDirectory(folder);
+                    Directory.CreateDirectory(XunkongCache.Instance.GetCacheFolderAsync().GetAwaiter().GetResult().Path);
+                });
+            }
 
             NotificationProvider.Success($"完成");
         }

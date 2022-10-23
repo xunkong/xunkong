@@ -1,7 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Scighost.WinUILib.Cache;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -163,7 +162,7 @@ public sealed partial class ImageViewer : UserControl
             }
             else
             {
-                file = await ImageCache.Instance.GetFileFromCacheAsync(uri);
+                file = await XunkongCache.Instance.GetFileFromCacheAsync(uri);
             }
             if (file is null)
             {
@@ -206,7 +205,7 @@ public sealed partial class ImageViewer : UserControl
             }
             else
             {
-                file = await ImageCache.Instance.GetFileFromCacheAsync(uri);
+                file = await XunkongCache.Instance.GetFileFromCacheAsync(uri);
             }
             if (file is null)
             {

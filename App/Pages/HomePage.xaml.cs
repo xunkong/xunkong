@@ -7,7 +7,6 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Media;
-using Scighost.WinUILib.Cache;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Numerics;
@@ -133,7 +132,7 @@ public sealed partial class HomePage : Page
             }
             else
             {
-                var cachedFile = ImageCache.Instance.GetCacheFilePath(new(wallpaper.Url));
+                var cachedFile = XunkongCache.Instance.GetCacheFilePath(new(wallpaper.Url));
                 if (File.Exists(cachedFile))
                 {
                     WallpaperInfo = wallpaper;
@@ -334,13 +333,12 @@ public sealed partial class HomePage : Page
             }
             else
             {
-                var path = ImageCache.Instance.GetCacheFilePath(new(WallpaperInfo.Url));
-                if (!File.Exists(path))
+                file = await XunkongCache.Instance.GetFromCacheAsync(new(WallpaperInfo.Url));
+                if (file is null)
                 {
                     NotificationProvider.Warning("找不到缓存的文件", 3000);
                     return;
                 }
-                file = await StorageFile.GetFileFromPathAsync(path);
             }
             ClipboardHelper.SetBitmap(file);
             _Button_Copy.Content = "\xE8FB";
@@ -375,7 +373,7 @@ public sealed partial class HomePage : Page
             }
             else
             {
-                file = ImageCache.Instance.GetCacheFilePath(new(WallpaperInfo.Url));
+                file = XunkongCache.Instance.GetCacheFilePath(new(WallpaperInfo.Url));
             }
             if (!File.Exists(file))
             {

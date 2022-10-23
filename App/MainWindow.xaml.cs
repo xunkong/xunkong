@@ -226,7 +226,7 @@ public sealed partial class MainWindow : Window
 
     public bool TryChangeBackdrop(uint value)
     {
-        var result = _backdrop.TryChangeBackdrop(value);
+        var result = _backdrop.TryChangeBackdrop(value, out _);
         if (result && (value & 0xF) > 0)
         {
             windowBackground.Visibility = Visibility.Collapsed;
