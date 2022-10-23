@@ -28,7 +28,7 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.9" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Graphics.Win2D" Version="1.0.3.1" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.5" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.220930.4-preview2" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.1" />
 		<PackageReference Include="MiniExcel" Version="1.28.0" />
 		<PackageReference Include="NAudio.Wasapi" Version="2.1.0" />

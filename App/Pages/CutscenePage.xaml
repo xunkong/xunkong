@@ -1,0 +1,184 @@
+﻿<!--  Copyright (c) Microsoft Corporation. All rights reserved.  -->
+<!--  Licensed under the MIT License. See LICENSE in the project root for license information.  -->
+
+<Page x:Class="Xunkong.Desktop.Pages.CutscenePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:actions="using:Microsoft.Xaml.Interactions.Core"
+      xmlns:activity="using:Microsoft.Xaml.Interactivity"
+      xmlns:animations="using:CommunityToolkit.WinUI.UI.Animations"
+      xmlns:behaviors="using:CommunityToolkit.WinUI.UI.Behaviors"
+      xmlns:cc="using:CommunityToolkit.WinUI.UI.Controls"
+      xmlns:converters="using:Xunkong.Desktop.Converters"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:Xunkong.Desktop.Pages"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:media="using:Microsoft.Xaml.Interactions.Media"
+      xmlns:xdc="using:Xunkong.Desktop.Controls"
+      xmlns:xg="using:Xunkong.GenshinData"
+      x:DefaultBindMode="OneWay"
+      Loaded="Page_Loaded"
+      mc:Ignorable="d">
+
+    <Page.Resources>
+        <converters:PlayerToIconConverter x:Key="PlayerToIconConverter" />
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+
+        <Grid Grid.ColumnSpan="2" Padding="24,0,24,0">
+            <StackPanel HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal">
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="过场动画" />
+                <Button Width="24"
+                        Height="24"
+                        Margin="8,0,0,0"
+                        Padding="0"
+                        Content="&#xE946;"
+                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                        Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
+                    <Button.Flyout>
+                        <Flyout>
+                            <StackPanel>
+                                <TextBlock Text="仅包含视频动画，不包含实时演算动画；" />
+                                <TextBlock Text="内置播放器不支持视频内字幕，可下载后观看；" />
+                                <TextBlock Text="播放时出现卡顿、音画不同步的情况，把进度条拖到开头后重播。" />
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                <AppBarButton Icon="Link" Label="复制链接">
+                    <AppBarButton.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Command="{x:Bind CopyAllLinksCommand}" Text="全部" />
+                            <MenuFlyoutItem Command="{x:Bind CopySelectionLinksCommand}" Text="已选择" />
+                        </MenuFlyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+                <AppBarToggleButton x:Name="AppBarToggleButton_MutliSelction"
+                                    Click="AppBarToggleButton_MutliSelction_Click"
+                                    Label="多选">
+                    <AppBarToggleButton.Icon>
+                        <FontIcon Glyph="&#xE73A;" />
+                    </AppBarToggleButton.Icon>
+                </AppBarToggleButton>
+                <AppBarToggleButton x:Name="AppBarToggleButton_Info" Label="信息">
+                    <AppBarToggleButton.Icon>
+                        <FontIcon Glyph="&#xE946;" />
+                    </AppBarToggleButton.Icon>
+                </AppBarToggleButton>
+            </StackPanel>
+        </Grid>
+
+
+
+
+        <cc:AdaptiveGridView x:Name="GridView_Cutscene"
+                             Grid.Row="1"
+                             Padding="24,0,24,24"
+                             DesiredWidth="240"
+                             ItemsSource="{x:Bind Cutscenes}"
+                             SelectedItem="{x:Bind SelectedCutscene, Mode=TwoWay}"
+                             SelectionMode="Single">
+            <GridView.ItemContainerStyle>
+                <Style BasedOn="{StaticResource DefaultGridViewItemStyle}" TargetType="GridViewItem">
+                    <Setter Property="Margin" Value="0,0,12,8" />
+                    <Setter Property="CornerRadius" Value="4" />
+                </Style>
+            </GridView.ItemContainerStyle>
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="xg:Cutscene">
+                    <Grid Height="135">
+                        <Image HorizontalAlignment="Center"
+                               Source="{x:Bind Poster}"
+                               Stretch="UniformToFill" />
+                        <Grid x:Name="Grid_Info"
+                              Background="#40000000"
+                              RequestedTheme="Dark">
+                            <Button x:Name="Button_PlayCutscene"
+                                    Width="36"
+                                    Height="32"
+                                    Padding="0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Click="Button_PlayCutscene_Click"
+                                    Content="&#xE173;"
+                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                    FontSize="16"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Style="{ThemeResource DateTimePickerFlyoutButtonStyle}" />
+                            <Image Width="24"
+                                   Height="24"
+                                   Margin="4,2,0,0"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Top"
+                                   Opacity="0.8"
+                                   Source="{x:Bind Player, Converter={StaticResource PlayerToIconConverter}}" />
+                            <StackPanel Margin="8,0,0,4" VerticalAlignment="Bottom">
+                                <TextBlock Text="{x:Bind Title}" />
+                                <TextBlock FontSize="12"
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           Text="{x:Bind Chapter}" />
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </cc:AdaptiveGridView>
+
+
+
+        <Grid Grid.Row="1"
+              Grid.Column="1"
+              Width="400"
+              Padding="24"
+              Background="{ThemeResource ControlOnImageFillColorDefaultBrush}"
+              CornerRadius="8,0,0,8"
+              Visibility="{x:Bind AppBarToggleButton_Info.IsChecked}">
+            <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                <StackPanel>
+                    <Border Width="352"
+                            Height="198"
+                            CornerRadius="8">
+                        <Image Width="352"
+                               Height="198"
+                               Source="{x:Bind SelectedCutscene.Poster}" />
+                    </Border>
+                    <TextBlock Margin="0,16,0,0"
+                               FontSize="20"
+                               Text="{x:Bind SelectedCutscene.Title}" />
+                    <TextBlock Margin="0,8,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                        <Run Text="{x:Bind SelectedCutscene.Group}" />
+                        <Run Text="" />
+                        <Run Text="{x:Bind SelectedCutscene.Chapter}" />
+                    </TextBlock>
+                    <TextBlock Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                        <Run Text="文件大小:" />
+                        <Run Text="{x:Bind SelectedCutscene.SizeString}" />
+                    </TextBlock>
+                    <StackPanel Margin="0,8,0,0"
+                                Orientation="Horizontal"
+                                Spacing="8">
+                        <Button Command="{x:Bind DownloadSelctedCutsceneCommand}" Content="下载" />
+                        <Button Command="{x:Bind CopySelctedCutsceneLinkCommand}" Content="复制链接" />
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+
+
+    </Grid>
+</Page>
