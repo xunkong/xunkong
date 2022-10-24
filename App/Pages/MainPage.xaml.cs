@@ -46,7 +46,6 @@ public sealed partial class MainPage : Page
     }
 
 
-    // todo 再次简化主页面元素
 
 
 
@@ -238,12 +237,13 @@ public sealed partial class MainPage : Page
 
     private void MainPage_Loaded(object sender, RoutedEventArgs e)
     {
-        if (AppSetting.GetValue(SettingKeys.ShowUpdateContentOnLoaded, false))
+        if (Version.TryParse(AppSetting.GetValue(SettingKeys.LastVersion, ""), out var version) && XunkongEnvironment.AppVersion > version)
         {
             _MainPageFrame.Navigate(typeof(UpdateContentPage));
         }
         else
         {
+            AppSetting.TrySetValue(SettingKeys.LastVersion, XunkongEnvironment.AppVersion.ToString());
             _NavigationView.SelectedItem = _NaviItem_HomePage;
             _MainPageFrame.Navigate(typeof(HomePage));
         }

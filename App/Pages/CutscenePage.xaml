@@ -11,9 +11,11 @@
       xmlns:cc="using:CommunityToolkit.WinUI.UI.Controls"
       xmlns:converters="using:Xunkong.Desktop.Converters"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:io="using:System.IO"
       xmlns:local="using:Xunkong.Desktop.Pages"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:media="using:Microsoft.Xaml.Interactions.Media"
+      xmlns:ui="using:CommunityToolkit.WinUI.UI"
       xmlns:xdc="using:Xunkong.Desktop.Controls"
       xmlns:xg="using:Xunkong.GenshinData"
       x:DefaultBindMode="OneWay"
@@ -28,14 +30,11 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="60" />
             <RowDefinition />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
 
 
-        <Grid Grid.ColumnSpan="2" Padding="24,0,24,0">
+        <Grid Padding="24,0,36,0">
             <StackPanel HorizontalAlignment="Left"
                         VerticalAlignment="Center"
                         Orientation="Horizontal">
@@ -50,9 +49,10 @@
                     <Button.Flyout>
                         <Flyout>
                             <StackPanel>
-                                <TextBlock Text="仅包含视频动画，不包含实时演算动画；" />
-                                <TextBlock Text="内置播放器不支持视频内字幕，可下载后观看；" />
-                                <TextBlock Text="播放时出现卡顿、音画不同步的情况，把进度条拖到开头后重播。" />
+                                <TextBlock Text="仅包含视频动画，不包含实时渲染动画；" />
+                                <TextBlock Text="大部分动画没有官方标题，命名的时候参考了观测枢的；" />
+                                <TextBlock Text="播放时出现卡顿、音画不同步的情况，把进度条拖到开头后重播；" />
+                                <TextBlock Text="内置播放器的体验比较糟糕，不支持视频内字幕，建议下载后观看。" />
                             </StackPanel>
                         </Flyout>
                     </Button.Flyout>
@@ -88,7 +88,7 @@
         <cc:AdaptiveGridView x:Name="GridView_Cutscene"
                              Grid.Row="1"
                              Padding="24,0,24,24"
-                             DesiredWidth="240"
+                             DesiredWidth="248"
                              ItemsSource="{x:Bind Cutscenes}"
                              SelectedItem="{x:Bind SelectedCutscene, Mode=TwoWay}"
                              SelectionMode="Single">
@@ -102,8 +102,24 @@
                 <DataTemplate x:DataType="xg:Cutscene">
                     <Grid Height="135">
                         <Image HorizontalAlignment="Center"
+                               ui:VisualExtensions.NormalizedCenterPoint="0.5"
                                Source="{x:Bind Poster}"
-                               Stretch="UniformToFill" />
+                               Stretch="UniformToFill">
+                            <animations:Explicit.Animations>
+                                <animations:AnimationSet x:Name="ImageZoomInAnimation">
+                                    <animations:ScaleAnimation EasingMode="EaseOut"
+                                                               EasingType="Circle"
+                                                               To="1.2"
+                                                               Duration="0:0:1.5" />
+                                </animations:AnimationSet>
+                                <animations:AnimationSet x:Name="ImageZoomOutAnimation">
+                                    <animations:ScaleAnimation EasingMode="EaseOut"
+                                                               EasingType="Circle"
+                                                               To="1"
+                                                               Duration="0:0:1.5" />
+                                </animations:AnimationSet>
+                            </animations:Explicit.Animations>
+                        </Image>
                         <Grid x:Name="Grid_Info"
                               Background="#40000000"
                               RequestedTheme="Dark">
@@ -133,6 +149,14 @@
                                            Text="{x:Bind Chapter}" />
                             </StackPanel>
                         </Grid>
+                        <activity:Interaction.Behaviors>
+                            <actions:EventTriggerBehavior EventName="PointerEntered">
+                                <behaviors:StartAnimationAction Animation="{Binding ElementName=ImageZoomInAnimation}" />
+                            </actions:EventTriggerBehavior>
+                            <actions:EventTriggerBehavior EventName="PointerExited">
+                                <behaviors:StartAnimationAction Animation="{Binding ElementName=ImageZoomOutAnimation}" />
+                            </actions:EventTriggerBehavior>
+                        </activity:Interaction.Behaviors>
                     </Grid>
                 </DataTemplate>
             </GridView.ItemTemplate>
@@ -140,32 +164,37 @@
 
 
 
-        <Grid Grid.Row="1"
-              Grid.Column="1"
-              Width="400"
-              Padding="24"
-              Background="{ThemeResource ControlOnImageFillColorDefaultBrush}"
-              CornerRadius="8,0,0,8"
+        <Grid Grid.Row="2"
+              Height="220"
+              Background="{ThemeResource ControlAltFillColorTransparent}"
               Visibility="{x:Bind AppBarToggleButton_Info.IsChecked}">
-            <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                <StackPanel>
-                    <Border Width="352"
-                            Height="198"
-                            CornerRadius="8">
-                        <Image Width="352"
-                               Height="198"
-                               Source="{x:Bind SelectedCutscene.Poster}" />
-                    </Border>
-                    <TextBlock Margin="0,16,0,0"
-                               FontSize="20"
+            <StackPanel Orientation="Horizontal">
+                <Border MinWidth="348"
+                        Margin="24,12,24,12"
+                        CornerRadius="8">
+                    <Image Source="{x:Bind SelectedCutscene.Poster}" />
+                </Border>
+                <StackPanel Margin="0,24,0,0">
+                    <TextBlock FontSize="20"
+                               IsTextSelectionEnabled="True"
                                Text="{x:Bind SelectedCutscene.Title}" />
-                    <TextBlock Margin="0,8,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                    <TextBlock Margin="0,8,0,0"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               IsTextSelectionEnabled="True">
                         <Run Text="{x:Bind SelectedCutscene.Group}" />
                         <Run Text="" />
                         <Run Text="{x:Bind SelectedCutscene.Chapter}" />
                     </TextBlock>
-                    <TextBlock Margin="0,4,0,0" Foreground="{ThemeResource TextFillColorSecondaryBrush}">
-                        <Run Text="文件大小:" />
+                    <TextBlock Margin="0,8,0,0"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               IsTextSelectionEnabled="True">
+                        <Run Text="文件名 " />
+                        <Run Text="{x:Bind io:Path.GetFileName(SelectedCutscene.Source)}" />
+                    </TextBlock>
+                    <TextBlock Margin="0,4,0,0"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               IsTextSelectionEnabled="True">
+                        <Run Text="文件大小 " />
                         <Run Text="{x:Bind SelectedCutscene.SizeString}" />
                     </TextBlock>
                     <StackPanel Margin="0,8,0,0"
@@ -175,7 +204,7 @@
                         <Button Command="{x:Bind CopySelctedCutsceneLinkCommand}" Content="复制链接" />
                     </StackPanel>
                 </StackPanel>
-            </ScrollViewer>
+            </StackPanel>
         </Grid>
 
 

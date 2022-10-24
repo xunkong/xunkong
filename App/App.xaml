@@ -40,6 +40,12 @@
             <SolidColorBrush x:Key="Rarity3ForegroundBrush">#6495ED</SolidColorBrush>
 
 
+            <AcrylicBrush x:Key="CustomAcrylicBrush"
+                          FallbackColor="{ThemeResource ControlOnImageFillColorDefault}"
+                          TintColor="{ThemeResource ControlOnImageFillColorDefault}"
+                          TintOpacity="0.6" />
+
+
             <!--  Defult Style  -->
             <Style TargetType="cc:ImageEx">
                 <Setter Property="IsCacheEnabled" Value="True" />
