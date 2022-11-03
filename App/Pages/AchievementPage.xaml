@@ -79,7 +79,7 @@
                             Height="32"
                             Margin="324,0,0,0"
                             HorizontalAlignment="Left"
-                            PlaceholderText="请输入成就的名称、描述、ID 。。。"
+                            PlaceholderText="请输入成就的名称、描述、版本、ID 。。。"
                             QueryIcon="Find"
                             QuerySubmitted="c_AutoSuggetBox_Search_QuerySubmitted" />
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">

@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System.Collections.ObjectModel;
+using System.Numerics;
 using Windows.UI.StartScreen;
 using Xunkong.Hoyolab;
 using Xunkong.Hoyolab.Account;
@@ -649,7 +650,22 @@ public sealed partial class MainPage : Page
         }
     }
 
-
-
-
+    private void Button_ChangeTheme_Tapped(object sender, TappedRoutedEventArgs e)
+    {
+        try
+        {
+            var point = _Border_AccountImage.TransformToVisual(this).TransformPoint(new Windows.Foundation.Point(0, 0));
+            var center = new Vector2((float)(point.X + _Border_AccountImage.ActualWidth / 2), (float)(point.Y + _Border_AccountImage.ActualHeight / 2));
+            if (ActualTheme is ElementTheme.Light)
+            {
+                WeakReferenceMessenger.Default.Send(new ChangeApplicationThemeMessage(2, center));
+            }
+            else
+            {
+                WeakReferenceMessenger.Default.Send(new ChangeApplicationThemeMessage(1, center));
+            }
+            e.Handled = true;
+        }
+        catch { }
+    }
 }

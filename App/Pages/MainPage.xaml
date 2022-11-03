@@ -17,6 +17,7 @@
                         DisplayModeChanged="_NavigationView_DisplayModeChanged"
                         IsBackEnabled="{x:Bind _MainPageFrame.CanGoBack}"
                         IsPaneToggleButtonVisible="False"
+                        IsSettingsVisible="False"
                         ItemInvoked="_NavigationView_ItemInvoked"
                         OpenPaneLength="260"
                         PaneClosing="_NavigationView_PaneClosing"
@@ -260,6 +261,20 @@
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{ThemeResource FluentSystemIcons}" Glyph="&#xE187;" />
                     </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Icon="Setting" Tag="SettingPage">
+                    <NavigationViewItem.Content>
+                        <Grid>
+                            <TextBlock VerticalAlignment="Center" Text="设置" />
+                            <Button x:Name="Button_ChangeTheme"
+                                    Margin="0,0,-12,0"
+                                    HorizontalAlignment="Right"
+                                    Content="&#xE793;"
+                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                    Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
+                                    Tapped="Button_ChangeTheme_Tapped" />
+                        </Grid>
+                    </NavigationViewItem.Content>
                 </NavigationViewItem>
             </NavigationView.FooterMenuItems>
 

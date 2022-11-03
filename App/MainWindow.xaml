@@ -7,47 +7,51 @@
         xmlns:xdc="using:Xunkong.Desktop.Controls"
         mc:Ignorable="d">
 
-    <Grid x:Name="RootGrid">
+    <Border x:Name="RootBorder">
 
-        <Rectangle x:Name="windowBackground"
-                   HorizontalAlignment="Stretch"
-                   VerticalAlignment="Stretch"
-                   Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
+        <Grid x:Name="RootGrid">
 
-        <Frame x:Name="RootFrame" />
+            <Rectangle x:Name="windowBackground"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
 
-        <ContentControl x:Name="FullWindowContent"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        HorizontalContentAlignment="Stretch"
-                        VerticalContentAlignment="Stretch"
-                        Visibility="Collapsed" />
+            <Frame x:Name="RootFrame" />
 
-
-        <!--  Title Bar  -->
-        <Border x:Name="AppTitleBar"
-                Height="48"
-                Margin="0,0,0,0"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Top" />
-
-        <!--  Notification Container  -->
-        <StackPanel Name="InfoBarContainer"
-                    MaxWidth="600"
-                    Margin="24,72,24,72"
-                    VerticalAlignment="Bottom">
-            <StackPanel.OpacityTransition>
-                <ScalarTransition />
-            </StackPanel.OpacityTransition>
-            <StackPanel.Transitions>
-                <TransitionCollection>
-                    <AddDeleteThemeTransition />
-                </TransitionCollection>
-            </StackPanel.Transitions>
-        </StackPanel>
+            <ContentControl x:Name="FullWindowContent"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch"
+                            Visibility="Collapsed" />
 
 
+            <!--  Title Bar  -->
+            <Border x:Name="AppTitleBar"
+                    Height="48"
+                    Margin="0,0,0,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Top" />
 
-    </Grid>
+            <!--  Notification Container  -->
+            <StackPanel Name="InfoBarContainer"
+                        MaxWidth="600"
+                        Margin="24,72,24,72"
+                        VerticalAlignment="Bottom">
+                <StackPanel.OpacityTransition>
+                    <ScalarTransition />
+                </StackPanel.OpacityTransition>
+                <StackPanel.Transitions>
+                    <TransitionCollection>
+                        <AddDeleteThemeTransition />
+                    </TransitionCollection>
+                </StackPanel.Transitions>
+            </StackPanel>
+
+
+
+        </Grid>
+
+    </Border>
 
 </Window>

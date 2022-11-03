@@ -163,7 +163,9 @@
                     <!--  应用主题  -->
                     <xdc:SettingCard>
                         <xdc:SettingCard.Icon>
-                            <FontIcon FontSize="20" Glyph="&#xE2B1;" />
+                            <FontIcon x:Name="FontIcon_Theme"
+                                      FontSize="20"
+                                      Glyph="&#xE2B1;" />
                         </xdc:SettingCard.Icon>
                         <xdc:SettingCard.Content>
                             <TextBlock VerticalAlignment="Center">

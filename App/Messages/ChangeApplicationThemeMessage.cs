@@ -1,4 +1,6 @@
-﻿namespace Xunkong.Desktop.Messages;
+﻿using System.Numerics;
+
+namespace Xunkong.Desktop.Messages;
 
 internal class ChangeApplicationThemeMessage
 {
@@ -7,8 +9,12 @@ internal class ChangeApplicationThemeMessage
     /// </summary>
     public int Theme { get; set; }
 
-    public ChangeApplicationThemeMessage(int theme)
+    public Vector2 Center { get; set; }
+
+    public ChangeApplicationThemeMessage(int theme, Vector2 center)
     {
         Theme = theme;
+        Center = center;
     }
+
 }

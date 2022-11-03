@@ -1,9 +1,16 @@
-﻿using Microsoft.UI;
+﻿using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.UI.Composition;
+using Microsoft.Graphics.DirectX;
+using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.Windows.AppLifecycle;
+using System.Diagnostics;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using Vanara.PInvoke;
 using Windows.ApplicationModel;
@@ -129,7 +136,7 @@ public sealed partial class MainWindow : Window
 
     private void InitializeMessage()
     {
-        WeakReferenceMessenger.Default.Register<ChangeApplicationThemeMessage>(this, (_, e) => ChangeApplicationTheme(e.Theme));
+        WeakReferenceMessenger.Default.Register<ChangeApplicationThemeMessage>(this, (_, e) => ChangeApplicationTheme(e.Theme, e.Center));
     }
 
 
@@ -160,15 +167,101 @@ public sealed partial class MainWindow : Window
 
 
 
-    private void ChangeApplicationTheme(int theme)
+    private async void ChangeApplicationTheme(int theme, Vector2? center = null)
     {
-        var elementTheme = theme switch
+        try
         {
-            1 => ElementTheme.Light,
-            2 => ElementTheme.Dark,
-            _ => ElementTheme.Default,
-        };
-        RootGrid.RequestedTheme = elementTheme;
+            var compositor = ElementCompositionPreview.GetElementVisual(Content).Compositor;
+            var graphicsDevice = CanvasComposition.CreateCompositionGraphicsDevice(compositor, CanvasDevice.GetSharedDevice());
+
+            var windowSize = Content.ActualSize;
+
+            // 捕获主题修改前的图面，此图面不随可视化树的变化而变化
+            var oldSurface = await graphicsDevice.CaptureAsync(ElementCompositionPreview.GetElementVisual(Content),
+                                                               new SizeInt32((int)Content.ActualSize.X, (int)Content.ActualSize.Y),
+                                                               DirectXPixelFormat.B8G8R8A8UIntNormalized,
+                                                               DirectXAlphaMode.Premultiplied,
+                                                               0);
+            var oldTheme = RootBorder.ActualTheme;
+            RootBorder.RequestedTheme = theme switch
+            {
+                1 => ElementTheme.Light,
+                2 => ElementTheme.Dark,
+                _ => ElementTheme.Default,
+            };
+
+            var max = Math.Max(_appWindow.ClientSize.Width, _appWindow.ClientSize.Height);
+
+            // 计算动画的中心位置
+            using var ellipse = compositor.CreateEllipseGeometry();
+            using var clip = compositor.CreateGeometricClip(ellipse);
+            if (center != null)
+            {
+                clip.Offset = center.Value;
+            }
+
+            if (RootBorder.ActualTheme == oldTheme || windowBackground.Visibility == Visibility.Collapsed)
+            {
+                return;
+            }
+
+            if (RootBorder.ActualTheme is ElementTheme.Light)
+            {
+                // 新主题是浅色模式
+
+                using var oldSprite = compositor.CreateSpriteVisual();
+                oldSprite.Brush = compositor.CreateSurfaceBrush(oldSurface);
+                oldSprite.Size = windowSize;
+                oldSprite.Clip = clip;
+                oldSprite.IsHitTestVisible = false;
+                ElementCompositionPreview.SetElementChildVisual(Content, oldSprite);
+
+                // 从大到小
+                using var animation = compositor.CreateVector2KeyFrameAnimation();
+                animation.InsertKeyFrame(0, new Vector2(max));
+                animation.InsertKeyFrame(1, Vector2.Zero);
+                animation.Duration = TimeSpan.FromMilliseconds(400);
+                ellipse.StartAnimation("Radius", animation);
+
+                await Task.Delay(400);
+            }
+            else
+            {
+                // 新主题是深色模式
+
+                // 主题修改后的图面，此图面与可视化树同步变化
+                using var newSurface = compositor.CreateVisualSurface();
+                newSurface.SourceVisual = ElementCompositionPreview.GetElementVisual(RootGrid);
+                newSurface.SourceSize = windowSize;
+
+                using var oldSprite = compositor.CreateSpriteVisual();
+                oldSprite.Brush = compositor.CreateSurfaceBrush(oldSurface);
+                oldSprite.Size = windowSize;
+                oldSprite.IsHitTestVisible = false;
+
+                using var newSprite = compositor.CreateSpriteVisual();
+                newSprite.Brush = compositor.CreateSurfaceBrush(newSurface);
+                newSprite.Size = windowSize;
+                newSprite.Clip = clip;
+                newSprite.IsHitTestVisible = false;
+
+                using var container = compositor.CreateContainerVisual();
+                container.Size = windowSize;
+                container.Children.InsertAtTop(oldSprite);
+                container.Children.InsertAtTop(newSprite);
+                ElementCompositionPreview.SetElementChildVisual(Content, container);
+
+                // 从小到大
+                using var animation = compositor.CreateVector2KeyFrameAnimation();
+                animation.InsertKeyFrame(0, Vector2.Zero);
+                animation.InsertKeyFrame(1, new Vector2(max));
+                animation.Duration = TimeSpan.FromMilliseconds(1000);
+                ellipse.StartAnimation("Radius", animation);
+
+                await Task.Delay(400);
+            }
+        }
+        catch { }
     }
 
 

@@ -2,7 +2,7 @@
 
     <FontFamily x:Key="FluentSystemIcons">ms-appx:///Assets/Fonts/FluentSystemIcons-Regular.ttf#FluentSystemIcons-Regular</FontFamily>
 
-    <FontFamily x:Key="HarmonyOSSans">ms-appx:///Assets/Fonts/HarmonyOS_Sans_SC_Regular.ttf#HarmonyOS Sans SC</FontFamily>
+    <FontFamily x:Key="HarmonyOSSans">SDK_SC_Web 85W,ms-appx:///Assets/Fonts/HarmonyOS_Sans_SC_Regular.ttf#HarmonyOS Sans SC</FontFamily>
     <StaticResource x:Key="CustomFont" ResourceKey="HarmonyOSSans" />
 
     <StaticResource x:Key="PivotHeaderItemFontFamily" ResourceKey="CustomFont" />
