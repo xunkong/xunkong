@@ -193,20 +193,13 @@ public sealed partial class ImageViewer : UserControl
     {
         try
         {
-            StorageFile? file = null;
             var uri = new Uri(Source);
-            if (uri.Scheme is "ms-appx")
+            var file = uri.Scheme switch
             {
-                file = await StorageFile.GetFileFromApplicationUriAsync(uri);
-            }
-            else if (uri.Scheme is "file")
-            {
-                file = await StorageFile.GetFileFromPathAsync(uri.ToString());
-            }
-            else
-            {
-                file = await XunkongCache.Instance.GetFileFromCacheAsync(uri);
-            }
+                "ms-appx" => await StorageFile.GetFileFromApplicationUriAsync(uri),
+                "file" => await StorageFile.GetFileFromPathAsync(uri.ToString()),
+                _ => await XunkongCache.Instance.GetFileFromCacheAsync(uri),
+            };
             if (file is null)
             {
                 NotificationProvider.Warning("找不到缓存的文件", 3000);
@@ -215,7 +208,9 @@ public sealed partial class ImageViewer : UserControl
             {
                 var picker = new FileSavePicker();
                 picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-                picker.FileTypeChoices.Add("Image", new List<string>() { ".png", ".webp" });
+                var extension = Path.GetExtension(uri.ToString());
+                if (string.IsNullOrWhiteSpace(extension)) { extension = ".png"; }
+                picker.FileTypeChoices.Add("Image", new List<string>() { extension });
                 picker.SuggestedFileName = Path.GetFileName(Source);
                 WinRT.Interop.InitializeWithWindow.Initialize(picker, MainWindow.Current.HWND);
                 var saveFile = await picker.PickSaveFileAsync();
@@ -256,26 +251,6 @@ public sealed partial class ImageViewer : UserControl
         _TextBlock_Factor.Text = (_ScrollViewer_Image.ZoomFactor * uiScale).ToString("P0");
     }
 
-
-
-    /// <summary>
-    /// 图片加载后计算合适的缩放率
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void _Image_ImageExOpened(object sender, CommunityToolkit.WinUI.UI.Controls.ImageExOpenedEventArgs e)
-    {
-        var width = _Image.ActualWidth;
-        var height = _Image.ActualHeight;
-        if (width * height == 0)
-        {
-            return;
-        }
-        _Image.CenterPoint = new System.Numerics.Vector3((float)(width / 2), (float)(height / 2), 0);
-        var factor = GetFitZoomFactor();
-        _TextBlock_Factor.Text = (factor * uiScale).ToString("P0");
-        _ScrollViewer_Image.ZoomToFactor((float)factor);
-    }
 
 
     /// <summary>

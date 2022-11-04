@@ -270,7 +270,8 @@
                     <Rectangle Margin="-4"
                                HorizontalAlignment="Stretch"
                                VerticalAlignment="Stretch"
-                               Fill="{ThemeResource ControlOnImageFillColorDefaultBrush}" />
+                               Fill="{ThemeResource ControlOnImageFillColorDefaultBrush}"
+                               IsHitTestVisible="False" />
 
                     <!--  角色大图  -->
                     <xdc:CachedImage x:Name="c_Image_GachaSplash"
@@ -915,12 +916,14 @@
                         </Border>
                         <TextBlock Grid.Row="3"
                                    Margin="60,0,0,12"
+                                   HorizontalAlignment="Left"
                                    VerticalAlignment="Center"
                                    FontSize="12"
                                    Foreground="#555555"
                                    Text="{x:Bind SelectedCharacter.CharacterInfo.Name}" />
                         <TextBlock Grid.Row="3"
                                    Margin="60,16,0,0"
+                                   HorizontalAlignment="Left"
                                    VerticalAlignment="Center"
                                    FontSize="10"
                                    Foreground="#84603D">

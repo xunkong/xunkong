@@ -289,6 +289,7 @@
                                         VerticalAlignment="Top"
                                         Background="#60000000"
                                         CornerRadius="0,4,0,4"
+                                        IsHitTestVisible="False"
                                         Visibility="{x:Bind IsOwn, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <TextBlock HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
@@ -302,7 +303,9 @@
                                                  HorizontalAlignment="Left"
                                                  VerticalAlignment="Top"
                                                  Source="{x:Bind Element, Converter={StaticResource ElementToElementImageConverter}}" />
-                                <Rectangle Fill="#60000000" Visibility="{x:Bind IsOwn, Converter={StaticResource BoolToVisibilityReversedConverter}}" />
+                                <Rectangle Fill="#60000000"
+                                           IsHitTestVisible="False"
+                                           Visibility="{x:Bind IsOwn, Converter={StaticResource BoolToVisibilityReversedConverter}}" />
                             </Grid>
                         </DataTemplate>
                     </GridView.ItemTemplate>

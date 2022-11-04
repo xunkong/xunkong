@@ -101,7 +101,7 @@
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="xg:Cutscene">
                     <Grid Height="135">
-                        <Image HorizontalAlignment="Center"
+                        <xdc:CachedImage HorizontalAlignment="Center"
                                ui:VisualExtensions.NormalizedCenterPoint="0.5"
                                Source="{x:Bind Poster}"
                                Stretch="UniformToFill">
@@ -119,9 +119,10 @@
                                                                Duration="0:0:1.5" />
                                 </animations:AnimationSet>
                             </animations:Explicit.Animations>
-                        </Image>
+                        </xdc:CachedImage>
                         <Grid x:Name="Grid_Info"
                               Background="#40000000"
+                              IsHitTestVisible="False"
                               RequestedTheme="Dark">
                             <Button x:Name="Button_PlayCutscene"
                                     Width="36"
@@ -149,6 +150,19 @@
                                            Text="{x:Bind Chapter}" />
                             </StackPanel>
                         </Grid>
+                        <Button x:Name="Button_PlayCutscene"
+                                Width="36"
+                                Height="32"
+                                Padding="0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Click="Button_PlayCutscene_Click"
+                                Content="&#xE173;"
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                FontSize="16"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                RequestedTheme="Dark"
+                                Style="{ThemeResource DateTimePickerFlyoutButtonStyle}" />
                         <activity:Interaction.Behaviors>
                             <actions:EventTriggerBehavior EventName="PointerEntered">
                                 <behaviors:StartAnimationAction Animation="{Binding ElementName=ImageZoomInAnimation}" />
@@ -169,11 +183,10 @@
               Background="{ThemeResource ControlAltFillColorTransparent}"
               Visibility="{x:Bind AppBarToggleButton_Info.IsChecked}">
             <StackPanel Orientation="Horizontal">
-                <Border MinWidth="348"
+                <xdc:CachedImage MinWidth="348"
                         Margin="24,12,24,12"
-                        CornerRadius="8">
-                    <Image Source="{x:Bind SelectedCutscene.Poster}" />
-                </Border>
+                                 CornerRadius="8"
+                                 Source="{x:Bind SelectedCutscene.Poster}" />
                 <StackPanel Margin="0,24,0,0">
                     <TextBlock FontSize="20"
                                IsTextSelectionEnabled="True"

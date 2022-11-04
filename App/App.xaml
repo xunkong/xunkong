@@ -9,13 +9,12 @@
             <ResourceDictionary.MergedDictionaries>
 
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-                <ResourceDictionary Source="Themes\CachedImageStyle.xaml" />
-                <ResourceDictionary Source="Themes\ContainerStyle.xaml" />
-                <ResourceDictionary Source="Themes\ConverterDictionary.xaml" />
-                <ResourceDictionary Source="Themes\FontStyle.xaml" />
-                <ResourceDictionary Source="Themes\FullBackgroundProgressBarStyle.xaml" />
-                <ResourceDictionary Source="Themes\ImageDictionary.xaml" />
-                <ResourceDictionary Source="Themes\RightAlignToggleSwitchStyle.xaml" />
+                <ResourceDictionary Source="Themes/ContainerStyle.xaml" />
+                <ResourceDictionary Source="Themes/ConverterDictionary.xaml" />
+                <ResourceDictionary Source="Themes/FontStyle.xaml" />
+                <ResourceDictionary Source="Themes/FullBackgroundProgressBarStyle.xaml" />
+                <ResourceDictionary Source="Themes/ImageDictionary.xaml" />
+                <ResourceDictionary Source="Themes/RightAlignToggleSwitchStyle.xaml" />
 
                 <!--  Other merged dictionaries here  -->
             </ResourceDictionary.MergedDictionaries>
@@ -44,17 +43,6 @@
                           FallbackColor="{ThemeResource ControlOnImageFillColorDefault}"
                           TintColor="{ThemeResource ControlOnImageFillColorDefault}"
                           TintOpacity="0.6" />
-
-
-            <!--  Defult Style  -->
-            <Style TargetType="cc:ImageEx">
-                <Setter Property="IsCacheEnabled" Value="True" />
-            </Style>
-            <Style BasedOn="{StaticResource CachedImageStyle}" TargetType="xdc:CachedImage">
-                <Setter Property="IsCacheEnabled" Value="True" />
-            </Style>
-
-
 
 
 

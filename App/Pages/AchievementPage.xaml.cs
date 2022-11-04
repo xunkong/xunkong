@@ -1291,7 +1291,7 @@ public sealed partial class AchievementPage : Page
                 border.Scale = Vector3.One;
                 border.Background = GoalNonSelectedBackgroundBrush;
                 grid.BorderBrush = GoalNonSelectedBorderBrush;
-                if (grid.Children.FirstOrDefault() is ImageEx image)
+                if (grid.Children.FirstOrDefault() is CachedImage image)
                 {
                     image.Source = mapTitleBgNonSelected;
                 }
@@ -1315,7 +1315,7 @@ public sealed partial class AchievementPage : Page
             {
                 border.Background = GoalSelectedBackgroundBrush;
                 grid.BorderBrush = GoalSelectedBorderBrush;
-                if (grid.Children.FirstOrDefault() is ImageEx image)
+                if (grid.Children.FirstOrDefault() is CachedImage image)
                 {
                     image.Source = mapTitleBgSelected;
                 }

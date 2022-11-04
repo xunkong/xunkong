@@ -154,7 +154,7 @@
                             <Grid Margin="2"
                                   BorderBrush="{ThemeResource GoalNonSelectedBorderBrush}"
                                   BorderThickness="1">
-                                <cc:ImageEx HorizontalAlignment="Right" Source="ms-appx:///Assets/Images/UI_Img_MapTitle_Bg_NonSelected.png" />
+                                <xdc:CachedImage HorizontalAlignment="Right" Source="ms-appx:///Assets/Images/UI_Img_MapTitle_Bg_NonSelected.png" />
                                 <StackPanel Margin="48,0,0,0">
                                     <TextBlock Margin="0,6,0,0"
                                                FontSize="16"

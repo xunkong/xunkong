@@ -53,7 +53,7 @@
             <xdc:CachedImage x:Name="_Image"
                              HorizontalAlignment="Center"
                              VerticalAlignment="Center"
-                             ImageExOpened="_Image_ImageExOpened"
+                             ImageOpend="_Image_ImageOpened"
                              IsDoubleTapEnabled="True"
                              PointerWheelChanged="_Image_PointerWheelChanged"
                              Source="{x:Bind Source}">

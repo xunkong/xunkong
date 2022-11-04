@@ -267,6 +267,7 @@
                                         VerticalAlignment="Top"
                                         Background="#80000000"
                                         CornerRadius="0,4,0,4"
+                                        IsHitTestVisible="False"
                                         Visibility="{x:Bind AnyData, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <TextBlock Margin="2"
                                                HorizontalAlignment="Center"
@@ -275,7 +276,9 @@
                                                Foreground="#F3F3F3"
                                                Text="{x:Bind Count}" />
                                 </Border>
-                                <Rectangle Fill="#60000000" Visibility="{x:Bind AnyData, Converter={StaticResource BoolToVisibilityReversedConverter}}" />
+                                <Rectangle Fill="#60000000"
+                                           IsHitTestVisible="False"
+                                           Visibility="{x:Bind AnyData, Converter={StaticResource BoolToVisibilityReversedConverter}}" />
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

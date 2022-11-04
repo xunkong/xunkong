@@ -14,3 +14,4 @@ global using Xunkong.Desktop.Helpers;
 global using Xunkong.Desktop.Messages;
 global using Xunkong.Desktop.Models;
 global using Xunkong.Desktop.Services;
+global using Scighost.WinUILib.Helpers;
