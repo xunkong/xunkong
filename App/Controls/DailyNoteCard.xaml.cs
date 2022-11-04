@@ -94,6 +94,54 @@ public sealed partial class DailyNoteCard : UserControl
     }
 
 
+    /// <summary>
+    /// 固定到开始菜单
+    /// </summary>
+    /// <returns></returns>
+    [RelayCommand]
+    private async Task PinToStartMenuAsync()
+    {
+        try
+        {
+            if (DailyNoteInfo is not null)
+            {
+                var result = await SecondaryTileProvider.RequestPinTileAsync(DailyNoteInfo);
+                if (result)
+                {
+                    TaskSchedulerService.RegisterForRefreshTile(result);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "固定磁贴到开始菜单");
+            NotificationProvider.Error(ex, "固定磁贴到开始菜单");
+        }
+    }
+
+
+
+    /// <summary>
+    /// 复制 cookie
+    /// </summary>
+    [RelayCommand]
+    private void CopyCookie()
+    {
+        try
+        {
+            if (GenshinRoleInfo is not null)
+            {
+                ClipboardHelper.SetText(GenshinRoleInfo.Cookie);
+                NotificationProvider.Success("已复制", 1500);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "复制 cookie");
+            NotificationProvider.Error(ex, "复制 cookie");
+        }
+    }
+
 
 
 }

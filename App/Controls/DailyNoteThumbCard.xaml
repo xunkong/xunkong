@@ -207,14 +207,14 @@
                 Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
                 Visibility="{x:Bind Error, Converter={StaticResource BoolToVisibilityReversedConverter}}">
             <Button.Flyout>
-                <MenuFlyout Placement="RightEdgeAlignedTop">
-                    <MenuFlyoutItem Command="{x:Bind PinToStartMenuCommand, Mode=OneTime}"
-                                    Icon="Pin"
-                                    Text="固定到开始屏幕" />
-                    <MenuFlyoutItem Command="{x:Bind CopyCookieCommand, Mode=OneTime}"
-                                    Icon="Copy"
-                                    Text="复制 Cookie" />
-                </MenuFlyout>
+                <Flyout>
+                    <local:DailyNoteCard DailyNoteInfo="{x:Bind DailyNoteInfo}"
+                                         Error="{x:Bind Error}"
+                                         ErrorMessage="{x:Bind ErrorMessage}"
+                                         GenshinRoleInfo="{x:Bind GenshinRoleInfo}"
+                                         HoyolabUserInfo="{x:Bind HoyolabUserInfo}"
+                                         TravelNotesDayData="{x:Bind TravelNotesDayData}" />
+                </Flyout>
             </Button.Flyout>
         </Button>
 

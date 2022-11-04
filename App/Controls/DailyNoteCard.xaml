@@ -6,7 +6,6 @@
              xmlns:local="using:Xunkong.Desktop"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              Width="312"
-             Height="376"
              x:DefaultBindMode="OneWay"
              mc:Ignorable="d">
 
@@ -24,10 +23,10 @@
                 <StackPanel VerticalAlignment="Center"
                             Spacing="4"
                             Visibility="{x:Bind GenshinRoleInfo, Converter={StaticResource ObjectToVisibilityConverter}}">
-                    <TextBlock d:Text="旅行者" Text="{x:Bind GenshinRoleInfo.Nickname}" />
+                    <TextBlock Text="{x:Bind GenshinRoleInfo.Nickname}" />
                     <TextBlock Style="{ThemeResource CaptionTextBlockStyle}">
-                        <Run d:Text="天空岛" Text="{x:Bind GenshinRoleInfo.RegionName}" />
-                        <Run d:Text="60" Text="{x:Bind GenshinRoleInfo.Level}" />
+                        <Run Text="{x:Bind GenshinRoleInfo.RegionName}" />
+                        <Run Text="{x:Bind GenshinRoleInfo.Level}" />
                         <Run Text="级" />
                     </TextBlock>
                 </StackPanel>
@@ -41,8 +40,8 @@
                             VerticalAlignment="Center"
                             Spacing="4"
                             Visibility="{x:Bind TravelNotesDayData, Converter={StaticResource ObjectToVisibilityConverter}}">
-                    <TextBlock d:Text="60" Text="{x:Bind TravelNotesDayData.CurrentPrimogems}" />
-                    <TextBlock d:Text="120000" Text="{x:Bind TravelNotesDayData.CurrentMora}" />
+                    <TextBlock Text="{x:Bind TravelNotesDayData.CurrentPrimogems}" />
+                    <TextBlock Text="{x:Bind TravelNotesDayData.CurrentMora}" />
                 </StackPanel>
             </StackPanel>
 
@@ -96,9 +95,9 @@
                                    Visibility="{x:Bind DailyNoteInfo.IsHomeCoinFull, Converter={StaticResource BoolToVisibilityConverter}}" />
                     </StackPanel>
                     <TextBlock Width="80" VerticalAlignment="Center">
-                        <Run d:Text="1200" Text="{x:Bind DailyNoteInfo.CurrentHomeCoin}" />
+                        <Run Text="{x:Bind DailyNoteInfo.CurrentHomeCoin}" />
                         <Run Text="/" />
-                        <Run d:Text="2400" Text="{x:Bind DailyNoteInfo.MaxHomeCoin}" />
+                        <Run Text="{x:Bind DailyNoteInfo.MaxHomeCoin}" />
                     </TextBlock>
                 </StackPanel>
                 <!--  每日委托  -->
@@ -174,9 +173,9 @@
                 <StackPanel Orientation="Horizontal" Spacing="4">
                     <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}">
                         <Run Text="探索派遣 ( 已完成" />
-                        <Run d:Text="3" Text="{x:Bind DailyNoteInfo.FinishedExpeditionNumber}" />
+                        <Run Text="{x:Bind DailyNoteInfo.FinishedExpeditionNumber}" />
                         <Run Text="/" />
-                        <Run d:Text="5" Text="{x:Bind DailyNoteInfo.CurrentExpeditionNumber}" />
+                        <Run Text="{x:Bind DailyNoteInfo.CurrentExpeditionNumber}" />
                         <Run Text=")" />
                     </TextBlock>
                     <Button Content="&#xE783;"
@@ -220,6 +219,33 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </StackPanel>
+
+            <MenuFlyoutSeparator />
+
+            <Grid ColumnSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Button HorizontalAlignment="Stretch"
+                        Command="{x:Bind PinToStartMenuCommand, Mode=OneTime}"
+                        Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon FontSize="16" Glyph="&#xE141;" />
+                        <TextBlock Text="固定到开始屏幕" />
+                    </StackPanel>
+                </Button>
+                <Button Grid.Column="1"
+                        HorizontalAlignment="Stretch"
+                        Command="{x:Bind CopyCookieCommand, Mode=OneTime}"
+                        Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon FontSize="16" Glyph="&#xE16F;" />
+                        <TextBlock Text="复制 Cookie" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+
         </StackPanel>
 
 
