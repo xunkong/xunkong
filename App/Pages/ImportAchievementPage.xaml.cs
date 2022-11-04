@@ -211,7 +211,13 @@ public sealed partial class ImportAchievementPage : Page
                     await Task.Run(() =>
                     {
                         using var dapper = DatabaseProvider.CreateConnection();
-                        dapper.Execute("INSERT OR REPLACE INTO AchievementData (Uid, Id, Current, Status, FinishedTime, LastUpdateTime) VALUES (@Uid, @Id, @Current, @Status, @FinishedTime, @LastUpdateTime);", achievementDatas);
+                        using var t = dapper.BeginTransaction();
+                        dapper.Execute("""
+                            INSERT INTO AchievementData (Uid, Id, Current, Status, FinishedTime, LastUpdateTime)
+                            VALUES (@Uid, @Id, @Current, @Status, @FinishedTime, @LastUpdateTime)
+                            ON CONFLICT DO UPDATE SET Current=@Current, Status=@Status, FinishedTime=@FinishedTime, LastUpdateTime=@LastUpdateTime;
+                            """, achievementDatas, t);
+                        t.Commit();
                     });
                     c_Button_Import.Content = "导入完成";
                     if (c_CheckBox_AutoRedirect.IsChecked ?? false)

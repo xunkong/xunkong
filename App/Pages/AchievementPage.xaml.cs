@@ -218,10 +218,6 @@ public sealed partial class AchievementPage : Page
             using var liteDb = DatabaseProvider.CreateLiteDB();
             var goals = liteDb.GetCollection<AchievementGoal>().FindAll().Adapt<List<AchievementPageModel_Goal>>();
             var items = liteDb.GetCollection<AchievementItem>().FindAll().Adapt<List<AchievementPageModel_Item>>();
-            if (!string.IsNullOrWhiteSpace(items.FirstOrDefault()?.Version))
-            {
-                c_AutoSuggetBox_Search.PlaceholderText = "请输入成就的名称、描述、版本、ID 。。。";
-            }
             var items_dic = items.ToDictionary(x => x.Id);
 
             if (!preCached)
@@ -422,13 +418,11 @@ public sealed partial class AchievementPage : Page
                 var yaePath = Path.Combine(XunkongEnvironment.UserDataPath, @"Tool\YaeAchievement.exe");
                 if (!File.Exists(yaePath))
                 {
-                    NotificationProvider.Warning("没有找到 YaeAchievement (Modified by Xunkong).exe");
                     return;
                 }
                 var info = new ProcessStartInfo
                 {
                     FileName = yaePath,
-                    Arguments = $"\"{exePath}\"",
                     UseShellExecute = true,
                     Verb = "runas",
                 };
@@ -485,7 +479,7 @@ public sealed partial class AchievementPage : Page
                     if (value is uint v)
                     {
                         versionCode = v;
-            }
+                    }
                 }
             }
             var versionBytes = await versionBytesTask;
@@ -503,7 +497,7 @@ public sealed partial class AchievementPage : Page
             Logger.Error(ex);
             NotificationProvider.Error(ex, "Update YaeAchievement");
         }
-        }
+    }
 
 
 
@@ -1015,7 +1009,13 @@ public sealed partial class AchievementPage : Page
                     await Task.Run(() =>
                     {
                         using var dapper = DatabaseProvider.CreateConnection();
-                        dapper.Execute("INSERT OR REPLACE INTO AchievementData (Uid, Id, Current, Status, FinishedTime, LastUpdateTime) VALUES (@Uid, @Id, @Current, @Status, @FinishedTime, @LastUpdateTime);", importAchievementDatas);
+                        using var t = dapper.BeginTransaction();
+                        dapper.Execute("""
+                            INSERT INTO AchievementData (Uid, Id, Current, Status, FinishedTime, LastUpdateTime)
+                            VALUES (@Uid, @Id, @Current, @Status, @FinishedTime, @LastUpdateTime)
+                            ON CONFLICT DO UPDATE SET Current=@Current, Status=@Status, FinishedTime=@FinishedTime, LastUpdateTime=@LastUpdateTime;
+                            """, importAchievementDatas, t);
+                        t.Commit();
                     });
                     NotificationProvider.Success("导入完成", $"已为 Uid {uid} 导入成就数据 {importAchievementCount} 条");
                 }
