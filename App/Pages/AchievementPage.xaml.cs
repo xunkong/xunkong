@@ -5,14 +5,17 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using ProtoBuf;
+using SingleFileExtractor.Core;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO.Compression;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Numerics;
+using System.Reflection;
 using System.Text.Json.Nodes;
-using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Pickers;
 using Windows.System;
@@ -415,7 +418,8 @@ public sealed partial class AchievementPage : Page
                     return;
                 }
                 var exePath = await InvokeService.GetGameExePathAsync();
-                var yaePath = Path.Combine(Package.Current.InstalledPath, @"Xunkong.Desktop\YaeAchievement (Modified by Xunkong).exe");
+                await CheckYaeAchievementUpdateAsync();
+                var yaePath = Path.Combine(XunkongEnvironment.UserDataPath, @"Tool\YaeAchievement.exe");
                 if (!File.Exists(yaePath))
                 {
                     NotificationProvider.Warning("没有找到 YaeAchievement (Modified by Xunkong).exe");
@@ -441,9 +445,93 @@ public sealed partial class AchievementPage : Page
                     return;
                 }
             }
-            NotificationProvider.Error(ex, "启动成就获取工具");
-            Logger.Error(ex, "启动成就获取工具");
+            NotificationProvider.Error(ex, "启动 YeaAchievement");
+            Logger.Error(ex, "启动 YeaAchievement");
         }
+    }
+
+
+
+
+
+    private async Task CheckYaeAchievementUpdateAsync()
+    {
+        const string HOST = "https://cn-cd-1259389942.file.myqcloud.com";
+        try
+        {
+            var path = Path.Combine(XunkongEnvironment.UserDataPath, "Tool\\YaeAchievement.exe");
+            var client = new HttpClient();
+            var versionBytesTask = client.GetByteArrayAsync($"{HOST}/schicksal/version");
+            uint versionCode = 0;
+            if (File.Exists(path))
+            {
+                var entry = new ExecutableReader().ReadManifest(path).Files.FirstOrDefault(x => x.RelativePath.Contains("YaeAchievement.dll"));
+                if (entry != null)
+                {
+                    using var fs = File.OpenRead(path);
+                    var bytes = new byte[entry.Size];
+                    fs.Position = entry.Offset;
+                    if (entry.IsCompressed)
+                    {
+                        using var deflate = new DeflateStream(fs, CompressionMode.Decompress);
+                        deflate.Read(bytes);
+                    }
+                    else
+                    {
+                        fs.Read(bytes);
+                    }
+                    var assembly = Assembly.Load(bytes);
+                    var value = assembly.GetType("YaeAchievement.GlobalVars")?.GetField("AppVersionCode")?.GetRawConstantValue();
+                    if (value is uint v)
+                    {
+                        versionCode = v;
+            }
+                }
+            }
+            var versionBytes = await versionBytesTask;
+            var version = Serializer.Deserialize<YaeVersion>(new ReadOnlySpan<byte>(versionBytes));
+            if (version.VersionCode != versionCode)
+            {
+                NotificationProvider.Information("正在下载 YeaAchievement");
+                Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+                var bytes = await client.GetByteArrayAsync($"{HOST}/{version.PackageLink}");
+                await File.WriteAllBytesAsync(path, bytes);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+            NotificationProvider.Error(ex, "Update YaeAchievement");
+        }
+        }
+
+
+
+
+    [ProtoContract]
+    private class YaeVersion
+    {
+        [ProtoMember(1)]
+        public uint VersionCode { get; set; }
+
+        [ProtoMember(2)]
+        public string VersionName { get; set; }
+
+        [ProtoMember(3)]
+        public string Description { get; set; }
+
+        [ProtoMember(4)]
+        public string PackageLink { get; set; }
+
+        [ProtoMember(5)]
+        public bool ForceUpdate { get; set; }
+
+        [ProtoMember(6)]
+        public bool EnableLibDownload { get; set; }
+
+        [ProtoMember(7)]
+        public bool EnableAutoDownload { get; set; }
+
     }
 
 

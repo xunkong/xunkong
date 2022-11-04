@@ -12,6 +12,11 @@
             <Run Text="获取成就数据，此工具将 DLL 注入到原神进程后转发数据包，有较高的风险，可能会触发原神的反作弊机制导致封号。" />
         </TextBlock>
         <TextBlock TextWrapping="Wrap">
+            <Run Text="使用此工具需要安装最新版的" />
+            <Hyperlink NavigateUri="https://dotnet.microsoft.com/zh-cn/download" UnderlineStyle="None">.NET 运行时</Hyperlink>
+            <Run Text="。" />
+        </TextBlock>
+        <TextBlock TextWrapping="Wrap">
             <Run Text="您也可以选择使用其他更安全的支持" />
             <Hyperlink NavigateUri="https://www.snapgenshin.com/development/UIAF.html" UnderlineStyle="None">统一可交换成就标准</Hyperlink>
             <Run Text="的成就导出工具。" />

@@ -34,8 +34,10 @@
 		<PackageReference Include="NAudio.Wasapi" Version="2.1.0" />
 		<PackageReference Include="NAudio.WinMM" Version="2.1.0" />
 		<PackageReference Include="Octokit" Version="4.0.1" />
+		<PackageReference Include="protobuf-net" Version="3.1.22" />
 		<PackageReference Include="Scighost.WinUILib" Version="0.1.1" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+		<PackageReference Include="SingleFileExtractor.Core" Version="1.1.0" />
 		<PackageReference Include="TaskScheduler" Version="2.10.1" />
 		<PackageReference Include="Titanium.Web.Proxy" Version="3.1.1450" />
 		<PackageReference Include="Vanara.PInvoke.User32" Version="3.4.9" />
@@ -47,7 +49,6 @@
 		<ProjectReference Include="..\..\Common\Xunkong.GenshinData\Xunkong.GenshinData.csproj" />
 		<ProjectReference Include="..\..\Common\Xunkong.Hoyolab\Xunkong.Hoyolab.csproj" />
 		<ProjectReference Include="..\..\Server\ApiClient\Xunkong.ApiClient.csproj" />
-		<ProjectReference Include="..\..\YaeAchievement\YaeAchievement.csproj" />
 		<!--<ProjectReference Include="..\Background\Xunkong.Desktop.Background.csproj" />-->
 	</ItemGroup>
 
