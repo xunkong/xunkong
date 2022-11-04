@@ -67,7 +67,7 @@
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Top"
                                    ui:VisualExtensions.NormalizedCenterPoint="0.5"
-                                   Source="ms-appx:///Assets/Images/98004277_p0_thumb.jpg"
+                                   Source="ms-appx:///Assets/Images/102203689_p0_thumb.jpg"
                                    Stretch="UniformToFill"
                                    Tapped="_Image_RecommendWallpaper_Tapped">
                                 <ani:Explicit.Animations>
@@ -105,14 +105,11 @@
                         </TextBlock>
                         <TextBlock Grid.Column="1"
                                    Margin="0,32,0,0"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                    TextWrapping="Wrap">
-                            <Run FontSize="12"
-                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                 Text="朱成碧 - 夜兰" />
+                            <Run FontSize="12" Text="アナ - 原神2周年記念" />
                             <LineBreak />
-                            <Run FontSize="12"
-                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                 Text="：D" />
+                            <Run FontSize="12" Text="おめでとうございます！これからも旅人と共に、星と深淵を目指せ！" />
                         </TextBlock>
                         <StackPanel Grid.Row="1"
                                     Grid.Column="1"
@@ -123,7 +120,6 @@
                                        Text="相关链接" />
                             <HyperlinkButton Content="更新记录" NavigateUri="https://github.com/xunkong/xunkong/releases" />
                             <HyperlinkButton Content="反馈和建议" NavigateUri="https://github.com/xunkong/xunkong/issues/new/choose" />
-                            <HyperlinkButton Command="{x:Bind CopyDevelopersMailCommand, Mode=OneTime}" Content="联系开发者" />
                             <HyperlinkButton Content="隐私策略" NavigateUri="https://github.com/xunkong/xunkong/blob/main/privacy-policy.md" />
                         </StackPanel>
                     </Grid>

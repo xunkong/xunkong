@@ -35,15 +35,15 @@ namespace Xunkong.Desktop.Pages;
 public sealed partial class HomePage : Page
 {
 
-    private const string FallbackWallpaperUri = "ms-appx:///Assets/Images/98004277_p0.jpg";
+    private const string FallbackWallpaperUri = "ms-appx:///Assets/Images/102203689_p0.jpg";
     private readonly static WallpaperInfo FallbackWallpaper = new WallpaperInfo
     {
-        Title = "夜兰",
-        Author = "朱成碧",
-        Description = "：D",
-        FileName = "[朱成碧] 夜兰 [98004277_p0].jpg",
-        Source = "https://www.pixiv.net/artworks/98004277",
-        Url = "https://file.xunkong.cc/wallpaper/98004277_p0.webp"
+        Title = "原神2周年記念",
+        Author = "アナ",
+        Description = "おめでとうございます！\r\nこれからも旅人と共に、星と深淵を目指せ！",
+        FileName = "[アナ] 原神2周年記念 [102203689_p0].jpg",
+        Source = "https://www.pixiv.net/artworks/102203689",
+        Url = "https://file.xunkong.cc/wallpaper/102203689_p0.webp"
     };
 
     private readonly XunkongApiService _xunkongApiService;
@@ -147,7 +147,7 @@ public sealed partial class HomePage : Page
             imageMaxHeight = MainWindow.Current.Height * 0.75 / MainWindow.Current.UIScale;
             _Grid_Image.MaxHeight = imageMaxHeight;
             await LoadBackgroundImage(file);
-            if (NetworkHelper.IsInternetOnMeteredConnection)
+            if (NetworkHelper.IsInternetOnMeteredConnection())
             {
                 if (!AppSetting.GetValue<bool>(SettingKeys.DownloadWallpaperOnMeteredInternet))
                 {

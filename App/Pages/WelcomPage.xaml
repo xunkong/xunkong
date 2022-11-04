@@ -20,7 +20,7 @@
 
         <xdc:CachedImage HorizontalAlignment="Center"
                          VerticalAlignment="Top"
-                         Source="ms-appx:///Assets/Images/98004277_p0.jpg"
+                         Source="ms-appx:///Assets/Images/102203689_p0.jpg"
                          Stretch="UniformToFill" />
 
         <Rectangle HorizontalAlignment="Stretch"
@@ -116,13 +116,15 @@
 
         </StackPanel>
 
-        <TextBlock Grid.Row="1"
-                   Grid.Column="1"
-                   Margin="0,0,12,8"
-                   HorizontalAlignment="Right"
-                   VerticalAlignment="Bottom"
-                   FontSize="14"
-                   Text="图片作者：朱成碧" />
+        <HyperlinkButton Grid.Row="1"
+                         Grid.Column="1"
+                         Margin="0,0,12,8"
+                         HorizontalAlignment="Right"
+                         VerticalAlignment="Bottom"
+                         Content="图片作者：アナ"
+                         FontSize="14"
+                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                         NavigateUri="https://twitter.com/anna_drw01" />
 
     </Grid>
 
