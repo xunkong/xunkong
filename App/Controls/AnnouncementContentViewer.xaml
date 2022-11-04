@@ -6,6 +6,19 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d">
 
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <Color x:Key="WebViewBackgroud">#F3F3F3</Color>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <Color x:Key="WebViewBackgroud">#202020</Color>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
     <UserControl.Transitions>
         <TransitionCollection>
             <EntranceThemeTransition />
@@ -14,8 +27,7 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" CornerRadius="8">
         <WebView2 x:Name="webview"
-                  Margin="12"
-                  DefaultBackgroundColor="Transparent"
+                  Margin="12" DefaultBackgroundColor="{ThemeResource WebViewBackgroud}"
                   IsRightTapEnabled="False" />
     </Grid>
 

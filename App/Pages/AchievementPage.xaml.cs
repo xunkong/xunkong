@@ -405,6 +405,7 @@ public sealed partial class AchievementPage : Page
                 SecondaryButtonText = "关闭",
                 DefaultButton = ContentDialogButton.Secondary,
                 XamlRoot = MainWindow.Current.XamlRoot,
+                RequestedTheme = MainWindow.Current.ActualTheme,
             };
             if (await dialog.ShowWithZeroMarginAsync() == ContentDialogResult.Primary)
             {
@@ -580,6 +581,7 @@ public sealed partial class AchievementPage : Page
             SecondaryButtonText = "取消",
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = MainWindow.Current.XamlRoot,
+            RequestedTheme = MainWindow.Current.ActualTheme,
         };
         if (await dialog.ShowWithZeroMarginAsync() == ContentDialogResult.Primary)
         {

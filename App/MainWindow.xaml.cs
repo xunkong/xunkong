@@ -47,6 +47,8 @@ public sealed partial class MainWindow : Window
 
     public DisplayArea DisplayArea => DisplayArea.GetFromWindowId(Win32Interop.GetWindowIdFromWindow(HWND), DisplayAreaFallback.Primary);
 
+    public ElementTheme ActualTheme => ((FrameworkElement)Content).ActualTheme;
+
 
     public MainWindow()
     {

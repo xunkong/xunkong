@@ -48,11 +48,20 @@
                         Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
                     <Button.Flyout>
                         <Flyout>
+                            <Flyout.FlyoutPresenterStyle>
+                                <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
+                                    <Setter Property="MaxWidth" Value="600" />
+                                </Style>
+                            </Flyout.FlyoutPresenterStyle>
                             <StackPanel>
-                                <TextBlock Text="仅包含视频动画，不包含实时渲染动画；" />
-                                <TextBlock Text="大部分动画没有官方标题，命名的时候参考了观测枢的；" />
+                                <TextBlock Text="页面内仅包含视频动画，不包含实时渲染动画；" />
+                                <TextBlock Text="大部分动画没有官方标题，命名时参考了观测枢；" />
                                 <TextBlock Text="播放时出现卡顿、音画不同步的情况，把进度条拖到开头后重播；" />
-                                <TextBlock Text="内置播放器的体验比较糟糕，不支持视频内字幕，建议下载后观看。" />
+                                <TextBlock>
+                                    <Run Text="使用内置播放器需要安装" />
+                                    <Hyperlink NavigateUri="https://www.microsoft.com/store/apps/9N4D0MSMP0PT" UnderlineStyle="None">VP9 视频扩展</Hyperlink>
+                                    <Run Text="，但是体验比较糟糕，建议下载后观看。" />
+                                </TextBlock>
                             </StackPanel>
                         </Flyout>
                     </Button.Flyout>
@@ -102,9 +111,9 @@
                 <DataTemplate x:DataType="xg:Cutscene">
                     <Grid Height="135">
                         <xdc:CachedImage HorizontalAlignment="Center"
-                               ui:VisualExtensions.NormalizedCenterPoint="0.5"
-                               Source="{x:Bind Poster}"
-                               Stretch="UniformToFill">
+                                         ui:VisualExtensions.NormalizedCenterPoint="0.5"
+                                         Source="{x:Bind Poster}"
+                                         Stretch="UniformToFill">
                             <animations:Explicit.Animations>
                                 <animations:AnimationSet x:Name="ImageZoomInAnimation">
                                     <animations:ScaleAnimation EasingMode="EaseOut"
@@ -124,18 +133,6 @@
                               Background="#40000000"
                               IsHitTestVisible="False"
                               RequestedTheme="Dark">
-                            <Button x:Name="Button_PlayCutscene"
-                                    Width="36"
-                                    Height="32"
-                                    Padding="0"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Top"
-                                    Click="Button_PlayCutscene_Click"
-                                    Content="&#xE173;"
-                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                    FontSize="16"
-                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Style="{ThemeResource DateTimePickerFlyoutButtonStyle}" />
                             <Image Width="24"
                                    Height="24"
                                    Margin="4,2,0,0"
@@ -184,7 +181,7 @@
               Visibility="{x:Bind AppBarToggleButton_Info.IsChecked}">
             <StackPanel Orientation="Horizontal">
                 <xdc:CachedImage MinWidth="348"
-                        Margin="24,12,24,12"
+                                 Margin="24,12,24,12"
                                  CornerRadius="8"
                                  Source="{x:Bind SelectedCutscene.Poster}" />
                 <StackPanel Margin="0,24,0,0">

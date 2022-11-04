@@ -42,6 +42,7 @@ internal static class SecondaryTileProvider
                 CloseButtonText = "取消",
                 DefaultButton = ContentDialogButton.Close,
                 XamlRoot = MainWindow.Current.XamlRoot,
+                RequestedTheme = MainWindow.Current.ActualTheme,
             };
             if (await dialog.ShowWithZeroMarginAsync() is ContentDialogResult.None)
             {

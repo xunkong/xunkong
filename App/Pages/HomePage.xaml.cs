@@ -734,6 +734,7 @@ public sealed partial class HomePage : Page
                             Title = "有新版本",
                             Content = stack1,
                             XamlRoot = MainWindow.Current.XamlRoot,
+                            RequestedTheme = MainWindow.Current.ActualTheme,
                         };
                         await dialog.ShowWithZeroMarginAsync();
                     }

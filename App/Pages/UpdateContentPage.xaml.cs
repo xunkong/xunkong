@@ -73,11 +73,11 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
                 }
             }
             var html = Markdig.Markdown.ToHtml(sb.ToString());
-            var theme = AppSetting.GetValue<int>(SettingKeys.ApplicationTheme);
+            var theme = MainWindow.Current.ActualTheme;
             var path = theme switch
             {
-                1 => Path.Combine(Package.Current.InstalledPath, @"Assets\Others\github-markdown-light_5.1.0.css"),
-                2 => Path.Combine(Package.Current.InstalledPath, @"Assets\Others\github-markdown-dark_5.1.0.css"),
+                ElementTheme.Light => Path.Combine(Package.Current.InstalledPath, @"Assets\Others\github-markdown-light_5.1.0.css"),
+                ElementTheme.Dark => Path.Combine(Package.Current.InstalledPath, @"Assets\Others\github-markdown-dark_5.1.0.css"),
                 _ => Path.Combine(Package.Current.InstalledPath, @"Assets\Others\github-markdown_5.1.0.css"),
             };
             var css = await File.ReadAllTextAsync(path);

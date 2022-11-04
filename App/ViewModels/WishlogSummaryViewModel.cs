@@ -476,6 +476,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
             SecondaryButtonText = "关闭",
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = MainWindow.Current.XamlRoot,
+            RequestedTheme = MainWindow.Current.ActualTheme,
         };
         if (await dialog.ShowWithZeroMarginAsync() == ContentDialogResult.Primary)
         {
@@ -539,6 +540,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
             SecondaryButtonText = "取消",
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = MainWindow.Current.XamlRoot,
+            RequestedTheme = MainWindow.Current.ActualTheme,
         };
         if (await dialog.ShowWithZeroMarginAsync() == ContentDialogResult.Primary && !string.IsNullOrWhiteSpace(textBox.Text))
         {
@@ -596,6 +598,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
             SecondaryButtonText = "不接受",
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = MainWindow.Current.XamlRoot,
+            RequestedTheme = MainWindow.Current.ActualTheme,
         };
         if (await dialog.ShowWithZeroMarginAsync() == ContentDialogResult.Primary)
         {
@@ -766,6 +769,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
                     CloseButtonText = "取消",
                     DefaultButton = ContentDialogButton.Close,
                     XamlRoot = MainWindow.Current.XamlRoot,
+                    RequestedTheme = MainWindow.Current.ActualTheme,
                 };
                 if (await dialog.ShowWithZeroMarginAsync() != ContentDialogResult.Primary)
                 {

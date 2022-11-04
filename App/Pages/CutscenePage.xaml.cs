@@ -41,7 +41,13 @@ public sealed partial class CutscenePage : Page
     [ObservableProperty]
     private Cutscene selectedCutscene;
 
-
+    partial void OnSelectedCutsceneChanged(Cutscene value)
+    {
+        if (value != null)
+        {
+            AppBarToggleButton_Info.IsChecked = true;
+        }
+    }
 
 
 
@@ -51,7 +57,7 @@ public sealed partial class CutscenePage : Page
         {
             var str = await httpClient.GetStringAsync("https://file.xunkong.cc/genshin/cutscene/all.json");
             var list = JsonSerializer.Deserialize<List<Cutscene>>(str, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            Cutscenes = list!.OrderByDescending(x => x.Version).ThenBy(x => x.Group).ThenBy(x => x.Title).ThenBy(x => x.Player).ToList();
+            Cutscenes = list!.OrderByDescending(x => x.Version).ThenByDescending(x => x.Type).ThenBy(x => x.Group).ThenBy(x => x.Title).ThenBy(x => x.Player).ToList();
         }
         catch (Exception ex)
         {

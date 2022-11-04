@@ -7,6 +7,19 @@
       x:DefaultBindMode="OneWay"
       mc:Ignorable="d">
 
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <Color x:Key="WebViewBackgroud">#F3F3F3</Color>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <Color x:Key="WebViewBackgroud">#202020</Color>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="60" />
@@ -50,7 +63,7 @@
               CornerRadius="8,0,0,0">
             <WebView2 x:Name="webview"
                       Margin="24,0,24,0"
-                      DefaultBackgroundColor="Transparent"
+                      DefaultBackgroundColor="{ThemeResource WebViewBackgroud}"
                       IsRightTapEnabled="False" />
             <ProgressRing Grid.Row="1"
                           Width="48"
