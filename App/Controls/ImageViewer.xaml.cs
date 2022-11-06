@@ -193,13 +193,7 @@ public sealed partial class ImageViewer : UserControl
     {
         try
         {
-            var uri = new Uri(Source);
-            var file = uri.Scheme switch
-            {
-                "ms-appx" => await StorageFile.GetFileFromApplicationUriAsync(uri),
-                "file" => await StorageFile.GetFileFromPathAsync(uri.ToString()),
-                _ => await XunkongCache.Instance.GetFileFromCacheAsync(uri),
-            };
+            var file = await XunkongCache.GetFileFromUriAsync(Source);
             if (file is null)
             {
                 NotificationProvider.Warning("找不到缓存的文件", 3000);
@@ -208,7 +202,7 @@ public sealed partial class ImageViewer : UserControl
             {
                 var picker = new FileSavePicker();
                 picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-                var extension = Path.GetExtension(uri.ToString());
+                var extension = Path.GetExtension(Source);
                 if (string.IsNullOrWhiteSpace(extension)) { extension = ".png"; }
                 picker.FileTypeChoices.Add("Image", new List<string>() { extension });
                 picker.SuggestedFileName = Path.GetFileName(Source);
@@ -438,30 +432,7 @@ public sealed partial class ImageViewer : UserControl
 
 
 
-    /// <summary>
-    /// 拖入更改图片，测试用
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void _ScrollViewer_Image_Drop(object sender, DragEventArgs e)
-    {
-        //if (e.DataView.Contains(StandardDataFormats.StorageItems))
-        //{
-        //    var items = await e.DataView.GetStorageItemsAsync();
-        //    if (items.Any())
-        //    {
-        //        var file = items.FirstOrDefault()?.Path;
-        //        ImageSource = file;
-        //    }
-        //}
-    }
-
-    private void _ScrollViewer_Image_DragOver(object sender, DragEventArgs e)
-    {
-        //e.AcceptedOperation = DataPackageOperation.Copy;
-        //e.DragUIOverride.IsCaptionVisible = false;
-        //e.DragUIOverride.IsGlyphVisible = false;
-    }
+  
 
 
 }

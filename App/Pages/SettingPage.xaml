@@ -263,6 +263,18 @@
                                 </Grid>
                                 <Grid Padding="44,12,0,12">
                                     <TextBlock>
+                                        <Run Text="使用自定义图片" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="把图片文件托到主页的图片区域即可" />
+                                    </TextBlock>
+                                    <ToggleSwitch HorizontalAlignment="Right"
+                                                  IsOn="{x:Bind UseCustomWallpaper, Mode=TwoWay}"
+                                                  Style="{ThemeResource RightAlignToggleSwitchStyle}" />
+                                </Grid>
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock>
                                         <Run Text="保存位置" />
                                         <LineBreak />
                                         <Run FontSize="12"

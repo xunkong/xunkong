@@ -37,4 +37,38 @@ internal sealed class XunkongCache : CacheBase<StorageFile>
         return request;
     }
 
+
+    public static async Task<StorageFile?> GetFileFromUriAsync(Uri uri)
+    {
+        try
+        {
+            return uri.Scheme switch
+            {
+                "ms-appx" => await StorageFile.GetFileFromApplicationUriAsync(uri),
+                "file" => await StorageFile.GetFileFromPathAsync(uri.ToString()),
+                _ => await Instance.GetFileFromCacheAsync(uri),
+            };
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+
+    public static async Task<StorageFile?> GetFileFromUriAsync(string? url)
+    {
+        if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out var uri))
+        {
+            return await GetFileFromUriAsync(uri);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+
+
+
 }

@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Services.Store;
@@ -123,31 +124,45 @@ public sealed partial class HomePage : Page
                 return;
             }
             _Grid_Image.Visibility = Visibility.Visible;
-            var wallpaper = _xunkongApiService.GetPreparedWallpaper();
-            string file;
-            if (wallpaper is null)
+            string? file = null;
+            bool skipDownload = false;
+            if (AppSetting.GetValue<bool>(SettingKeys.UseCustomWallpaper))
             {
-                WallpaperInfo = FallbackWallpaper;
-                file = (await StorageFile.GetFileFromApplicationUriAsync(new(FallbackWallpaperUri))).Path;
-            }
-            else
-            {
-                var cachedFile = XunkongCache.Instance.GetCacheFilePath(new(wallpaper.Url));
-                if (File.Exists(cachedFile))
+                var path = Path.Combine(ApplicationData.Current.LocalCacheFolder.Path, "CustomWallpaper.png");
+                if (File.Exists(path))
                 {
-                    WallpaperInfo = wallpaper;
-                    file = cachedFile;
+                    file = path;
+                    skipDownload = true;
+                    WallpaperInfo = new WallpaperInfo { Url = path, FileName = "CustomWallpaper.png" };
                 }
-                else
+            }
+            if (string.IsNullOrWhiteSpace(file))
+            {
+                var wallpaper = _xunkongApiService.GetPreparedWallpaper();
+                if (wallpaper is null)
                 {
                     WallpaperInfo = FallbackWallpaper;
                     file = (await StorageFile.GetFileFromApplicationUriAsync(new(FallbackWallpaperUri))).Path;
+                }
+                else
+                {
+                    var cachedFile = XunkongCache.Instance.GetCacheFilePath(new(wallpaper.Url));
+                    if (File.Exists(cachedFile))
+                    {
+                        WallpaperInfo = wallpaper;
+                        file = cachedFile;
+                    }
+                    else
+                    {
+                        WallpaperInfo = FallbackWallpaper;
+                        file = (await StorageFile.GetFileFromApplicationUriAsync(new(FallbackWallpaperUri))).Path;
+                    }
                 }
             }
             imageMaxHeight = MainWindow.Current.Height * 0.75 / MainWindow.Current.UIScale;
             _Grid_Image.MaxHeight = imageMaxHeight;
             await LoadBackgroundImage(file);
-            if (NetworkHelper.IsInternetOnMeteredConnection())
+            if (NetworkHelper.IsInternetOnMeteredConnection() && !skipDownload)
             {
                 if (!AppSetting.GetValue<bool>(SettingKeys.DownloadWallpaperOnMeteredInternet))
                 {
@@ -177,6 +192,69 @@ public sealed partial class HomePage : Page
         }).ConfigureAwait(false).GetAwaiter();
     }
 
+    /// <summary>
+    /// 拖入图片
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void _Grid_Image_DragOver(object sender, DragEventArgs e)
+    {
+        if (e.DataView.Contains(StandardDataFormats.StorageItems) || e.DataView.Contains(StandardDataFormats.Bitmap))
+        {
+            e.AcceptedOperation = DataPackageOperation.Copy;
+            e.DragUIOverride.IsCaptionVisible = false;
+            e.DragUIOverride.IsGlyphVisible = false;
+        }
+    }
+
+
+    /// <summary>
+    /// 拖入图片
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void _Grid_Image_Drop(object sender, DragEventArgs e)
+    {
+        try
+        {
+            if (e.DataView.Contains(StandardDataFormats.StorageItems))
+            {
+                var items = await e.DataView.GetStorageItemsAsync();
+                var item = items.FirstOrDefault() as StorageFile;
+                if (item != null)
+                {
+                    using var fs = await item.OpenReadAsync();
+                    var decoder = await BitmapDecoder.CreateAsync(fs);
+                    heightDivWidth = (double)decoder.PixelHeight / decoder.PixelWidth;
+                    await DecodeAndShowImage(fs.AsStream());
+                    WallpaperInfo = null!;
+                    var file = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync("CustomWallpaper.png", CreationCollisionOption.ReplaceExisting);
+                    await item.CopyAndReplaceAsync(file);
+                }
+            }
+            if (e.DataView.Contains(StandardDataFormats.Bitmap))
+            {
+                var r = await e.DataView.GetBitmapAsync();
+                using var stream = await r.OpenReadAsync();
+                var decoder = await BitmapDecoder.CreateAsync(stream);
+                heightDivWidth = (double)decoder.PixelHeight / decoder.PixelWidth;
+                await DecodeAndShowImage(stream.AsStream());
+                WallpaperInfo = null!;
+                var file = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync("CustomWallpaper.png", CreationCollisionOption.ReplaceExisting);
+                using var fs = await file.OpenStreamForWriteAsync();
+                var s = stream.AsStream();
+                s.Position = 0;
+                await s.CopyToAsync(fs);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "拖入图片文件");
+            NotificationProvider.Error("无法识别文件");
+        }
+    }
+
+
 
     /// <summary>
     /// 加载背景图片
@@ -187,71 +265,10 @@ public sealed partial class HomePage : Page
     {
         try
         {
-            var compositor = ElementCompositionPreview.GetElementVisual(_Border_BackgroundImage).Compositor;
             using var stream = File.OpenRead(file);
             var decoder = await BitmapDecoder.CreateAsync(stream.AsRandomAccessStream());
             heightDivWidth = (double)decoder.PixelHeight / decoder.PixelWidth;
-
-            var imageSurface = LoadedImageSurface.StartLoadFromUri(new(file));
-            var imageBrush = compositor.CreateSurfaceBrush();
-            imageBrush.Surface = imageSurface;
-            imageBrush.Stretch = CompositionStretch.UniformToFill;
-            imageBrush.VerticalAlignmentRatio = 0;
-
-            var linearGradientBrush1 = compositor.CreateLinearGradientBrush();
-            linearGradientBrush1.StartPoint = Vector2.Zero;
-            linearGradientBrush1.EndPoint = Vector2.UnitY;
-            linearGradientBrush1.ColorStops.Add(compositor.CreateColorGradientStop(0, Colors.White));
-            linearGradientBrush1.ColorStops.Add(compositor.CreateColorGradientStop(0.95f, Colors.Black));
-
-            var linearGradientBrush2 = compositor.CreateLinearGradientBrush();
-            linearGradientBrush2.StartPoint = new Vector2(0.5f, 0);
-            linearGradientBrush2.EndPoint = Vector2.UnitY;
-            linearGradientBrush2.ColorStops.Add(compositor.CreateColorGradientStop(0, Colors.White));
-            linearGradientBrush2.ColorStops.Add(compositor.CreateColorGradientStop(1, Colors.Black));
-
-            var blendEffect = new BlendEffect
-            {
-                Mode = BlendEffectMode.Multiply,
-                Background = new CompositionEffectSourceParameter("Background"),
-                Foreground = new CompositionEffectSourceParameter("Foreground"),
-            };
-
-            var blendEffectFactory = compositor.CreateEffectFactory(blendEffect);
-            var gradientEffectBrush = blendEffectFactory.CreateBrush();
-            gradientEffectBrush.SetSourceParameter("Background", linearGradientBrush2);
-            gradientEffectBrush.SetSourceParameter("Foreground", linearGradientBrush1);
-
-
-            var invertEffect = new LuminanceToAlphaEffect
-            {
-                Source = new CompositionEffectSourceParameter("Source"),
-            };
-
-            var invertEffectFactory = compositor.CreateEffectFactory(invertEffect);
-            var opacityEffectBrush = invertEffectFactory.CreateBrush();
-            opacityEffectBrush.SetSourceParameter("Source", gradientEffectBrush);
-
-            var maskEffect = new AlphaMaskEffect
-            {
-                AlphaMask = new CompositionEffectSourceParameter("Mask"),
-                Source = new CompositionEffectSourceParameter("Source"),
-            };
-
-            var maskFactory = compositor.CreateEffectFactory(maskEffect);
-            var maskEffectBrush = maskFactory.CreateBrush();
-            maskEffectBrush.SetSourceParameter("Mask", opacityEffectBrush);
-            maskEffectBrush.SetSourceParameter("Source", imageBrush);
-
-            imageVisual = compositor.CreateSpriteVisual();
-            imageVisual.Brush = maskEffectBrush;
-
-            var width = _Border_BackgroundImage.ActualWidth;
-            var height = Math.Clamp(width * heightDivWidth, 0, imageMaxHeight);
-            imageVisual.Size = new Vector2((float)width, (float)height);
-            _Border_BackgroundImage.Height = height;
-            _Border_BackgroundImage.Visibility = Visibility.Visible;
-            ElementCompositionPreview.SetElementChildVisual(_Border_BackgroundImage, imageVisual);
+            await DecodeAndShowImage(stream);
         }
         catch (COMException ex)
         {
@@ -266,6 +283,77 @@ public sealed partial class HomePage : Page
                     async () => await Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?productid=9PG2DK419DRG&mode=mini")));
             }
         }
+    }
+
+
+
+    private async Task DecodeAndShowImage(Stream stream)
+    {
+        var ms = new MemoryStream();
+        stream.Position = 0;
+        await stream.CopyToAsync(ms);
+        ms.Position = 0;
+        var compositor = ElementCompositionPreview.GetElementVisual(_Border_BackgroundImage).Compositor;
+        var imageSurface = LoadedImageSurface.StartLoadFromStream(ms.AsRandomAccessStream());
+        var imageBrush = compositor.CreateSurfaceBrush();
+        imageBrush.Surface = imageSurface;
+        imageBrush.Stretch = CompositionStretch.UniformToFill;
+        imageBrush.VerticalAlignmentRatio = 0;
+
+        var linearGradientBrush1 = compositor.CreateLinearGradientBrush();
+        linearGradientBrush1.StartPoint = Vector2.Zero;
+        linearGradientBrush1.EndPoint = Vector2.UnitY;
+        linearGradientBrush1.ColorStops.Add(compositor.CreateColorGradientStop(0, Colors.White));
+        linearGradientBrush1.ColorStops.Add(compositor.CreateColorGradientStop(0.95f, Colors.Black));
+
+        var linearGradientBrush2 = compositor.CreateLinearGradientBrush();
+        linearGradientBrush2.StartPoint = new Vector2(0.5f, 0);
+        linearGradientBrush2.EndPoint = Vector2.UnitY;
+        linearGradientBrush2.ColorStops.Add(compositor.CreateColorGradientStop(0, Colors.White));
+        linearGradientBrush2.ColorStops.Add(compositor.CreateColorGradientStop(1, Colors.Black));
+
+        var blendEffect = new BlendEffect
+        {
+            Mode = BlendEffectMode.Multiply,
+            Background = new CompositionEffectSourceParameter("Background"),
+            Foreground = new CompositionEffectSourceParameter("Foreground"),
+        };
+
+        var blendEffectFactory = compositor.CreateEffectFactory(blendEffect);
+        var gradientEffectBrush = blendEffectFactory.CreateBrush();
+        gradientEffectBrush.SetSourceParameter("Background", linearGradientBrush2);
+        gradientEffectBrush.SetSourceParameter("Foreground", linearGradientBrush1);
+
+
+        var invertEffect = new LuminanceToAlphaEffect
+        {
+            Source = new CompositionEffectSourceParameter("Source"),
+        };
+
+        var invertEffectFactory = compositor.CreateEffectFactory(invertEffect);
+        var opacityEffectBrush = invertEffectFactory.CreateBrush();
+        opacityEffectBrush.SetSourceParameter("Source", gradientEffectBrush);
+
+        var maskEffect = new AlphaMaskEffect
+        {
+            AlphaMask = new CompositionEffectSourceParameter("Mask"),
+            Source = new CompositionEffectSourceParameter("Source"),
+        };
+
+        var maskFactory = compositor.CreateEffectFactory(maskEffect);
+        var maskEffectBrush = maskFactory.CreateBrush();
+        maskEffectBrush.SetSourceParameter("Mask", opacityEffectBrush);
+        maskEffectBrush.SetSourceParameter("Source", imageBrush);
+
+        imageVisual = compositor.CreateSpriteVisual();
+        imageVisual.Brush = maskEffectBrush;
+
+        var width = _Border_BackgroundImage.ActualWidth;
+        var height = Math.Clamp(width * heightDivWidth, 0, imageMaxHeight);
+        imageVisual.Size = new Vector2((float)width, (float)height);
+        _Border_BackgroundImage.Height = height;
+        _Border_BackgroundImage.Visibility = Visibility.Visible;
+        ElementCompositionPreview.SetElementChildVisual(_Border_BackgroundImage, imageVisual);
     }
 
 
@@ -326,24 +414,22 @@ public sealed partial class HomePage : Page
     {
         try
         {
-            StorageFile file;
+            StorageFile? file = null;
             if (WallpaperInfo == FallbackWallpaper)
             {
                 file = await StorageFile.GetFileFromApplicationUriAsync(new Uri(FallbackWallpaperUri));
             }
             else
             {
-                file = await XunkongCache.Instance.GetFromCacheAsync(new(WallpaperInfo.Url));
-                if (file is null)
-                {
-                    NotificationProvider.Warning("找不到缓存的文件", 3000);
-                    return;
-                }
+                file = await XunkongCache.GetFileFromUriAsync(WallpaperInfo?.Url);
             }
-            ClipboardHelper.SetBitmap(file);
-            _Button_Copy.Content = "\xE8FB";
-            await Task.Delay(3000);
-            _Button_Copy.Content = "\xE8C8";
+            if (file != null)
+            {
+                ClipboardHelper.SetBitmap(file);
+                _Button_Copy.Content = "\xE8FB";
+                await Task.Delay(3000);
+                _Button_Copy.Content = "\xE8C8";
+            }
         }
         catch (Exception ex)
         {
@@ -358,7 +444,7 @@ public sealed partial class HomePage : Page
     /// 保存图片
     /// </summary>
     [RelayCommand]
-    private void SaveWallpaper()
+    private async Task SaveWallpaper()
     {
         if (string.IsNullOrWhiteSpace(WallpaperInfo?.Url))
         {
@@ -366,22 +452,22 @@ public sealed partial class HomePage : Page
         }
         try
         {
-            string? file = null;
+            StorageFile? file = null;
             if (WallpaperInfo == FallbackWallpaper)
             {
-                file = StorageFile.GetFileFromApplicationUriAsync(new Uri(FallbackWallpaperUri)).GetAwaiter().GetResult().Path;
+                file = await StorageFile.GetFileFromApplicationUriAsync(new Uri(FallbackWallpaperUri));
             }
             else
             {
-                file = XunkongCache.Instance.GetCacheFilePath(new(WallpaperInfo.Url));
+                file = await XunkongCache.GetFileFromUriAsync(WallpaperInfo?.Url);
             }
-            if (!File.Exists(file))
+            if (file is null)
             {
                 NotificationProvider.Warning("找不到缓存的文件", 3000);
                 return;
             }
             var destFolder = AppSetting.GetValue<string>(SettingKeys.WallpaperSaveFolder) ?? Path.Combine(XunkongEnvironment.UserDataPath, "Wallpaper");
-            var fileName = WallpaperInfo.FileName ?? Path.GetFileName(WallpaperInfo.Url);
+            var fileName = WallpaperInfo?.FileName ?? Path.GetFileName(WallpaperInfo?.Url)!;
             var destPath = Path.Combine(destFolder, fileName);
             Action openImageAction = () => Process.Start(new ProcessStartInfo { FileName = destPath, UseShellExecute = true });
             if (File.Exists(destPath))
@@ -389,7 +475,7 @@ public sealed partial class HomePage : Page
                 Action overwriteAction = () =>
                 {
                     Directory.CreateDirectory(destFolder);
-                    File.Copy(file, destPath, true);
+                    File.Copy(file.Path, destPath, true);
                     NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "已保存", fileName, "打开文件", openImageAction, null, 3000);
                 };
                 NotificationProvider.ShowWithButton(InfoBarSeverity.Warning, "文件已存在", null, "覆盖文件", overwriteAction, null, 3000);
@@ -398,7 +484,7 @@ public sealed partial class HomePage : Page
             else
             {
                 Directory.CreateDirectory(destFolder);
-                File.Copy(file, destPath, true);
+                File.Copy(file.Path, destPath, true);
                 NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "已保存", fileName, "打开文件", openImageAction, null, 3000);
             }
         }
@@ -834,6 +920,8 @@ public sealed partial class HomePage : Page
             await InvokeService.CheckTransformerReachedAndHomeCoinFullAsync(true);
         }
     }
+
+
 
 
 

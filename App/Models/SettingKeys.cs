@@ -155,4 +155,12 @@ internal static class SettingKeys
     /// </summary>
     public const string WallpaperSaveFolder = nameof(WallpaperSaveFolder);
 
+    /// <summary>
+    /// 使用自定义壁纸
+    /// </summary>
+    public const string UseCustomWallpaper = nameof(UseCustomWallpaper);
+
+
+
+
 }

@@ -34,10 +34,7 @@
 
         <ScrollViewer x:Name="_ScrollViewer_Image"
                       Grid.ColumnSpan="3"
-                      AllowDrop="True"
                       DoubleTapped="_ScrollViewer_Image_DoubleTapped"
-                      DragOver="_ScrollViewer_Image_DragOver"
-                      Drop="_ScrollViewer_Image_Drop"
                       HorizontalScrollBarVisibility="Hidden"
                       HorizontalScrollMode="Enabled"
                       IsDoubleTapEnabled="True"

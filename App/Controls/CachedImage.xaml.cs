@@ -503,18 +503,10 @@ public sealed partial class CachedImage : UserControl
         {
             if (Source is string url)
             {
-                if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out var uri))
+                var file = await XunkongCache.GetFileFromUriAsync(url);
+                if (file != null)
                 {
-                    var file = uri.Scheme switch
-                    {
-                        "ms-appx" => await StorageFile.GetFileFromApplicationUriAsync(uri),
-                        "file" => await StorageFile.GetFileFromPathAsync(uri.ToString()),
-                        _ => await XunkongCache.Instance.GetFileFromCacheAsync(uri),
-                    };
-                    if (file != null)
-                    {
-                        ClipboardHelper.SetBitmap(file);
-                    }
+                    ClipboardHelper.SetBitmap(file);
                 }
             }
         }
@@ -556,20 +548,12 @@ public sealed partial class CachedImage : UserControl
         {
             if (Source is string url)
             {
-                if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out var uri))
+                var file = await XunkongCache.GetFileFromUriAsync(url);
+                if (file != null)
                 {
-                    var file = uri.Scheme switch
-                    {
-                        "ms-appx" => await StorageFile.GetFileFromApplicationUriAsync(uri),
-                        "file" => await StorageFile.GetFileFromPathAsync(uri.ToString()),
-                        _ => await XunkongCache.Instance.GetFileFromCacheAsync(uri),
-                    };
-                    if (file != null)
-                    {
-                        var rf = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(Path.GetFileName(url), CreationCollisionOption.ReplaceExisting);
-                        await file.CopyAndReplaceAsync(rf);
-                        ClipboardHelper.SetStorageItems(DataPackageOperation.Copy, rf);
-                    }
+                    var rf = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(Path.GetFileName(url), CreationCollisionOption.ReplaceExisting);
+                    await file.CopyAndReplaceAsync(rf);
+                    ClipboardHelper.SetStorageItems(DataPackageOperation.Copy, rf);
                 }
             }
         }
@@ -595,12 +579,7 @@ public sealed partial class CachedImage : UserControl
                 {
                     var extension = Path.GetExtension(uri.ToString());
                     if (string.IsNullOrWhiteSpace(extension)) { extension = ".png"; }
-                    var file = uri.Scheme switch
-                    {
-                        "ms-appx" => await StorageFile.GetFileFromApplicationUriAsync(uri),
-                        "file" => await StorageFile.GetFileFromPathAsync(uri.ToString()),
-                        _ => await XunkongCache.Instance.GetFileFromCacheAsync(uri),
-                    };
+                    var file = await XunkongCache.GetFileFromUriAsync(uri);
                     if (file != null)
                     {
                         var picker = new FileSavePicker();

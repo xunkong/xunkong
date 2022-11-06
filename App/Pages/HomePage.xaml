@@ -29,13 +29,19 @@
 
                 <Grid x:Name="_Grid_Image"
                       Margin="-48,0,-48,-48"
+                      AllowDrop="True"
+                      Background="Transparent"
+                      DragOver="_Grid_Image_DragOver"
+                      Drop="_Grid_Image_Drop"
                       Visibility="Collapsed">
                     <Border x:Name="_Border_BackgroundImage"
+                            IsHitTestVisible="False"
                             SizeChanged="_Border_BackgroundImage_SizeChanged"
                             Visibility="Collapsed" />
                     <!--  背景图片信息  -->
                     <StackPanel x:Name="_StackPanel_WallpaperInfo"
                                 Margin="48,24,48,96"
+                                HorizontalAlignment="Left"
                                 VerticalAlignment="Bottom"
                                 Visibility="{x:Bind WallpaperInfo, Converter={StaticResource ObjectToVisibilityConverter}}">
                         <StackPanel.ChildrenTransitions>

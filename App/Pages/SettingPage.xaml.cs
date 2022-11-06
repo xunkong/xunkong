@@ -199,6 +199,13 @@ public sealed partial class SettingPage : Page
     }
 
 
+    [ObservableProperty]
+    private bool _UseCustomWallpaper = AppSetting.GetValue<bool>(SettingKeys.UseCustomWallpaper);
+    partial void OnUseCustomWallpaperChanged(bool value)
+    {
+        AppSetting.TrySetValue(SettingKeys.UseCustomWallpaper, value);
+    }
+
 
     /// <summary>
     /// 壁纸保存位置
