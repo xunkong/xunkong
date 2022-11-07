@@ -146,11 +146,11 @@ public sealed partial class HomePage : Page
                 }
                 else
                 {
-                    var cachedFile = XunkongCache.Instance.GetCacheFilePath(new(wallpaper.Url));
-                    if (File.Exists(cachedFile))
+                    var cachedFile = await XunkongCache.Instance.GetFileFromCacheAsync(new(wallpaper.Url));
+                    if (cachedFile != null)
                     {
                         WallpaperInfo = wallpaper;
-                        file = cachedFile;
+                        file = cachedFile.Path;
                     }
                     else
                     {
@@ -226,7 +226,7 @@ public sealed partial class HomePage : Page
                     using var fs = await item.OpenReadAsync();
                     var decoder = await BitmapDecoder.CreateAsync(fs);
                     heightDivWidth = (double)decoder.PixelHeight / decoder.PixelWidth;
-                    await DecodeAndShowImage(fs.AsStream());
+                    await LoadBackgroundImage(fs.AsStream());
                     WallpaperInfo = null!;
                     var file = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync("CustomWallpaper.png", CreationCollisionOption.ReplaceExisting);
                     await item.CopyAndReplaceAsync(file);
@@ -238,7 +238,7 @@ public sealed partial class HomePage : Page
                 using var stream = await r.OpenReadAsync();
                 var decoder = await BitmapDecoder.CreateAsync(stream);
                 heightDivWidth = (double)decoder.PixelHeight / decoder.PixelWidth;
-                await DecodeAndShowImage(stream.AsStream());
+                await LoadBackgroundImage(stream.AsStream());
                 WallpaperInfo = null!;
                 var file = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync("CustomWallpaper.png", CreationCollisionOption.ReplaceExisting);
                 using var fs = await file.OpenStreamForWriteAsync();
@@ -268,7 +268,8 @@ public sealed partial class HomePage : Page
             using var stream = File.OpenRead(file);
             var decoder = await BitmapDecoder.CreateAsync(stream.AsRandomAccessStream());
             heightDivWidth = (double)decoder.PixelHeight / decoder.PixelWidth;
-            await DecodeAndShowImage(stream);
+            var compositor = ElementCompositionPreview.GetElementVisual(_Border_BackgroundImage).Compositor;
+            await LoadBackgroundImage(stream);
         }
         catch (COMException ex)
         {
@@ -286,15 +287,14 @@ public sealed partial class HomePage : Page
     }
 
 
-
-    private async Task DecodeAndShowImage(Stream stream)
+    private async Task LoadBackgroundImage(Stream stream)
     {
         var ms = new MemoryStream();
         stream.Position = 0;
         await stream.CopyToAsync(ms);
         ms.Position = 0;
-        var compositor = ElementCompositionPreview.GetElementVisual(_Border_BackgroundImage).Compositor;
         var imageSurface = LoadedImageSurface.StartLoadFromStream(ms.AsRandomAccessStream());
+        var compositor = ElementCompositionPreview.GetElementVisual(_Border_BackgroundImage).Compositor;
         var imageBrush = compositor.CreateSurfaceBrush();
         imageBrush.Surface = imageSurface;
         imageBrush.Stretch = CompositionStretch.UniformToFill;

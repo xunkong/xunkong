@@ -177,6 +177,20 @@ public sealed partial class CachedImage : UserControl
 
 
 
+    public bool DecodeFromStream
+    {
+        get { return (bool)GetValue(DecodeFromStreamProperty); }
+        set { SetValue(DecodeFromStreamProperty, value); }
+    }
+
+    // Using a DependencyProperty as the backing store for DecodeFromStream.  This enables animation, styling, binding, etc...
+    public static readonly DependencyProperty DecodeFromStreamProperty =
+        DependencyProperty.Register("DecodeFromStream", typeof(bool), typeof(CachedImage), new PropertyMetadata(false));
+
+
+
+
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(PixelInfoString))]
     private int pixelHeight;
@@ -193,7 +207,7 @@ public sealed partial class CachedImage : UserControl
     public string PixelInfoString => $"{PixelWidth} x {PixelHeight}   {fileSize / 1024:N0} KB";
 
 
-    public event RoutedEventHandler ImageOpend;
+    public event RoutedEventHandler ImageOpened;
 
     public event ExceptionRoutedEventHandler ImageFailed;
 
@@ -396,7 +410,19 @@ public sealed partial class CachedImage : UserControl
                     _fileSizeCache[imageUri.ToString()] = size;
                 }
                 FileSize = size;
-                return new BitmapImage(new Uri(file.Path));
+                if (DecodeFromStream)
+                {
+                    using var stream = await file.OpenReadAsync();
+                    var bitmap = new BitmapImage();
+                    await bitmap.SetSourceAsync(stream);
+                    PixelHeight = bitmap.PixelHeight;
+                    PixelWidth = bitmap.PixelWidth;
+                    return bitmap;
+                }
+                else
+                {
+                    return new BitmapImage(new Uri(file.Path));
+                }
             }
         }
         catch (TaskCanceledException)
@@ -448,7 +474,7 @@ public sealed partial class CachedImage : UserControl
             PixelHeight = source.PixelHeight;
             PixelWidth = source.PixelWidth;
         }
-        ImageOpend?.Invoke(this, e);
+        ImageOpened?.Invoke(this, e);
     }
 
 

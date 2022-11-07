@@ -42,6 +42,7 @@
                       PointerMoved="_ScrollViewer_Image_PointerMoved"
                       PointerPressed="_ScrollViewer_Image_PointerPressed"
                       PointerReleased="_ScrollViewer_Image_PointerReleased"
+                      PointerWheelChanged="_ScrollViewer_Image_PointerWheelChanged"
                       Tapped="_ScrollViewer_Image_Tapped"
                       VerticalScrollBarVisibility="Hidden"
                       VerticalScrollMode="Enabled"
@@ -50,9 +51,10 @@
             <xdc:CachedImage x:Name="_Image"
                              HorizontalAlignment="Center"
                              VerticalAlignment="Center"
-                             ImageOpend="_Image_ImageOpened"
+                             DecodeFromStream="True"
+                             ImageOpened="_Image_ImageOpened"
                              IsDoubleTapEnabled="True"
-                             PointerWheelChanged="_Image_PointerWheelChanged"
+                             SizeChanged="_Image_SizeChanged"
                              Source="{x:Bind Source}">
                 <xdc:CachedImage.RotationTransition>
                     <ScalarTransition />

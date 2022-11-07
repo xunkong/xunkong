@@ -252,7 +252,26 @@ public sealed partial class ImageViewer : UserControl
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void _Image_ImageOpened(object sender, RoutedEventArgs e)
+    private void _Image_ImageOpened(object sender, RoutedEventArgs _)
+    {
+        var width = _Image.ActualWidth;
+        var height = _Image.ActualHeight;
+        if (width * height == 0)
+        {
+            return;
+        }
+        _Image.CenterPoint = new System.Numerics.Vector3((float)(width / 2), (float)(height / 2), 0);
+        var factor = GetFitZoomFactor();
+        _TextBlock_Factor.Text = (factor * uiScale).ToString("P0");
+        _ScrollViewer_Image.ZoomToFactor((float)factor);
+    }
+
+    /// <summary>
+    /// 图片加载后计算合适的缩放率（部分无法触发 <see cref="CachedImage.ImageOpened"/> 的情况）
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void _Image_SizeChanged(object sender, SizeChangedEventArgs e)
     {
         var width = _Image.ActualWidth;
         var height = _Image.ActualHeight;
@@ -359,7 +378,7 @@ public sealed partial class ImageViewer : UserControl
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void _Image_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
+    private void _ScrollViewer_Image_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
     {
         var stats = Microsoft.UI.Input.InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control);
         if (stats == CoreVirtualKeyStates.None)
@@ -430,9 +449,5 @@ public sealed partial class ImageViewer : UserControl
         canImageMoved = false;
     }
 
-
-
-  
-
-
+    
 }
