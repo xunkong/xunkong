@@ -98,24 +98,26 @@ public sealed partial class MainWindow : Window
         var windowId = Win32Interop.GetWindowIdFromWindow(HWND);
         _appWindow = AppWindow.GetFromWindowId(windowId);
         _appWindow.SetIcon(Path.Combine(Package.Current.InstalledLocation.Path, "Assets/Logos/logo.ico"));
-        // AppWindowTitleBar 的体验不是很好
-        //if (AppWindowTitleBar.IsCustomizationSupported())
-        //{
-        //    var dpi = User32.GetDpiForWindow(_hWnd);
-        //    var left = 84 * (int)dpi / 96;
-        //    var top = 48 * (int)dpi / 96;
-        //    var titleBar = _appWindow.TitleBar;
-        //    titleBar.ExtendsContentIntoTitleBar = true;
-        //    titleBar.ButtonBackgroundColor = Colors.Transparent;
-        //    titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
-        //    _appWindow.TitleBar.SetDragRectangles(new RectInt32[] { new RectInt32(left, 0, _appWindow.Size.Width, top) });
-        //}
-        //else
-        //{
-        this.ExtendsContentIntoTitleBar = true;
-        this.SetTitleBar(AppTitleBar);
-        this.Title = XunkongEnvironment.AppName;
-        //}
+        if (AppWindowTitleBar.IsCustomizationSupported())
+        {
+            var scale = this.UIScale;
+            var left = 48 * scale;
+            var top = 48 * scale;
+            var titleBar = _appWindow.TitleBar;
+            titleBar.ExtendsContentIntoTitleBar = true;
+            titleBar.ButtonBackgroundColor = Colors.Transparent;
+            titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            titleBar.SetDragRectangles(new RectInt32[] { new RectInt32((int)left, 0, 10000, (int)top) });
+            // 解决 Windows 10 上标题栏无法拖动的问题
+            // https://github.com/microsoft/WindowsAppSDK/issues/2976
+            _appWindow.ResizeClient(_appWindow.ClientSize);
+        }
+        else
+        {
+            this.ExtendsContentIntoTitleBar = true;
+            this.SetTitleBar(AppTitleBar);
+            this.Title = XunkongEnvironment.AppName;
+        }
         if (AppSetting.GetValue<bool>(SettingKeys.IsMainWindowMaximum))
         {
             User32.ShowWindow(HWND, ShowWindowCommand.SW_MAXIMIZE);
@@ -138,6 +140,7 @@ public sealed partial class MainWindow : Window
 
     private void InitializeMessage()
     {
+        // todo: MainWindow 和 MainPage 中的部分方法改为直接调用
         WeakReferenceMessenger.Default.Register<ChangeApplicationThemeMessage>(this, (_, e) => ChangeApplicationTheme(e.Theme, e.Center));
     }
 
