@@ -5,6 +5,7 @@ using Syncfusion.Licensing;
 using System.Diagnostics;
 using Windows.ApplicationModel;
 using Xunkong.Hoyolab.TravelNotes;
+using Microsoft.UI.Xaml.Navigation;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -32,14 +33,18 @@ public sealed partial class TravelNotesPage : Page
     public TravelNotesPage()
     {
         this.InitializeComponent();
+        NavigationCacheMode = AppSetting.GetValue<bool>(SettingKeys.EnableNavigationCache) ? NavigationCacheMode.Enabled : NavigationCacheMode.Disabled;
         _hoyolabService = ServiceProvider.GetService<HoyolabService>()!;
         Loaded += TravelNotesPage_Loaded;
     }
 
     private async void TravelNotesPage_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
-        await Task.Delay(100);
-        await InitializeDataAsync();
+        if (DayStats is null)
+        {
+            await Task.Delay(30);
+            await InitializeDataAsync();
+        }
     }
 
     private void SfCartesianChart_PointerWheelChanged(object sender, PointerRoutedEventArgs e)

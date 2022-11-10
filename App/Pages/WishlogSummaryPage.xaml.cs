@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Navigation;
 using Xunkong.Desktop.ViewModels;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -21,6 +22,7 @@ public sealed partial class WishlogSummaryPage : Page
     public WishlogSummaryPage()
     {
         this.InitializeComponent();
+        NavigationCacheMode = AppSetting.GetValue<bool>(SettingKeys.EnableNavigationCache) ? NavigationCacheMode.Enabled : NavigationCacheMode.Disabled;
         DataContext = ServiceProvider.GetService<WishlogSummaryViewModel>();
         Loaded += (_, _) => vm.InitializePageData();
         Unloaded += (_, _) => vm.Unloaded();

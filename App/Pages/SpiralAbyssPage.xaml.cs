@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Xunkong.Hoyolab.SpiralAbyss;
+using Microsoft.UI.Xaml.Navigation;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -32,10 +33,11 @@ public sealed partial class SpiralAbyssPage : Page
     public SpiralAbyssPage()
     {
         this.InitializeComponent();
+        NavigationCacheMode = AppSetting.GetValue<bool>(SettingKeys.EnableNavigationCache) ? NavigationCacheMode.Enabled : NavigationCacheMode.Disabled;
         _hoyolabService = ServiceProvider.GetService<HoyolabService>()!;
         WeakReferenceMessenger.Default.Register<SelectedGameRoleChangedMessage>(this, (_, e) => InitializeData());
         Loaded += SpiralAbyssPage_Loaded;
-        Unloaded += SpiralAbyssPage_Unloaded;
+        //Unloaded += SpiralAbyssPage_Unloaded;
     }
 
 
@@ -51,8 +53,11 @@ public sealed partial class SpiralAbyssPage : Page
 
     private async void SpiralAbyssPage_Loaded(object sender, RoutedEventArgs e)
     {
-        await Task.Delay(100);
-        InitializeData();
+        if (LeftPanels is null)
+        {
+            await Task.Delay(30);
+            InitializeData();
+        }
     }
 
 

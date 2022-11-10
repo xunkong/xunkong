@@ -180,6 +180,10 @@ internal partial class WishlogSummaryViewModel : ObservableObject
     [RelayCommand]
     public async void InitializePageData()
     {
+        if (Uids != null)
+        {
+            return;
+        }
         try
         {
             IsLoadingUidData = true;

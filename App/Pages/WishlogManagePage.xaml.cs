@@ -29,7 +29,6 @@ public sealed partial class WishlogManagePage : Page
 
     private readonly JsonSerializerOptions _jsonOptions;
 
-    public static WishlogManagePage Instance;
 
     static WishlogManagePage()
     {
@@ -41,7 +40,6 @@ public sealed partial class WishlogManagePage : Page
 
     public WishlogManagePage()
     {
-        Instance = this;
         this.InitializeComponent();
         _wishlogService = ServiceProvider.GetService<WishlogService>()!;
         _backupService = ServiceProvider.GetService<BackupService>()!;

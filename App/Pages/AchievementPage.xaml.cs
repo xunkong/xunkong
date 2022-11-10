@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Net.Http.Json;
+using Microsoft.UI.Xaml.Navigation;
 using System.Numerics;
 using System.Reflection;
 using System.Text.Json.Nodes;
@@ -43,6 +44,7 @@ public sealed partial class AchievementPage : Page
     public AchievementPage()
     {
         this.InitializeComponent();
+        NavigationCacheMode = AppSetting.GetValue<bool>(SettingKeys.EnableNavigationCache) ? NavigationCacheMode.Enabled : NavigationCacheMode.Disabled;
         WeakReferenceMessenger.Default.Register<ProtocolMessage>(this, (_, e) => HandleProtocolMessage(e));
         Loaded += AchievementPage_Loaded;
         Unloaded += AchievementPage_Unloaded;
@@ -140,8 +142,11 @@ public sealed partial class AchievementPage : Page
 
     private async void AchievementPage_Loaded(object sender, RoutedEventArgs e)
     {
-        await Task.Delay(100);
-        InitializeData();
+        if (Uids is null)
+        {
+            await Task.Delay(30);
+            InitializeData();
+        }
     }
 
 

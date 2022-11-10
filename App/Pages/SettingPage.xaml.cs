@@ -715,4 +715,16 @@ public sealed partial class SettingPage : Page
     #endregion
 
 
+
+    /// <summary>
+    /// 页面缓存
+    /// </summary>
+    [ObservableProperty]
+    private bool _EnableNavigationCache = AppSetting.GetValue<bool>(SettingKeys.EnableNavigationCache);
+    partial void OnEnableNavigationCacheChanged(bool value)
+    {
+        AppSetting.TrySetValue(SettingKeys.EnableNavigationCache, value);
+    }
+
+
 }

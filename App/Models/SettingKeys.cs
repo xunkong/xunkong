@@ -160,7 +160,10 @@ internal static class SettingKeys
     /// </summary>
     public const string UseCustomWallpaper = nameof(UseCustomWallpaper);
 
-
+    /// <summary>
+    /// 启用页面缓存
+    /// </summary>
+    public const string EnableNavigationCache = nameof(EnableNavigationCache);
 
 
 }

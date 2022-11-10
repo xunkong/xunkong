@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Navigation;
 using Windows.Foundation;
 using Windows.UI;
 using Xunkong.GenshinData.Character;
@@ -23,7 +24,8 @@ public sealed partial class WishEventHistoryPage : Page
 {
     public WishEventHistoryPage()
     {
-        this.InitializeComponent();
+        this.InitializeComponent(); 
+        NavigationCacheMode = AppSetting.GetValue<bool>(SettingKeys.EnableNavigationCache) ? NavigationCacheMode.Enabled : NavigationCacheMode.Disabled;
         Loaded += WishEventCDPage_Loaded;
     }
 

@@ -10,6 +10,7 @@ using Xunkong.Desktop.Controls;
 using Xunkong.GenshinData.Character;
 using Xunkong.GenshinData.Weapon;
 using Xunkong.Hoyolab.Account;
+using Microsoft.UI.Xaml.Navigation;
 using Xunkong.Hoyolab.Avatar;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -52,6 +53,7 @@ public sealed partial class CharacterInfoPage : Page
     public CharacterInfoPage()
     {
         this.InitializeComponent();
+        NavigationCacheMode = AppSetting.GetValue<bool>(SettingKeys.EnableNavigationCache) ? NavigationCacheMode.Enabled : NavigationCacheMode.Disabled;
         _houselabService = ServiceProvider.GetService<HoyolabService>()!;
         _wishlogService = ServiceProvider.GetService<WishlogService>()!;
         _xunkongApiService = ServiceProvider.GetService<XunkongApiService>()!;
@@ -62,8 +64,11 @@ public sealed partial class CharacterInfoPage : Page
 
     private async void CharacterInfoPage_Loaded(object sender, RoutedEventArgs e)
     {
-        _ScrollViewer_SideIcon = (VisualTreeHelper.GetChild(_ListBox_SideIcon, 0) as Border)?.Child as ScrollViewer;
-        await InitializeDataAsync();
+        if (Characters is null)
+        {
+            _ScrollViewer_SideIcon = (VisualTreeHelper.GetChild(_ListBox_SideIcon, 0) as Border)?.Child as ScrollViewer;
+            await InitializeDataAsync();
+        }
     }
 
     /// <summary>
