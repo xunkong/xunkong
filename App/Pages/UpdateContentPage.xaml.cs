@@ -43,32 +43,19 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
         {
             var client = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("xunkong"));
             var sb = new StringBuilder();
-            if (lastVersion is null || lastVersion >= ThisVersion)
+            var releases = await client.Repository.Release.GetAll("xunkong", "xunkong", new Octokit.ApiOptions { PageCount = 1, PageSize = 10, StartPage = 1 });
+            foreach (var release in releases)
             {
-                var release = await client.Repository.Release.Get("xunkong", "xunkong", ThisVersion.ToString(3));
-                sb.AppendLine($"# {release.TagName} {release.Name}");
-                sb.AppendLine();
-                sb.AppendLine($"> 更新于 {release.PublishedAt?.LocalDateTime:yyyy-MM-dd HH:mm:ss}");
-                sb.AppendLine();
-                sb.AppendLine(release.Body);
-                sb.AppendLine();
-            }
-            else
-            {
-                var releases = await client.Repository.Release.GetAll("xunkong", "xunkong", new Octokit.ApiOptions { PageCount = 1, PageSize = 10, StartPage = 1 });
-                foreach (var release in releases)
+                if (Version.TryParse(release.TagName, out var version))
                 {
-                    if (Version.TryParse(release.TagName, out var version))
+                    if (lastVersion < version && version <= ThisVersion)
                     {
-                        if (lastVersion < version && version <= ThisVersion)
-                        {
-                            sb.AppendLine($"# {release.TagName} {release.Name}");
-                            sb.AppendLine();
-                            sb.AppendLine($"> 更新于 {release.PublishedAt:yyyy-MM-dd HH:mm:ss}");
-                            sb.AppendLine();
-                            sb.AppendLine(release.Body);
-                            sb.AppendLine();
-                        }
+                        sb.AppendLine($"# {release.TagName} {release.Name}");
+                        sb.AppendLine();
+                        sb.AppendLine($"> 更新于 {release.PublishedAt:yyyy-MM-dd HH:mm:ss}");
+                        sb.AppendLine();
+                        sb.AppendLine(release.Body);
+                        sb.AppendLine();
                     }
                 }
             }

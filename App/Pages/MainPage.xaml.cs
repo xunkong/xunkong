@@ -238,15 +238,14 @@ public sealed partial class MainPage : Page
 
     private void MainPage_Loaded(object sender, RoutedEventArgs e)
     {
-        if (Version.TryParse(AppSetting.GetValue(SettingKeys.LastVersion, ""), out var version) && XunkongEnvironment.AppVersion > version)
+        if (Version.TryParse(AppSetting.GetValue(SettingKeys.LastVersion, ""), out var version) && XunkongEnvironment.AppVersion == version)
         {
-            _MainPageFrame.Navigate(typeof(UpdateContentPage));
+            _NavigationView.SelectedItem = _NaviItem_HomePage;
+            _MainPageFrame.Navigate(typeof(HomePage));
         }
         else
         {
-            AppSetting.TrySetValue(SettingKeys.LastVersion, XunkongEnvironment.AppVersion.ToString());
-            _NavigationView.SelectedItem = _NaviItem_HomePage;
-            _MainPageFrame.Navigate(typeof(HomePage));
+            _MainPageFrame.Navigate(typeof(UpdateContentPage));
         }
         if (AppSetting.TryGetValue<bool>(SettingKeys.NavigationViewPaneClose, out var isClosed))
         {
