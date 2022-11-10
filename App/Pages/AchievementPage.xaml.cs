@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.WinUI.UI;
-using CommunityToolkit.WinUI.UI.Controls;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
@@ -223,7 +221,7 @@ public sealed partial class AchievementPage : Page
             if (!preCached)
             {
                 // 预下载图片
-                goals.Select(x => FileCache.Instance.PreCacheAsync(new Uri(x.IconPath))).ToList();
+                goals.Select(x => XunkongCache.Instance.PreCacheAsync(new Uri(x.IconPath))).ToList();
                 preCached = true;
             }
 

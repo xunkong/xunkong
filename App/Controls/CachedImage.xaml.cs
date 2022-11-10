@@ -375,14 +375,26 @@ public sealed partial class CachedImage : UserControl
             }
             else if (imageUri.Scheme is "file")
             {
-                if (!_fileSizeCache.TryGetValue(imageUri.ToString(), out long size))
+                if (DecodeFromStream)
                 {
-                    var file = await StorageFile.GetFileFromPathAsync(imageUri.ToString());
-                    size = new FileInfo(file.Path).Length;
-                    _fileSizeCache[imageUri.ToString()] = size;
+                    using var stream = File.OpenRead(imageUri.AbsolutePath);
+                    var bitmap = new BitmapImage();
+                    await bitmap.SetSourceAsync(stream.AsRandomAccessStream());
+                    PixelHeight = bitmap.PixelHeight;
+                    PixelWidth = bitmap.PixelWidth;
+                    FileSize = stream.Length;
+                    return bitmap;
                 }
-                FileSize = size;
-                return new BitmapImage(imageUri);
+                else
+                {
+                    if (!_fileSizeCache.TryGetValue(imageUri.ToString(), out long size))
+                    {
+                        size = new FileInfo(imageUri.AbsolutePath).Length;
+                        _fileSizeCache[imageUri.ToString()] = size;
+                    }
+                    FileSize = size;
+                    return new BitmapImage(imageUri);
+                }
             }
             else
             {

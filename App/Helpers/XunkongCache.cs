@@ -11,7 +11,7 @@ internal sealed class XunkongCache : CacheBase<StorageFile>
     private static XunkongCache _instance;
 
 
-    public static XunkongCache Instance => _instance ??= new XunkongCache { CacheDuration = TimeSpan.FromDays(30), RetryCount = 3, MaxMemoryCacheCount = 1000 };
+    public static XunkongCache Instance => _instance ??= new XunkongCache { CacheDuration = TimeSpan.FromDays(30), RetryCount = 3 };
 
 
     private static string UA = $"XunkongDesktop/{XunkongEnvironment.AppVersion}";
