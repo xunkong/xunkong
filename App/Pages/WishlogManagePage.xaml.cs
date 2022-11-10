@@ -499,7 +499,7 @@ public sealed partial class WishlogManagePage : Page
                 var filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), $@"Xunkong\Export\Wishlog\Wishlog_{SelectedUid}_{DateTimeOffset.Now:yyyyMMdd_HHmmss}.xlsx");
                 Directory.CreateDirectory(Path.GetDirectoryName(filename)!);
                 using var fs = File.Open(filename, FileMode.CreateNew);
-                var templatePath = Path.Combine(Package.Current.InstalledPath, @"Assets\Others\WishlogTemplate.xlsx");
+                var templatePath = Path.Combine(Package.Current.InstalledLocation.Path, @"Assets\Others\WishlogTemplate.xlsx");
                 await MiniExcel.SaveAsByTemplateAsync(fs, templatePath, exportObj);
                 Action action = () => Process.Start(new ProcessStartInfo { FileName = Path.GetDirectoryName(filename), UseShellExecute = true });
                 NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "导出完成", null, "打开文件夹", action);

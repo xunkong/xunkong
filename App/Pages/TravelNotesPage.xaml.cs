@@ -254,7 +254,7 @@ public sealed partial class TravelNotesPage : Page
             var filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), $@"Xunkong\Export\TravelNotes\TravelNotes_{uid}_{DateTimeOffset.Now:yyyyMMdd_HHmmss}.xlsx");
             Directory.CreateDirectory(Path.GetDirectoryName(filename)!);
             using var fs = File.Open(filename, FileMode.CreateNew);
-            var templatePath = Path.Combine(Package.Current.InstalledPath, @"Assets\Others\TravelNotesTemplate.xlsx");
+            var templatePath = Path.Combine(Package.Current.InstalledLocation.Path, @"Assets\Others\TravelNotesTemplate.xlsx");
             await MiniExcel.SaveAsByTemplateAsync(fs, templatePath, obj);
             void action() => Process.Start(new ProcessStartInfo { FileName = Path.GetDirectoryName(filename), UseShellExecute = true });
             NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "导出完成", null, "打开文件夹", action);
