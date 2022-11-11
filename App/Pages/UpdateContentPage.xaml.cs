@@ -52,7 +52,7 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
                     {
                         sb.AppendLine($"# {release.TagName} {release.Name}");
                         sb.AppendLine();
-                        sb.AppendLine($"> 更新于 {release.PublishedAt:yyyy-MM-dd HH:mm:ss}");
+                        sb.AppendLine($"> 更新于 {release.PublishedAt?.LocalDateTime:yyyy-MM-dd HH:mm:ss}");
                         sb.AppendLine();
                         sb.AppendLine(release.Body);
                         sb.AppendLine();
@@ -114,7 +114,8 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
     [RelayCommand]
     private void NotShowThisVersion()
     {
-        AppSetting.TrySetValue(SettingKeys.ShowUpdateContentOnLoaded, false);
+        //AppSetting.TrySetValue(SettingKeys.ShowUpdateContentOnLoaded, false);
+        AppSetting.TrySetValue(SettingKeys.LastVersion, ThisVersion.ToString());
         NotificationProvider.Success("此版本不再显示此页面");
     }
 
