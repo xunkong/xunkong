@@ -94,6 +94,11 @@ public sealed partial class ToolWindow : Window
                     Frame_Root.Content = new ImportAchievementPage(args);
                     handled = true;
                 }
+                if (args.Uri.Host.ToLower() == "settings")
+                {
+                    Frame_Root.Content = new SettingToolPage(args);
+                    handled = true;
+                }
             }
         }
         if (!handled)
