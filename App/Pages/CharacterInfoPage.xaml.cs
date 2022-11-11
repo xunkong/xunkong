@@ -66,6 +66,7 @@ public sealed partial class CharacterInfoPage : Page
     {
         if (Characters is null)
         {
+            await Task.Delay(60);
             _ScrollViewer_SideIcon = (VisualTreeHelper.GetChild(_ListBox_SideIcon, 0) as Border)?.Child as ScrollViewer;
             await InitializeDataAsync();
         }

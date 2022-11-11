@@ -144,7 +144,7 @@ public sealed partial class AchievementPage : Page
     {
         if (Uids is null)
         {
-            await Task.Delay(30);
+            await Task.Delay(60);
             InitializeData();
         }
     }

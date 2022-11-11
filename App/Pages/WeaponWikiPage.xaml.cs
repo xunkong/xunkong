@@ -26,7 +26,7 @@ public sealed partial class WeaponWikiPage : Page
 
     private async void WeaponWikiPage_Loaded(object sender, RoutedEventArgs e)
     {
-        await Task.Delay(30);
+        await Task.Delay(60);
         InitiliazePage();
     }
 

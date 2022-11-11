@@ -55,7 +55,7 @@ public sealed partial class SpiralAbyssPage : Page
     {
         if (LeftPanels is null)
         {
-            await Task.Delay(30);
+            await Task.Delay(60);
             InitializeData();
         }
     }

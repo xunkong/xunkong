@@ -97,7 +97,7 @@
                         <TextBlock Grid.Column="1"
                                    Margin="0,4,0,0"
                                    TextWrapping="Wrap">
-                            <Run Text="Scighost 的原神工具箱，觉得好用就给个" />
+                            <Run Text="记录旅途中发生的事，觉得好用就给个" />
                             <Hyperlink Click="Hyperlink_Click" UnderlineStyle="None">好评</Hyperlink>
                             <Run Text="或" />
                             <Hyperlink NavigateUri="https://github.com/xunkong/xunkong" UnderlineStyle="None">Star</Hyperlink>
@@ -138,7 +138,11 @@
                             <Image Width="28"
                                    Height="28"
                                    Margin="-4"
-                                   Source="ms-appx:///Assets/Logos/StoreLogo.png" />
+                                   Source="ms-appx:///Assets/Logos/StoreLogo.png">
+                                <ToolTipService.ToolTip>
+                                    <Image Source="ms-appx:///Assets/Logos/logo.png" />
+                                </ToolTipService.ToolTip>
+                            </Image>
                         </xdc:SettingCard.Icon>
                         <xdc:SettingCard.Content>
                             <TextBlock>
@@ -161,7 +165,7 @@
                         <xdc:SettingCard.Icon>
                             <FontIcon x:Name="FontIcon_Theme"
                                       FontSize="20"
-                                      Glyph="&#xE2B1;" />
+                                      Glyph="&#xE793;" />
                         </xdc:SettingCard.Icon>
                         <xdc:SettingCard.Content>
                             <TextBlock VerticalAlignment="Center">
@@ -169,7 +173,7 @@
                                 <LineBreak />
                                 <Run FontSize="12"
                                      Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                     Text="浅色深色都一样" />
+                                     Text="跟随系统选项在应用重启后生效" />
                             </TextBlock>
                         </xdc:SettingCard.Content>
                         <xdc:SettingCard.Selector>
@@ -194,7 +198,7 @@
                                         <LineBreak />
                                         <Run FontSize="12"
                                              Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                             Text="暂时只可在 Windows 11 上使用" />
+                                             Text="应该能在 Windows 10 上用了吧" />
                                     </TextBlock>
                                 </StackPanel>
                                 <ComboBox MinWidth="104"
@@ -470,10 +474,10 @@
                                                     <ColumnDefinition Width="4*" />
                                                     <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
-                                                <xdc:CachedImage Grid.Column="0"
-                                                                 Width="24"
-                                                                 Source="{x:Bind Icon}"
-                                                                 Stretch="Uniform" />
+                                                <Image Grid.Column="0"
+                                                       Width="24"
+                                                       Source="{x:Bind Icon}"
+                                                       Stretch="Uniform" />
                                                 <TextBlock Grid.Column="1"
                                                            VerticalAlignment="Center"
                                                            Text="{x:Bind Title}" />

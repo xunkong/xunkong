@@ -55,7 +55,7 @@
                             </Flyout.FlyoutPresenterStyle>
                             <StackPanel>
                                 <TextBlock Text="页面内仅包含视频动画，不包含实时渲染动画；" />
-                                <TextBlock Text="大部分动画没有官方标题，命名时参考了观测枢；" />
+                                <TextBlock Text="大部分动画没有官方标题，命名时参考了观测枢和原声专辑" />
                                 <TextBlock Text="播放时出现卡顿、音画不同步的情况，把进度条拖到开头后重播；" />
                                 <TextBlock>
                                     <Run Text="使用内置播放器需要安装" />
@@ -206,6 +206,13 @@
                                IsTextSelectionEnabled="True">
                         <Run Text="文件大小 " />
                         <Run Text="{x:Bind SelectedCutscene.SizeString}" />
+                    </TextBlock>
+                    <TextBlock Margin="0,4,0,0"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               IsTextSelectionEnabled="True"
+                               Visibility="{x:Bind SelectedCutscene.Comment, Converter={StaticResource StringToVisibilityConverter}}">
+                        <Run Text="备注 " />
+                        <Run Text="{x:Bind SelectedCutscene.Comment, TargetNullValue=}" />
                     </TextBlock>
                     <StackPanel Margin="0,8,0,0"
                                 Orientation="Horizontal"

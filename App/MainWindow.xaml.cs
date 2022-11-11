@@ -6,10 +6,8 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.Windows.AppLifecycle;
-using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Vanara.PInvoke;
@@ -98,6 +96,7 @@ public sealed partial class MainWindow : Window
         var windowId = Win32Interop.GetWindowIdFromWindow(HWND);
         _appWindow = AppWindow.GetFromWindowId(windowId);
         _appWindow.SetIcon(Path.Combine(Package.Current.InstalledLocation.Path, "Assets/Logos/logo.ico"));
+        this.Title = XunkongEnvironment.AppName;
         if (AppWindowTitleBar.IsCustomizationSupported())
         {
             var scale = this.UIScale;
@@ -116,7 +115,6 @@ public sealed partial class MainWindow : Window
         {
             this.ExtendsContentIntoTitleBar = true;
             this.SetTitleBar(AppTitleBar);
-            this.Title = XunkongEnvironment.AppName;
         }
         if (AppSetting.GetValue<bool>(SettingKeys.IsMainWindowMaximum))
         {

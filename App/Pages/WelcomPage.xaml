@@ -33,10 +33,13 @@
                     VerticalAlignment="Center">
 
             <StackPanel x:Name="Tip_1" Spacing="16">
+                <Image Width="80"
+                       HorizontalAlignment="Left"
+                       Source="ms-appx:///Assets/Logos/logo.png" />
                 <TextBlock FontSize="32" Text="寻空" />
-                <TextBlock Margin="0,0,0,16"
+                <TextBlock Margin="0,-8,0,16"
                            FontSize="20"
-                           Text="Scighost 的原神工具箱" />
+                           Text="记录旅途中发生的事" />
                 <TextBlock Text="本应用使用 MIT 许可证协议开源，并免费发布，但是不提供任何可用性保证。" />
                 <TextBlock Text="在使用之前，您需要了解以下内容：" />
             </StackPanel>

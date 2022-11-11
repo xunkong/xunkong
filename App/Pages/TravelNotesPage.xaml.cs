@@ -42,7 +42,7 @@ public sealed partial class TravelNotesPage : Page
     {
         if (DayStats is null)
         {
-            await Task.Delay(30);
+            await Task.Delay(60);
             await InitializeDataAsync();
         }
     }

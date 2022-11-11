@@ -1,5 +1,8 @@
 ﻿namespace Xunkong.Desktop;
 
+#if DISABLE_XAML_GENERATED_MAIN
+
+
 public static class Program
 {
     [global::System.Runtime.InteropServices.DllImport("Microsoft.ui.xaml.dll")]
@@ -72,3 +75,6 @@ public static class Program
         ServiceProvider.Dispose();
     }
 }
+
+#endif
+

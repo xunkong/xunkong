@@ -81,7 +81,7 @@ public sealed partial class GrowthSchedulePage : Page
 
     private async void GrowthSchedulePage_Loaded(object sender, RoutedEventArgs e)
     {
-        await Task.Delay(30);
+        await Task.Delay(60);
         await InitializePageAsync();
     }
 
