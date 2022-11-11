@@ -1,8 +1,8 @@
-![烟绯律师](https://file.xunkong.cc/static/repo/xunkong/YanfeiLawyer.webp)
+﻿![烟绯律师](https://file.xunkong.cc/static/repo/xunkong/YanfeiLawyer.webp)
 
 # 寻空
 
-> Scighost 的原神工具箱，带给旅行者方便与乐趣。
+> 记录旅途中发生的事
 
 **寻空**可以帮你统计和分析游戏中的各项数据，快速掌握账号的相关信息。在这里你可以：
 
@@ -65,7 +65,7 @@
 
 ## 应用截图
 
-![screenshot-home-yelan](https://file.xunkong.cc/static/repo/xunkong/screenshot-home-yelan.webp)
+![screenshot-home-kongying](https://file.xunkong.cc/static/repo/xunkong/screenshot-home-kongying.webp)
 
 ## 开发指南
 
@@ -75,28 +75,12 @@
 
 寻空离不开以下开源项目的帮助：
 
-- [.NET Platform](https://github.com/dotnet)
-- [AngleSharp](https://github.com/AngleSharp/AngleSharp)
-- [WindowsCommunityToolkit](https://github.com/CommunityToolkit/WindowsCommunityToolkit)
-- [Dapper](https://github.com/DapperLib/Dapper)
 - [GenshinData](https://github.com/Dimbreath/GenshinData)
-- [Github Markdown CSS](https://github.com/sindresorhus/github-markdown-css)
-- [LiteDB](https://github.com/mbdavid/LiteDB)
-- [Mapster](https://github.com/MapsterMapper/Mapster)
-- [WindowsAppSDK](https://github.com/microsoft/WindowsAppSDK)
-- [Markdig](https://github.com/xoofx/markdig)
-- [MiniExcel](https://github.com/MiniExcel/MiniExcel)
-- [NAudio](https://github.com/naudio/NAudio)
-- [Octokit](https://github.com/octokit/octokit.net)
-- [PixivApi](https://github.com/Scighost/PixivApi)
-- [Serilog](https://github.com/serilog/serilog)
-- [Snap Genshin](https://github.com/DGP-Studio/Snap.Genshin)
-- [TaskScheduler](https://github.com/dahall/TaskScheduler)
-- [Titanium Web Proxy](https://github.com/justcoding121/Titanium-Web-Proxy)
-- [Vanara](https://github.com/dahall/Vanara)
+- [GI-cutscenes](https://github.com/ToaHartor/GI-cutscenes)
+- [Snap.Genshin](https://github.com/DGP-Studio/Snap.Genshin)
 - [YaeAchievement](https://github.com/HolographicHat/YaeAchievement)
 
-感谢 [米游社@朱成碧](https://bbs.mihoyo.com/ys/accountCenter/postList?id=74552206)、[Twitter@心臓弱眞君](https://twitter.com/xinzoruo) 以及所有为原神创作同人图的画师们。
+感谢 [Twitter@アナ](https://twitter.com/anna_drw01)、[Twitter@心臓弱眞君](https://twitter.com/xinzoruo) 以及所有为原神创作同人图的画师们。
 
 感谢微软提供的 Visual Studio 社区版 和 Visual Studio Code 开发工具，JetBrains 提供的开源项目许可证，Syncfusion 提供的免费许可证，Cloudflare 提供的免费 CDN，华为提供的开源字体 HarmonyOS Sans。
 

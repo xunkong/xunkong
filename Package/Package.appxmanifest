@@ -10,12 +10,12 @@
 	<Identity
 	  Name="Xunkong.Desktop.Package"
 	  Publisher="CN=Xunkong by Scighost"
-	  Version="1.2.2.0" />
+	  Version="1.2.3.0" />
 
 	<!--<Identity
 	  Name="40418Scighost.Xunkong"
 	  Publisher="CN=0459ED7D-12B2-4D08-9E6C-F2652F306586"
-	  Version="1.2.2.0" />-->
+	  Version="1.2.3.0" />-->
 
 	<Properties>
 		<DisplayName>寻空 侧载版</DisplayName>
@@ -38,7 +38,7 @@
 		  EntryPoint="$targetentrypoint$">
 			<uap:VisualElements
 			  DisplayName="寻空 侧载版"
-			  Description="Scighost 的原神工具箱"
+			  Description="记录旅途中发生的事"
 			  BackgroundColor="transparent"
 			  Square150x150Logo="Assets\Logos\Square150x150Logo.png"
 			  Square44x44Logo="Assets\Logos\Square44x44Logo.png">
@@ -46,7 +46,6 @@
 				<uap:SplashScreen Image="Assets\Logos\SplashScreen.png"/>
 			</uap:VisualElements>
 			<Extensions>
-				<Extension Category="windows.updateTask" EntryPoint="Xunkong.Desktop.Background.UpdateTask" />
 				<uap:Extension Category="windows.protocol">
 					<uap:Protocol Name="xunkong" ReturnResults="optional">
 						<uap:DisplayName>寻空</uap:DisplayName>
@@ -60,12 +59,4 @@
 		<rescap:Capability Name="runFullTrust" />
 	</Capabilities>
 
-	<Extensions>
-		<Extension Category="windows.activatableClass.inProcessServer">
-			<InProcessServer>
-				<Path>Xunkong.Desktop\WinRT.Host.dll</Path>
-				<ActivatableClass ActivatableClassId="Xunkong.Desktop.Background.UpdateTask" ThreadingModel="both" />
-			</InProcessServer>
-		</Extension>
-	</Extensions>
 </Package>
