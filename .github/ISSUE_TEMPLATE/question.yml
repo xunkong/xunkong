@@ -1,4 +1,4 @@
-name: 提问题
+name: 我有问题
 description: 请按照模板填写你的问题
 title: 你的标题
 labels:
@@ -24,11 +24,15 @@ body:
     description: 提交截图更有助于分析问题
 - type: input
   id: system-version
+  validations:
+    required: true
   attributes:
     label: 系统版本
     description: 精确到版本号，如 Windows 10 21H2
 - type: input
   id: xunkong-version
+  validations:
+    required: true
   attributes:
     label: 寻空版本
     description: 更新到最新版后再反馈问题
