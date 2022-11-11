@@ -97,7 +97,7 @@ internal class InvokeService
                 }
                 var info = new ProcessStartInfo
                 {
-                    FileName = Path.Combine(Package.Current.InstalledPath, @"Xunkong.Desktop.FpsUnlocker\Xunkong.Desktop.FpsUnlocker.exe"),
+                    FileName = Path.Combine(Package.Current.InstalledLocation.Path, @"Xunkong.Desktop.FpsUnlocker\Xunkong.Desktop.FpsUnlocker.exe"),
                     Arguments = command.ToString(),
                     UseShellExecute = true,
                     Verb = "runas",
