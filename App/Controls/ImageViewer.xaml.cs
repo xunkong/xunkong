@@ -44,6 +44,9 @@ public sealed partial class ImageViewer : UserControl
     [ObservableProperty]
     private List<string>? sourceCollection;
 
+    [ObservableProperty]
+    private bool decodeFromStream;
+
 
 
     partial void OnSourceCollectionChanged(List<string>? value)

@@ -399,7 +399,7 @@ public sealed partial class HomePage : Page
             }
             else
             {
-                MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = WallpaperInfo.Url });
+                MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = WallpaperInfo.Url, DecodeFromStream = true });
             }
         }
     }

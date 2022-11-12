@@ -51,7 +51,7 @@
             <xdc:CachedImage x:Name="_Image"
                              HorizontalAlignment="Center"
                              VerticalAlignment="Center"
-                             DecodeFromStream="True"
+                             DecodeFromStream="{x:Bind DecodeFromStream}"
                              ImageOpened="_Image_ImageOpened"
                              IsDoubleTapEnabled="True"
                              SizeChanged="_Image_SizeChanged"

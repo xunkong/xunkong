@@ -377,7 +377,7 @@ public sealed partial class CachedImage : UserControl
             {
                 if (DecodeFromStream)
                 {
-                    using var stream = File.OpenRead(imageUri.AbsolutePath);
+                    using var stream = File.OpenRead(imageUri.LocalPath);
                     var bitmap = new BitmapImage();
                     await bitmap.SetSourceAsync(stream.AsRandomAccessStream());
                     PixelHeight = bitmap.PixelHeight;
@@ -389,7 +389,7 @@ public sealed partial class CachedImage : UserControl
                 {
                     if (!_fileSizeCache.TryGetValue(imageUri.ToString(), out long size))
                     {
-                        size = new FileInfo(imageUri.AbsolutePath).Length;
+                        size = new FileInfo(imageUri.LocalPath).Length;
                         _fileSizeCache[imageUri.ToString()] = size;
                     }
                     FileSize = size;
