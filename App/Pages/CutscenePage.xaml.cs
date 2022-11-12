@@ -3,8 +3,11 @@
 
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.System;
 using Xunkong.Desktop.Controls;
 using Xunkong.GenshinData;
@@ -28,8 +31,7 @@ public sealed partial class CutscenePage : Page
     public CutscenePage()
     {
         this.InitializeComponent();
-        httpClient = new HttpClient(new HttpClientHandler { AutomaticDecompression = System.Net.DecompressionMethods.All });
-        httpClient.DefaultRequestHeaders.Add("User-Agent", $"XunkongDesktop/{XunkongEnvironment.AppVersion}");
+        httpClient = ServiceProvider.GetService<HttpClient>()!;
     }
 
 
@@ -45,7 +47,7 @@ public sealed partial class CutscenePage : Page
     {
         if (value != null)
         {
-            AppBarToggleButton_Info.IsChecked = true;
+            Grid_Info.Visibility = Visibility.Visible;
         }
     }
 
@@ -67,17 +69,48 @@ public sealed partial class CutscenePage : Page
     }
 
 
+    [RelayCommand]
+    private void CloseInfoGrid()
+    {
+        Grid_Info.Visibility = Visibility.Collapsed;
+    }
 
 
 
 
-    private void Button_PlayCutscene_Click(object sender, RoutedEventArgs e)
+    private async void Button_PlayCutscene_Click(object sender, RoutedEventArgs e)
     {
         if (sender is Button button)
         {
             if (button.DataContext is Cutscene cutscene)
             {
-                MainWindow.Current.SetFullWindowContent(new CutsceneViewer(cutscene));
+                try
+                {
+                    var folder = AppSetting.GetValue<string>(SettingKeys.CutsceneFolder);
+                    if (!string.IsNullOrWhiteSpace(folder))
+                    {
+                        var path = Path.Combine(folder!, Path.GetFileNameWithoutExtension(cutscene.Source));
+                        if (File.Exists(path) /*&& new FileInfo(path).Length == cutscene.Size*/)
+                        {
+                            var file = await StorageFile.GetFileFromPathAsync(path);
+                            MainWindow.Current.SetFullWindowContent(new CutsceneViewer(file));
+                            return;
+                        }
+                        path += ".mkv";
+                        if (File.Exists(path) /*&& new FileInfo(path).Length == cutscene.Size*/)
+                        {
+                            var file = await StorageFile.GetFileFromPathAsync(path);
+                            MainWindow.Current.SetFullWindowContent(new CutsceneViewer(file));
+                            return;
+                        }
+                    }
+                    MainWindow.Current.SetFullWindowContent(new CutsceneViewer(cutscene));
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                    NotificationProvider.Error(ex);
+                }
             }
         }
     }
@@ -100,6 +133,48 @@ public sealed partial class CutscenePage : Page
             }
         }
     }
+
+
+    [RelayCommand]
+    private async Task SetCutsceneFolderAsync()
+    {
+        try
+        {
+            var currentFolder = AppSetting.GetValue<string>(SettingKeys.CutsceneFolder);
+            var dialog = new ContentDialog
+            {
+                Title = "本地文件夹",
+                Content = $"如在本地文件夹中存在相同文件名（或加上 .mkv 扩展名）的文件，则播放过场动画时使用本地文件。动画文件需要自行下载。\r\n当前文件夹：\r\n{currentFolder}",
+                PrimaryButtonText = "选择本地文件夹",
+                SecondaryButtonText = "清除设置",
+                CloseButtonText = "取消",
+                DefaultButton = ContentDialogButton.Primary,
+                XamlRoot = MainWindow.Current.XamlRoot,
+            };
+            var result = await dialog.ShowAsync();
+            if (result is ContentDialogResult.Primary)
+            {
+                var picker = new FolderPicker();
+                WinRT.Interop.InitializeWithWindow.Initialize(picker, MainWindow.Current.HWND);
+                var folder = await picker.PickSingleFolderAsync();
+                if (folder != null)
+                {
+                    AppSetting.TrySetValue(SettingKeys.CutsceneFolder, folder.Path);
+                }
+            }
+            if (result is ContentDialogResult.Secondary)
+            {
+                AppSetting.TrySetValue<string>(SettingKeys.CutsceneFolder, null!);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+            NotificationProvider.Error(ex);
+        }
+    }
+
+
 
 
     [RelayCommand]
@@ -172,6 +247,135 @@ public sealed partial class CutscenePage : Page
         }
         catch { }
     }
+
+
+
+    [RelayCommand]
+    private void DownloadWithPowerShell()
+    {
+        try
+        {
+            if (SelectedCutscene is null)
+            {
+                return;
+            }
+            var folder = AppSetting.GetValue<string>(SettingKeys.CutsceneFolder);
+            if (string.IsNullOrWhiteSpace(folder))
+            {
+                NotificationProvider.Warning("没有设置本地文件夹");
+                return;
+            }
+            Directory.CreateDirectory(folder);
+            var file = Path.Combine(folder, Path.GetFileNameWithoutExtension(SelectedCutscene.Source) + ".mkv");
+            if (File.Exists(file) && new FileInfo(file).Length == SelectedCutscene.Size)
+            {
+                NotificationProvider.Warning("文件已存在");
+                return;
+            }
+            // https://www.powershellgallery.com/packages/Invoke-DownloadFile
+            var script = $$""""
+                $Url=\"{{SelectedCutscene.Source}}\"
+                $Path=\"{{file}}\"
+
+                function convertFileSize {
+                    param(
+                        $bytes
+                    )
+
+                    if ($bytes -lt 1MB) {
+                        return \"$(\"{0:n2}\" -f [Math]::Round($bytes / 1KB, 2)) KB\"
+                    }
+                    elseif ($bytes -lt 1GB) {
+                        return \"$(\"{0:n2}\" -f [Math]::Round($bytes / 1MB, 2)) MB\"
+                    }
+                    elseif ($bytes -lt 1TB) {
+                        return \"$(\"{0:n2}\" -f [Math]::Round($bytes / 1GB, 2)) GB\"
+                    }
+                }
+
+                Write-Verbose \"URL set to \"\"$($Url)\"\".\"
+
+                if (!($Path)) {
+                    Write-Verbose \"Path parameter not set, parsing Url for filename.\"
+                    $URLParser = $Url | Select-String -Pattern \".*\:\/\/.*\/(.*\.{1}\w*).*\" -List
+
+                    $Path = \"./$($URLParser.Matches.Groups[1].Value)\"
+                }
+
+                Write-Host \"Download file to \"\"$($Path)\"\"\"
+
+                Write-Verbose \"Path set to \"\"$($Path)\"\".\"
+
+                #Load in the WebClient object.
+                Write-Verbose \"Loading in WebClient object.\"
+                try {
+                    $Downloader = New-Object -TypeName System.Net.WebClient
+                    $Downloader.Headers.Add('User-Agent', 'PowerShell NSPlayer WMFSDK')
+                }
+                catch [Exception] {
+                    Write-Host $_.Exception -ForegroundColor Red -ErrorAction Stop
+                }
+
+                try {
+
+                    #Start the download by using WebClient.DownloadFileTaskAsync, since this lets us show progress on screen.
+                    Write-Verbose \"Starting download...\"
+                    $FileDownload = $Downloader.DownloadFileTaskAsync($Url, $Path)
+
+                    #Register the event from WebClient.DownloadProgressChanged to monitor download progress.
+                    Write-Verbose \"Registering the \"\"DownloadProgressChanged\"\" event handle from the WebClient object.\"
+                    Register-ObjectEvent -InputObject $Downloader -EventName DownloadProgressChanged -SourceIdentifier WebClient.DownloadProgressChanged | Out-Null
+
+                    #Wait two seconds for the registration to fully complete
+                    Start-Sleep -Seconds 3
+
+                    if ($FileDownload.IsFaulted) {
+                        Write-Verbose \"An error occurred. Generating error.\"
+                        Write-Error $FileDownload.GetAwaiter().GetResult()
+                        break
+                    }
+
+                    #While the download is showing as not complete, we keep looping to get event data.
+                    while (!($FileDownload.IsCompleted)) {
+
+                        if ($FileDownload.IsFaulted) {
+                            Write-Verbose \"An error occurred. Generating error.\"
+                            Write-Error $FileDownload.GetAwaiter().GetResult()
+                            break
+                        }
+
+                        $EventData = Get-Event -SourceIdentifier WebClient.DownloadProgressChanged | Select-Object -ExpandProperty \"SourceEventArgs\" -Last 1
+
+                        $ReceivedData = ($EventData | Select-Object -ExpandProperty \"BytesReceived\")
+                        $TotalToReceive = ($EventData | Select-Object -ExpandProperty \"TotalBytesToReceive\")
+                        $TotalPercent = $EventData | Select-Object -ExpandProperty \"ProgressPercentage\"
+
+                        Write-Progress -Activity \"Downloading File\" -Status \"Percent Complete: $($TotalPercent)%\" -CurrentOperation \"Downloaded $(convertFileSize -bytes $ReceivedData) / $(convertFileSize -bytes $TotalToReceive)\" -PercentComplete $TotalPercent
+                    }
+                }
+                catch [Exception] {
+                    Write-Host $_.Exception.Message -ForegroundColor Red -ErrorAction Stop
+                    Read-Host -Prompt 'Press Enter to exit'
+                }
+                finally {
+                    #Cleanup tasks
+                    Write-Verbose \"Cleaning up...\"
+                    Write-Progress -Activity \"Downloading File\" -Completed
+                    Unregister-Event -SourceIdentifier WebClient.DownloadProgressChanged
+                    $Downloader.Dispose()
+                }
+                """";
+            Process.Start("PowerShell", script);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+            NotificationProvider.Error(ex);
+        }
+    }
+
+
+
 
 
 

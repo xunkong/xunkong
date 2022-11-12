@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Windows.Media.Core;
+using Windows.Storage;
 using Xunkong.GenshinData;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -21,6 +22,13 @@ public sealed partial class CutsceneViewer : UserControl
         this.InitializeComponent();
         PlaterElement.Source = MediaSource.CreateFromUri(new Uri(cutscene.Source));
         PlaterElement.PosterSource = new BitmapImage(new Uri(cutscene.Poster));
+    }
+
+
+    public CutsceneViewer(IStorageFile file)
+    {
+        this.InitializeComponent();
+        PlaterElement.Source = MediaSource.CreateFromStorageFile(file);
     }
 
 

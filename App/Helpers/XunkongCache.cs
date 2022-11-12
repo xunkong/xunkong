@@ -32,7 +32,7 @@ internal sealed class XunkongCache : CacheBase<StorageFile>
         var request = new HttpRequestMessage(HttpMethod.Get, uri);
         if (uri.Host is "file.xunkong.cc")
         {
-            request.Headers.Add("UserAgent", UA);
+            request.Headers.Add("User-Agent", UA);
         }
         return request;
     }

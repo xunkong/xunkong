@@ -165,5 +165,10 @@ internal static class SettingKeys
     /// </summary>
     public const string EnableNavigationCache = nameof(EnableNavigationCache);
 
+    /// <summary>
+    /// 过场动画文件夹
+    /// </summary>
+    public const string CutsceneFolder = nameof(CutsceneFolder);
+
 
 }
