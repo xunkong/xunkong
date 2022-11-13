@@ -274,8 +274,8 @@ public sealed partial class CutscenePage : Page
             }
             // https://www.powershellgallery.com/packages/Invoke-DownloadFile
             var script = $$""""
-                $Url=\"{{SelectedCutscene.Source}}\"
-                $Path=\"{{file}}\"
+                $Url = \"{{SelectedCutscene.Source}}\"
+                $Path = \"{{file}}\"
 
                 function convertFileSize {
                     param(
@@ -302,25 +302,29 @@ public sealed partial class CutscenePage : Page
                     $Path = \"./$($URLParser.Matches.Groups[1].Value)\"
                 }
 
-                Write-Host \"Download file to \"\"$($Path)\"\"\"
-
                 Write-Verbose \"Path set to \"\"$($Path)\"\".\"
+
+                Write-Host \"Download file to \"\"$($Path)\"\"\"
 
                 #Load in the WebClient object.
                 Write-Verbose \"Loading in WebClient object.\"
                 try {
                     $Downloader = New-Object -TypeName System.Net.WebClient
-                    $Downloader.Headers.Add('User-Agent', 'PowerShell NSPlayer WMFSDK')
+                    $Downloader.Headers.Add(\"User-Agent\", \"PowerShell NSPlayer WMFSDK\")
                 }
                 catch [Exception] {
                     Write-Host $_.Exception -ForegroundColor Red -ErrorAction Stop
                 }
 
+                #Creating a temporary file.
+                $TmpFile = New-TemporaryFile
+                Write-Verbose \"TmpFile set to \"\"$($TmpFile)\"\".\"
+
                 try {
 
                     #Start the download by using WebClient.DownloadFileTaskAsync, since this lets us show progress on screen.
                     Write-Verbose \"Starting download...\"
-                    $FileDownload = $Downloader.DownloadFileTaskAsync($Url, $Path)
+                    $FileDownload = $Downloader.DownloadFileTaskAsync($Url, $TmpFile)
 
                     #Register the event from WebClient.DownloadProgressChanged to monitor download progress.
                     Write-Verbose \"Registering the \"\"DownloadProgressChanged\"\" event handle from the WebClient object.\"
@@ -331,7 +335,7 @@ public sealed partial class CutscenePage : Page
 
                     if ($FileDownload.IsFaulted) {
                         Write-Verbose \"An error occurred. Generating error.\"
-                        Write-Error $FileDownload.GetAwaiter().GetResult()
+                        Write-Host $FileDownload.GetAwaiter().GetResult() -ForegroundColor Red -ErrorAction Stop
                         break
                     }
 
@@ -340,7 +344,7 @@ public sealed partial class CutscenePage : Page
 
                         if ($FileDownload.IsFaulted) {
                             Write-Verbose \"An error occurred. Generating error.\"
-                            Write-Error $FileDownload.GetAwaiter().GetResult()
+                            Write-Host $FileDownload.GetAwaiter().GetResult() -ForegroundColor Red -ErrorAction Stop
                             break
                         }
 
@@ -355,13 +359,26 @@ public sealed partial class CutscenePage : Page
                 }
                 catch [Exception] {
                     Write-Host $_.Exception.Message -ForegroundColor Red -ErrorAction Stop
-                    Read-Host -Prompt 'Press Enter to exit'
+                    Read-Host -Prompt \"ress Enter to exit\"
                 }
                 finally {
                     #Cleanup tasks
                     Write-Verbose \"Cleaning up...\"
                     Write-Progress -Activity \"Downloading File\" -Completed
                     Unregister-Event -SourceIdentifier WebClient.DownloadProgressChanged
+
+                    if (($FileDownload.IsCompleted) -and !($FileDownload.IsFaulted)) {
+                        #If the download was finished without termination, then we move the file.
+                        Write-Verbose \"Moved the downloaded file to \"\"$($Path)\"\".\"
+                        Move-Item -Path $TmpFile -Destination $Path -Force
+                    }
+                    else {
+                        #If the download was terminated, we remove the file.
+                        Write-Verbose \"Cancelling the download and removing the tmp file.\"
+                        $Downloader.CancelAsync()
+                        Remove-Item -Path $TmpFile -Force
+                    }
+
                     $Downloader.Dispose()
                 }
                 """";

@@ -55,11 +55,13 @@
                             </Flyout.FlyoutPresenterStyle>
                             <StackPanel>
                                 <TextBlock Text="页面内仅包含视频动画，不包含实时渲染动画；" />
-                                <TextBlock Text="大部分动画没有官方标题，命名时参考了观测枢和原声专辑" />
+                                <TextBlock Text="大部分动画没有官方标题，命名时参考了观测枢和原声专辑；" />
+                                <TextBlock Text="建议下载至本地文件夹后观看，文件扩展名应修改为.mkv；" />
+                                <TextBlock Text="如果下载时消耗的流量过大，可能会出现拒绝访问的情况；" />
                                 <TextBlock>
                                     <Run Text="使用内置播放器需要安装" />
                                     <Hyperlink NavigateUri="https://www.microsoft.com/store/apps/9N4D0MSMP0PT" UnderlineStyle="None">VP9 视频扩展</Hyperlink>
-                                    <Run Text="，但是体验比较糟糕，建议下载后观看。" />
+                                    <Run Text="，网络不好时体验比较糟糕。" />
                                 </TextBlock>
                             </StackPanel>
                         </Flyout>
