@@ -9,7 +9,7 @@
 		<RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
 		<UseWinUI>true</UseWinUI>
 		<Nullable>enable</Nullable>
-		<LangVersion>preview</LangVersion>
+		<DebugType>embedded</DebugType>
 		<DefineConstants>DISABLE_XAML_GENERATED_MAIN</DefineConstants>
 		<ApplicationIcon>..\Package\Assets\Logos\logo.ico</ApplicationIcon>
 	</PropertyGroup>

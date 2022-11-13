@@ -44,6 +44,7 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
             var client = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("xunkong"));
             var sb = new StringBuilder();
             var releases = await client.Repository.Release.GetAll("xunkong", "xunkong", new Octokit.ApiOptions { PageCount = 1, PageSize = 10, StartPage = 1 });
+            bool any = false;
             foreach (var release in releases)
             {
                 if (Version.TryParse(release.TagName, out var version))
@@ -56,7 +57,20 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
                         sb.AppendLine();
                         sb.AppendLine(release.Body);
                         sb.AppendLine();
+                        any = true;
                     }
+                }
+            }
+            if (!any)
+            {
+                if (releases.FirstOrDefault() is Octokit.Release release)
+                {
+                    sb.AppendLine($"# {release.TagName} {release.Name}");
+                    sb.AppendLine();
+                    sb.AppendLine($"> 更新于 {release.PublishedAt?.LocalDateTime:yyyy-MM-dd HH:mm:ss}");
+                    sb.AppendLine();
+                    sb.AppendLine(release.Body);
+                    sb.AppendLine();
                 }
             }
             var html = Markdig.Markdown.ToHtml(sb.ToString());

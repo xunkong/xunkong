@@ -298,7 +298,7 @@ public sealed partial class AchievementPage : Page
             var lastSelectedGoalId = SelectedGoal?.Id;
             AchievementGoals = goals.OrderBy(x => x.OrderId).ToList();
             SelectedGoal = AchievementGoals.FirstOrDefault(x => x.Id == lastSelectedGoalId) ?? AchievementGoals.FirstOrDefault()!;
-            Achievements = SelectedGoal!.Items;
+            Achievements = SelectedGoal?.Items!;
 
             original_items = items;
             original_items_dic = items_dic;

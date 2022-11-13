@@ -140,7 +140,14 @@
                                    Margin="-4"
                                    Source="ms-appx:///Assets/Logos/StoreLogo.png">
                                 <ToolTipService.ToolTip>
-                                    <Image Source="ms-appx:///Assets/Logos/logo.png" />
+                                    <ToolTip>
+                                        <ToolTip.Style>
+                                            <Style BasedOn="{StaticResource DefaultToolTipStyle}" TargetType="ToolTip">
+                                                <Setter Property="MaxWidth" Value="480" />
+                                            </Style>
+                                        </ToolTip.Style>
+                                        <Image Source="ms-appx:///Assets/Images/102413942_p0.webp" />
+                                    </ToolTip>
                                 </ToolTipService.ToolTip>
                             </Image>
                         </xdc:SettingCard.Icon>

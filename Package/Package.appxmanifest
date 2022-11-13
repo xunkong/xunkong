@@ -10,7 +10,7 @@
 	<Identity
 	  Name="Xunkong.Desktop.Package"
 	  Publisher="CN=Xunkong by Scighost"
-	  Version="1.2.3.0" />
+	  Version="1.2.3.1" />
 
 	<!--<Identity
 	  Name="40418Scighost.Xunkong"
