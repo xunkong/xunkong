@@ -156,13 +156,13 @@
                                 <xdc:CachedImage HorizontalAlignment="Right" Source="ms-appx:///Assets/Images/UI_Img_MapTitle_Bg_NonSelected.png" />
                                 <StackPanel Margin="48,0,0,0">
                                     <TextBlock Margin="0,6,0,0"
-                                               FontSize="16"
-                                               FontWeight="Bold"
+                                               FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
+                                               FontSize="14"
                                                Foreground="{ThemeResource GoalNonSelectedNameBrush}"
                                                Text="{x:Bind Name}" />
-                                    <TextBlock Margin="0,2,0,0"
+                                    <TextBlock Margin="0,4,0,0"
+                                               FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
                                                FontSize="14"
-                                               FontWeight="Bold"
                                                Foreground="{ThemeResource GoalNonSelectedProgressBrush}">
                                         <Run Text="{x:Bind Progress}" />
                                         <Run Text="" />
@@ -276,15 +276,15 @@
                             <TextBlock Margin="0,8,0,0"
                                        HorizontalAlignment="Left"
                                        VerticalAlignment="Top"
+                                       FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
                                        FontSize="16"
-                                       FontWeight="Bold"
                                        Foreground="{ThemeResource ItemGridFinishedCountBrush}"
                                        Text="达成进度" />
                             <TextBlock Margin="0,8,0,0"
                                        HorizontalAlignment="Right"
                                        VerticalAlignment="Top"
+                                       FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
                                        FontSize="16"
-                                       FontWeight="Bold"
                                        Foreground="{ThemeResource ItemGridFinishedCountBrush}"
                                        Text="{x:Bind SelectedGoal.Progress}" />
                             <ProgressBar MinHeight="6"
@@ -299,18 +299,17 @@
                             <TextBlock Margin="0,0,0,12"
                                        HorizontalAlignment="Left"
                                        VerticalAlignment="Bottom"
-                                       FontFamily="楷体"
+                                       FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
                                        FontSize="14"
-                                       FontWeight="SemiBold"
                                        Foreground="{ThemeResource ItemGridDescriptionBrush}"
                                        Text="达成以下所有成就可领取名片纹饰" />
                             <TextBlock Margin="0,0,0,12"
                                        HorizontalAlignment="Right"
                                        VerticalAlignment="Bottom"
+                                       FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
                                        FontSize="14"
-                                       FontWeight="SemiBold"
                                        Foreground="{ThemeResource ItemGridDescriptionBrush}">
-                                <Run FontFamily="楷体" Text="原石奖励" />
+                                <Run Text="原石奖励" />
                                 <Run Text="{x:Bind SelectedGoal.GotRewardCount}" /><Run Text="/" /><Run Text="{x:Bind SelectedGoal.TotalRewardCount}" />
                             </TextBlock>
                         </Grid>
@@ -323,7 +322,7 @@
                                    Visibility="{x:Bind SelectedGoal.IsFinish, Converter={StaticResource BoolToVisibilityConverter}}" />
                             <TextBlock HorizontalAlignment="Center"
                                        VerticalAlignment="Center"
-                                       FontWeight="Bold"
+                                       FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
                                        Foreground="#B7A18C"
                                        Visibility="{x:Bind SelectedGoal.IsFinish, Converter={StaticResource BoolToVisibilityReversedConverter}}">
                                 <Run Text="{x:Bind SelectedGoal.Current}" /><Run Text="/" /><Run Text="{x:Bind SelectedGoal.Total}" />
@@ -332,14 +331,14 @@
                                         VerticalAlignment="Center"
                                         Visibility="{x:Bind SelectedGoal.IsFinish, Converter={StaticResource BoolToVisibilityConverter}}">
                                 <TextBlock HorizontalAlignment="Center"
+                                           FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
                                            FontSize="12"
-                                           FontWeight="Bold"
                                            Foreground="#BAA58F"
                                            Text="达成" />
                                 <TextBlock Margin="0,2,0,0"
                                            HorizontalAlignment="Center"
+                                           FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
                                            FontSize="14"
-                                           FontWeight="Bold"
                                            Foreground="#84603D">
                                     <Run Text="总计" />
                                     <Run Text="{x:Bind SelectedGoal.Current}" />
@@ -356,8 +355,8 @@
                                 <TextBlock Grid.Row="2"
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center"
+                                           FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
                                            FontSize="12"
-                                           FontWeight="Bold"
                                            Foreground="#BCA896"
                                            Text="{x:Bind SelectedGoal.FinishedTimeString}" />
                             </Border>
@@ -420,10 +419,10 @@
                                         <StackPanel Margin="0,12,0,0"
                                                     HorizontalAlignment="Left"
                                                     VerticalAlignment="Top"
-                                                    Spacing="6">
+                                                    Spacing="4">
                                             <TextBlock HorizontalAlignment="Left"
+                                                       FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
                                                        FontSize="16"
-                                                       FontWeight="Bold"
                                                        Foreground="{ThemeResource ItemGridTitleBrush}"
                                                        IsTextSelectionEnabled="True">
                                                 <Run Text="{Binding Title}" />
@@ -434,9 +433,8 @@
                                             </TextBlock>
                                             <TextBlock Margin="0,0,80,0"
                                                        HorizontalAlignment="Left"
-                                                       FontFamily="楷体"
+                                                       FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
                                                        FontSize="14"
-                                                       FontWeight="SemiBold"
                                                        Foreground="{ThemeResource ItemGridDescriptionBrush}"
                                                        IsTextSelectionEnabled="True"
                                                        Text="{x:Bind Description}"
@@ -446,8 +444,7 @@
                                         <TextBlock Margin="0,0,80,4"
                                                    HorizontalAlignment="Left"
                                                    VerticalAlignment="Bottom"
-                                                   FontFamily="楷体"
-                                                   FontSize="14"
+                                                   FontSize="12"
                                                    Foreground="{ThemeResource ItemGridFinishedCountBrush}"
                                                    IsTextSelectionEnabled="True"
                                                    Text="{x:Bind Comment}"
@@ -458,8 +455,7 @@
                                                  Margin="0,0,80,0"
                                                  VerticalAlignment="Bottom"
                                                  VerticalContentAlignment="Bottom"
-                                                 FontFamily="楷体"
-                                                 FontSize="14"
+                                                 FontSize="12"
                                                  Foreground="{ThemeResource ItemGridFinishedCountBrush}"
                                                  LostFocus="c_TextBox_AchievementComment_LostFocus"
                                                  PlaceholderForeground="{ThemeResource TextFillColorTertiaryBrush}"
@@ -485,8 +481,8 @@
                                         <TextBlock Margin="0,0,0,-2"
                                                    HorizontalAlignment="Center"
                                                    VerticalAlignment="Bottom"
+                                                   FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
                                                    FontSize="12"
-                                                   FontWeight="SemiBold"
                                                    Foreground="White"
                                                    Text="{x:Bind RewardCount}" />
                                     </Grid>
@@ -498,7 +494,7 @@
                                                Visibility="{x:Bind IsFinish, Converter={StaticResource BoolToVisibilityConverter}}" />
                                         <TextBlock HorizontalAlignment="Center"
                                                    VerticalAlignment="Center"
-                                                   FontWeight="Bold"
+                                                   FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
                                                    Foreground="#B7A18C"
                                                    Visibility="{x:Bind IsFinish, Converter={StaticResource BoolToVisibilityReversedConverter}}">
                                             <Run Text="{x:Bind Current}" /><Run Text="/" /><Run Text="{x:Bind Progress}" />
@@ -507,14 +503,14 @@
                                                     VerticalAlignment="Center"
                                                     Visibility="{x:Bind IsFinish, Converter={StaticResource BoolToVisibilityConverter}}">
                                             <TextBlock HorizontalAlignment="Center"
+                                                       FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
                                                        FontSize="12"
-                                                       FontWeight="Bold"
                                                        Foreground="#BAA58F"
                                                        Text="达成" />
                                             <TextBlock Margin="0,2,0,0"
                                                        HorizontalAlignment="Center"
+                                                       FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
                                                        FontSize="14"
-                                                       FontWeight="Bold"
                                                        Foreground="#84603D"
                                                        Visibility="{x:Bind IsDeleteWatcherAfterFinish, Converter={StaticResource BoolToVisibilityReversedConverter}}">
                                                 <Run Text="总计" />
@@ -532,8 +528,8 @@
                                             <TextBlock Grid.Row="2"
                                                        HorizontalAlignment="Center"
                                                        VerticalAlignment="Center"
+                                                       FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
                                                        FontSize="12"
-                                                       FontWeight="Bold"
                                                        Foreground="#BCA896"
                                                        Text="{x:Bind FinishedDateString}" />
                                         </Border>
@@ -773,15 +769,15 @@
                              HorizontalAlignment="Left"
                              VerticalAlignment="Center" />
             <TextBlock Margin="92,12,0,0"
+                       FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
                        FontSize="12"
-                       FontWeight="SemiBold"
                        Foreground="{ThemeResource ItemGridFinishedCountBrush}"
                        Text="达成成就" />
             <TextBlock x:Name="c_TextBlock_Push"
                        Margin="92,0,0,0"
                        VerticalAlignment="Center"
+                       FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
                        FontSize="16"
-                       FontWeight="Bold"
                        Foreground="#495366" />
         </Grid>
 
