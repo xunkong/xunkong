@@ -110,7 +110,7 @@ public sealed partial class GenshinDescTextBlock : UserControl
                     text.Inlines.Add(new Run
                     {
                         Text = desc.Slice(i + 3, length).ToString(),
-                        FontFamily = new FontFamily("楷体"),
+                        FontStyle = Windows.UI.Text.FontStyle.Italic,
                     });
                     i += length + 6;
                     lastIndex = i + 1;

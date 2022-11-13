@@ -442,7 +442,7 @@
                                              HorizontalAlignment="Left"
                                              Source="{x:Bind SelectedCharacter.Element, Converter={StaticResource ElementToElementImageConverter}}" />
                             <TextBlock HorizontalTextAlignment="Left">
-                                <Run FontFamily="楷体" Text="{x:Bind SelectedCharacter.Title}" />
+                                <Run FontStyle="Italic" Text="{x:Bind SelectedCharacter.Title}" />
                                 <LineBreak />
                                 <Run FontSize="36" Text="{x:Bind SelectedCharacter.Name}" />
                             </TextBlock>
@@ -470,7 +470,7 @@
                                 <Run Text="{x:Bind SelectedCharacter.Affiliation}" />
                             </TextBlock>
                             <TextBlock Margin="0,4,0,0"
-                                       FontFamily="楷体"
+                                       FontStyle="Italic"
                                        Text="{x:Bind SelectedCharacter.Description}" />
                         </StackPanel>
 
