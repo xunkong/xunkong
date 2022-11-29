@@ -24,7 +24,7 @@ public sealed partial class WishlogSummaryPage : Page
         this.InitializeComponent();
         NavigationCacheMode = AppSetting.GetValue<bool>(SettingKeys.EnableNavigationCache) ? NavigationCacheMode.Enabled : NavigationCacheMode.Disabled;
         DataContext = ServiceProvider.GetService<WishlogSummaryViewModel>();
-        Loaded += (_, _) => vm.InitializePageData();
+        Loaded += (_, _) => vm.InitializePageData(true);
         Unloaded += (_, _) => vm.Unloaded();
     }
 

@@ -178,9 +178,9 @@ internal partial class WishlogSummaryViewModel : ObservableObject
     /// </summary>
     /// <returns></returns>
     [RelayCommand]
-    public async void InitializePageData()
+    public async void InitializePageData(bool canSkip = false)
     {
-        if (Uids != null)
+        if (Uids != null && canSkip)
         {
             return;
         }
@@ -189,7 +189,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
             IsLoadingUidData = true;
             Uids = new ObservableCollection<string>(_wishlogService.GetAllUids().Select(x => x.ToString()));
             _SelectedUid = UserSetting.GetValue<int>(SettingKeys.LastSelectedUidInWishlogSummaryPage);
-            await Task.Delay(500);
+            await Task.Delay(800);
             OnPropertyChanged(nameof(SelectedUid));
             if (!Uids.Contains(SelectedUid) || _SelectedUid == 0)
             {

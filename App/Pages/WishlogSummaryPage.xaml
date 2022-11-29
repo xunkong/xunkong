@@ -324,6 +324,7 @@
                         Orientation="Horizontal">
                 <AppBarButton Name="_AppBarButton_RefreshPage"
                               Command="{x:Bind vm.InitializePageDataCommand, Mode=OneTime}"
+                              CommandParameter="{StaticResource False}"
                               Icon="Refresh"
                               Label="刷新页面" />
                 <AppBarSeparator />
