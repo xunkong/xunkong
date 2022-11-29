@@ -422,10 +422,11 @@
                         </Expander.Content>
                     </Expander>
 
-                    <!--  网页快捷方式  -->
+                    <!--  网页快捷方式，已弃用  -->
                     <Expander Name="_Expander_WebTool"
                               HorizontalAlignment="Stretch"
                               HorizontalContentAlignment="Stretch"
+                              x:Load="False"
                               Collapsed="_Expander_WebTool_Collapsed"
                               Expanding="_Expander_WebTool_Expanding">
                         <Expander.Header>
@@ -502,6 +503,36 @@
                             </Grid>
                         </Expander.Content>
                     </Expander>
+
+
+                    <!--  网页快捷方式  -->
+                    <Button Padding="0"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            Command="{x:Bind NavigateToWebToolEditPageCommand, Mode=OneTime}">
+                        <Grid Padding="20,16,18,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal">
+                                <SymbolIcon Symbol="Globe" />
+                                <TextBlock Margin="20,0,0,0">
+                                    <Run Text="网页快捷方式" />
+                                    <LineBreak />
+                                    <Run FontSize="12"
+                                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                         Text="在左侧导航栏中添加网页快捷方式" />
+                                </TextBlock>
+                            </StackPanel>
+                            <FontIcon Grid.Column="1"
+                                      FontSize="12"
+                                      Glyph="&#xE76C;" />
+                        </Grid>
+                    </Button>
+
+
+
 
 
                     <!--  页面缓存  -->

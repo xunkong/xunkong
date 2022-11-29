@@ -572,6 +572,25 @@ public sealed partial class SettingPage : Page
 
 
 
+
+    /// <summary>
+    /// 导航到网页快捷方式编辑页面
+    /// </summary>
+    [RelayCommand]
+    private void NavigateToWebToolEditPage()
+    {
+        try
+        {
+            MainPage.Current.Navigate(typeof(WebToolEditPage));
+        }
+        catch { }
+    }
+
+
+
+
+
+
     #endregion
 
 
