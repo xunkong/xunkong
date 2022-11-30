@@ -835,14 +835,17 @@ public sealed partial class HomePage : Page
             {
                 // 侧载版检查更新
                 var client = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("Xunkong"));
-                var release = await client.Repository.Release.GetLatest("xunkong", "xunkong");
-                if (Version.TryParse(release.TagName, out var version))
+                var releases = await client.Repository.Release.GetAll("xunkong", "xunkong", new Octokit.ApiOptions { PageCount = 1, PageSize = 1, StartPage = 1 });
+                if (releases.FirstOrDefault() is Octokit.Release release)
                 {
-                    if (version > XunkongEnvironment.AppVersion)
+                    if (Version.TryParse(release.TagName, out var version))
                     {
-                        _Grid_InfoBar.Visibility = Visibility.Visible;
-                        var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, $"新版本 {version}", release.Name, "详细信息", async () => await Launcher.LaunchUriAsync(new Uri(release.HtmlUrl)));
-                        _StackPanel_InfoBar.Children.Insert(0, infoBar);
+                        if (version > XunkongEnvironment.AppVersion)
+                        {
+                            _Grid_InfoBar.Visibility = Visibility.Visible;
+                            var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, $"新版本 {version}", release.Name, "详细信息", async () => await Launcher.LaunchUriAsync(new Uri(release.HtmlUrl)));
+                            _StackPanel_InfoBar.Children.Insert(0, infoBar);
+                        }
                     }
                 }
             }

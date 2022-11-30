@@ -15,8 +15,6 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
 {
 
 
-    private Version? lastVersion;
-
     private Version ThisVersion = XunkongEnvironment.AppVersion;
 
 
@@ -28,10 +26,6 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
 
     private async void UpdateContentPage_Loaded(object sender, RoutedEventArgs e)
     {
-        if (Version.TryParse(AppSetting.GetValue(SettingKeys.LastVersion, ""), out var version))
-        {
-            lastVersion = version;
-        }
         await InitializeCommand.ExecuteAsync(null);
     }
 
@@ -43,13 +37,17 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
         {
             var client = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("xunkong"));
             var sb = new StringBuilder();
-            var releases = await client.Repository.Release.GetAll("xunkong", "xunkong", new Octokit.ApiOptions { PageCount = 1, PageSize = 10, StartPage = 1 });
-            bool any = false;
+            var releases = await client.Repository.Release.GetAll("xunkong", "xunkong", new Octokit.ApiOptions { PageCount = 1, PageSize = 30, StartPage = 1 });
+            if (XunkongEnvironment.IsStoreVersion)
+            {
+                releases = releases.Where(x => x.Prerelease == false).ToList();
+            }
+            int count = 10;
             foreach (var release in releases)
             {
                 if (Version.TryParse(release.TagName, out var version))
                 {
-                    if (lastVersion < version && version <= ThisVersion)
+                    if (version <= ThisVersion)
                     {
                         sb.AppendLine($"# {release.TagName} {release.Name}");
                         sb.AppendLine();
@@ -57,22 +55,14 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
                         sb.AppendLine();
                         sb.AppendLine(release.Body);
                         sb.AppendLine();
-                        any = true;
+                        if (--count == 0)
+                        {
+                            break;
+                        }
                     }
                 }
             }
-            if (!any)
-            {
-                if (releases.FirstOrDefault() is Octokit.Release release)
-                {
-                    sb.AppendLine($"# {release.TagName} {release.Name}");
-                    sb.AppendLine();
-                    sb.AppendLine($"> 更新于 {release.PublishedAt?.LocalDateTime:yyyy-MM-dd HH:mm:ss}");
-                    sb.AppendLine();
-                    sb.AppendLine(release.Body);
-                    sb.AppendLine();
-                }
-            }
+
             var html = Markdig.Markdown.ToHtml(sb.ToString());
             var theme = MainWindow.Current.ActualTheme;
             var path = theme switch
