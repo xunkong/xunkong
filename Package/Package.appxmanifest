@@ -10,12 +10,7 @@
 	<Identity
 	  Name="Xunkong.Desktop.Package"
 	  Publisher="CN=Xunkong by Scighost"
-	  Version="1.2.3.1" />
-
-	<!--<Identity
-	  Name="40418Scighost.Xunkong"
-	  Publisher="CN=0459ED7D-12B2-4D08-9E6C-F2652F306586"
-	  Version="1.2.3.0" />-->
+	  Version="1.2.4.0" />
 
 	<Properties>
 		<DisplayName>寻空 侧载版</DisplayName>

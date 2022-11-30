@@ -498,7 +498,7 @@ public sealed partial class MainPage : Page
         link.Inlines.Add(linkeText);
         text.Inlines.Add(link);
         text.Inlines.Add(new LineBreak());
-        text.Inlines.Add(new Run { Text = "需要包含 cookie_token 值，否则会出现 HoyolabException (-100) 错误" });
+        text.Inlines.Add(new Run { Text = "需要包含 cookie_token_v2 值，否则会出现 HoyolabException (-100) 错误" });
 
         var stackPanel = new StackPanel { Spacing = 12 };
         stackPanel.Children.Add(text);
