@@ -171,4 +171,10 @@ internal static class SettingKeys
     public const string CutsceneFolder = nameof(CutsceneFolder);
 
 
+    /// <summary>
+    /// 不显示实时便笺
+    /// </summary>
+    public const string DisableDailyNotesInHomePage = nameof(DisableDailyNotesInHomePage);
+
+
 }

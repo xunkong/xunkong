@@ -746,4 +746,17 @@ public sealed partial class SettingPage : Page
     }
 
 
+
+
+    /// <summary>
+    /// 在主页不显示实时便笺
+    /// </summary>
+    [ObservableProperty]
+    private bool _DisableDailyNotesInHomePage = AppSetting.GetValue<bool>(SettingKeys.DisableDailyNotesInHomePage);
+    partial void OnDisableDailyNotesInHomePageChanged(bool value)
+    {
+        AppSetting.TrySetValue(SettingKeys.DisableDailyNotesInHomePage, value);
+    }
+
+
 }

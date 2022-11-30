@@ -81,8 +81,11 @@ public sealed partial class HomePage : Page
     {
         // 推荐图片
         InitializeWallpaperAsync();
-        // 实时便笺
-        GetDailyNotesAsync();
+        if (!AppSetting.GetValue<bool>(SettingKeys.DisableDailyNotesInHomePage))
+        {
+            // 实时便笺
+            GetDailyNotesAsync();
+        }
         // 今天刷什么
         GetCalendarAndGrowthScheduleAsync();
         // 即将结束的活动
