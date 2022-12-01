@@ -121,7 +121,7 @@
                             <HyperlinkButton Content="更新记录" NavigateUri="https://github.com/xunkong/xunkong/releases" />
                             <HyperlinkButton Content="反馈和建议" NavigateUri="https://github.com/xunkong/xunkong/issues/new/choose" />
                             <HyperlinkButton Content="隐私策略" NavigateUri="https://github.com/xunkong/xunkong/blob/main/privacy-policy.md" />
-                            <HyperlinkButton Content="赞助开发者" NavigateUri="https://afdian.net/a/scighost" />
+                            <HyperlinkButton Content="赞助开发者" NavigateUri="https://xunkong.cc/donate/" />
                         </StackPanel>
                     </Grid>
 
