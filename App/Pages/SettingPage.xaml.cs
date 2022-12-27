@@ -82,6 +82,22 @@ public sealed partial class SettingPage : Page
         NotificationProvider.Success("已复制开发者的邮件（如果没收到回复，可能是被识别为垃圾邮件了）", 5000);
     }
 
+
+    /// <summary>
+    /// 显示更新内容
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void HyperlinkButton_UpdateContent_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            MainPage.Current.Navigate(typeof(UpdateContentPage));
+        }
+        catch { }
+    }
+
+
     #endregion
 
 
@@ -118,6 +134,22 @@ public sealed partial class SettingPage : Page
     }
 
 
+    /// <summary>
+    /// 是否可以编辑启用预览版
+    /// </summary>
+    public bool CanEditPrerelease => XunkongEnvironment.IsStoreVersion;
+
+
+    /// <summary>
+    /// 启用预览版
+    /// </summary>
+    [ObservableProperty]
+    private bool _EnablePrerelease = !XunkongEnvironment.IsStoreVersion || AppSetting.GetValue<bool>(SettingKeys.EnablePrerelease);
+    partial void OnEnablePrereleaseChanged(bool value)
+    {
+        AppSetting.SetValue(SettingKeys.EnablePrerelease, value);
+    }
+
 
 
     /// <summary>
@@ -133,7 +165,7 @@ public sealed partial class SettingPage : Page
 
 
     /// <summary>
-    /// 切换应用模式
+    /// 切换应用主题
     /// </summary>
     [ObservableProperty]
     private int _SelectedThemeIndex = AppSetting.GetValue<int>(SettingKeys.ApplicationTheme);
@@ -199,6 +231,9 @@ public sealed partial class SettingPage : Page
     }
 
 
+    /// <summary>
+    /// 使用自定义壁纸
+    /// </summary>
     [ObservableProperty]
     private bool _UseCustomWallpaper = AppSetting.GetValue<bool>(SettingKeys.UseCustomWallpaper);
     partial void OnUseCustomWallpaperChanged(bool value)

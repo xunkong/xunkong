@@ -774,6 +774,31 @@ public sealed partial class HomePage : Page
         {
             if (XunkongEnvironment.IsStoreVersion)
             {
+                // 预览版检查更新
+                if (AppSetting.GetValue<bool>(SettingKeys.EnablePrerelease))
+                {
+                    try
+                    {
+                        var client = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("Xunkong"));
+                        var releases = await client.Repository.Release.GetAll("xunkong", "xunkong", new Octokit.ApiOptions { PageCount = 1, PageSize = 1, StartPage = 1 });
+                        if (releases.FirstOrDefault() is Octokit.Release release)
+                        {
+                            if (Version.TryParse(release.TagName, out var version))
+                            {
+                                if (version > XunkongEnvironment.AppVersion && release.Prerelease)
+                                {
+                                    _Grid_InfoBar.Visibility = Visibility.Visible;
+                                    var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, $"新预览版 {version}", release.Name, "详细信息", async () => await Launcher.LaunchUriAsync(new Uri(release.HtmlUrl)));
+                                    _StackPanel_InfoBar.Children.Insert(0, infoBar);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex, "主页检查预览版更新");
+                    }
+                }
                 // 商店版检查更新
                 var context = StoreContext.GetDefault();
                 // 调用需要在UI线程运行的函数前
@@ -849,7 +874,7 @@ public sealed partial class HomePage : Page
                         if (version > XunkongEnvironment.AppVersion)
                         {
                             _Grid_InfoBar.Visibility = Visibility.Visible;
-                            var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, $"新版本 {version}", release.Name, "详细信息", async () => await Launcher.LaunchUriAsync(new Uri(release.HtmlUrl)));
+                            var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, release.Prerelease ? $"新预览版 {version}" : $"新版本 {version}", release.Name, "详细信息", async () => await Launcher.LaunchUriAsync(new Uri(release.HtmlUrl)));
                             _StackPanel_InfoBar.Children.Insert(0, infoBar);
                         }
                     }

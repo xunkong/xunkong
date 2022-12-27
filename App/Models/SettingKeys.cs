@@ -170,16 +170,20 @@ internal static class SettingKeys
     /// </summary>
     public const string CutsceneFolder = nameof(CutsceneFolder);
 
-
     /// <summary>
     /// 不显示实时便笺
     /// </summary>
     public const string DisableDailyNotesInHomePage = nameof(DisableDailyNotesInHomePage);
 
-
     /// <summary>
     /// 推荐的壁纸
     /// </summary>
     public const string RecommendWallpaper = nameof(RecommendWallpaper);
+
+    /// <summary>
+    /// 启用预览版
+    /// </summary>
+    public const string EnablePrerelease = nameof(EnablePrerelease);
+
 
 }

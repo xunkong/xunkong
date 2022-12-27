@@ -118,7 +118,9 @@
                             <TextBlock Margin="0,0,4,0"
                                        VerticalAlignment="Center"
                                        Text="相关链接" />
-                            <HyperlinkButton Content="更新记录" NavigateUri="https://github.com/xunkong/xunkong/releases" />
+                            <HyperlinkButton Name="HyperlinkButton_UpdateContent"
+                                             Click="HyperlinkButton_UpdateContent_Click"
+                                             Content="更新记录" />
                             <HyperlinkButton Content="反馈和建议" NavigateUri="https://github.com/xunkong/xunkong/issues/new/choose" />
                             <HyperlinkButton Content="隐私策略" NavigateUri="https://github.com/xunkong/xunkong/blob/main/privacy-policy.md" />
                             <HyperlinkButton Content="赞助开发者" NavigateUri="https://xunkong.cc/donate/" />
@@ -134,39 +136,58 @@
 
 
                     <!--  检查更新  -->
-                    <xdc:SettingCard>
-                        <xdc:SettingCard.Icon>
-                            <Image Width="28"
-                                   Height="28"
-                                   Margin="-4"
-                                   Source="ms-appx:///Assets/Logos/StoreLogo.png">
-                                <ToolTipService.ToolTip>
-                                    <ToolTip>
-                                        <ToolTip.Style>
-                                            <Style BasedOn="{StaticResource DefaultToolTipStyle}" TargetType="ToolTip">
-                                                <Setter Property="MaxWidth" Value="480" />
-                                            </Style>
-                                        </ToolTip.Style>
-                                        <Image Source="ms-appx:///Assets/Images/102413942_p0.webp" />
-                                    </ToolTip>
-                                </ToolTipService.ToolTip>
-                            </Image>
-                        </xdc:SettingCard.Icon>
-                        <xdc:SettingCard.Content>
-                            <TextBlock>
-                                <Run Text="{x:Bind AppName}" />
-                                <LineBreak />
-                                <Run FontSize="12"
-                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                     Text="{x:Bind AppVersion}" />
-                            </TextBlock>
-                        </xdc:SettingCard.Content>
-                        <xdc:SettingCard.Selector>
-                            <Button HorizontalAlignment="Right"
-                                    Command="{x:Bind CheckUpdateCommand, Mode=OneTime}"
-                                    Content="检查更新" />
-                        </xdc:SettingCard.Selector>
-                    </xdc:SettingCard>
+                    <Expander Name="_Expander_AppVersion"
+                              HorizontalAlignment="Stretch"
+                              HorizontalContentAlignment="Stretch">
+                        <Expander.Header>
+                            <Grid>
+                                <StackPanel Padding="4,16,0,16" Orientation="Horizontal">
+                                    <Image Width="28"
+                                           Height="28"
+                                           Margin="-4"
+                                           Source="ms-appx:///Assets/Logos/StoreLogo.png">
+                                        <ToolTipService.ToolTip>
+                                            <ToolTip>
+                                                <ToolTip.Style>
+                                                    <Style BasedOn="{StaticResource DefaultToolTipStyle}" TargetType="ToolTip">
+                                                        <Setter Property="MaxWidth" Value="480" />
+                                                    </Style>
+                                                </ToolTip.Style>
+                                                <Image Source="ms-appx:///Assets/Images/102413942_p0.webp" />
+                                            </ToolTip>
+                                        </ToolTipService.ToolTip>
+                                    </Image>
+                                    <TextBlock Margin="20,0,0,0">
+                                        <Run Text="{x:Bind AppName}" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="{x:Bind AppVersion}" />
+                                    </TextBlock>
+                                </StackPanel>
+                                <Button HorizontalAlignment="Right"
+                                        Command="{x:Bind CheckUpdateCommand, Mode=OneTime}"
+                                        Content="检查更新" />
+                            </Grid>
+                        </Expander.Header>
+                        <Expander.Content>
+                            <StackPanel Margin="0,-16,44,-16">
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock>
+                                        <Run Text="预览版更新提醒" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="预览版包含正在测试的功能，通过 GitHub 分发" />
+                                    </TextBlock>
+                                    <ToggleSwitch HorizontalAlignment="Right"
+                                                  IsEnabled="{x:Bind CanEditPrerelease}"
+                                                  IsOn="{x:Bind EnablePrerelease, Mode=TwoWay}"
+                                                  Style="{ThemeResource RightAlignToggleSwitchStyle}" />
+                                </Grid>
+                            </StackPanel>
+                        </Expander.Content>
+                    </Expander>
 
                     <!--  应用主题  -->
                     <xdc:SettingCard>
