@@ -14,7 +14,8 @@
             <Rectangle x:Name="windowBackground"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Stretch"
-                       Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
+                       Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                       IsHitTestVisible="False" />
 
             <Frame x:Name="RootFrame" />
 
@@ -38,9 +39,6 @@
                         MaxWidth="600"
                         Margin="24,72,24,72"
                         VerticalAlignment="Bottom">
-                <StackPanel.OpacityTransition>
-                    <ScalarTransition />
-                </StackPanel.OpacityTransition>
                 <StackPanel.Transitions>
                     <TransitionCollection>
                         <AddDeleteThemeTransition />

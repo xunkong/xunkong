@@ -177,4 +177,9 @@ internal static class SettingKeys
     public const string DisableDailyNotesInHomePage = nameof(DisableDailyNotesInHomePage);
 
 
+    /// <summary>
+    /// 推荐的壁纸
+    /// </summary>
+    public const string RecommendWallpaper = nameof(RecommendWallpaper);
+
 }

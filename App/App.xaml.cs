@@ -61,7 +61,6 @@ public partial class App : Application
     /// <param name="args">Details about the launch request and process.</param>
     protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs _)
     {
-        var a = Environment.GetCommandLineArgs();
         var args = AppInstance.GetCurrent().GetActivatedEventArgs();
         var firstInstance = AppInstance.FindOrRegisterForKey("Main");
         if (!firstInstance.IsCurrent && args.Kind == ExtendedActivationKind.Launch)

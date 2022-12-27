@@ -2,6 +2,7 @@
 
 namespace Xunkong.Desktop.Messages;
 
+[Obsolete("", true)]
 internal class ChangeApplicationThemeMessage
 {
     /// <summary>
@@ -11,6 +12,7 @@ internal class ChangeApplicationThemeMessage
 
     public Vector2 Center { get; set; }
 
+    [Obsolete("", true)]
     public ChangeApplicationThemeMessage(int theme, Vector2 center)
     {
         Theme = theme;

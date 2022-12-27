@@ -42,7 +42,6 @@ public sealed partial class MainPage : Page
         MainWindow.Current.SetTitleBar(_appTitleBar);
         _hoyolabService = ServiceProvider.GetService<HoyolabService>()!;
         _xunkongApiService = ServiceProvider.GetService<XunkongApiService>()!;
-        WeakReferenceMessenger.Default.Register<InitializeNavigationWebToolItemMessage>(this, (_, e) => InitializeNavigationWebToolItem());
         Loaded += MainPage_Loaded;
     }
 
@@ -251,11 +250,10 @@ public sealed partial class MainPage : Page
         {
             _NavigationView.IsPaneOpen = !isClosed;
         }
-        InitializeNavigationWebToolItem();
-        GetGenshinData();
-        RefreshAllAcount();
-        SignInAllAccount();
         InitializeJumpList();
+        RefreshAllAcount();
+        GetGenshinData();
+        InitializeNavigationWebToolItem(true);
         // todo 壁纸浏览页
     }
 
@@ -263,8 +261,12 @@ public sealed partial class MainPage : Page
     /// <summary>
     /// 初始化导航栏网页工具
     /// </summary>
-    private async void InitializeNavigationWebToolItem()
+    public async void InitializeNavigationWebToolItem(bool delay = false)
     {
+        if (delay)
+        {
+            await Task.Delay(600);
+        }
         const string WEBTOOL = "WebTool";
         try
         {
@@ -306,11 +308,11 @@ public sealed partial class MainPage : Page
     /// </summary>
     public void GetGenshinData()
     {
-        Task.Run(() =>
+        Task.Run(async () =>
         {
             try
             {
-                _xunkongApiService.GetAllGenshinDataFromServerAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+                await _xunkongApiService.GetAllGenshinDataFromServerAsync().ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -341,30 +343,11 @@ public sealed partial class MainPage : Page
         {
             Logger.Error(ex, "获取所有账号信息");
         }
-        Task.Run(() =>
+        Task.Run(async () =>
         {
             try
             {
-                _hoyolabService.UpdateAllAccountsAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex, "刷新所有账号信息");
-            }
-        }).ConfigureAwait(false);
-    }
-
-
-    /// <summary>
-    /// 签到
-    /// </summary>
-    private void SignInAllAccount()
-    {
-
-        Task.Run(() =>
-        {
-            try
-            {
+                await _hoyolabService.UpdateAllAccountsAsync().ConfigureAwait(false);
                 if (!AppSetting.GetValue<bool>(SettingKeys.SignInAllAccountsWhenStartUpApplication))
                 {
                     return;
@@ -374,7 +357,7 @@ public sealed partial class MainPage : Page
                 {
                     try
                     {
-                        _hoyolabService.SignInAsync(role).ConfigureAwait(false).GetAwaiter().GetResult();
+                        await _hoyolabService.SignInAsync(role).ConfigureAwait(false);
                     }
                     catch (HoyolabException e)
                     {
@@ -385,8 +368,7 @@ public sealed partial class MainPage : Page
             }
             catch (Exception ex)
             {
-                NotificationProvider.Error(ex, "签到");
-                Logger.Error(ex, "签到");
+                Logger.Error(ex, "刷新所有账号信息或签到");
             }
         }).ConfigureAwait(false);
     }
@@ -659,11 +641,11 @@ public sealed partial class MainPage : Page
             var center = new Vector2((float)(point.X + _Border_AccountImage.ActualWidth / 2), (float)(point.Y + _Border_AccountImage.ActualHeight / 2));
             if (ActualTheme is ElementTheme.Light)
             {
-                WeakReferenceMessenger.Default.Send(new ChangeApplicationThemeMessage(2, center));
+                MainWindow.Current.ChangeApplicationTheme(2, center);
             }
             else
             {
-                WeakReferenceMessenger.Default.Send(new ChangeApplicationThemeMessage(1, center));
+                MainWindow.Current.ChangeApplicationTheme(1, center);
             }
             e.Handled = true;
         }

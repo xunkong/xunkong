@@ -273,31 +273,29 @@ internal class XunkongApiService
     }
 
 
-    public WallpaperInfo? GetPreparedWallpaper(bool throwError = false)
+    public WallpaperInfo? GetPreparedWallpaper()
     {
         try
         {
-            using var liteDb = DatabaseProvider.CreateLiteDB();
-            var col = liteDb.GetCollection<WallpaperInfo>("RecommendWallpaper");
-            var wallpaper = col.FindOne(_ => true);
-            return wallpaper;
-        }
-        catch
-        {
-            if (throwError)
+            var str = AppSetting.GetValue<string>(SettingKeys.RecommendWallpaper);
+            if (!string.IsNullOrWhiteSpace(str))
             {
-                throw;
+                return JsonSerializer.Deserialize<WallpaperInfo>(str);
             }
             else
             {
                 return null;
             }
         }
+        catch
+        {
+            return null;
+        }
     }
 
 
 
-    public async Task PrepareNextWallpaperAsync(bool throwError = false)
+    public async Task PrepareNextWallpaperAsync()
     {
         try
         {
@@ -311,19 +309,10 @@ internal class XunkongApiService
                     Directory.CreateDirectory(Path.GetDirectoryName(file)!);
                     await File.WriteAllBytesAsync(file, bytes);
                 }
-                using var liteDb = DatabaseProvider.CreateLiteDB();
-                var col = liteDb.GetCollection<WallpaperInfo>("RecommendWallpaper");
-                col.DeleteAll();
-                col.Insert(wallpaper);
+                AppSetting.SetValue(SettingKeys.RecommendWallpaper, JsonSerializer.Serialize(wallpaper));
             }
         }
-        catch
-        {
-            if (throwError)
-            {
-                throw;
-            }
-        }
+        catch { }
     }
 
 

@@ -142,7 +142,7 @@ public sealed partial class SettingPage : Page
         AppSetting.SetValue(SettingKeys.ApplicationTheme, value);
         var point = FontIcon_Theme.TransformToVisual(MainWindow.Current.Content).TransformPoint(new Windows.Foundation.Point(0, 0));
         var center = new System.Numerics.Vector2(((float)(point.X + FontIcon_Theme.ActualWidth / 2)), ((float)(point.Y + FontIcon_Theme.ActualHeight / 2)));
-        WeakReferenceMessenger.Default.Send(new ChangeApplicationThemeMessage(value, center));
+        MainWindow.Current.ChangeApplicationTheme(value, center);
     }
 
 
@@ -561,7 +561,7 @@ public sealed partial class SettingPage : Page
             t.Commit();
             WebToolItemList = new(list);
             NotificationProvider.Success("保存成功");
-            WeakReferenceMessenger.Default.Send<InitializeNavigationWebToolItemMessage>();
+            MainPage.Current.InitializeNavigationWebToolItem();
         }
         catch (Exception ex)
         {

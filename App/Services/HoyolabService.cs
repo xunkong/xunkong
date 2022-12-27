@@ -24,9 +24,10 @@ internal class HoyolabService
 
     public HoyolabUserInfo? GetLastSelectedOrFirstHoyolabUserInfo()
     {
+        var lastUid = AppSetting.GetValue<int>(SettingKeys.LastSelectUserInfoUid);
         using var dapper = DatabaseProvider.CreateConnection();
-        const string sql = $"SELECT u.* FROM HoyolabUserInfo u LEFT JOIN Setting s ON u.Uid=s.Value WHERE s.Key='{SettingKeys.LastSelectUserInfoUid}' LIMIT 1;";
-        var info = dapper.QueryFirstOrDefault<HoyolabUserInfo>(sql);
+        const string sql = $"SELECT * FROM HoyolabUserInfo WHERE Uid=@Uid LIMIT 1;";
+        var info = dapper.QueryFirstOrDefault<HoyolabUserInfo>(sql, new { Uid = lastUid });
         if (info is not null)
         {
             return info;
@@ -40,9 +41,10 @@ internal class HoyolabService
 
     public GenshinRoleInfo? GetLastSelectedOrFirstGenshinRoleInfo()
     {
+        var lastUid = AppSetting.GetValue<int>(SettingKeys.LastSelectGameRoleUid);
         using var dapper = DatabaseProvider.CreateConnection();
-        const string sql = $"SELECT g.* FROM GenshinRoleInfo g LEFT JOIN Setting s ON g.Uid=s.Value WHERE s.Key='{SettingKeys.LastSelectGameRoleUid}' LIMIT 1;";
-        var info = dapper.QueryFirstOrDefault<GenshinRoleInfo>(sql);
+        const string sql = $"SELECT * FROM GenshinRoleInfo WHERE Uid=@Uid LIMIT 1;";
+        var info = dapper.QueryFirstOrDefault<GenshinRoleInfo>(sql, new { Uid = lastUid });
         if (info is not null)
         {
             return info;

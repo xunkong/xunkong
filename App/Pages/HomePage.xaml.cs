@@ -182,11 +182,11 @@ public sealed partial class HomePage : Page
         {
             c_StackPanel_QuickAction.Visibility = Visibility.Visible;
         }
-        Task.Run(() =>
+        Task.Run(async () =>
         {
             try
             {
-                _xunkongApiService.PrepareNextWallpaperAsync().GetAwaiter().GetResult();
+                await _xunkongApiService.PrepareNextWallpaperAsync().ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -271,7 +271,6 @@ public sealed partial class HomePage : Page
             using var stream = File.OpenRead(file);
             var decoder = await BitmapDecoder.CreateAsync(stream.AsRandomAccessStream());
             heightDivWidth = (double)decoder.PixelHeight / decoder.PixelWidth;
-            var compositor = ElementCompositionPreview.GetElementVisual(_Border_BackgroundImage).Compositor;
             await LoadBackgroundImage(stream);
         }
         catch (COMException ex)
@@ -296,7 +295,12 @@ public sealed partial class HomePage : Page
         stream.Position = 0;
         await stream.CopyToAsync(ms);
         ms.Position = 0;
-        var imageSurface = LoadedImageSurface.StartLoadFromStream(ms.AsRandomAccessStream());
+
+        var width = _Border_BackgroundImage.ActualWidth;
+        var height = Math.Clamp(width * heightDivWidth, 0, imageMaxHeight);
+        var size = new Size(width, height);
+
+        var imageSurface = LoadedImageSurface.StartLoadFromStream(ms.AsRandomAccessStream(), size);
         var compositor = ElementCompositionPreview.GetElementVisual(_Border_BackgroundImage).Compositor;
         var imageBrush = compositor.CreateSurfaceBrush();
         imageBrush.Surface = imageSurface;
@@ -351,8 +355,7 @@ public sealed partial class HomePage : Page
         imageVisual = compositor.CreateSpriteVisual();
         imageVisual.Brush = maskEffectBrush;
 
-        var width = _Border_BackgroundImage.ActualWidth;
-        var height = Math.Clamp(width * heightDivWidth, 0, imageMaxHeight);
+
         imageVisual.Size = new Vector2((float)width, (float)height);
         _Border_BackgroundImage.Height = height;
         _Border_BackgroundImage.Visibility = Visibility.Visible;

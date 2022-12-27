@@ -79,16 +79,22 @@ public sealed partial class MainWindow : Window
 
     private void InitializeWindow()
     {
+        InitializeBackdrop();
+        InitializeWindowState();
+        NotificationProvider.Initialize(InfoBarContainer);
+        Closed += MainWindow_Closed;
+    }
+
+
+    private void InitializeBackdrop()
+    {
         _backdrop = new SystemBackdropHelper(this);
         if (_backdrop.TrySetBackdrop())
         {
             windowBackground.Visibility = Visibility.Collapsed;
         }
-        InitializeWindowState();
-        InitializeMessage();
-        NotificationProvider.Initialize(InfoBarContainer);
-        Closed += MainWindow_Closed;
     }
+
 
     private void InitializeWindowState()
     {
@@ -100,13 +106,12 @@ public sealed partial class MainWindow : Window
         if (AppWindowTitleBar.IsCustomizationSupported())
         {
             var scale = this.UIScale;
-            var left = 48 * scale;
-            var top = 48 * scale;
+            var top = (int)(48 * scale);
             var titleBar = _appWindow.TitleBar;
             titleBar.ExtendsContentIntoTitleBar = true;
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
-            titleBar.SetDragRectangles(new RectInt32[] { new RectInt32((int)left, 0, 10000, (int)top) });
+            titleBar.SetDragRectangles(new RectInt32[] { new RectInt32(top, 0, 10000, top) });
             // 解决 Windows 10 上标题栏无法拖动的问题
             // https://github.com/microsoft/WindowsAppSDK/issues/2976
             _appWindow.ResizeClient(_appWindow.ClientSize);
@@ -136,13 +141,6 @@ public sealed partial class MainWindow : Window
 
 
 
-    private void InitializeMessage()
-    {
-        // todo: MainWindow 和 MainPage 中的部分方法改为直接调用
-        WeakReferenceMessenger.Default.Register<ChangeApplicationThemeMessage>(this, (_, e) => ChangeApplicationTheme(e.Theme, e.Center));
-    }
-
-
 
     private void MainWindow_Closed(object sender, WindowEventArgs args)
     {
@@ -169,8 +167,12 @@ public sealed partial class MainWindow : Window
 
 
 
-
-    private async void ChangeApplicationTheme(int theme, Vector2? center = null)
+    /// <summary>
+    /// 切换窗口主题
+    /// </summary>
+    /// <param name="theme"></param>
+    /// <param name="center"></param>
+    public async void ChangeApplicationTheme(int theme, Vector2? center = null)
     {
         try
         {
@@ -210,26 +212,6 @@ public sealed partial class MainWindow : Window
 
             if (RootBorder.ActualTheme is ElementTheme.Light)
             {
-                // 新主题是浅色模式
-
-                using var oldSprite = compositor.CreateSpriteVisual();
-                oldSprite.Brush = compositor.CreateSurfaceBrush(oldSurface);
-                oldSprite.Size = windowSize;
-                oldSprite.Clip = clip;
-                oldSprite.IsHitTestVisible = false;
-                ElementCompositionPreview.SetElementChildVisual(Content, oldSprite);
-
-                // 从大到小
-                using var animation = compositor.CreateVector2KeyFrameAnimation();
-                animation.InsertKeyFrame(0, new Vector2(max));
-                animation.InsertKeyFrame(1, Vector2.Zero);
-                animation.Duration = TimeSpan.FromMilliseconds(400);
-                ellipse.StartAnimation("Radius", animation);
-
-                await Task.Delay(400);
-            }
-            else
-            {
                 // 新主题是深色模式
 
                 // 主题修改后的图面，此图面与可视化树同步变化
@@ -259,6 +241,26 @@ public sealed partial class MainWindow : Window
                 animation.InsertKeyFrame(0, Vector2.Zero);
                 animation.InsertKeyFrame(1, new Vector2(max));
                 animation.Duration = TimeSpan.FromMilliseconds(1000);
+                ellipse.StartAnimation("Radius", animation);
+
+                await Task.Delay(400);
+            }
+            else
+            {
+                // 新主题是浅色模式
+
+                using var oldSprite = compositor.CreateSpriteVisual();
+                oldSprite.Brush = compositor.CreateSurfaceBrush(oldSurface);
+                oldSprite.Size = windowSize;
+                oldSprite.Clip = clip;
+                oldSprite.IsHitTestVisible = false;
+                ElementCompositionPreview.SetElementChildVisual(Content, oldSprite);
+
+                // 从大到小
+                using var animation = compositor.CreateVector2KeyFrameAnimation();
+                animation.InsertKeyFrame(0, new Vector2(max));
+                animation.InsertKeyFrame(1, Vector2.Zero);
+                animation.Duration = TimeSpan.FromMilliseconds(400);
                 ellipse.StartAnimation("Radius", animation);
 
                 await Task.Delay(400);

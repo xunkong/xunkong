@@ -193,7 +193,7 @@ public sealed partial class WebToolEditPage : Page
             t.Commit();
             WebToolItemList = new(list);
             NotificationProvider.Success("保存成功");
-            WeakReferenceMessenger.Default.Send<InitializeNavigationWebToolItemMessage>();
+            MainPage.Current.InitializeNavigationWebToolItem();
         }
         catch (Exception ex)
         {
