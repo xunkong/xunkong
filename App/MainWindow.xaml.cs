@@ -159,11 +159,11 @@ public sealed partial class MainWindow : Window
         var wpl = new User32.WINDOWPLACEMENT();
         if (User32.GetWindowPlacement(HWND, ref wpl))
         {
-            AppSetting.TrySetValue(SettingKeys.IsMainWindowMaximum, wpl.showCmd == ShowWindowCommand.SW_MAXIMIZE);
+            AppSetting.SetValue(SettingKeys.IsMainWindowMaximum, wpl.showCmd == ShowWindowCommand.SW_MAXIMIZE);
             var p = _appWindow.Position;
             var s = _appWindow.Size;
             var rect = new WindowRect(p.X, p.Y, s.Width, s.Height);
-            AppSetting.TrySetValue(SettingKeys.MainWindowRect, rect.Value, true);
+            AppSetting.SetValue(SettingKeys.MainWindowRect, rect.Value);
         }
     }
 

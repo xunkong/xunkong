@@ -159,12 +159,12 @@ public sealed partial class CutscenePage : Page
                 var folder = await picker.PickSingleFolderAsync();
                 if (folder != null)
                 {
-                    AppSetting.TrySetValue(SettingKeys.CutsceneFolder, folder.Path);
+                    AppSetting.SetValue(SettingKeys.CutsceneFolder, folder.Path);
                 }
             }
             if (result is ContentDialogResult.Secondary)
             {
-                AppSetting.TrySetValue<string>(SettingKeys.CutsceneFolder, null!);
+                AppSetting.SetValue<string>(SettingKeys.CutsceneFolder, null!);
             }
         }
         catch (Exception ex)

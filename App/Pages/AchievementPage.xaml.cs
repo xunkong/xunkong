@@ -163,7 +163,7 @@ public sealed partial class AchievementPage : Page
         {
             Uids = new(LoadAchievementUids());
             var lastSelectedUid = SelectedUid;
-            if (UserSetting.TryGetValue(SettingKeys.LastSelectedUidInAchievementPage, out int uid) && Uids.Contains(uid))
+            if (AppSetting.TryGetValue(SettingKeys.LastSelectedUidInAchievementPage, out int uid) && Uids.Contains(uid))
             {
                 SelectedUid = uid;
             }
@@ -201,7 +201,7 @@ public sealed partial class AchievementPage : Page
         if (uid is int i and > 0)
         {
             SelectedUid = i;
-            UserSetting.TrySetValue(SettingKeys.LastSelectedUidInAchievementPage, SelectedUid);
+            AppSetting.SetValue(SettingKeys.LastSelectedUidInAchievementPage, SelectedUid);
         }
     }
 

@@ -127,7 +127,7 @@ public sealed partial class SettingPage : Page
     private bool _EnableHomePageWallpaper = AppSetting.GetValue(SettingKeys.EnableHomePageWallpaper, true);
     partial void OnEnableHomePageWallpaperChanged(bool value)
     {
-        AppSetting.TrySetValue(SettingKeys.EnableHomePageWallpaper, value);
+        AppSetting.SetValue(SettingKeys.EnableHomePageWallpaper, value);
     }
 
 
@@ -139,7 +139,7 @@ public sealed partial class SettingPage : Page
     private int _SelectedThemeIndex = AppSetting.GetValue<int>(SettingKeys.ApplicationTheme);
     partial void OnSelectedThemeIndexChanged(int value)
     {
-        AppSetting.TrySetValue(SettingKeys.ApplicationTheme, value);
+        AppSetting.SetValue(SettingKeys.ApplicationTheme, value);
         var point = FontIcon_Theme.TransformToVisual(MainWindow.Current.Content).TransformPoint(new Windows.Foundation.Point(0, 0));
         var center = new System.Numerics.Vector2(((float)(point.X + FontIcon_Theme.ActualWidth / 2)), ((float)(point.Y + FontIcon_Theme.ActualHeight / 2)));
         WeakReferenceMessenger.Default.Send(new ChangeApplicationThemeMessage(value, center));
@@ -154,7 +154,7 @@ public sealed partial class SettingPage : Page
     private bool _DownloadWallpaperOnMeteredInternet = AppSetting.GetValue<bool>(SettingKeys.DownloadWallpaperOnMeteredInternet);
     partial void OnDownloadWallpaperOnMeteredInternetChanged(bool value)
     {
-        AppSetting.TrySetValue(SettingKeys.DownloadWallpaperOnMeteredInternet, value);
+        AppSetting.SetValue(SettingKeys.DownloadWallpaperOnMeteredInternet, value);
     }
 
 
@@ -189,11 +189,11 @@ public sealed partial class SettingPage : Page
     {
         if (MainWindow.Current.TryChangeBackdrop(value))
         {
-            AppSetting.TrySetValue(SettingKeys.WindowBackdrop, value);
+            AppSetting.SetValue(SettingKeys.WindowBackdrop, value);
         }
         else
         {
-            AppSetting.TrySetValue(SettingKeys.WindowBackdrop, 0);
+            AppSetting.SetValue(SettingKeys.WindowBackdrop, 0);
             NotificationProvider.Warning("不支持此操作");
         }
     }
@@ -203,7 +203,7 @@ public sealed partial class SettingPage : Page
     private bool _UseCustomWallpaper = AppSetting.GetValue<bool>(SettingKeys.UseCustomWallpaper);
     partial void OnUseCustomWallpaperChanged(bool value)
     {
-        AppSetting.TrySetValue(SettingKeys.UseCustomWallpaper, value);
+        AppSetting.SetValue(SettingKeys.UseCustomWallpaper, value);
     }
 
 
@@ -264,7 +264,7 @@ public sealed partial class SettingPage : Page
     private int _UnlockedFPS = AppSetting.GetValue(SettingKeys.TargetFPS, 60);
     partial void OnUnlockedFPSChanged(int value)
     {
-        AppSetting.TrySetValue(SettingKeys.TargetFPS, value);
+        AppSetting.SetValue(SettingKeys.TargetFPS, value);
     }
 
     /// <summary>
@@ -274,7 +274,7 @@ public sealed partial class SettingPage : Page
     private bool _UsePopupWindow = AppSetting.GetValue<bool>(SettingKeys.IsPopupWindow);
     partial void OnUsePopupWindowChanged(bool value)
     {
-        AppSetting.TrySetValue(SettingKeys.IsPopupWindow, value);
+        AppSetting.SetValue(SettingKeys.IsPopupWindow, value);
     }
 
 
@@ -317,7 +317,7 @@ public sealed partial class SettingPage : Page
                 var path = file.Path;
                 if (path.EndsWith("YuanShen.exe") || path.EndsWith("GenshinImpact.exe"))
                 {
-                    AppSetting.TrySetValue(SettingKeys.GameExePath, path);
+                    AppSetting.SetValue(SettingKeys.GameExePath, path);
                     GameExePath = file.Path;
                 }
                 else
@@ -347,10 +347,10 @@ public sealed partial class SettingPage : Page
     /// 启动应用时签到所有账号
     /// </summary>
     [ObservableProperty]
-    private bool _SignInAllAccountsWhenStartUpApplication = UserSetting.GetValue<bool>(SettingKeys.SignInAllAccountsWhenStartUpApplication);
+    private bool _SignInAllAccountsWhenStartUpApplication = AppSetting.GetValue<bool>(SettingKeys.SignInAllAccountsWhenStartUpApplication);
     partial void OnSignInAllAccountsWhenStartUpApplicationChanged(bool value)
     {
-        UserSetting.TrySetValue(SettingKeys.SignInAllAccountsWhenStartUpApplication, value);
+        AppSetting.SetValue(SettingKeys.SignInAllAccountsWhenStartUpApplication, value);
     }
 
 
@@ -742,7 +742,7 @@ public sealed partial class SettingPage : Page
     private bool _EnableNavigationCache = AppSetting.GetValue<bool>(SettingKeys.EnableNavigationCache);
     partial void OnEnableNavigationCacheChanged(bool value)
     {
-        AppSetting.TrySetValue(SettingKeys.EnableNavigationCache, value);
+        AppSetting.SetValue(SettingKeys.EnableNavigationCache, value);
     }
 
 
@@ -755,7 +755,7 @@ public sealed partial class SettingPage : Page
     private bool _DisableDailyNotesInHomePage = AppSetting.GetValue<bool>(SettingKeys.DisableDailyNotesInHomePage);
     partial void OnDisableDailyNotesInHomePageChanged(bool value)
     {
-        AppSetting.TrySetValue(SettingKeys.DisableDailyNotesInHomePage, value);
+        AppSetting.SetValue(SettingKeys.DisableDailyNotesInHomePage, value);
     }
 
 

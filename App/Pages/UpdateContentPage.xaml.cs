@@ -97,8 +97,7 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
             webview.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
             webview.CoreWebView2.Settings.AreBrowserAcceleratorKeysEnabled = false;
             webview.NavigateToString(html);
-            //AppSetting.TrySetValue(SettingKeys.ShowUpdateContentOnLoaded, false);
-            AppSetting.TrySetValue(SettingKeys.LastVersion, ThisVersion.ToString());
+            AppSetting.SetValue(SettingKeys.LastVersion, ThisVersion);
         }
         catch (Exception ex)
         {
@@ -118,8 +117,7 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
     [RelayCommand]
     private void NotShowThisVersion()
     {
-        //AppSetting.TrySetValue(SettingKeys.ShowUpdateContentOnLoaded, false);
-        AppSetting.TrySetValue(SettingKeys.LastVersion, ThisVersion.ToString());
+        AppSetting.SetValue(SettingKeys.LastVersion, ThisVersion);
         NotificationProvider.Success("此版本不再显示此页面");
     }
 

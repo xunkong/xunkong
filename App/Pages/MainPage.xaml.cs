@@ -110,7 +110,7 @@ public sealed partial class MainPage : Page
     private void _Border_AccountImage_Tapped(object sender, TappedRoutedEventArgs e)
     {
         _NavigationView.IsPaneOpen = !_NavigationView.IsPaneOpen;
-        AppSetting.TrySetValue(SettingKeys.NavigationViewPaneClose, !_NavigationView.IsPaneOpen);
+        AppSetting.SetValue(SettingKeys.NavigationViewPaneClose, !_NavigationView.IsPaneOpen);
     }
 
 
@@ -238,7 +238,7 @@ public sealed partial class MainPage : Page
 
     private void MainPage_Loaded(object sender, RoutedEventArgs e)
     {
-        if (Version.TryParse(AppSetting.GetValue(SettingKeys.LastVersion, ""), out var version) && XunkongEnvironment.AppVersion == version)
+        if (AppSetting.TryGetValue<Version>(SettingKeys.LastVersion, out var version) && XunkongEnvironment.AppVersion == version)
         {
             _NavigationView.SelectedItem = _NaviItem_HomePage;
             _MainPageFrame.Navigate(typeof(HomePage));
@@ -365,7 +365,7 @@ public sealed partial class MainPage : Page
         {
             try
             {
-                if (!UserSetting.GetValue<bool>(SettingKeys.SignInAllAccountsWhenStartUpApplication))
+                if (!AppSetting.GetValue<bool>(SettingKeys.SignInAllAccountsWhenStartUpApplication))
                 {
                     return;
                 }
@@ -429,12 +429,12 @@ public sealed partial class MainPage : Page
             if (_ListView_Account.SelectedItem is GenshinRoleInfo role)
             {
                 GenshinRoleInfo = role;
-                UserSetting.TrySetValue(SettingKeys.LastSelectGameRoleUid, role.Uid);
+                AppSetting.SetValue(SettingKeys.LastSelectGameRoleUid, role.Uid);
                 var user = _hoyolabService.GetHoyolabUserInfoFromDatabaseByCookie(role.Cookie!);
                 if (user is not null)
                 {
                     HoyolabUserInfo = user;
-                    UserSetting.TrySetValue(SettingKeys.LastSelectUserInfoUid, user.Uid);
+                    AppSetting.SetValue(SettingKeys.LastSelectUserInfoUid, user.Uid);
                 }
                 _Flyout_ChangeAccount.Hide();
                 WeakReferenceMessenger.Default.Send(new SelectedGameRoleChangedMessage { Uid = role.Uid, Role = role });
@@ -462,10 +462,10 @@ public sealed partial class MainPage : Page
                 var roles = await _hoyolabService.GetGenshinRoleInfoListAsync(cookie);
                 HoyolabUserInfo = user;
                 GenshinRoleInfo = roles.FirstOrDefault();
-                UserSetting.TrySetValue(SettingKeys.LastSelectUserInfoUid, user.Uid);
+                AppSetting.SetValue(SettingKeys.LastSelectUserInfoUid, user.Uid);
                 if (GenshinRoleInfo is not null)
                 {
-                    UserSetting.TrySetValue(SettingKeys.LastSelectGameRoleUid, GenshinRoleInfo.Uid);
+                    AppSetting.SetValue(SettingKeys.LastSelectGameRoleUid, GenshinRoleInfo.Uid);
                 }
                 GenshinRoleInfoList = new(_hoyolabService.GetGenshinRoleInfoList());
                 NotificationProvider.Success("已添加账号");
@@ -527,10 +527,10 @@ public sealed partial class MainPage : Page
                 var roles = await _hoyolabService.GetGenshinRoleInfoListAsync(cookie);
                 HoyolabUserInfo = user;
                 GenshinRoleInfo = roles.FirstOrDefault();
-                UserSetting.TrySetValue(SettingKeys.LastSelectUserInfoUid, user.Uid);
+                AppSetting.SetValue(SettingKeys.LastSelectUserInfoUid, user.Uid);
                 if (GenshinRoleInfo is not null)
                 {
-                    UserSetting.TrySetValue(SettingKeys.LastSelectGameRoleUid, GenshinRoleInfo.Uid);
+                    AppSetting.SetValue(SettingKeys.LastSelectGameRoleUid, GenshinRoleInfo.Uid);
                 }
                 GenshinRoleInfoList = new(_hoyolabService.GetGenshinRoleInfoList());
             }

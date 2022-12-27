@@ -21,11 +21,12 @@ internal class DatabaseProvider
 
     private static bool _initialized;
 
-    private const int DATABASE_VERSION = 2;
-
 
     public static string SqlitePath => _sqlitePath;
     public static string LiteDbPath => _liteDbPath;
+
+
+    private static List<string> UpdateSqls = new() { TableStructure_v1, TableStructure_v2 };
 
 
 
@@ -50,12 +51,13 @@ internal class DatabaseProvider
     {
         using var dapper = new SqliteConnection(_sqliteConnectionString);
         dapper.Open();
-        dapper.Execute(TableStructure_Init);
-        var version = dapper.QueryFirstOrDefault<int>("SELECT Value FROM DatabaseVersion WHERE Key='DatabaseVersion' LIMIT 1;");
-        if (version < DATABASE_VERSION)
+        dapper.Execute("PRAGMA JOURNAL_MODE = WAL;");
+        //dapper.Execute(TableStructure_Init);
+        //var version = dapper.QueryFirstOrDefault<int>("SELECT Value FROM DatabaseVersion WHERE Key='DatabaseVersion' LIMIT 1;");
+        var version = dapper.QueryFirstOrDefault<int>("PRAGMA USER_VERSION;");
+        if (version < UpdateSqls.Count)
         {
-            var updatingSqls = GetUpdatingSqls(version);
-            foreach (var sql in updatingSqls)
+            foreach (var sql in UpdateSqls.Skip(version))
             {
                 dapper.Execute(sql);
             }
@@ -254,9 +256,9 @@ internal class DatabaseProvider
             DateTime TEXT    NOT NULL
         );
         
-        INSERT OR REPLACE INTO DatabaseVersion (Key, Value) VALUES ('DatabaseVersion', 1);
+        PRAGMA USER_VERSION = 1;
         
-        COMMIT;
+        COMMIT TRANSACTION;
         """;
 
 
@@ -264,18 +266,17 @@ internal class DatabaseProvider
         BEGIN TRANSACTION;
         CREATE TABLE IF NOT EXISTS AchievementData
         (
-            Uid            INT NOT NULL,
-            Id             INT NOT NULL,
-            Current        INT NOT NULL,
-            Status         INT NOT NULL,
+            Uid            INTEGER NOT NULL,
+            Id             INTEGER NOT NULL,
+            Current        INTEGER NOT NULL,
+            Status         INTEGER NOT NULL,
             FinishedTime   TEXT,
             Comment        TEXT,
             LastUpdateTime TEXT,
             PRIMARY KEY (Uid, Id)
         );
-        INSERT OR
-        REPLACE INTO DatabaseVersion (Key, Value) VALUES ('DatabaseVersion', 2);
-        COMMIT;
+        PRAGMA USER_VERSION = 2;
+        COMMIT TRANSACTION;
         """;
 
 

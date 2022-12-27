@@ -125,7 +125,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
             if (int.TryParse(value, out int uid))
             {
                 SetProperty(ref _SelectedUid, uid);
-                UserSetting.TrySetValue(SettingKeys.LastSelectedUidInWishlogSummaryPage, uid);
+                AppSetting.SetValue(SettingKeys.LastSelectedUidInWishlogSummaryPage, uid);
             }
         }
     }
@@ -188,7 +188,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         {
             IsLoadingUidData = true;
             Uids = new ObservableCollection<string>(_wishlogService.GetAllUids().Select(x => x.ToString()));
-            _SelectedUid = UserSetting.GetValue<int>(SettingKeys.LastSelectedUidInWishlogSummaryPage);
+            _SelectedUid = AppSetting.GetValue<int>(SettingKeys.LastSelectedUidInWishlogSummaryPage);
             await Task.Delay(800);
             OnPropertyChanged(nameof(SelectedUid));
             if (!Uids.Contains(SelectedUid) || _SelectedUid == 0)

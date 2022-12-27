@@ -1,4 +1,5 @@
-﻿using Windows.Storage;
+﻿using System.ComponentModel;
+using Windows.Storage;
 
 namespace Xunkong.Desktop.Helpers;
 
@@ -13,26 +14,28 @@ internal static class AppSetting
     }
 
 
-    public static T? GetValue<T>(string key, T? defaultValue = default, bool throwError = false)
+    public static T? GetValue<T>(string key, T? defaultValue = default)
     {
         try
         {
             var value = _container.Values[key];
-            if (value is null)
+            if (value is T t)
             {
-                return defaultValue;
+                return t;
             }
-            else
+            else if (value is string s)
             {
-                return (T?)value;
+                var converter = TypeDescriptor.GetConverter(typeof(T));
+                if (converter == null)
+                {
+                    return defaultValue;
+                }
+                return (T?)converter.ConvertFromString(s);
             }
+            return defaultValue;
         }
         catch
         {
-            if (throwError)
-            {
-                throw;
-            }
             return defaultValue;
         }
 
@@ -41,7 +44,11 @@ internal static class AppSetting
 
     public static void SetValue<T>(string key, T value)
     {
-        _container.Values[key] = value;
+        try
+        {
+            _container.Values[key] = value?.ToString();
+        }
+        catch { }
     }
 
 
@@ -50,38 +57,31 @@ internal static class AppSetting
         try
         {
             var value = _container.Values[key];
-            if (value is null)
+            if (value is T t)
             {
-                result = defaultValue;
-                return false;
-            }
-            else
-            {
-                result = (T?)value;
+                result = t;
                 return true;
             }
+            else if (value is string s)
+            {
+                var converter = TypeDescriptor.GetConverter(typeof(T));
+                if (converter is null)
+                {
+                    result = defaultValue;
+                    return false;
+                }
+                else
+                {
+                    result = (T?)converter.ConvertFromString(s);
+                    return true;
+                }
+            }
+            result = defaultValue;
+            return false;
         }
         catch
         {
             result = defaultValue;
-            return false;
-        }
-    }
-
-
-    public static bool TrySetValue<T>(string key, T value, bool setNullWhenError = false)
-    {
-        try
-        {
-            _container.Values[key] = value;
-            return true;
-        }
-        catch
-        {
-            if (setNullWhenError)
-            {
-                _container.Values[key] = null;
-            }
             return false;
         }
     }

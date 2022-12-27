@@ -2,6 +2,7 @@
 
 namespace Xunkong.Desktop.Helpers;
 
+[Obsolete("不再使用数据库存储设置项", true)]
 internal static class UserSetting
 {
 

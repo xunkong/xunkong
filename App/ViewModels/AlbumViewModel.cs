@@ -164,7 +164,7 @@ internal partial class AlbumViewModel : ObservableObject
                     if (Directory.Exists(screenFolderPath))
                     {
                         albumFolder = screenFolderPath;
-                        AppSetting.TrySetValue(SettingKeys.ScreenFolderPath, screenFolderPath);
+                        AppSetting.SetValue(SettingKeys.ScreenFolderPath, screenFolderPath);
                         return;
                     }
                 }
