@@ -8,6 +8,9 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:xha="using:Xunkong.Hoyolab.Account"
       x:DefaultBindMode="OneWay"
+      PointerPressed="Page_PointerPressed"
+      PointerReleased="Page_PointerReleased"
+      ProcessKeyboardAccelerators="Page_ProcessKeyboardAccelerators"
       mc:Ignorable="d">
 
     <Grid>
