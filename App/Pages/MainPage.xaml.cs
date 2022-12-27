@@ -440,16 +440,7 @@ public sealed partial class MainPage : Page
         {
             try
             {
-                var user = await _hoyolabService.GetHoyolabUserInfoAsync(cookie);
-                var roles = await _hoyolabService.GetGenshinRoleInfoListAsync(cookie);
-                HoyolabUserInfo = user;
-                GenshinRoleInfo = roles.FirstOrDefault();
-                AppSetting.SetValue(SettingKeys.LastSelectUserInfoUid, user.Uid);
-                if (GenshinRoleInfo is not null)
-                {
-                    AppSetting.SetValue(SettingKeys.LastSelectGameRoleUid, GenshinRoleInfo.Uid);
-                }
-                GenshinRoleInfoList = new(_hoyolabService.GetGenshinRoleInfoList());
+                await AddCookieAsync(cookie);
                 NotificationProvider.Success("已添加账号");
             }
             catch (Exception ex)
@@ -460,7 +451,6 @@ public sealed partial class MainPage : Page
         });
         _MainPageFrame.Navigate(typeof(LoginPage), action);
     }
-
 
 
 
@@ -505,16 +495,7 @@ public sealed partial class MainPage : Page
             }
             try
             {
-                var user = await _hoyolabService.GetHoyolabUserInfoAsync(cookie);
-                var roles = await _hoyolabService.GetGenshinRoleInfoListAsync(cookie);
-                HoyolabUserInfo = user;
-                GenshinRoleInfo = roles.FirstOrDefault();
-                AppSetting.SetValue(SettingKeys.LastSelectUserInfoUid, user.Uid);
-                if (GenshinRoleInfo is not null)
-                {
-                    AppSetting.SetValue(SettingKeys.LastSelectGameRoleUid, GenshinRoleInfo.Uid);
-                }
-                GenshinRoleInfoList = new(_hoyolabService.GetGenshinRoleInfoList());
+                await AddCookieAsync(cookie);
             }
             catch (Exception ex)
             {
@@ -522,6 +503,22 @@ public sealed partial class MainPage : Page
                 Logger.Error(ex, "获取账号信息");
             }
         }
+    }
+
+
+
+    public async Task AddCookieAsync(string cookie)
+    {
+        var user = await _hoyolabService.GetHoyolabUserInfoAsync(cookie);
+        var roles = await _hoyolabService.GetGenshinRoleInfoListAsync(cookie);
+        HoyolabUserInfo = user;
+        GenshinRoleInfo = roles.FirstOrDefault();
+        AppSetting.SetValue(SettingKeys.LastSelectUserInfoUid, user.Uid);
+        if (GenshinRoleInfo is not null)
+        {
+            AppSetting.SetValue(SettingKeys.LastSelectGameRoleUid, GenshinRoleInfo.Uid);
+        }
+        GenshinRoleInfoList = new(_hoyolabService.GetGenshinRoleInfoList());
     }
 
 

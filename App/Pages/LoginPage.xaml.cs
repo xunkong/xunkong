@@ -1,7 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Navigation;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -14,9 +13,7 @@ namespace Xunkong.Desktop.Pages;
 public sealed partial class LoginPage : Page
 {
 
-
-    private Action<string> addCookie;
-
+    private const string URL = "https://www.miyoushe.com/ys/";
 
 
     public LoginPage()
@@ -27,29 +24,18 @@ public sealed partial class LoginPage : Page
     }
 
 
-
-    protected override void OnNavigatedTo(NavigationEventArgs e)
-    {
-        if (e.Parameter is Action<string> action)
-        {
-            addCookie = action;
-        }
-    }
-
-
-
     private async void LoginPage_Loaded(object sender, RoutedEventArgs e)
     {
         try
         {
             await _WebView2.EnsureCoreWebView2Async();
             var manager = _WebView2.CoreWebView2.CookieManager;
-            var cookies = await manager.GetCookiesAsync("https://bbs.mihoyo.com/ys/");
+            var cookies = await manager.GetCookiesAsync(URL);
             foreach (var item in cookies)
             {
                 manager.DeleteCookie(item);
             }
-            _WebView2.CoreWebView2.Navigate("https://bbs.mihoyo.com/ys/");
+            _WebView2.CoreWebView2.Navigate(URL);
             _TeachTip_Ok.IsOpen = true;
         }
         catch (Exception ex)
@@ -65,7 +51,7 @@ public sealed partial class LoginPage : Page
     {
         try
         {
-            if (args.IsSuccess && sender.Source.ToString() == "https://bbs.mihoyo.com/ys/")
+            if (args.IsSuccess && sender.Source.ToString() == URL)
             {
                 const string js = """
                     var removeQRIntervalId = setInterval(RemoveAppQRCode, 100);
@@ -163,9 +149,10 @@ public sealed partial class LoginPage : Page
         try
         {
             var manager = _WebView2.CoreWebView2.CookieManager;
-            var cookies = await manager.GetCookiesAsync("https://bbs.mihoyo.com/ys/");
+            var cookies = await manager.GetCookiesAsync(URL);
             var str = string.Join(";", cookies.Select(x => $"{x.Name}={x.Value}"));
-            addCookie(str);
+            await MainPage.Current.AddCookieAsync(str);
+            NotificationProvider.Success("已添加账号");
         }
         catch (Exception ex)
         {
