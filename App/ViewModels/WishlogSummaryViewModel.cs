@@ -59,6 +59,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
                     ClipboardHelper.SetText(e);
                     NotificationProvider.Success("完成", $"已复制 Uid {uid} 的祈愿记录网址到剪贴板", 5000);
                     var addCount = await _wishlogService.GetWishlogByUidAsync(uid, progressHandler);
+                    OperationHistory.AddToDatabase("GetWishlog", uid.ToString());
                     StateText = $"新增 {addCount} 条祈愿记录";
                     SelectedUid = uid.ToString();
                     InitializePageData();
@@ -383,6 +384,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
                 StateText = "网址已过期";
                 return;
             }
+            OperationHistory.AddToDatabase("GetWishlog", uid.ToString());
             SelectedUid = uid.ToString();
             InitializePageData();
         }
@@ -425,6 +427,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
                 StateText = $"检查祈愿记录网址的有效性";
                 var uid = await _wishlogService.GetUidByWishlogUrl(url);
                 var addCount = await _wishlogService.GetWishlogByUidAsync(uid, progressHandler);
+                OperationHistory.AddToDatabase("GetWishlog", uid.ToString());
                 StateText = $"新增 {addCount} 条祈愿记录";
                 SelectedUid = uid.ToString();
                 InitializePageData();
@@ -556,6 +559,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
                 StateText = "验证祈愿记录网址的有效性";
                 var uid = await _wishlogService.GetUidByWishlogUrl(wishlogUrl);
                 var addCount = await _wishlogService.GetWishlogByUidAsync(uid, progressHandler);
+                OperationHistory.AddToDatabase("GetWishlog", uid.ToString());
                 StateText = $"新增 {addCount} 条祈愿记录";
                 SelectedUid = uid.ToString();
                 InitializePageData();

@@ -232,6 +232,7 @@ public sealed partial class CharacterInfoPage : Page
             {
                 _role = role;
                 avatars = await _houselabService.GetAvatarDetailsAsync(role!);
+                _houselabService.SaveAvatarDetailsAsync(role, avatars);
             }
             var info_characters = liteDb.GetCollection<CharacterInfo>().FindAll().ToList();
             var characters = info_characters.Adapt<List<CharacterInfoPage_Character>>();

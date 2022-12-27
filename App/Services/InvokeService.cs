@@ -115,6 +115,7 @@ internal class InvokeService
                 };
                 Process.Start(info);
             }
+            OperationHistory.AddToDatabase("StartGame");
             return true;
         }
         catch (Exception ex)

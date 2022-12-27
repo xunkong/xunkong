@@ -282,6 +282,7 @@
             </NavigationView.FooterMenuItems>
 
             <Frame Name="_MainPageFrame"
+                   Navigated="_MainPageFrame_Navigated"
                    NavigationFailed="_MainPageFrame_NavigationFailed"
                    Visibility="Visible" />
 

@@ -83,6 +83,10 @@ public sealed partial class MainWindow : Window
         InitializeWindowState();
         NotificationProvider.Initialize(InfoBarContainer);
         Closed += MainWindow_Closed;
+        Task.Run(() =>
+        {
+            OperationHistory.AddToDatabase("Startup");
+        });
     }
 
 
@@ -146,6 +150,7 @@ public sealed partial class MainWindow : Window
     {
         SaveWindowState();
         BackupService.AutoBackupDatabase();
+        OperationHistory.AddToDatabase("Shutdown");
     }
 
 

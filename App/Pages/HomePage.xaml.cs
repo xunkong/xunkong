@@ -407,6 +407,7 @@ public sealed partial class HomePage : Page
             {
                 MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = WallpaperInfo.Url, DecodeFromStream = true });
             }
+            OperationHistory.AddToDatabase("OpenWallpaper", WallpaperInfo.Url, WallpaperInfo);
         }
     }
 
@@ -483,6 +484,7 @@ public sealed partial class HomePage : Page
                     Directory.CreateDirectory(destFolder);
                     File.Copy(file.Path, destPath, true);
                     NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "已保存", fileName, "打开文件", openImageAction, null, 3000);
+                    OperationHistory.AddToDatabase("SaveWallpaper", WallpaperInfo?.Url, WallpaperInfo);
                 };
                 NotificationProvider.ShowWithButton(InfoBarSeverity.Warning, "文件已存在", null, "覆盖文件", overwriteAction, null, 3000);
                 return;
@@ -492,6 +494,7 @@ public sealed partial class HomePage : Page
                 Directory.CreateDirectory(destFolder);
                 File.Copy(file.Path, destPath, true);
                 NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "已保存", fileName, "打开文件", openImageAction, null, 3000);
+                OperationHistory.AddToDatabase("SaveWallpaper", WallpaperInfo?.Url, WallpaperInfo);
             }
         }
         catch (Exception ex)

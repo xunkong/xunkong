@@ -28,6 +28,7 @@ internal static class PreCacheService
         {
             return;
         }
+        OperationHistory.AddToDatabase("PrecacheAllImage");
         _cancellationTokenSource = new CancellationTokenSource();
         var thread = new Thread(new ThreadStart(() => PreCacheAllFilesAsync(_cancellationTokenSource.Token)));
         thread.Start();

@@ -125,6 +125,7 @@ public sealed partial class SettingPage : Page
                 uri = new("https://github.com/xunkong/xunkong/releases");
             }
             await Launcher.LaunchUriAsync(uri);
+            OperationHistory.AddToDatabase("CheckUpdate", XunkongEnvironment.AppVersion.ToString());
         }
         catch (Exception ex)
         {
@@ -175,6 +176,7 @@ public sealed partial class SettingPage : Page
         var point = FontIcon_Theme.TransformToVisual(MainWindow.Current.Content).TransformPoint(new Windows.Foundation.Point(0, 0));
         var center = new System.Numerics.Vector2(((float)(point.X + FontIcon_Theme.ActualWidth / 2)), ((float)(point.Y + FontIcon_Theme.ActualHeight / 2)));
         MainWindow.Current.ChangeApplicationTheme(value, center);
+        OperationHistory.AddToDatabase("ChangeTheme", "SelectItem");
     }
 
 
@@ -719,6 +721,7 @@ public sealed partial class SettingPage : Page
             }
 
             NotificationProvider.Success($"完成");
+            OperationHistory.AddToDatabase("ClearCache");
         }
         catch (Exception ex)
         {
@@ -749,6 +752,7 @@ public sealed partial class SettingPage : Page
         {
             await _xunkongApiService.GetAllGenshinDataFromServerAsync();
             NotificationProvider.Success("完成", "本地的原神数据已是最新版本");
+            OperationHistory.AddToDatabase("UpdateGenshinData");
         }
         catch (HttpRequestException ex)
         {

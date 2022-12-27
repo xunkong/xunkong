@@ -301,6 +301,26 @@ internal class HoyolabService
 
 
 
+    public async void SaveAvatarDetailsAsync(GenshinRoleInfo role, List<AvatarDetail>? details = null)
+    {
+        try
+        {
+            using var dapper = DatabaseProvider.CreateConnection();
+            var history = dapper.QueryFirstOrDefault<OperationHistory>("SELECT * FROM OperationHistory WHERE Operation='AvatarDetails' AND Key=@Uid ORDER BY Id DESC LIMIT 1;", new { role.Uid });
+            if (history is not null && DateTimeOffset.Now - history.Time < TimeSpan.FromDays(7))
+            {
+                return;
+            }
+            if (details is null)
+            {
+                details = await _hoyolabClient.GetAvatarDetailsAsync(role);
+            }
+            OperationHistory.AddToDatabase("AvatarDetails", role.Uid.ToString(), details);
+        }
+        catch { }
+    }
+
+
 
 
     public async Task<GameRecordSummary> GetGameRecordSummaryAsync(GenshinRoleInfo role)

@@ -25,8 +25,10 @@ internal class DatabaseProvider
     public static string SqlitePath => _sqlitePath;
     public static string LiteDbPath => _liteDbPath;
 
+    public static int DatabaseVersion => UpdateSqls.Count;
 
-    private static List<string> UpdateSqls = new() { TableStructure_v1, TableStructure_v2 };
+
+    private static List<string> UpdateSqls = new() { TableStructure_v1, TableStructure_v2, TableStructure_v3 };
 
 
 
@@ -102,18 +104,6 @@ internal class DatabaseProvider
         return new LiteDatabase(_docDbConnectionString);
     }
 
-
-
-
-    private static List<string> GetUpdatingSqls(int version)
-    {
-        return version switch
-        {
-            0 => new List<string> { TableStructure_v1, TableStructure_v2 },
-            1 => new List<string> { TableStructure_v2 },
-            _ => new List<string> { },
-        };
-    }
 
 
 
@@ -279,6 +269,26 @@ internal class DatabaseProvider
         COMMIT TRANSACTION;
         """;
 
+
+    private const string TableStructure_v3 = """
+        BEGIN TRANSACTION;
+        DROP TABLE IF EXISTS DatabaseVersion;
+
+        CREATE TABLE IF NOT EXISTS OperationHistory
+        (
+            Id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            Time      TEXT    NOT NULL,
+            Operation TEXT    NOT NULL,
+            Key       TEXT,
+            Value     TEXT
+        );
+        CREATE INDEX IF NOT EXISTS IX_OperationHistory_Time ON OperationHistory (Time);
+        CREATE INDEX IF NOT EXISTS IX_OperationHistory_Operation ON OperationHistory (Operation);
+        CREATE INDEX IF NOT EXISTS IX_OperationHistory_Key ON OperationHistory (Key);
+
+        PRAGMA USER_VERSION = 3;
+        COMMIT TRANSACTION;
+        """;
 
 }
 

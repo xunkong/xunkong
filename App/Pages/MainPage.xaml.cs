@@ -134,12 +134,14 @@ public sealed partial class MainPage : Page
             if (args.IsSettingsInvoked)
             {
                 _MainPageFrame.Navigate(typeof(SettingPage));
+                OperationHistory.AddToDatabase("Navigate", "SettingPage");
             }
             else
             {
                 if (args.InvokedItemContainer.DataContext is WebToolItem webToolItem)
                 {
                     _MainPageFrame.Navigate(typeof(WebToolPage), webToolItem);
+                    OperationHistory.AddToDatabase("Navigate", "WebToolPage", webToolItem);
                 }
                 else
                 {
@@ -151,6 +153,7 @@ public sealed partial class MainPage : Page
                     if (tag == "Help")
                     {
                         _MainPageFrame.Navigate(typeof(WebViewPage), "https://xunkong.cc/help/xunkong/");
+                        OperationHistory.AddToDatabase("Navigate", "HelpPage");
                     }
                     else
                     {
@@ -168,6 +171,7 @@ public sealed partial class MainPage : Page
                                 _MainPageFrame.Navigate(type);
                             }
                         }
+                        OperationHistory.AddToDatabase("Navigate", tag);
                     }
                 }
             }
@@ -226,6 +230,28 @@ public sealed partial class MainPage : Page
         }
     }
 
+
+
+    private void _MainPageFrame_Navigated(object sender, NavigationEventArgs e)
+    {
+        try
+        {
+            if (e.NavigationMode is NavigationMode.New)
+            {
+                var type = e.SourcePageType.Name;
+                if (type is "SettingPage" or "WebToolPage" or "HelpPage")
+                {
+                    return;
+                }
+                if (pageTypeDic.ContainsKey(type))
+                {
+                    return;
+                }
+                OperationHistory.AddToDatabase("Navigate", type);
+            }
+        }
+        catch { }
+    }
 
 
     /// <summary>
@@ -309,6 +335,7 @@ public sealed partial class MainPage : Page
         }
         else
         {
+            OperationHistory.AddToDatabase("UpdateVersion", XunkongEnvironment.AppVersion.ToString());
             _MainPageFrame.Navigate(typeof(UpdateContentPage));
         }
         if (AppSetting.TryGetValue<bool>(SettingKeys.NavigationViewPaneClose, out var isClosed))
@@ -710,7 +737,10 @@ public sealed partial class MainPage : Page
                 MainWindow.Current.ChangeApplicationTheme(1, center);
             }
             e.Handled = true;
+            OperationHistory.AddToDatabase("ChangeTheme", "ClickButton");
         }
         catch { }
     }
+
+
 }

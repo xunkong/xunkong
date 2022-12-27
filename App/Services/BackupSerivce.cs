@@ -97,28 +97,20 @@ internal class BackupService
             {
                 return;
             }
-            var dir = Path.Combine(XunkongEnvironment.UserDataPath, $@"Backup\Database\");
-            if (Directory.Exists(dir))
+            using var dapper = DatabaseProvider.CreateConnection();
+            var operation = dapper.QueryFirstOrDefault<OperationHistory>("SELECT * FROM OperationHistory WHERE Operation='BackupDatabase' ORDER BY Id DESC LIMIT 1;");
+            if (operation is not null && DateTimeOffset.Now - operation.Time < TimeSpan.FromDays(7))
             {
-                var files = Directory.GetFiles(dir);
-                var filename = Path.GetFileNameWithoutExtension(files.LastOrDefault());
-                if (!string.IsNullOrWhiteSpace(filename))
-                {
-                    var fileData = filename.Substring(filename.IndexOf("_") + 1);
-                    var nowData = DateTime.Now.AddDays(-7).ToString("yyyyMMdd_HHmmss");
-                    if (fileData.CompareTo(nowData) == 1)
-                    {
-                        return;
-                    }
-                }
+                return;
             }
+            var dir = Path.Combine(XunkongEnvironment.UserDataPath, @"Backup\Database\");
             Directory.CreateDirectory(dir);
-            var filePath = Path.Combine(XunkongEnvironment.UserDataPath, $@"Backup\Database\XunkongData_{DateTimeOffset.Now:yyyyMMdd_HHmmss}.db");
+            var filePath = Path.Combine(dir, $@"XunkongData_{DateTimeOffset.Now:yyyyMMdd_HHmmss}.db");
             using var backupConnection = new SqliteConnection($"Data Source={filePath};");
-            using var cnt = DatabaseProvider.CreateConnection();
             backupConnection.Open();
-            cnt.Open();
-            cnt.BackupDatabase(backupConnection);
+            OperationHistory.AddToDatabase("BackupDatabase");
+            dapper.Open();
+            dapper.BackupDatabase(backupConnection);
         }
         catch (Exception ex)
         {

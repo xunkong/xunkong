@@ -106,10 +106,12 @@ public sealed partial class SpiralAbyssPage : Page
             }
             var last = await _hoyolabService.GetSpiralAbyssInfoAsync(role, 2);
             var current = await _hoyolabService.GetSpiralAbyssInfoAsync(role, 1);
+            OperationHistory.AddToDatabase("GetAbyss", role.Uid.ToString());
             SelectedAbyssInfo = null;
             abyssDic.Clear();
             InitializeData();
             NotificationProvider.Success($"已获取 {role.Nickname} 最新的深渊记录");
+            _hoyolabService.SaveAvatarDetailsAsync(role);
         }
         catch (Exception ex)
         {

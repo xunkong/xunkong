@@ -431,6 +431,7 @@ public sealed partial class AchievementPage : Page
                     Verb = "runas",
                 };
                 Process.Start(info);
+                OperationHistory.AddToDatabase("StartYaeAchievement");
             }
         }
         catch (Exception ex)
