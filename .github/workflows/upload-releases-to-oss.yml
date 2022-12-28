@@ -38,5 +38,5 @@ jobs:
         run: |
           foreach($file in Get-ChildItem "./release"){
             Write-Host $file.FullName
-            ossutil cp $file.FullName oss://scighost-xunkong/download/
+            ossutil cp $file.FullName oss://scighost-xunkong/download/ -f
           }
