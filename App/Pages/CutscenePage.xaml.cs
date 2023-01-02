@@ -87,19 +87,19 @@ public sealed partial class CutscenePage : Page
                 try
                 {
                     var folder = AppSetting.GetValue<string>(SettingKeys.CutsceneFolder);
-                    if (!string.IsNullOrWhiteSpace(folder))
+                    if (Directory.Exists(folder))
                     {
-                        var path = Path.Combine(folder!, Path.GetFileNameWithoutExtension(cutscene.Source));
-                        if (File.Exists(path) /*&& new FileInfo(path).Length == cutscene.Size*/)
+                        var name = Path.GetFileName(cutscene.Source);
+                        var files = Directory.GetFiles(folder, $"{name}.*", SearchOption.AllDirectories);
+                        if (files.FirstOrDefault(x => Path.GetFileName(x) == $"{name}.mkv") is string { Length: > 0 } path1)
                         {
-                            var file = await StorageFile.GetFileFromPathAsync(path);
+                            var file = await StorageFile.GetFileFromPathAsync(path1);
                             MainWindow.Current.SetFullWindowContent(new CutsceneViewer(file));
                             return;
                         }
-                        path += ".mkv";
-                        if (File.Exists(path) /*&& new FileInfo(path).Length == cutscene.Size*/)
+                        if (files.FirstOrDefault(x => Path.GetFileName(x) == name) is string { Length: > 0 } path2)
                         {
-                            var file = await StorageFile.GetFileFromPathAsync(path);
+                            var file = await StorageFile.GetFileFromPathAsync(path2);
                             MainWindow.Current.SetFullWindowContent(new CutsceneViewer(file));
                             return;
                         }
