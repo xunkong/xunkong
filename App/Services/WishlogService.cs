@@ -117,7 +117,7 @@ internal class WishlogService
     /// </remarks>
     /// <param name="uid"></param>
     /// <returns></returns>
-    public bool CheckWishlogUrlExpired(int uid)
+    public static bool CheckWishlogUrlExpired(int uid)
     {
         using var dapper = DatabaseProvider.CreateConnection();
         var model = dapper.QueryFirstOrDefault<WishlogUrl>("SELECT * FROM WishlogUrl WHERE Uid=@Uid LIMIT 1;", new { Uid = uid });
@@ -259,7 +259,7 @@ internal class WishlogService
 
 
 
-    public int InsertWishlogItems(int uid, IEnumerable<WishlogItem> wishlogs)
+    public static int InsertWishlogItems(int uid, IEnumerable<WishlogItem> wishlogs)
     {
         using var context = DatabaseProvider.CreateContext();
         var oldIds = context.WishlogItem.AsNoTracking().Where(x => x.Uid == uid).Select(x => x.Id).ToList();
@@ -277,7 +277,7 @@ internal class WishlogService
     /// 获取本地数据库中所有的uid
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<int> GetAllUids()
+    public static IEnumerable<int> GetAllUids()
     {
         using var dapper = DatabaseProvider.CreateConnection();
         return dapper.Query<int>("SELECT DISTINCT Uid FROM WishlogItem;");
@@ -289,7 +289,7 @@ internal class WishlogService
     /// </summary>
     /// <param name="uid"></param>
     /// <returns></returns>
-    public int GetWishlogCount(int uid)
+    public static int GetWishlogCount(int uid)
     {
         using var dapper = DatabaseProvider.CreateConnection();
         return dapper.QuerySingleOrDefault<int>("SELECT COUNT(*) FROM WishlogItem WHERE Uid=@Uid;", new { Uid = uid });
@@ -298,12 +298,12 @@ internal class WishlogService
 
 
 
-    public List<WishlogItemEx> GetWishlogItemExByUid(int uid)
+    public static List<WishlogItemEx> GetWishlogItemExByUid(int uid)
     {
         using var dapper = DatabaseProvider.CreateConnection();
         using var liteDb = DatabaseProvider.CreateLiteDB();
         var col = liteDb.GetCollection<WishEventInfo>();
-        var items = dapper.Query<WishlogItemEx>("SELECT * FROM WishlogItem WHERE Uid=@Uid;", new { Uid = uid }).ToList();
+        var items = dapper.Query<WishlogItemEx>("SELECT * FROM WishlogItem WHERE Uid=@Uid ORDER BY Id;", new { Uid = uid }).ToList();
         var events = col.Query().OrderBy(x => x.Id).ToList();
         var groups = items.GroupBy(x => x.QueryType).ToList();
         foreach (var group in groups)

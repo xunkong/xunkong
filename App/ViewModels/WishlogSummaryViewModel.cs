@@ -188,7 +188,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         try
         {
             IsLoadingUidData = true;
-            Uids = new ObservableCollection<string>(_wishlogService.GetAllUids().Select(x => x.ToString()));
+            Uids = new ObservableCollection<string>(WishlogService.GetAllUids().Select(x => x.ToString()));
             _SelectedUid = AppSetting.GetValue<int>(SettingKeys.LastSelectedUidInWishlogSummaryPage);
             await Task.Delay(800);
             OnPropertyChanged(nameof(SelectedUid));
@@ -230,7 +230,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
             var dic_characters = characters.Where(x => !string.IsNullOrWhiteSpace(x.Name)).ToImmutableDictionary(x => x.Name!);
             var weapons = liteDb.GetCollection<WeaponInfo>().FindAll().ToList();
             var dic_weapons = weapons.Where(x => !string.IsNullOrWhiteSpace(x.Name)).ToImmutableDictionary(x => x.Name!);
-            var wishlogs = _wishlogService.GetWishlogItemExByUid(_SelectedUid);
+            var wishlogs = WishlogService.GetWishlogItemExByUid(_SelectedUid);
             var wishlogs_group_dic = wishlogs.GroupBy(x => x.Name).ToImmutableDictionary(x => x.Key);
 
             if (!ignoreWishlogStats)
@@ -767,7 +767,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
                 StateText = "云端没有记录";
                 return;
             }
-            if (result.CurrentCount > _wishlogService.GetWishlogCount(uid))
+            if (result.CurrentCount > WishlogService.GetWishlogCount(uid))
             {
                 var dialog = new ContentDialog
                 {

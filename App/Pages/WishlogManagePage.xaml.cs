@@ -106,11 +106,11 @@ public sealed partial class WishlogManagePage : Page
     {
         try
         {
-            var uids = _wishlogService.GetAllUids();
+            var uids = WishlogService.GetAllUids();
             UidList = uids.Select(x => x.ToString()).ToList();
             if (int.TryParse(SelectedUid, out int uid))
             {
-                var wishlogs = _wishlogService.GetWishlogItemExByUid(uid);
+                var wishlogs = WishlogService.GetWishlogItemExByUid(uid);
                 WishlogList = new(wishlogs.OrderByDescending(x => x.Id));
                 InfoText = $"祈愿记录总计 {wishlogs.Count} 条";
             }
@@ -129,7 +129,7 @@ public sealed partial class WishlogManagePage : Page
         {
             if (int.TryParse(SelectedUid, out int uid))
             {
-                var wishlogs = _wishlogService.GetWishlogItemExByUid(uid);
+                var wishlogs = WishlogService.GetWishlogItemExByUid(uid);
                 WishlogList = new(wishlogs.OrderByDescending(x => x.Id));
                 InfoText = $"祈愿记录总计 {wishlogs.Count} 条";
             }
@@ -386,16 +386,16 @@ public sealed partial class WishlogManagePage : Page
             using var dapper = DatabaseProvider.CreateConnection();
             var existIds = dapper.Query<long>("SELECT Id FROM WishlogItem WHERE Uid=@Uid;", new { Uid = uid });
             var insertItems = wishlogs.ExceptBy(existIds, x => x.Id).ToList();
-            _wishlogService.InsertWishlogItems(uid, insertItems);
+            WishlogService.InsertWishlogItems(uid, insertItems);
             if (OverwriteExistedItems)
             {
                 var updateItems = wishlogs.IntersectBy(existIds, x => x.Id).ToList();
-                _wishlogService.InsertWishlogItems(uid, insertItems);
+                WishlogService.InsertWishlogItems(uid, insertItems);
             }
             var count = dapper.QuerySingleOrDefault<int>("SELECT COUNT(*) FROM WishlogItem WHERE Uid=@Uid;", new { Uid = uid });
             InfoText = $"此次导入新增祈愿记录 {insertItems.Count} 条，导入后总计 {count} 条。";
 
-            UidList = _wishlogService.GetAllUids().Select(x => x.ToString()).ToList();
+            UidList = WishlogService.GetAllUids().Select(x => x.ToString()).ToList();
             SelectedUid = uid.ToString();
         }
         catch (Exception ex)

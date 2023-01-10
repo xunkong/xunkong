@@ -237,7 +237,7 @@ public sealed partial class CharacterInfoPage : Page
             var info_characters = liteDb.GetCollection<CharacterInfo>().FindAll().ToList();
             var characters = info_characters.Adapt<List<CharacterInfoPage_Character>>();
             var weaponDic = liteDb.GetCollection<WeaponInfo>().FindAll().ToDictionary(x => x.Id, x => x.AwakenIcon);
-            var wishlogs = _wishlogService.GetWishlogItemExByUid(role?.Uid ?? 0);
+            var wishlogs = WishlogService.GetWishlogItemExByUid(role?.Uid ?? 0);
             var matches = from a in avatars join c in characters on a.Id equals c.Id select (a, c);
             int exceptId = 0;
             foreach (var item in matches)
