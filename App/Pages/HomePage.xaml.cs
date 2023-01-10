@@ -20,6 +20,7 @@ using Windows.System;
 using Windows.UI.Notifications;
 using Xunkong.ApiClient;
 using Xunkong.Desktop.Controls;
+using Xunkong.Desktop.Summaries;
 using Xunkong.Hoyolab;
 using Xunkong.Hoyolab.Account;
 using Xunkong.Hoyolab.Activity;
@@ -959,8 +960,11 @@ public sealed partial class HomePage : Page
     }
 
 
-
-
+    [RelayCommand]
+    private void OpenSummary2022()
+    {
+        MainWindow.Current.SetFullWindowContent(new Summary2022View());
+    }
 
 
 

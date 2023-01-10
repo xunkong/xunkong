@@ -150,6 +150,7 @@
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                Text="快捷指令" />
                     <Button Command="{x:Bind StartGameCommand, Mode=OneTime}" Content="启动游戏" />
+                    <Button Command="{x:Bind OpenSummary2022Command, Mode=OneTime}" Content="2022 年度总结" />
                 </StackPanel>
 
 
