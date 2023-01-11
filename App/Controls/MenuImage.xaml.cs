@@ -17,7 +17,7 @@ using Windows.Storage.Pickers;
 namespace Xunkong.Desktop.Controls;
 
 [INotifyPropertyChanged]
-public sealed partial class CachedImage : UserControl
+public sealed partial class MenuImage : UserControl
 {
 
 
@@ -36,7 +36,7 @@ public sealed partial class CachedImage : UserControl
 
 
 
-    public CachedImage()
+    public MenuImage()
     {
         this.InitializeComponent();
     }
@@ -56,7 +56,7 @@ public sealed partial class CachedImage : UserControl
 
     // Using a DependencyProperty as the backing store for PlaceHolderSource.  This enables animation, styling, binding, etc...
     public static readonly DependencyProperty PlaceholderSourceProperty =
-        DependencyProperty.Register("PlaceholderSource", typeof(ImageSource), typeof(CachedImage), new PropertyMetadata(null));
+        DependencyProperty.Register("PlaceholderSource", typeof(ImageSource), typeof(MenuImage), new PropertyMetadata(null));
 
 
 
@@ -68,7 +68,7 @@ public sealed partial class CachedImage : UserControl
 
     // Using a DependencyProperty as the backing store for PlaceholderStretch.  This enables animation, styling, binding, etc...
     public static readonly DependencyProperty PlaceholderStretchProperty =
-        DependencyProperty.Register("PlaceholderStretch", typeof(Stretch), typeof(CachedImage), new PropertyMetadata(Stretch.None));
+        DependencyProperty.Register("PlaceholderStretch", typeof(Stretch), typeof(MenuImage), new PropertyMetadata(Stretch.None));
 
 
 
@@ -81,7 +81,7 @@ public sealed partial class CachedImage : UserControl
 
     // Using a DependencyProperty as the backing store for PlaceholderText.  This enables animation, styling, binding, etc...
     public static readonly DependencyProperty PlaceholderTextProperty =
-        DependencyProperty.Register("PlaceholderText", typeof(string), typeof(CachedImage), new PropertyMetadata(null));
+        DependencyProperty.Register("PlaceholderText", typeof(string), typeof(MenuImage), new PropertyMetadata(null));
 
 
 
@@ -95,7 +95,7 @@ public sealed partial class CachedImage : UserControl
 
     // Using a DependencyProperty as the backing store for FallbackSource.  This enables animation, styling, binding, etc...
     public static readonly DependencyProperty FailedSourceProperty =
-        DependencyProperty.Register("FailedSource", typeof(ImageSource), typeof(CachedImage), new PropertyMetadata(null));
+        DependencyProperty.Register("FailedSource", typeof(ImageSource), typeof(MenuImage), new PropertyMetadata(null));
 
 
 
@@ -108,7 +108,7 @@ public sealed partial class CachedImage : UserControl
 
     // Using a DependencyProperty as the backing store for FallbackStretch.  This enables animation, styling, binding, etc...
     public static readonly DependencyProperty FailedStretchProperty =
-        DependencyProperty.Register("FailedStretch", typeof(Stretch), typeof(CachedImage), new PropertyMetadata(Stretch.Uniform));
+        DependencyProperty.Register("FailedStretch", typeof(Stretch), typeof(MenuImage), new PropertyMetadata(Stretch.Uniform));
 
 
 
@@ -120,7 +120,7 @@ public sealed partial class CachedImage : UserControl
 
     // Using a DependencyProperty as the backing store for Stretch.  This enables animation, styling, binding, etc...
     public static readonly DependencyProperty StretchProperty =
-        DependencyProperty.Register("Stretch", typeof(Stretch), typeof(CachedImage), new PropertyMetadata(Stretch.Uniform));
+        DependencyProperty.Register("Stretch", typeof(Stretch), typeof(MenuImage), new PropertyMetadata(Stretch.Uniform));
 
 
 
@@ -134,7 +134,7 @@ public sealed partial class CachedImage : UserControl
 
     // Using a DependencyProperty as the backing store for Source.  This enables animation, styling, binding, etc...
     public static readonly DependencyProperty SourceProperty =
-        DependencyProperty.Register("Source", typeof(object), typeof(CachedImage), new PropertyMetadata(null, SourceChanged));
+        DependencyProperty.Register("Source", typeof(object), typeof(MenuImage), new PropertyMetadata(null, SourceChanged));
 
 
 
@@ -146,7 +146,7 @@ public sealed partial class CachedImage : UserControl
 
     // Using a DependencyProperty as the backing store for DisableAnimation.  This enables animation, styling, binding, etc...
     public static readonly DependencyProperty DisableAnimationProperty =
-        DependencyProperty.Register("DisableAnimation", typeof(bool), typeof(CachedImage), new PropertyMetadata(false));
+        DependencyProperty.Register("DisableAnimation", typeof(bool), typeof(MenuImage), new PropertyMetadata(false));
 
 
 
@@ -159,7 +159,7 @@ public sealed partial class CachedImage : UserControl
 
     // Using a DependencyProperty as the backing store for ShowLoadingRing.  This enables animation, styling, binding, etc...
     public static readonly DependencyProperty ShowLoadingRingProperty =
-        DependencyProperty.Register("ShowLoadingRing", typeof(bool), typeof(CachedImage), new PropertyMetadata(false));
+        DependencyProperty.Register("ShowLoadingRing", typeof(bool), typeof(MenuImage), new PropertyMetadata(false));
 
 
 
@@ -172,7 +172,7 @@ public sealed partial class CachedImage : UserControl
 
     // Using a DependencyProperty as the backing store for ClearWidthOnLoaded.  This enables animation, styling, binding, etc...
     public static readonly DependencyProperty ClearHeightOnLoadedProperty =
-        DependencyProperty.Register("ClearHeightOnLoaded", typeof(bool), typeof(CachedImage), new PropertyMetadata(false));
+        DependencyProperty.Register("ClearHeightOnLoaded", typeof(bool), typeof(MenuImage), new PropertyMetadata(false));
 
 
 
@@ -185,7 +185,7 @@ public sealed partial class CachedImage : UserControl
 
     // Using a DependencyProperty as the backing store for DecodeFromStream.  This enables animation, styling, binding, etc...
     public static readonly DependencyProperty DecodeFromStreamProperty =
-        DependencyProperty.Register("DecodeFromStream", typeof(bool), typeof(CachedImage), new PropertyMetadata(false));
+        DependencyProperty.Register("DecodeFromStream", typeof(bool), typeof(MenuImage), new PropertyMetadata(false));
 
 
 
@@ -223,7 +223,7 @@ public sealed partial class CachedImage : UserControl
 
     private static void SourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        var control = d as CachedImage;
+        var control = d as MenuImage;
 
         if (control == null)
         {

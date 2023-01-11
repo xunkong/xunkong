@@ -9,6 +9,8 @@
             <ResourceDictionary.MergedDictionaries>
 
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+
+                <ResourceDictionary Source="Themes/CachedImageStyle.xaml" />
                 <ResourceDictionary Source="Themes/ContainerStyle.xaml" />
                 <ResourceDictionary Source="Themes/ConverterDictionary.xaml" />
                 <ResourceDictionary Source="Themes/FontStyle.xaml" />

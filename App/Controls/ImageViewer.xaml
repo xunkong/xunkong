@@ -48,18 +48,18 @@
                       VerticalScrollMode="Enabled"
                       ViewChanged="_ScrollViewer_Image_ViewChanged"
                       ZoomMode="Enabled">
-            <xdc:CachedImage x:Name="_Image"
-                             HorizontalAlignment="Center"
-                             VerticalAlignment="Center"
-                             DecodeFromStream="{x:Bind DecodeFromStream}"
-                             ImageOpened="_Image_ImageOpened"
-                             IsDoubleTapEnabled="True"
-                             SizeChanged="_Image_SizeChanged"
-                             Source="{x:Bind Source}">
-                <xdc:CachedImage.RotationTransition>
+            <xdc:MenuImage x:Name="_Image"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           DecodeFromStream="{x:Bind DecodeFromStream}"
+                           ImageOpened="_Image_ImageOpened"
+                           IsDoubleTapEnabled="True"
+                           SizeChanged="_Image_SizeChanged"
+                           Source="{x:Bind Source}">
+                <xdc:MenuImage.RotationTransition>
                     <ScalarTransition />
-                </xdc:CachedImage.RotationTransition>
-            </xdc:CachedImage>
+                </xdc:MenuImage.RotationTransition>
+            </xdc:MenuImage>
         </ScrollViewer>
 
 

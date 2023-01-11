@@ -907,20 +907,21 @@
                                 <Grid Width="80"
                                       Height="98"
                                       CornerRadius="4">
-                                    <xdc:CachedImage Width="80"
-                                                     VerticalAlignment="Top"
-                                                     Source="{x:Bind Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}" />
+                                    <Image Width="80"
+                                           Height="98"
+                                           VerticalAlignment="Top"
+                                           Source="{x:Bind Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}" />
                                     <xdc:CachedImage Width="80"
                                                      Height="80"
                                                      VerticalAlignment="Top"
                                                      CornerRadius="4,4,16,0"
                                                      Source="{x:Bind Icon}" />
-                                    <xdc:CachedImage Width="20"
-                                                     Height="20"
-                                                     Margin="2"
-                                                     HorizontalAlignment="Left"
-                                                     VerticalAlignment="Top"
-                                                     Source="{x:Bind Element, Converter={StaticResource ElementToElementImageConverter}}" />
+                                    <Image Width="20"
+                                           Height="20"
+                                           Margin="2"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Top"
+                                           Source="{x:Bind Element, Converter={StaticResource ElementToElementImageConverter}}" />
                                     <TextBlock Margin="0,0,0,2"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Bottom"
@@ -958,9 +959,10 @@
                                 <Grid Width="80"
                                       Height="98"
                                       CornerRadius="4">
-                                    <xdc:CachedImage Width="80"
-                                                     VerticalAlignment="Top"
-                                                     Source="{x:Bind Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}" />
+                                    <Image Width="80"
+                                           Height="98"
+                                           VerticalAlignment="Top"
+                                           Source="{x:Bind Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}" />
                                     <xdc:CachedImage Width="80"
                                                      Height="80"
                                                      VerticalAlignment="Top"

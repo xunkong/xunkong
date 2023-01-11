@@ -273,7 +273,7 @@
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="models:CharacterInfoPage_Character">
                             <Grid Width="80" CornerRadius="4">
-                                <xdc:CachedImage Source="{x:Bind Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}" />
+                                <Image Source="{x:Bind Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}" />
                                 <xdc:CachedImage VerticalAlignment="Top"
                                                  CornerRadius="4,4,16,0"
                                                  Source="{x:Bind FaceIcon}" />
@@ -297,12 +297,12 @@
                                                Foreground="#F3F3F3"
                                                Text="{x:Bind ActivedConstellationNumber}" />
                                 </Border>
-                                <xdc:CachedImage Width="20"
-                                                 Height="20"
-                                                 Margin="1"
-                                                 HorizontalAlignment="Left"
-                                                 VerticalAlignment="Top"
-                                                 Source="{x:Bind Element, Converter={StaticResource ElementToElementImageConverter}}" />
+                                <Image Width="20"
+                                       Height="20"
+                                       Margin="1"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Top"
+                                       Source="{x:Bind Element, Converter={StaticResource ElementToElementImageConverter}}" />
                                 <Rectangle Fill="#60000000"
                                            IsHitTestVisible="False"
                                            Visibility="{x:Bind IsOwn, Converter={StaticResource BoolToVisibilityReversedConverter}}" />

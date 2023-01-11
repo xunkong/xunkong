@@ -171,11 +171,11 @@
                                         <Run Text="{x:Bind GotRewardCount}" /><Run Text="/" /><Run Text="{x:Bind TotalRewardCount}" />
                                     </TextBlock>
                                 </StackPanel>
-                                <Image Height="28"
-                                       Margin="12,8,0,0"
-                                       HorizontalAlignment="Left"
-                                       VerticalAlignment="Top"
-                                       Source="{x:Bind SmallIcon}" />
+                                <xdc:CachedImage Height="28"
+                                                 Margin="12,8,0,0"
+                                                 HorizontalAlignment="Left"
+                                                 VerticalAlignment="Top"
+                                                 Source="{x:Bind SmallIcon}" />
                             </Grid>
                         </Border>
                     </DataTemplate>

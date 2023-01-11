@@ -205,9 +205,10 @@
                                     <Grid Width="80"
                                           Height="98"
                                           CornerRadius="4">
-                                        <xdc:CachedImage Width="80"
-                                                         VerticalAlignment="Top"
-                                                         Source="{x:Bind CharacterInfo.Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}" />
+                                        <Image Width="80"
+                                               Height="98"
+                                               VerticalAlignment="Top"
+                                               Source="{x:Bind CharacterInfo.Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}" />
                                         <xdc:CachedImage Width="80"
                                                          Height="80"
                                                          VerticalAlignment="Top"
@@ -219,12 +220,12 @@
                                                    FontSize="12"
                                                    Foreground="#84603D"
                                                    Text="{x:Bind CharacterInfo.Name}" />
-                                        <xdc:CachedImage Width="20"
-                                                         Height="20"
-                                                         Margin="1"
-                                                         HorizontalAlignment="Left"
-                                                         VerticalAlignment="Top"
-                                                         Source="{x:Bind CharacterInfo.Element, Converter={StaticResource ElementToElementImageConverter}}" />
+                                        <Image Width="20"
+                                               Height="20"
+                                               Margin="1"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Top"
+                                               Source="{x:Bind CharacterInfo.Element, Converter={StaticResource ElementToElementImageConverter}}" />
                                     </Grid>
                                 </DataTemplate>
                             </GridView.ItemTemplate>
