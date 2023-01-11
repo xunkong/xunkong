@@ -31,11 +31,22 @@
                       VerticalScrollMode="Enabled"
                       ZoomMode="Enabled">
 
+            <ScrollViewer.ContextFlyout>
+                <MenuFlyout>
+                    <MenuFlyoutItem Command="{x:Bind ResetCommand}"
+                                    Icon="Refresh"
+                                    Text="重置视图" />
+                    <MenuFlyoutItem Command="{x:Bind SaveCommand}"
+                                    Icon="Save"
+                                    Text="保存为图片" />
+                </MenuFlyout>
+            </ScrollViewer.ContextFlyout>
+
 
             <ScrollViewer.TopLeftHeader>
                 <Border x:Name="_Border_TopLeftHeader"
+                        Width="144"
                         Height="60"
-                        MinWidth="144"
                         Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}">
                     <ComboBox x:Name="_ComboBox"
                               Width="120"
@@ -113,7 +124,10 @@
                 </Border>
             </ScrollViewer.LeftHeader>
 
-            <Border HorizontalAlignment="Left" VerticalAlignment="Top">
+
+            <Border x:Name="_Border_Content"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top">
                 <ItemsControl ItemsSource="{x:Bind Columns}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -138,8 +152,10 @@
                                             <TextBlock HorizontalAlignment="Center"
                                                        VerticalAlignment="Center"
                                                        Text="{x:Bind IndexString}" />
-                                            <xdc:CachedImage Width="{StaticResource CellSize}"
+                                            <xdc:CachedImage x:Name="Image_Icon"
+                                                             Width="{StaticResource CellSize}"
                                                              Height="{StaticResource CellSize}"
+                                                             x:Load="{x:Bind Icon, Converter={StaticResource StringToBoolConverter}}"
                                                              CornerRadius="4"
                                                              Source="{x:Bind Icon}" />
                                         </Grid>

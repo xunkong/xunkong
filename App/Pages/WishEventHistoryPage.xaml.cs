@@ -1,12 +1,18 @@
-﻿using Microsoft.UI;
+﻿using Microsoft.Graphics.Canvas;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
+using Windows.Storage.Pickers;
+using Windows.System;
 using Windows.UI;
+using WinRT.Interop;
 using Xunkong.GenshinData.Character;
 using Xunkong.GenshinData.Weapon;
 using Xunkong.Hoyolab.Wishlog;
@@ -24,7 +30,7 @@ public sealed partial class WishEventHistoryPage : Page
 {
     public WishEventHistoryPage()
     {
-        this.InitializeComponent(); 
+        this.InitializeComponent();
         NavigationCacheMode = AppSetting.GetValue<bool>(SettingKeys.EnableNavigationCache) ? NavigationCacheMode.Enabled : NavigationCacheMode.Disabled;
         Loaded += WishEventCDPage_Loaded;
     }
@@ -244,6 +250,88 @@ public sealed partial class WishEventHistoryPage : Page
 
 
     #endregion
+
+
+
+
+    [RelayCommand]
+    private void Reset()
+    {
+        _ScrollViewer.ChangeView(0, 0, 1);
+    }
+
+
+
+    [RelayCommand]
+    private async Task SaveAsync()
+    {
+        try
+        {
+            var scale = MainWindow.Current.UIScale;
+
+            var backgroundBrush = this.ActualTheme == ElementTheme.Light ? new SolidColorBrush(Color.FromArgb(0xFF, 0xF3, 0xF3, 0xF3)) : new SolidColorBrush(Color.FromArgb(0xFF, 0x20, 0x20, 0x20));
+            _ScrollViewer.Background = backgroundBrush;
+            _Border_Content.Background = backgroundBrush;
+
+            _ScrollViewer.ChangeView(0, 0, 1, true);
+            await Task.Delay(60);
+
+            var w = _ScrollViewer.ExtentWidth * scale;
+            var h = _ScrollViewer.ExtentHeight * scale;
+
+
+            CanvasDevice device = CanvasDevice.GetSharedDevice();
+            using CanvasRenderTarget offscreen = new CanvasRenderTarget(device, width: (int)w, height: (int)h, dpi: (int)(64 * scale));
+            using (CanvasDrawingSession ds = offscreen.CreateDrawingSession())
+            {
+                var r = new RenderTargetBitmap();
+
+                await r.RenderAsync(_ScrollViewer);
+                var buffer = await r.GetPixelsAsync();
+                ds.DrawImage(CanvasBitmap.CreateFromBytes(device, buffer.ToArray(), r.PixelWidth, r.PixelHeight, Windows.Graphics.DirectX.DirectXPixelFormat.B8G8R8A8UIntNormalized), new Rect(0, 0, r.PixelWidth, r.PixelHeight));
+
+                await r.RenderAsync(_Border_TopHeader);
+                buffer = await r.GetPixelsAsync();
+                ds.DrawImage(CanvasBitmap.CreateFromBytes(device, buffer.ToArray(), r.PixelWidth, r.PixelHeight, Windows.Graphics.DirectX.DirectXPixelFormat.B8G8R8A8UIntNormalized), new Rect(144 * scale, 0, r.PixelWidth, r.PixelHeight));
+
+                await r.RenderAsync(_Border_LeftHeader);
+                buffer = await r.GetPixelsAsync();
+                ds.DrawImage(CanvasBitmap.CreateFromBytes(device, buffer.ToArray(), r.PixelWidth, r.PixelHeight, Windows.Graphics.DirectX.DirectXPixelFormat.B8G8R8A8UIntNormalized), new Rect(0, 60 * scale, r.PixelWidth, r.PixelHeight));
+
+                await r.RenderAsync(_ScrollViewer.Content as UIElement);
+                buffer = await r.GetPixelsAsync();
+                ds.DrawImage(CanvasBitmap.CreateFromBytes(device, buffer.ToArray(), r.PixelWidth, r.PixelHeight, Windows.Graphics.DirectX.DirectXPixelFormat.B8G8R8A8UIntNormalized), new Rect(144 * scale, 60 * scale, r.PixelWidth, r.PixelHeight));
+            }
+
+
+            var picker = new FileSavePicker();
+            picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+            picker.FileTypeChoices.Add("Png File", new List<string>() { ".png" });
+            picker.SuggestedFileName = "WishEventHistory";
+            InitializeWithWindow.Initialize(picker, MainWindow.Current.HWND);
+
+            var file = await picker.PickSaveFileAsync();
+            if (file != null)
+            {
+                using var stream = await file.OpenAsync(Windows.Storage.FileAccessMode.ReadWrite);
+                await offscreen.SaveAsync(stream, CanvasBitmapFileFormat.Png);
+                stream.Dispose();
+                NotificationProvider.ShowWithButton(InfoBarSeverity.Success, null, "已保存", "打开文件", async () => await Launcher.LaunchFileAsync(file), null, 3000);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+            NotificationProvider.Error(ex);
+        }
+        finally
+        {
+            _ScrollViewer.Background = null;
+            _Border_Content.Background = null;
+        }
+    }
+
+
 
 
 
