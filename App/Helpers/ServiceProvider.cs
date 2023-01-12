@@ -64,6 +64,7 @@ internal static class ServiceProvider
         sc.AddSingleton<XunkongApiService>();
         sc.AddSingleton<AlbumViewModel>();
         sc.AddSingleton<ProxyService>();
+        sc.AddSingleton<GithubService>();
         sc.AddSingleton(new JsonSerializerOptions { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping, PropertyNameCaseInsensitive = true });
     }
 

@@ -54,6 +54,8 @@ public sealed partial class HomePage : Page
 
     private readonly HoyolabClient _hoyolabClient;
 
+    private readonly GithubService _githubService;
+
 
     public HomePage()
     {
@@ -61,6 +63,7 @@ public sealed partial class HomePage : Page
         _xunkongApiService = ServiceProvider.GetService<XunkongApiService>()!;
         _hoyolabService = ServiceProvider.GetService<HoyolabService>()!;
         _hoyolabClient = ServiceProvider.GetService<HoyolabClient>()!;
+        _githubService = ServiceProvider.GetService<GithubService>()!;
         Loaded += HomePage_Loaded;
     }
 
@@ -783,18 +786,14 @@ public sealed partial class HomePage : Page
                 {
                     try
                     {
-                        var client = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("Xunkong"));
-                        var releases = await client.Repository.Release.GetAll("xunkong", "xunkong", new Octokit.ApiOptions { PageCount = 1, PageSize = 1, StartPage = 1 });
-                        if (releases.FirstOrDefault() is Octokit.Release release)
+                        var release = await _githubService.GetLatestReleaseAsync();
+                        if (Version.TryParse(release?.TagName, out var version))
                         {
-                            if (Version.TryParse(release.TagName, out var version))
+                            if (version > XunkongEnvironment.AppVersion && release.Prerelease)
                             {
-                                if (version > XunkongEnvironment.AppVersion && release.Prerelease)
-                                {
-                                    _Grid_InfoBar.Visibility = Visibility.Visible;
-                                    var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, $"新预览版 {version}", release.Name, "详细信息", async () => await Launcher.LaunchUriAsync(new Uri(release.HtmlUrl)));
-                                    _StackPanel_InfoBar.Children.Insert(0, infoBar);
-                                }
+                                _Grid_InfoBar.Visibility = Visibility.Visible;
+                                var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, $"新预览版 {version}", release.Name, "详细信息", async () => await Launcher.LaunchUriAsync(new Uri(release.HtmlUrl)));
+                                _StackPanel_InfoBar.Children.Insert(0, infoBar);
                             }
                         }
                     }
@@ -869,18 +868,14 @@ public sealed partial class HomePage : Page
             else
             {
                 // 侧载版检查更新
-                var client = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("Xunkong"));
-                var releases = await client.Repository.Release.GetAll("xunkong", "xunkong", new Octokit.ApiOptions { PageCount = 1, PageSize = 1, StartPage = 1 });
-                if (releases.FirstOrDefault() is Octokit.Release release)
+                var release = await _githubService.GetLatestReleaseAsync();
+                if (Version.TryParse(release?.TagName, out var version))
                 {
-                    if (Version.TryParse(release.TagName, out var version))
+                    if (version > XunkongEnvironment.AppVersion)
                     {
-                        if (version > XunkongEnvironment.AppVersion)
-                        {
-                            _Grid_InfoBar.Visibility = Visibility.Visible;
-                            var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, release.Prerelease ? $"新预览版 {version}" : $"新版本 {version}", release.Name, "详细信息", async () => await Launcher.LaunchUriAsync(new Uri(release.HtmlUrl)));
-                            _StackPanel_InfoBar.Children.Insert(0, infoBar);
-                        }
+                        _Grid_InfoBar.Visibility = Visibility.Visible;
+                        var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, release.Prerelease ? $"新预览版 {version}" : $"新版本 {version}", release.Name, "详细信息", async () => await Launcher.LaunchUriAsync(new Uri(release.HtmlUrl)));
+                        _StackPanel_InfoBar.Children.Insert(0, infoBar);
                     }
                 }
             }

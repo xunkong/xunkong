@@ -17,10 +17,13 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
 
     private Version ThisVersion = XunkongEnvironment.AppVersion;
 
+    private readonly GithubService githubService;
+
 
     public UpdateContentPage()
     {
         this.InitializeComponent();
+        githubService = ServiceProvider.GetService<GithubService>()!;
         Loaded += UpdateContentPage_Loaded;
     }
 
@@ -35,9 +38,8 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
     {
         try
         {
-            var client = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("xunkong"));
             var sb = new StringBuilder();
-            var releases = await client.Repository.Release.GetAll("xunkong", "xunkong", new Octokit.ApiOptions { PageCount = 1, PageSize = 30, StartPage = 1 });
+            var releases = await githubService.GetReleaseAsync(1, 30);
             if (XunkongEnvironment.IsStoreVersion)
             {
                 releases = releases.Where(x => x.Prerelease == false).ToList();
@@ -51,7 +53,7 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
                     {
                         sb.AppendLine($"# {release.TagName} {release.Name}");
                         sb.AppendLine();
-                        sb.AppendLine($"> 更新于 {release.PublishedAt?.LocalDateTime:yyyy-MM-dd HH:mm:ss}");
+                        sb.AppendLine($"> 更新于 {release.PublishedAt.LocalDateTime:yyyy-MM-dd HH:mm:ss}");
                         sb.AppendLine();
                         sb.AppendLine(release.Body);
                         sb.AppendLine();
