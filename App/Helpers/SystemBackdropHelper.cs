@@ -1,5 +1,4 @@
 ﻿using Microsoft.UI.Xaml;
-using Scighost.WinUILib.Helpers;
 
 namespace Xunkong.Desktop.Helpers;
 

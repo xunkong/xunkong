@@ -1,7 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Xunkong.Hoyolab.SpiralAbyss;
 using Microsoft.UI.Xaml.Navigation;
+using Xunkong.Hoyolab.SpiralAbyss;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.

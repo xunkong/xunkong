@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Navigation;
 using ProtoBuf;
 using SingleFileExtractor.Core;
 using System.Collections.ObjectModel;
@@ -11,7 +12,6 @@ using System.Diagnostics;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Net.Http.Json;
-using Microsoft.UI.Xaml.Navigation;
 using System.Numerics;
 using System.Reflection;
 using System.Text.Json.Nodes;
@@ -218,7 +218,7 @@ public sealed partial class AchievementPage : Page
             GotRewardCount = 0;
             TotalRewardCount = 0;
             editable = false;
-            
+
             var goals = XunkongApiService.GetGenshinData<AchievementGoal>().Adapt<List<AchievementPageModel_Goal>>();
             var items = XunkongApiService.GetGenshinData<AchievementItem>().Adapt<List<AchievementPageModel_Item>>();
             var items_dic = items.ToDictionary(x => x.Id);

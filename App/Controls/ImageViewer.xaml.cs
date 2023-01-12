@@ -452,5 +452,5 @@ public sealed partial class ImageViewer : UserControl
         canImageMoved = false;
     }
 
-    
+
 }

@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Navigation;
 using System.Collections.ObjectModel;
 using System.Numerics;
 using Windows.Foundation;
@@ -10,7 +11,6 @@ using Xunkong.Desktop.Controls;
 using Xunkong.GenshinData.Character;
 using Xunkong.GenshinData.Weapon;
 using Xunkong.Hoyolab.Account;
-using Microsoft.UI.Xaml.Navigation;
 using Xunkong.Hoyolab.Avatar;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -233,7 +233,7 @@ public sealed partial class CharacterInfoPage : Page
                 avatars = await _houselabService.GetAvatarDetailsAsync(role!);
                 _houselabService.SaveAvatarDetailsAsync(role, avatars);
             }
-            
+
             var characters = XunkongApiService.GetGenshinData<CharacterInfo>().Adapt<List<CharacterInfoPage_Character>>();
             var weaponDic = XunkongApiService.GetGenshinData<WeaponInfo>().ToDictionary(x => x.Id, x => x.AwakenIcon);
             var wishlogs = WishlogService.GetWishlogItemExByUid(role?.Uid ?? 0);

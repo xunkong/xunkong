@@ -4,7 +4,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using Xunkong.GenshinData.Character;
 using Xunkong.Hoyolab.SpiralAbyss;
 using Xunkong.Hoyolab.Wishlog;
