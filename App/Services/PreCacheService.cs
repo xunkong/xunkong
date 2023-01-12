@@ -143,8 +143,8 @@ internal static class PreCacheService
     {
         var list = new List<string?>();
         var obj = new List<string>();
-        using var liteDb = DatabaseProvider.CreateLiteDB();
-        var characters = liteDb.GetCollection<CharacterInfo>().FindAll().ToList();
+
+        var characters = XunkongApiService.GetGenshinData<CharacterInfo>();
         list.AddRange(characters.Select(x => x.FaceIcon));
         list.AddRange(characters.Select(x => x.SideIcon));
         list.AddRange(characters.Select(x => x.Card));
@@ -169,13 +169,13 @@ internal static class PreCacheService
         //list.AddRange(characters.SelectMany(x => x.Voices?.Select(x => x.Japanese) ?? obj));
         //list.AddRange(characters.SelectMany(x => x.Voices?.Select(x => x.Korean) ?? obj));
 
-        var weapons = liteDb.GetCollection<WeaponInfo>().FindAll().ToList();
+        var weapons = XunkongApiService.GetGenshinData<WeaponInfo>();
         list.AddRange(weapons.Select(x => x.Icon));
         list.AddRange(weapons.Select(x => x.AwakenIcon));
         list.AddRange(weapons.Select(x => x.GachaIcon));
         list.AddRange(weapons.SelectMany(x => x.Promotions?.SelectMany(x => x.CostItems?.Select(x => x.Item.Icon) ?? obj) ?? obj));
 
-        var goals = liteDb.GetCollection<AchievementGoal>().FindAll().ToList();
+        var goals = XunkongApiService.GetGenshinData<AchievementGoal>();
         list.AddRange(goals.Select(x => x.IconPath));
         list.AddRange(goals.Select(x => x.SmallIcon));
         list.AddRange(goals.Select(x => x.RewardNameCard?.Icon));

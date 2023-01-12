@@ -218,9 +218,9 @@ public sealed partial class AchievementPage : Page
             GotRewardCount = 0;
             TotalRewardCount = 0;
             editable = false;
-            using var liteDb = DatabaseProvider.CreateLiteDB();
-            var goals = liteDb.GetCollection<AchievementGoal>().FindAll().Adapt<List<AchievementPageModel_Goal>>();
-            var items = liteDb.GetCollection<AchievementItem>().FindAll().Adapt<List<AchievementPageModel_Item>>();
+            
+            var goals = XunkongApiService.GetGenshinData<AchievementGoal>().Adapt<List<AchievementPageModel_Goal>>();
+            var items = XunkongApiService.GetGenshinData<AchievementItem>().Adapt<List<AchievementPageModel_Item>>();
             var items_dic = items.ToDictionary(x => x.Id);
 
             if (!preCached)

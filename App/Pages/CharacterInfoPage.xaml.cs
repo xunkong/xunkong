@@ -221,7 +221,6 @@ public sealed partial class CharacterInfoPage : Page
     {
         try
         {
-            using var liteDb = DatabaseProvider.CreateLiteDB();
             var role = _houselabService.GetLastSelectedOrFirstGenshinRoleInfo();
             List<AvatarDetail> avatars;
             if (role == null)
@@ -234,9 +233,9 @@ public sealed partial class CharacterInfoPage : Page
                 avatars = await _houselabService.GetAvatarDetailsAsync(role!);
                 _houselabService.SaveAvatarDetailsAsync(role, avatars);
             }
-            var info_characters = liteDb.GetCollection<CharacterInfo>().FindAll().ToList();
-            var characters = info_characters.Adapt<List<CharacterInfoPage_Character>>();
-            var weaponDic = liteDb.GetCollection<WeaponInfo>().FindAll().ToDictionary(x => x.Id, x => x.AwakenIcon);
+            
+            var characters = XunkongApiService.GetGenshinData<CharacterInfo>().Adapt<List<CharacterInfoPage_Character>>();
+            var weaponDic = XunkongApiService.GetGenshinData<WeaponInfo>().ToDictionary(x => x.Id, x => x.AwakenIcon);
             var wishlogs = WishlogService.GetWishlogItemExByUid(role?.Uid ?? 0);
             var matches = from a in avatars join c in characters on a.Id equals c.Id select (a, c);
             int exceptId = 0;

@@ -91,18 +91,14 @@ public sealed partial class GrowthSchedulePage : Page
     {
         try
         {
-            using var liteDb = DatabaseProvider.CreateLiteDB();
-            var col = liteDb.GetCollection<CharacterInfo>();
-            characterInfos = col.Find(x => x.Id != 10000005 && x.Id != 10000007).ToList();
+            characterInfos = XunkongApiService.GetGenshinData<CharacterInfo>().Where(x => x.Id != 10000005 && x.Id != 10000007).ToList();
             // 周本掉落材料
             BossMaterialGroup.Source = characterInfos.GroupBy(x => x.Talents?.FirstOrDefault()?.Levels?.Skip(6)?.FirstOrDefault()?.CostItems?.LastOrDefault()?.Item, new MaterialItemComparer())
                                                      .Where(x => x.Key != null).OrderBy(x => x.Key!.Id)
                                                      .Select(x => new PM_GrowthSchedule_BossMaterialGroup(x.OrderByDescending(x => x.BeginTime).ThenBy(x => x.SortId)) { Material = x.Key! })
                                                      .ToList();
 
-
-            var col2 = liteDb.GetCollection<WeaponInfo>();
-            weaponInfos = col2.FindAll().ToList();
+            weaponInfos = XunkongApiService.GetGenshinData<WeaponInfo>();
 
             using var docDb = DatabaseProvider.CreateDocDb();
             // 养成计划内容

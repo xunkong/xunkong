@@ -1,5 +1,7 @@
-﻿using System.Net.Http;
+﻿using System.Collections.Concurrent;
+using System.Net.Http;
 using Xunkong.ApiClient;
+using Xunkong.ApiClient.GenshinData;
 using Xunkong.ApiClient.Xunkong;
 using Xunkong.GenshinData.Achievement;
 using Xunkong.GenshinData.Character;
@@ -177,26 +179,14 @@ internal class XunkongApiService
 
 
 
+    private static readonly ConcurrentDictionary<string, object> GenshinDataDic = new();
+
+
 
     public async Task GetAllGenshinDataFromServerAsync()
     {
         var data = await _xunkongClient.GetAllGenshinDataAsync();
-        using var liteDb = DatabaseProvider.CreateLiteDB();
-        var col1 = liteDb.GetCollection<CharacterInfo>();
-        col1.DeleteAll();
-        col1.InsertBulk(data.Characters);
-        var col2 = liteDb.GetCollection<WeaponInfo>();
-        col2.DeleteAll();
-        col2.InsertBulk(data.Weapons);
-        var col3 = liteDb.GetCollection<WishEventInfo>();
-        col3.DeleteAll();
-        col3.InsertBulk(data.WishEvents);
-        var col4 = liteDb.GetCollection<AchievementItem>();
-        col4.DeleteAll();
-        col4.InsertBulk(data.Achievement.Items);
-        var col5 = liteDb.GetCollection<AchievementGoal>();
-        col5.DeleteAll();
-        col5.InsertBulk(data.Achievement.Goals);
+        SaveGenshinData(data);
     }
 
 
@@ -230,6 +220,54 @@ internal class XunkongApiService
         col.DeleteAll();
         col.InsertBulk(wishEventInfos);
         return wishEventInfos;
+    }
+
+
+    private static void SaveGenshinData(AllGenshinData data)
+    {
+        using var liteDb = DatabaseProvider.CreateLiteDB();
+
+        GenshinDataDic[nameof(CharacterInfo)] = data.Characters;
+        var col1 = liteDb.GetCollection<CharacterInfo>();
+        col1.DeleteAll();
+        col1.InsertBulk(data.Characters);
+
+        GenshinDataDic[nameof(WeaponInfo)] = data.Weapons;
+        var col2 = liteDb.GetCollection<WeaponInfo>();
+        col2.DeleteAll();
+        col2.InsertBulk(data.Weapons);
+
+        GenshinDataDic[nameof(WishEventInfo)] = data.WishEvents;
+        var col3 = liteDb.GetCollection<WishEventInfo>();
+        col3.DeleteAll();
+        col3.InsertBulk(data.WishEvents);
+
+        GenshinDataDic[nameof(AchievementItem)] = data.Achievement.Items;
+        var col4 = liteDb.GetCollection<AchievementItem>();
+        col4.DeleteAll();
+        col4.InsertBulk(data.Achievement.Items);
+
+        GenshinDataDic[nameof(AchievementGoal)] = data.Achievement.Goals;
+        var col5 = liteDb.GetCollection<AchievementGoal>();
+        col5.DeleteAll();
+        col5.InsertBulk(data.Achievement.Goals);
+    }
+
+
+
+    public static List<T> GetGenshinData<T>()
+    {
+        if (GenshinDataDic.TryGetValue(typeof(T).Name, out var value))
+        {
+            if (value is List<T> t)
+            {
+                return t;
+            }
+        }
+        using var liteDb = DatabaseProvider.CreateLiteDB();
+        var list = liteDb.GetCollection<T>().FindAll().ToList();
+        GenshinDataDic[typeof(T).Name] = list;
+        return list;
     }
 
 

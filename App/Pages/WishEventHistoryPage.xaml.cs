@@ -83,9 +83,8 @@ public sealed partial class WishEventHistoryPage : Page
 
     private void LoadCharacterEventData()
     {
-        using var litedb = DatabaseProvider.CreateLiteDB();
-        var characters = litedb.GetCollection<CharacterInfo>().FindAll().ToList();
-        var wishevents = litedb.GetCollection<WishEventInfo>().FindAll().ToList();
+        var characters = XunkongApiService.GetGenshinData<CharacterInfo>();
+        var wishevents = XunkongApiService.GetGenshinData<WishEventInfo>();
         var chaevents = wishevents.Where(x => x.QueryType == WishType.CharacterEvent).GroupBy(x => x.StartTime).ToList();
         var leftHeader = chaevents.Select(x => new WishEventHistoryPage_LeftHeader
         {
@@ -145,9 +144,8 @@ public sealed partial class WishEventHistoryPage : Page
 
     private void LoadWeaponEventData()
     {
-        using var litedb = DatabaseProvider.CreateLiteDB();
-        var weapons = litedb.GetCollection<WeaponInfo>().FindAll().ToList();
-        var wishevents = litedb.GetCollection<WishEventInfo>().FindAll().ToList();
+        var weapons = XunkongApiService.GetGenshinData<WeaponInfo>();
+        var wishevents = XunkongApiService.GetGenshinData<WishEventInfo>();
         var weaevents = wishevents.Where(x => x.QueryType == WishType.WeaponEvent).GroupBy(x => x.StartTime).ToList();
         var leftHeader = weaevents.Select(x => new WishEventHistoryPage_LeftHeader
         {

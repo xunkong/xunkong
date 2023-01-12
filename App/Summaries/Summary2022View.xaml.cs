@@ -85,9 +85,9 @@ public sealed partial class Summary2022View : UserControl
 #if DEBUG
                 var sw = Stopwatch.StartNew();
 #endif
-                using var liteDb = DatabaseProvider.CreateLiteDB();
-                list_wiki_wishevent = liteDb.GetCollection<WishEventInfo>().FindAll().Where(x => x.EndTime >= time2022 && x.StartTime < time2023).ToList();
-                list_wiki_character = liteDb.GetCollection<CharacterInfo>().FindAll().ToList();
+
+                list_wiki_wishevent = XunkongApiService.GetGenshinData<WishEventInfo>().Where(x => x.EndTime >= time2022 && x.StartTime < time2023).ToList();
+                list_wiki_character = XunkongApiService.GetGenshinData<CharacterInfo>();
                 if (list_wiki_character.Count == 0 || list_wiki_wishevent.Count == 0)
                 {
                     NotificationProvider.Warning("缺少原神数据，无法生成报告，请在设置页面手动更新");

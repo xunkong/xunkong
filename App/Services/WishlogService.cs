@@ -304,8 +304,9 @@ internal class WishlogService
         using var liteDb = DatabaseProvider.CreateLiteDB();
         var col = liteDb.GetCollection<WishEventInfo>();
         var items = dapper.Query<WishlogItemEx>("SELECT * FROM WishlogItem WHERE Uid=@Uid ORDER BY Id;", new { Uid = uid }).ToList();
-        var events = col.Query().OrderBy(x => x.Id).ToList();
+        var events = XunkongApiService.GetGenshinData<WishEventInfo>();
         var groups = items.GroupBy(x => x.QueryType).ToList();
+
         foreach (var group in groups)
         {
             var groupList = group.OrderBy(x => x.Id).ToList();
