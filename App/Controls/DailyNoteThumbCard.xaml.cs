@@ -1,4 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Xunkong.Hoyolab;
 using Xunkong.Hoyolab.Account;
 using Xunkong.Hoyolab.DailyNote;
 using Xunkong.Hoyolab.TravelNotes;
@@ -20,22 +22,26 @@ public sealed partial class DailyNoteThumbCard : UserControl
     }
 
 
-    public HoyolabUserInfo HoyolabUserInfo { get; set; }
+    [ObservableProperty]
+    private HoyolabUserInfo _HoyolabUserInfo;
 
+    [ObservableProperty]
+    private GenshinRoleInfo _GenshinRoleInfo;
 
-    public GenshinRoleInfo GenshinRoleInfo { get; set; }
+    [ObservableProperty]
+    private DailyNoteInfo _DailyNoteInfo;
 
+    [ObservableProperty]
+    private TravelNotesDayData _TravelNotesDayData;
 
-    public DailyNoteInfo DailyNoteInfo { get; set; }
+    [ObservableProperty]
+    private bool _Error;
 
+    [ObservableProperty]
+    private string _ErrorMessage;
 
-    public TravelNotesDayData TravelNotesDayData { get; set; }
-
-
-    public bool Error { get; set; }
-
-
-    public string ErrorMessage { get; set; }
+    [ObservableProperty]
+    private bool _NeedVerification;
 
 
     private async void DailyNoteThumbCard_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
@@ -59,11 +65,61 @@ public sealed partial class DailyNoteThumbCard : UserControl
                 }
             }
         }
+        catch { }
+    }
+
+
+
+
+    [RelayCommand]
+    private async Task RefreshAsync()
+    {
+        try
+        {
+            var client = ServiceProvider.GetService<HoyolabService>()!;
+            var dailynote = await client.GetDailyNoteAsync(GenshinRoleInfo);
+            var travelnotes = await client.GetTravelNotesSummaryAsync(GenshinRoleInfo, DateTime.Now.Month);
+            DailyNoteInfo = dailynote!;
+            TravelNotesDayData = travelnotes.DayData;
+            ErrorMessage = "";
+            Error = false;
+            NeedVerification = false;
+        }
+        catch (HoyolabException ex)
+        {
+            if (ex.ReturnCode != 1034)
+            {
+                NeedVerification = false;
+            }
+            ErrorMessage = ex.Message;
+        }
         catch (Exception ex)
         {
-
+            NeedVerification = false;
+            ErrorMessage = ex.Message;
         }
     }
+
+
+
+
+    [RelayCommand]
+    private void Verify()
+    {
+        try
+        {
+            if (Flyout_WebBridge.Content is null)
+            {
+                Flyout_WebBridge.Content = new DailyNoteWebBridge(HoyolabUserInfo, GenshinRoleInfo);
+            }
+            FlyoutBase.ShowAttachedFlyout(c_Grid_Base);
+        }
+        catch { }
+    }
+
+
+
+
 
 
     /// <summary>

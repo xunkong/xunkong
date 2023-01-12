@@ -560,7 +560,7 @@ public sealed partial class HomePage : Page
                     }
                     catch (HoyolabException ex)
                     {
-                        card = new DailyNoteThumbCard { HoyolabUserInfo = user, GenshinRoleInfo = role, Error = true, ErrorMessage = ex.Message };
+                        card = new DailyNoteThumbCard { HoyolabUserInfo = user, GenshinRoleInfo = role, Error = true, ErrorMessage = ex.Message, NeedVerification = ex.ReturnCode == 1034 };
                     }
                     c_TextBlock_DailyNote.Visibility = Visibility.Visible;
                     c_GridView_DailyNotes.Visibility = Visibility.Visible;
