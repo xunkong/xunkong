@@ -48,6 +48,7 @@ public sealed partial class WishEventHistoryPage : Page
 
     private void WishEventCDPage_Loaded(object sender, RoutedEventArgs e)
     {
+        NotificationProvider.Information("提示", "鼠标左键拖动，鼠标右键打开菜单");
         _ComboBox.SelectedIndex = 0;
     }
 
@@ -276,37 +277,47 @@ public sealed partial class WishEventHistoryPage : Page
             _ScrollViewer.ChangeView(0, 0, 1, true);
             await Task.Delay(60);
 
-            var w = _ScrollViewer.ExtentWidth * scale;
-            var h = _ScrollViewer.ExtentHeight * scale;
+            var w = Math.Round(_ScrollViewer.ExtentWidth * scale);
+            var h = Math.Round(_ScrollViewer.ExtentHeight * scale);
 
 
             CanvasDevice device = CanvasDevice.GetSharedDevice();
-            using CanvasRenderTarget offscreen = new CanvasRenderTarget(device, width: (int)w, height: (int)h, dpi: (int)(64 * scale));
+            using CanvasRenderTarget offscreen = new CanvasRenderTarget(device, width: (int)w, height: (int)h, dpi: 96);
             using (CanvasDrawingSession ds = offscreen.CreateDrawingSession())
             {
+                // 因为 D3D11 的限制，渲染图像的宽高会缩放至不会超过 4096，绘制到目标图像时需要自行计算矩形区域大小
+                // https://learn.microsoft.com/zh-cn/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.media.imaging.rendertargetbitmap?view=windows-app-sdk-1.2#remarks
                 var r = new RenderTargetBitmap();
 
                 await r.RenderAsync(_ScrollViewer);
                 var buffer = await r.GetPixelsAsync();
-                ds.DrawImage(CanvasBitmap.CreateFromBytes(device, buffer.ToArray(), r.PixelWidth, r.PixelHeight, Windows.Graphics.DirectX.DirectXPixelFormat.B8G8R8A8UIntNormalized), new Rect(0, 0, r.PixelWidth, r.PixelHeight));
+                w = Math.Round(_ScrollViewer.ActualWidth * scale);
+                h = Math.Round(_ScrollViewer.ActualHeight * scale);
+                ds.DrawImage(CanvasBitmap.CreateFromBytes(device, buffer.ToArray(), r.PixelWidth, r.PixelHeight, Windows.Graphics.DirectX.DirectXPixelFormat.B8G8R8A8UIntNormalized), new Rect(0, 0, w, h));
 
                 await r.RenderAsync(_Border_TopHeader);
                 buffer = await r.GetPixelsAsync();
-                ds.DrawImage(CanvasBitmap.CreateFromBytes(device, buffer.ToArray(), r.PixelWidth, r.PixelHeight, Windows.Graphics.DirectX.DirectXPixelFormat.B8G8R8A8UIntNormalized), new Rect(144 * scale, 0, r.PixelWidth, r.PixelHeight));
+                w = Math.Round(_Border_TopHeader.ActualWidth * scale);
+                h = Math.Round(_Border_TopHeader.ActualHeight * scale);
+                ds.DrawImage(CanvasBitmap.CreateFromBytes(device, buffer.ToArray(), r.PixelWidth, r.PixelHeight, Windows.Graphics.DirectX.DirectXPixelFormat.B8G8R8A8UIntNormalized), new Rect(144 * scale, 0, w, h));
 
                 await r.RenderAsync(_Border_LeftHeader);
                 buffer = await r.GetPixelsAsync();
-                ds.DrawImage(CanvasBitmap.CreateFromBytes(device, buffer.ToArray(), r.PixelWidth, r.PixelHeight, Windows.Graphics.DirectX.DirectXPixelFormat.B8G8R8A8UIntNormalized), new Rect(0, 60 * scale, r.PixelWidth, r.PixelHeight));
+                w = Math.Round(_Border_LeftHeader.ActualWidth * scale);
+                h = Math.Round(_Border_LeftHeader.ActualHeight * scale);
+                ds.DrawImage(CanvasBitmap.CreateFromBytes(device, buffer.ToArray(), r.PixelWidth, r.PixelHeight, Windows.Graphics.DirectX.DirectXPixelFormat.B8G8R8A8UIntNormalized), new Rect(0, 60 * scale, w, h));
 
-                await r.RenderAsync(_ScrollViewer.Content as UIElement);
+                await r.RenderAsync(_Border_Content);
                 buffer = await r.GetPixelsAsync();
-                ds.DrawImage(CanvasBitmap.CreateFromBytes(device, buffer.ToArray(), r.PixelWidth, r.PixelHeight, Windows.Graphics.DirectX.DirectXPixelFormat.B8G8R8A8UIntNormalized), new Rect(144 * scale, 60 * scale, r.PixelWidth, r.PixelHeight));
+                w = Math.Round(_Border_Content.ActualWidth * scale);
+                h = Math.Round(_Border_Content.ActualHeight * scale);
+                ds.DrawImage(CanvasBitmap.CreateFromBytes(device, buffer.ToArray(), r.PixelWidth, r.PixelHeight, Windows.Graphics.DirectX.DirectXPixelFormat.B8G8R8A8UIntNormalized), new Rect(144 * scale, 60 * scale, w, h));
             }
 
 
             var picker = new FileSavePicker();
             picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-            picker.FileTypeChoices.Add("Png File", new List<string>() { ".png" });
+            picker.FileTypeChoices.Add("Jpg File", new List<string>() { ".jpg" });
             picker.SuggestedFileName = "WishEventHistory";
             InitializeWithWindow.Initialize(picker, MainWindow.Current.HWND);
 
@@ -314,7 +325,7 @@ public sealed partial class WishEventHistoryPage : Page
             if (file != null)
             {
                 using var stream = await file.OpenAsync(Windows.Storage.FileAccessMode.ReadWrite);
-                await offscreen.SaveAsync(stream, CanvasBitmapFileFormat.Png);
+                await offscreen.SaveAsync(stream, CanvasBitmapFileFormat.Jpeg, 0.9f);
                 stream.Dispose();
                 NotificationProvider.ShowWithButton(InfoBarSeverity.Success, null, "已保存", "打开文件", async () => await Launcher.LaunchFileAsync(file), null, 3000);
             }

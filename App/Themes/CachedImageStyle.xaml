@@ -18,6 +18,7 @@
                         <Image Name="PlaceholderImage"
                                HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
                                VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                               x:Load="False"
                                Opacity="1.0"
                                Source="{TemplateBinding PlaceholderSource}"
                                Stretch="{TemplateBinding PlaceholderStretch}" />

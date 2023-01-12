@@ -17,7 +17,7 @@
     <Grid>
 
         <ScrollViewer Name="_ScrollViewer"
-                      Margin="1"
+                      Margin="2"
                       CornerRadius="8,0,0,0"
                       HorizontalScrollBarVisibility="Hidden"
                       HorizontalScrollMode="Enabled"
