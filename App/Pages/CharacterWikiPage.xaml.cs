@@ -2,7 +2,8 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using NAudio.Wave;
+using Windows.Media.Core;
+using Windows.Media.Playback;
 using Xunkong.Desktop.Controls;
 using Xunkong.GenshinData.Character;
 
@@ -19,14 +20,14 @@ public sealed partial class CharacterWikiPage : Page
 {
 
 
-    private readonly WaveOutEvent _audioDevice;
+    private readonly MediaPlayer _mediaPlayer;
 
 
     public CharacterWikiPage()
     {
         this.InitializeComponent();
-        _audioDevice = new WaveOutEvent();
-        _audioDevice.PlaybackStopped += _audioDevice_PlaybackStopped;
+        _mediaPlayer = new MediaPlayer();
+        _mediaPlayer.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
         Loaded += CharacterWikiPage_Loaded;
         Unloaded += CharacterWikiPage_Unloaded;
     }
@@ -42,7 +43,7 @@ public sealed partial class CharacterWikiPage : Page
 
     private void CharacterWikiPage_Unloaded(object sender, RoutedEventArgs e)
     {
-        _audioDevice.Dispose();
+        _mediaPlayer.Dispose();
     }
 
 
@@ -96,7 +97,7 @@ public sealed partial class CharacterWikiPage : Page
 
     partial void OnSelectedCharacterChanged(PM_CharacterWiki_CharacterInfo? value)
     {
-        _audioDevice.Stop();
+        _mediaPlayer.Pause();
         value?.Initialize();
         c_GridView_Filter.SelectedItem = null;
         c_GridView_Filter.SelectedItem = value;
@@ -265,9 +266,9 @@ public sealed partial class CharacterWikiPage : Page
                 {
                     if (button == lastPlayedButton)
                     {
-                        if (_audioDevice.PlaybackState == PlaybackState.Playing)
+                        if (_mediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing)
                         {
-                            _audioDevice.Stop();
+                            _mediaPlayer.Pause();
                             return;
                         }
                         else
@@ -281,20 +282,14 @@ public sealed partial class CharacterWikiPage : Page
                                 button.Content = "\uE102";
                                 return;
                             }
-                            using var fr = new MediaFoundationReader(file.Path);
-                            _audioDevice.Init(fr);
-                            _audioDevice.Play();
+                            _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri(file.Path));
+                            _mediaPlayer.Play();
                             button.Content = "\uE103";
                         }
                     }
                     else
                     {
-                        if (lastPlayedButton != null)
-                        {
-                            lastPlayedButton.Content = "\uE102";
-                        }
-                        _audioDevice.PlaybackStopped -= _audioDevice_PlaybackStopped;
-                        _audioDevice.Stop();
+                        _mediaPlayer.Pause();
                         button.Content = new ProgressRing { Width = 16, Height = 16, Foreground = Application.Current.Resources["TextFillColorSecondaryBrush"] as Brush };
                         var id = Random.Shared.Next();
                         randomId = id;
@@ -302,15 +297,12 @@ public sealed partial class CharacterWikiPage : Page
                         if (file is null || randomId != id)
                         {
                             button.Content = "\uE102";
-                            _audioDevice.PlaybackStopped += _audioDevice_PlaybackStopped;
                             return;
                         }
-                        using var fr = new MediaFoundationReader(file.Path);
-                        _audioDevice.Init(fr);
-                        _audioDevice.Play();
+                        _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri(file.Path));
+                        _mediaPlayer.Play();
                         button.Content = "\uE103";
                         lastPlayedButton = button;
-                        _audioDevice.PlaybackStopped += _audioDevice_PlaybackStopped;
                     }
                 }
             }
@@ -322,18 +314,20 @@ public sealed partial class CharacterWikiPage : Page
     }
 
 
-    /// <summary>
-    /// 播放结束
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    /// <exception cref="NotImplementedException"></exception>
-    private void _audioDevice_PlaybackStopped(object? sender, StoppedEventArgs e)
+
+
+    private MediaPlaybackState lastState;
+
+    private void PlaybackSession_PlaybackStateChanged(MediaPlaybackSession sender, object args)
     {
-        if (lastPlayedButton != null)
+        if (lastState == MediaPlaybackState.Playing && sender.PlaybackState == MediaPlaybackState.Paused)
         {
-            lastPlayedButton.Content = "\uE102";
+            if (lastPlayedButton != null)
+            {
+                DispatcherQueue.TryEnqueue(() => lastPlayedButton.Content = "\uE102");
+            }
         }
+        lastState = sender.PlaybackState;
     }
 
 
