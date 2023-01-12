@@ -6,24 +6,93 @@ namespace Xunkong.Desktop.Models;
 
 
 
-public record WishlogSummaryPage_ItemThumb(string? Name, int Rarity, ElementType Element, WeaponType WeaponType, int Count, string? Icon, DateTimeOffset LastTime);
-
-
-
-public record WishlogSummaryPage_QueryTypeStats(WishType QueryType,
-                                            int TotalCount,
-                                            int Rank5Count,
-                                            int Rank4Count,
-                                            DateTimeOffset StartTime,
-                                            DateTimeOffset EndTime,
-                                            int UpItemCount,
-                                            int CurrentGuarantee,
-                                            int MaxGuarantee,
-                                            int MinGuarantee,
-                                            List<WishlogSummaryPage_Rank5Item> Rank5Items,
-                                            bool LastRank5ItemIsUp,
-                                            int LastRank5ItemGuarantee)
+public class WishlogSummaryPage_ItemThumb
 {
+    public WishlogSummaryPage_ItemThumb(string? name, int rarity, ElementType element, WeaponType weaponType, int count, string? icon, DateTimeOffset lastTime)
+    {
+        Name = name;
+        Rarity = rarity;
+        Element = element;
+        WeaponType = weaponType;
+        Count = count;
+        Icon = icon;
+        LastTime = lastTime;
+    }
+
+    public string? Name { get; set; }
+
+    public int Rarity { get; set; }
+
+    public ElementType Element { get; set; }
+
+    public WeaponType WeaponType { get; set; }
+
+    public int Count { get; set; }
+
+    public string? Icon { get; set; }
+
+    public DateTimeOffset LastTime { get; set; }
+}
+
+
+
+public class WishlogSummaryPage_QueryTypeStats
+{
+    public WishlogSummaryPage_QueryTypeStats(WishType queryType,
+                                             int totalCount,
+                                             int rank5Count,
+                                             int rank4Count,
+                                             DateTimeOffset startTime,
+                                             DateTimeOffset endTime,
+                                             int upItemCount,
+                                             int currentGuarantee,
+                                             int maxGuarantee,
+                                             int minGuarantee,
+                                             List<WishlogSummaryPage_Rank5Item> rank5Items,
+                                             bool lastRank5ItemIsUp,
+                                             int lastRank5ItemGuarantee)
+    {
+        QueryType = queryType;
+        TotalCount = totalCount;
+        Rank5Count = rank5Count;
+        Rank4Count = rank4Count;
+        StartTime = startTime;
+        EndTime = endTime;
+        UpItemCount = upItemCount;
+        CurrentGuarantee = currentGuarantee;
+        MaxGuarantee = maxGuarantee;
+        MinGuarantee = minGuarantee;
+        Rank5Items = rank5Items;
+        LastRank5ItemIsUp = lastRank5ItemIsUp;
+        LastRank5ItemGuarantee = lastRank5ItemGuarantee;
+    }
+
+    public WishType QueryType { get; set; }
+
+    public int TotalCount { get; set; }
+
+    public int Rank5Count { get; set; }
+
+    public int Rank4Count { get; set; }
+
+    public DateTimeOffset StartTime { get; set; }
+
+    public DateTimeOffset EndTime { get; set; }
+
+    public int UpItemCount { get; set; }
+
+    public int CurrentGuarantee { get; set; }
+
+    public int MaxGuarantee { get; set; }
+
+    public int MinGuarantee { get; set; }
+
+    public List<WishlogSummaryPage_Rank5Item> Rank5Items { get; set; }
+
+    public bool LastRank5ItemIsUp { get; set; }
+
+    public int LastRank5ItemGuarantee { get; set; }
+
 
     public bool AnyData => TotalCount > 0;
 
@@ -49,7 +118,7 @@ public record WishlogSummaryPage_QueryTypeStats(WishType QueryType,
 
 
 
-public record WishlogSummaryPage_Rank5Item(string Name, int Guarantee, DateTimeOffset Time, bool IsUp) : INotifyPropertyChanged
+public class WishlogSummaryPage_Rank5Item : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
     private void OnPropertyChanged([CallerMemberName] string propertyName = "")
@@ -57,10 +126,27 @@ public record WishlogSummaryPage_Rank5Item(string Name, int Guarantee, DateTimeO
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
+    public string Name { get; set; }
+
+    public int Guarantee { get; set; }
+
+    public DateTimeOffset Time { get; set; }
+
+    public bool IsUp { get; set; }
+
     public string Color { get; set; }
 
 
     private string _Foreground;
+
+    public WishlogSummaryPage_Rank5Item(string name, int guarantee, DateTimeOffset time, bool isUp)
+    {
+        Name = name;
+        Guarantee = guarantee;
+        Time = time;
+        IsUp = isUp;
+    }
+
     public string Foreground
     {
         get { return _Foreground; }

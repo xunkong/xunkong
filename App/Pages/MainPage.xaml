@@ -217,7 +217,7 @@
                 <NavigationViewItem Content="过场动画"
                                     Icon="SlideShow"
                                     Tag="CutscenePage" />
-                <NavigationViewItem Content="祈愿记录" Tag="WishlogSummaryPage">
+                <NavigationViewItem Content="祈愿记录" Tag="WishlogSummaryPage2">
                     <NavigationViewItem.Icon>
                         <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}" UriSource="ms-appx:///Assets/Images/SpriteUI_BtnIcon_Gacha.png" />
                     </NavigationViewItem.Icon>

@@ -301,8 +301,6 @@ internal class WishlogService
     public static List<WishlogItemEx> GetWishlogItemExByUid(int uid)
     {
         using var dapper = DatabaseProvider.CreateConnection();
-        using var liteDb = DatabaseProvider.CreateLiteDB();
-        var col = liteDb.GetCollection<WishEventInfo>();
         var items = dapper.Query<WishlogItemEx>("SELECT * FROM WishlogItem WHERE Uid=@Uid ORDER BY Id;", new { Uid = uid }).ToList();
         var events = XunkongApiService.GetGenshinData<WishEventInfo>();
         var groups = items.GroupBy(x => x.QueryType).ToList();
@@ -374,6 +372,75 @@ internal class WishlogService
                 }
             }
         }
+
+        bool waile = false; // 歪了
+        foreach (var item in items.Where(x => x.RankType == 5 && x.QueryType == WishType.CharacterEvent))
+        {
+            if (item.IsUp)
+            {
+                if (waile)
+                {
+                    item.IsDabaodi = true;
+                    waile = false;
+                }
+            }
+            else
+            {
+                waile = true;
+            }
+        }
+
+        waile = false;
+        foreach (var item in items.Where(x => x.RankType == 4 && x.QueryType == WishType.CharacterEvent))
+        {
+            if (item.IsUp)
+            {
+                if (waile)
+                {
+                    item.IsDabaodi = true;
+                    waile = false;
+                }
+            }
+            else
+            {
+                waile = true;
+            }
+        }
+
+        waile = false;
+        foreach (var item in items.Where(x => x.RankType == 5 && x.QueryType == WishType.WeaponEvent))
+        {
+            if (item.IsUp)
+            {
+                if (waile)
+                {
+                    item.IsDabaodi = true;
+                    waile = false;
+                }
+            }
+            else
+            {
+                waile = true;
+            }
+        }
+
+        waile = false;
+        foreach (var item in items.Where(x => x.RankType == 4 && x.QueryType == WishType.CharacterEvent))
+        {
+            if (item.IsUp)
+            {
+                if (waile)
+                {
+                    item.IsDabaodi = true;
+                    waile = false;
+                }
+            }
+            else
+            {
+                waile = true;
+            }
+        }
+
         return items;
     }
 

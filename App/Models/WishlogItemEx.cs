@@ -23,4 +23,16 @@ public class WishlogItemEx : WishlogItem
     public bool IsUp { get; set; }
 
 
+    public bool IsDabaodi { get; set; }
+
+
+    public string GuaranteeType => (QueryType, IsUp, IsDabaodi) switch
+    {
+        (WishType.Novice or WishType.Permanent, _, _) => "",
+        (_, true, false) => "小保底",
+        (_, true, true) => "大保底",
+        (_, false, _) => "歪了",
+    };
+
+
 }
