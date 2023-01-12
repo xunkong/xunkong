@@ -25,7 +25,6 @@
 		<PackageReference Include="Mapster" Version="7.3.0" />
 		<PackageReference Include="Markdig" Version="0.30.4" />
 		<PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Graphics.Win2D" Version="1.0.4" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" />

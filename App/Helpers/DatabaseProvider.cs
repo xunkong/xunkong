@@ -81,15 +81,6 @@ internal class DatabaseProvider
     }
 
 
-    public static XunkongDbContext CreateContext()
-    {
-        if (!_initialized)
-        {
-            Initialize();
-        }
-        return new XunkongDbContext(_sqliteConnectionString);
-    }
-
 
 
     public static LiteDatabase CreateLiteDB()
