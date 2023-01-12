@@ -64,17 +64,25 @@ public sealed partial class CharacterWikiPage : Page
     {
         try
         {
-            using var liteDb = DatabaseProvider.CreateLiteDB();
-            CharacterInfos = liteDb.GetCollection<CharacterInfo>()
-                                   .FindAll()
-                                   .OrderByDescending(x => x.BeginTime)
-                                   .ThenBy(x => x.SortId)
-                                   .Select(x => new PM_CharacterWiki_CharacterInfo
-                                   {
-                                       CharacterInfo = x,
-                                       PromotePropString = PropertyType.GetDescription(x.Promotions?.LastOrDefault()?.AddProps?.LastOrDefault()?.PropType)
-                                   })
-                                   .ToList();
+            var list = XunkongApiService.GetGenshinData<CharacterInfo>();
+            // 以钟离和阿贝多为分界线，之前的应该用 SordId 升序，之后的应该用降序
+            CharacterInfos = list.Where(x => x.BeginTime > new DateTime(2020, 12, 15))
+                                 .OrderByDescending(x => x.BeginTime)
+                                 .ThenByDescending(x => x.SortId)
+                                 .Select(x => new PM_CharacterWiki_CharacterInfo
+                                 {
+                                     CharacterInfo = x,
+                                     PromotePropString = PropertyType.GetDescription(x.Promotions?.LastOrDefault()?.AddProps?.LastOrDefault()?.PropType)
+                                 })
+                                 .Concat(list.Where(x => x.BeginTime < new DateTime(2020, 12, 15))
+                                             .OrderByDescending(x => x.BeginTime)
+                                             .ThenBy(x => x.SortId)
+                                             .Select(x => new PM_CharacterWiki_CharacterInfo
+                                             {
+                                                 CharacterInfo = x,
+                                                 PromotePropString = PropertyType.GetDescription(x.Promotions?.LastOrDefault()?.AddProps?.LastOrDefault()?.PropType)
+                                             }))
+                                 .ToList();
             SelectedCharacter = CharacterInfos.FirstOrDefault();
             FilterCharacters = CharacterInfos;
         }
