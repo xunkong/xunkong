@@ -346,7 +346,12 @@
                 <AppBarButton Icon="OpenFile" Label="获取记录">
                     <AppBarButton.Flyout>
                         <MenuFlyout>
-                            <MenuFlyoutItem Command="{x:Bind GetWishlogFromCacheFileCommand, Mode=OneTime}" Text="从缓存文件" />
+                            <MenuFlyoutItem Command="{x:Bind GetWishlogFromCacheFileCommand, Mode=OneTime}"
+                                            CommandParameter="0"
+                                            Text="官服" />
+                            <MenuFlyoutItem Command="{x:Bind GetWishlogFromCacheFileCommand, Mode=OneTime}"
+                                            CommandParameter="1"
+                                            Text="国际服" />
                             <MenuFlyoutSeparator />
                             <MenuFlyoutItem Command="{x:Bind StartProxyCommand, Mode=OneTime}" Text="启动代理" />
                             <MenuFlyoutItem Command="{x:Bind CloseProxyCommand, Mode=OneTime}" Text="关闭代理" />

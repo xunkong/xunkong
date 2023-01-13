@@ -288,11 +288,26 @@ public sealed partial class SettingPage : Page
 
     #region Start Game
 
+
+
+    [ObservableProperty]
+    private int _GameServerIndex = AppSetting.GetValue<int>(SettingKeys.GameServerIndex);
+    partial void OnGameServerIndexChanged(int value)
+    {
+        AppSetting.SetValue(SettingKeys.GameServerIndex, value);
+    }
+
     /// <summary>
     /// 游戏 exe 文件路径
     /// </summary>
     [ObservableProperty]
-    private string? _GameExePath = AppSetting.GetValue(SettingKeys.GameExePath, "不指定具体文件则会从注册表查找文件路径");
+    private string? _GameExePathCN = AppSetting.GetValue(SettingKeys.GameExePathCN, "不指定具体文件则会从注册表查找文件路径");
+
+    [ObservableProperty]
+    private string? _GameExePathGlobal = AppSetting.GetValue(SettingKeys.GameExePathGlobal, "不指定具体文件则会从注册表查找文件路径");
+
+    [ObservableProperty]
+    private string? _GameExePathCNCloud = AppSetting.GetValue(SettingKeys.GameExePathCNCloud, "不指定具体文件则会从注册表查找文件路径");
 
     /// <summary>
     /// 解锁 fps 上限
@@ -325,7 +340,7 @@ public sealed partial class SettingPage : Page
     {
         try
         {
-            await InvokeService.StartGameAsync();
+            await GameAccountService.StartGameAsync(GameServerIndex, true);
         }
         catch (Exception ex)
         {
@@ -340,7 +355,7 @@ public sealed partial class SettingPage : Page
     /// </summary>
     /// <returns></returns>
     [RelayCommand]
-    private async Task ChangeGameExePathAsync()
+    private async Task ChangeGameExePathAsync(string server)
     {
         try
         {
@@ -352,10 +367,25 @@ public sealed partial class SettingPage : Page
             if (file != null)
             {
                 var path = file.Path;
-                if (path.EndsWith("YuanShen.exe") || path.EndsWith("GenshinImpact.exe"))
+                if (path.EndsWith(".exe"))
                 {
-                    AppSetting.SetValue(SettingKeys.GameExePath, path);
-                    GameExePath = file.Path;
+                    switch (server)
+                    {
+                        case "0":
+                            AppSetting.SetValue(SettingKeys.GameExePathCN, path);
+                            GameExePathCN = file.Path;
+                            break;
+                        case "1":
+                            AppSetting.SetValue(SettingKeys.GameExePathGlobal, path);
+                            GameExePathGlobal = file.Path;
+                            break;
+                        case "2":
+                            AppSetting.SetValue(SettingKeys.GameExePathCNCloud, path);
+                            GameExePathCNCloud = file.Path;
+                            break;
+                        default:
+                            break;
+                    }
                 }
                 else
                 {

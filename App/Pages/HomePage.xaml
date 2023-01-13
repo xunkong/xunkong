@@ -149,7 +149,117 @@
                                FontSize="20"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                Text="快捷指令" />
-                    <Button Command="{x:Bind StartGameCommand, Mode=OneTime}" Content="启动游戏" />
+                    <Button Content="启动游戏">
+                        <Button.Flyout>
+                            <Flyout>
+                                <Grid MinWidth="280"
+                                      ColumnSpacing="12"
+                                      RowSpacing="12">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.ColumnSpan="2"
+                                                Orientation="Horizontal"
+                                                Spacing="16">
+                                        <TextBlock VerticalAlignment="Center" Text="默认启动程序" />
+                                        <ComboBox Width="120" SelectedIndex="{x:Bind GameServerIndex, Mode=TwoWay}">
+                                            <ComboBoxItem Content="官服" />
+                                            <ComboBoxItem Content="国际服" />
+                                            <ComboBoxItem Content="云原神" />
+                                        </ComboBox>
+                                    </StackPanel>
+
+                                    <Button Grid.Column="1"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Content="?"
+                                            Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
+                                        <Button.Flyout>
+                                            <Flyout>
+                                                <TextBlock>
+                                                    <Run Text="系统注册表中保存有已登录账号的凭证" />
+                                                    <LineBreak />
+                                                    <Run Text="本功能通过在启动游戏前替换注册表的内容实现账号切换" />
+                                                </TextBlock>
+                                            </Flyout>
+                                        </Button.Flyout>
+                                    </Button>
+
+                                    <TextBlock Grid.Row="1"
+                                               Grid.ColumnSpan="2"
+                                               Text="已保存的游戏内账号" />
+                                    <ItemsControl Grid.Row="2"
+                                                  Grid.ColumnSpan="2"
+                                                  ItemsSource="{x:Bind GameAccounts}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Spacing="8" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="xdm:GameAccount">
+                                                <Grid HorizontalAlignment="Stretch" ColumnSpacing="8">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="60" />
+                                                        <ColumnDefinition />
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock VerticalAlignment="Center"
+                                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                               Text="{x:Bind Server, Converter={StaticResource EnumToDescriptionOrStringConverter}}" />
+                                                    <TextBlock Grid.Column="1"
+                                                               MaxWidth="200"
+                                                               VerticalAlignment="Center"
+                                                               Text="{x:Bind Name}"
+                                                               TextTrimming="CharacterEllipsis" />
+                                                    <Button Name="Button_ChangeAccount"
+                                                            Grid.Column="2"
+                                                            Click="Button_ChangeAccount_Click"
+                                                            Content="&#xE8AB;"
+                                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                            Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
+                                                            ToolTipService.ToolTip="切换" />
+                                                    <Button Grid.Column="3"
+                                                            Content="&#xE107;"
+                                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                            Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
+                                                            ToolTipService.ToolTip="删除">
+                                                        <Button.Flyout>
+                                                            <MenuFlyout>
+                                                                <MenuFlyoutItem Name="MenuFlyoutItem_DeleteAccount"
+                                                                                Click="MenuFlyoutItem_DeleteAccount_Click"
+                                                                                Text="确认删除" />
+                                                            </MenuFlyout>
+                                                        </Button.Flyout>
+                                                    </Button>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <Button Grid.Row="3"
+                                            Grid.Column="0"
+                                            HorizontalAlignment="Stretch"
+                                            Command="{x:Bind StartGameCommand, Mode=OneTime}"
+                                            Content="启动游戏" />
+                                    <Button Grid.Row="3"
+                                            Grid.Column="1"
+                                            HorizontalAlignment="Stretch"
+                                            Command="{x:Bind AddGameAccountCommand, Mode=OneTime}"
+                                            Content="添加游戏账号" />
+                                </Grid>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
                     <Button Command="{x:Bind OpenSummary2022Command, Mode=OneTime}" Content="2022 年度总结" />
                 </StackPanel>
 

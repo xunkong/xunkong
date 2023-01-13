@@ -354,14 +354,57 @@
                             <StackPanel Margin="0,-16,44,-16">
                                 <Grid Padding="44,12,0,12">
                                     <TextBlock TextWrapping="Wrap">
-                                        <Run Text="YuanShen.exe 或 GenshinImpact.exe 文件路径" />
+                                        <Run Text="默认启动程序" />
                                         <LineBreak />
                                         <Run FontSize="12"
                                              Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                             Text="{x:Bind GameExePath}" />
+                                             Text="点击启动游戏时打开哪个程序" />
+                                    </TextBlock>
+                                    <ComboBox Width="100"
+                                              HorizontalAlignment="Right"
+                                              SelectedIndex="{x:Bind GameServerIndex, Mode=TwoWay}">
+                                        <ComboBoxItem Content="官服" />
+                                        <ComboBoxItem Content="国际服" />
+                                        <ComboBoxItem Content="云原神" />
+                                    </ComboBox>
+                                </Grid>
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock TextWrapping="Wrap">
+                                        <Run Text="官服 YuanShen.exe 路径" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="{x:Bind GameExePathCN}" />
                                     </TextBlock>
                                     <Button HorizontalAlignment="Right"
                                             Command="{x:Bind ChangeGameExePathCommand, Mode=OneTime}"
+                                            CommandParameter="0"
+                                            Content="选择文件" />
+                                </Grid>
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock TextWrapping="Wrap">
+                                        <Run Text="国际服 GenshinImpact.exe 路径" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="{x:Bind GameExePathGlobal}" />
+                                    </TextBlock>
+                                    <Button HorizontalAlignment="Right"
+                                            Command="{x:Bind ChangeGameExePathCommand, Mode=OneTime}"
+                                            CommandParameter="1"
+                                            Content="选择文件" />
+                                </Grid>
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock TextWrapping="Wrap">
+                                        <Run Text="云原神 Genshin Impact Cloud Game.exe 路径" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="{x:Bind GameExePathGlobal}" />
+                                    </TextBlock>
+                                    <Button HorizontalAlignment="Right"
+                                            Command="{x:Bind ChangeGameExePathCommand, Mode=OneTime}"
+                                            CommandParameter="2"
                                             Content="选择文件" />
                                 </Grid>
                                 <Grid Padding="44,12,0,12">
@@ -700,13 +743,14 @@
         </ScrollViewer>
 
 
-        <!--  网页快捷方式编辑面板  -->
+        <!--  网页快捷方式编辑面板，已弃用  -->
         <Grid Name="_Grid_EditWebToolItem"
               Grid.RowSpan="2"
               Grid.Column="2"
               Width="400"
               Padding="12,0,12,0"
               HorizontalAlignment="Right"
+              x:Load="False"
               Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
               BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
               BorderThickness="1"

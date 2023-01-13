@@ -415,7 +415,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
     {
         try
         {
-            var exePath = await InvokeService.GetGameExePathAsync();
+            var exePath = GameAccountService.GetGameExePath(0);
             var url = WishlogClient.GetWishlogUrlFromCacheFile(exePath);
             if (url is null)
             {

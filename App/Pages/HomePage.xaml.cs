@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Media;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Numerics;
@@ -81,6 +82,19 @@ public sealed partial class HomePage : Page
     private List<Announcement> finishingActivities;
 
 
+    [ObservableProperty]
+    private ObservableCollection<GameAccount> gameAccounts;
+
+
+    [ObservableProperty]
+    private int gameServerIndex = AppSetting.GetValue<int>(SettingKeys.GameServerIndex);
+
+    partial void OnGameServerIndexChanged(int value)
+    {
+        AppSetting.SetValue(SettingKeys.GameServerIndex, value);
+    }
+
+
     private void HomePage_Loaded(object sender, RoutedEventArgs e)
     {
         // 推荐图片
@@ -90,6 +104,8 @@ public sealed partial class HomePage : Page
             // 实时便笺
             GetDailyNotesAsync();
         }
+        // 账号
+        LoadGameAccounts();
         // 今天刷什么
         GetCalendarAndGrowthScheduleAsync();
         // 即将结束的活动
@@ -948,7 +964,7 @@ public sealed partial class HomePage : Page
     [RelayCommand]
     private async Task StartGameAsync()
     {
-        if (await InvokeService.StartGameAsync(true))
+        if (await GameAccountService.StartGameAsync(GameServerIndex, true))
         {
             await InvokeService.CheckTransformerReachedAndHomeCoinFullAsync(true);
         }
@@ -959,6 +975,109 @@ public sealed partial class HomePage : Page
     private void OpenSummary2022()
     {
         MainWindow.Current.SetFullWindowContent(new Summary2022View());
+    }
+
+
+
+
+    private void LoadGameAccounts()
+    {
+        try
+        {
+            GameAccounts = new(GameAccountService.GetGameAccountsFromDatabase());
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+    }
+
+
+
+    private void Button_ChangeAccount_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (sender is Button button && button.DataContext is GameAccount account)
+            {
+                var serverName = account.Server.ToDescription();
+                if (GameAccountService.IsGameRunning((int)account.Server))
+                {
+                    NotificationProvider.Warning($"{serverName}游戏正在运行，无法切换账号");
+                    return;
+                }
+                if (GameAccountService.ChangeGameAccount(account))
+                {
+                    NotificationProvider.Success($"{serverName}账号已切换为 {account.Name}");
+                }
+                else
+                {
+                    NotificationProvider.Warning($"{serverName}账号切换失败");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+            NotificationProvider.Error(ex);
+        }
+    }
+
+
+
+
+    private void MenuFlyoutItem_DeleteAccount_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (sender is MenuFlyoutItem item && item.DataContext is GameAccount account)
+            {
+                GameAccountService.DeleteGameAccount(account);
+                if (GameAccounts.Contains(account))
+                {
+                    GameAccounts.Remove(account);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+            NotificationProvider.Error(ex);
+        }
+    }
+
+
+
+
+    [RelayCommand]
+    private async Task AddGameAccountAsync()
+    {
+        try
+        {
+            var accounts = GameAccountService.GetGameAccountsFromRegistry();
+            if (accounts.Any())
+            {
+                var dialog = new ContentDialog
+                {
+                    Title = "添加游戏账号",
+                    Content = new AddGameAccountDialog { GameAccounts = accounts },
+                    CloseButtonText = "关闭",
+                    XamlRoot = MainWindow.Current.XamlRoot,
+                    RequestedTheme = MainWindow.Current.ActualTheme,
+                };
+                await dialog.ShowWithZeroMarginAsync();
+                LoadGameAccounts();
+            }
+            else
+            {
+                NotificationProvider.Warning("没有找到已登录的游戏账号");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+            NotificationProvider.Error(ex);
+        }
     }
 
 

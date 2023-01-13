@@ -1,6 +1,6 @@
 ﻿namespace Xunkong.Desktop.Models;
 
-internal static class SettingKeys
+internal abstract class SettingKeys
 {
     /// <summary>
     /// 最大化窗口
@@ -96,6 +96,7 @@ internal static class SettingKeys
     /// <summary>
     /// 游戏exe文件路径
     /// </summary>
+    [Obsolete("", true)]
     public const string GameExePath = nameof(GameExePath);
 
     /// <summary>
@@ -143,6 +144,7 @@ internal static class SettingKeys
     /// <summary>
     /// 应用启动时打开更新内容界面
     /// </summary>
+    [Obsolete("", true)]
     public const string ShowUpdateContentOnLoaded = nameof(ShowUpdateContentOnLoaded);
 
     /// <summary>
@@ -184,6 +186,26 @@ internal static class SettingKeys
     /// 启用预览版
     /// </summary>
     public const string EnablePrerelease = nameof(EnablePrerelease);
+
+    /// <summary>
+    /// 游戏服务器
+    /// </summary>
+    public const string GameServerIndex = nameof(GameServerIndex);
+
+    /// <summary>
+    /// 官服游戏路径
+    /// </summary>
+    public const string GameExePathCN = nameof(GameExePathCN);
+
+    /// <summary>
+    /// 国际服游戏路径
+    /// </summary>
+    public const string GameExePathGlobal = nameof(GameExePathGlobal);
+
+    /// <summary>
+    /// 云原神游戏路径
+    /// </summary>
+    public const string GameExePathCNCloud = nameof(GameExePathCNCloud);
 
 
 }

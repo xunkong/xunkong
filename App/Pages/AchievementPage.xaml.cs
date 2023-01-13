@@ -412,12 +412,11 @@ public sealed partial class AchievementPage : Page
             };
             if (await dialog.ShowWithZeroMarginAsync() == ContentDialogResult.Primary)
             {
-                if (InvokeService.IsGameRunning())
+                if (GameAccountService.IsGameRunning(0) || GameAccountService.IsGameRunning(1))
                 {
                     NotificationProvider.Warning("已有游戏进程在运行");
                     return;
                 }
-                var exePath = await InvokeService.GetGameExePathAsync();
                 await CheckYaeAchievementUpdateAsync();
                 var yaePath = Path.Combine(XunkongEnvironment.UserDataPath, @"Tool\YaeAchievement.exe");
                 if (!File.Exists(yaePath))

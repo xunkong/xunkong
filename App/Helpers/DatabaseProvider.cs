@@ -28,7 +28,7 @@ internal class DatabaseProvider
     public static int DatabaseVersion => UpdateSqls.Count;
 
 
-    private static List<string> UpdateSqls = new() { TableStructure_v1, TableStructure_v2, TableStructure_v3 };
+    private static List<string> UpdateSqls = new() { TableStructure_v1, TableStructure_v2, TableStructure_v3, TableStructure_v4 };
 
 
 
@@ -52,10 +52,6 @@ internal class DatabaseProvider
     private static void Initialize()
     {
         using var dapper = new SqliteConnection(_sqliteConnectionString);
-        dapper.Open();
-        dapper.Execute("PRAGMA JOURNAL_MODE = WAL;");
-        //dapper.Execute(TableStructure_Init);
-        //var version = dapper.QueryFirstOrDefault<int>("SELECT Value FROM DatabaseVersion WHERE Key='DatabaseVersion' LIMIT 1;");
         var version = dapper.QueryFirstOrDefault<int>("PRAGMA USER_VERSION;");
         if (version < UpdateSqls.Count)
         {
@@ -110,6 +106,8 @@ internal class DatabaseProvider
 
     private const string TableStructure_v1 = """
         BEGIN TRANSACTION;
+
+        PRAGMA JOURNAL_MODE = WAL;
         
         CREATE TABLE IF NOT EXISTS Setting
         (
@@ -278,6 +276,26 @@ internal class DatabaseProvider
         CREATE INDEX IF NOT EXISTS IX_OperationHistory_Key ON OperationHistory (Key);
 
         PRAGMA USER_VERSION = 3;
+        COMMIT TRANSACTION;
+        """;
+
+
+    private const string TableStructure_v4 = """
+        BEGIN TRANSACTION;
+
+        CREATE TABLE IF NOT EXISTS GameAccount
+        (
+            SHA256 TEXT    NOT NULL PRIMARY KEY,
+            Name   TEXT    NOT NULL,
+            Server INTEGER NOT NULL,
+            Value  BLOB    NOT NULL,
+            Time   TEXT    NOT NULL
+        );
+        CREATE UNIQUE INDEX IF NOT EXISTS IX_GameAccount_Name_Server ON GameAccount (Name, Server);
+
+        CREATE INDEX IF NOT EXISTS IX_TravelNotesAwardItem_ActionName ON TravelNotesAwardItem (ActionName);
+
+        PRAGMA USER_VERSION = 4;
         COMMIT TRANSACTION;
         """;
 

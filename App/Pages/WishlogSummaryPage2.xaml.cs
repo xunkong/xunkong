@@ -144,7 +144,6 @@ public sealed partial class WishlogSummaryPage2 : Page
     {
         try
         {
-            StateText = "";
             var uids = WishlogService.GetAllUids().ToList();
             AllUids = new(uids.Select(x => x.ToString()));
 
@@ -508,11 +507,11 @@ public sealed partial class WishlogSummaryPage2 : Page
     /// </summary>
     /// <returns></returns>
     [RelayCommand]
-    private async Task GetWishlogFromCacheFileAsync()
+    private async Task GetWishlogFromCacheFileAsync(string server)
     {
         try
         {
-            var exePath = await InvokeService.GetGameExePathAsync();
+            var exePath = GameAccountService.GetGameExePath(server == "1" ? 1 : 0);
             var url = WishlogClient.GetWishlogUrlFromCacheFile(exePath);
             if (url is null)
             {

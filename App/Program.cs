@@ -24,7 +24,7 @@ public static class Program
 
         if (args.FirstOrDefault() == "StartGame")
         {
-            if (InvokeService.StartGameAsync().GetAwaiter().GetResult())
+            if (GameAccountService.StartGameAsync(AppSetting.GetValue<int>(SettingKeys.GameServerIndex)).GetAwaiter().GetResult())
             {
                 InvokeService.CheckTransformerReachedAndHomeCoinFullAsync().GetAwaiter().GetResult();
             }
