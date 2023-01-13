@@ -276,7 +276,7 @@ public sealed partial class CharacterWikiPage : Page
                             button.Content = new ProgressRing { Width = 16, Height = 16, Foreground = Application.Current.Resources["TextFillColorSecondaryBrush"] as Brush };
                             var id = Random.Shared.Next();
                             randomId = id;
-                            var file = await XunkongCache.Instance.GetFromCacheAsync(new Uri(voice));
+                            var file = await VoiceCache.Instance.GetFromCacheAsync(new Uri(voice));
                             if (file is null || randomId != id)
                             {
                                 button.Content = "\uE102";
@@ -293,7 +293,7 @@ public sealed partial class CharacterWikiPage : Page
                         button.Content = new ProgressRing { Width = 16, Height = 16, Foreground = Application.Current.Resources["TextFillColorSecondaryBrush"] as Brush };
                         var id = Random.Shared.Next();
                         randomId = id;
-                        var file = await XunkongCache.Instance.GetFromCacheAsync(new Uri(voice));
+                        var file = await VoiceCache.Instance.GetFromCacheAsync(new Uri(voice));
                         if (file is null || randomId != id)
                         {
                             button.Content = "\uE102";

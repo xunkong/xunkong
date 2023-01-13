@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using System.Collections.ObjectModel;
+using System.Diagnostics.Eventing.Reader;
 using System.Net.Http;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -690,10 +691,24 @@ public sealed partial class SettingPage : Page
 
 
     /// <summary>
-    /// 已缓存 xxx MB
+    /// 图片已缓存 xxx MB
     /// </summary>
     [ObservableProperty]
-    private string _cachedFileSizeString;
+    private string _imageCacheSizeString;
+
+
+    /// <summary>
+    /// 语音缓存
+    /// </summary>
+    [ObservableProperty]
+    private string _voiceCacheSizeString;
+
+
+    /// <summary>
+    /// 全部缓存
+    /// </summary>
+    [ObservableProperty]
+    private string _totalCacheSizeString;
 
 
     /// <summary>
@@ -704,29 +719,52 @@ public sealed partial class SettingPage : Page
         try
         {
             long totalSize = 0;
-            var folder = ApplicationData.Current.TemporaryFolder.Path;
-            if (Directory.Exists(folder))
-            {
-                var files = new DirectoryInfo(folder).GetFiles("*", SearchOption.AllDirectories);
-                totalSize += files.Sum(x => x.Length);
-            }
 
-            if (totalSize > 0)
-            {
+            var size = GetFolderSize(XunkongCache.Instance.GetCacheFolderAsync().GetAwaiter().GetResult().Path);
+            totalSize += size;
+            ImageCacheSizeString = GetSizeString(size);
 
-                CachedFileSizeString = $"已缓存 {(double)totalSize / (1 << 20):F2} MB";
-            }
-            else
-            {
-                CachedFileSizeString = $"已缓存 0 MB";
-            }
+            size = GetFolderSize(VoiceCache.Instance.GetCacheFolderAsync().GetAwaiter().GetResult().Path);
+            totalSize += size;
+            VoiceCacheSizeString = GetSizeString(size);
+
+            TotalCacheSizeString = GetSizeString(totalSize);
         }
         catch (Exception ex)
         {
             Logger.Error(ex, "计算已缓存文件的大小");
-            CachedFileSizeString = "无法计算已缓存文件的大小";
         }
     }
+
+
+
+    private long GetFolderSize(string folder)
+    {
+        if (Directory.Exists(folder))
+        {
+            return new DirectoryInfo(folder).GetFiles("*", SearchOption.AllDirectories).Sum(x => x.Length);
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+
+    private string GetSizeString(long size)
+    {
+        if (size > 0)
+        {
+
+            return $"已缓存 {(double)size / (1 << 20):F2} MB";
+        }
+        else
+        {
+            return $"已缓存 0 MB";
+        }
+    }
+
+
 
 
     /// <summary>
@@ -734,24 +772,28 @@ public sealed partial class SettingPage : Page
     /// </summary>
     /// <returns></returns>
     [RelayCommand]
-    private async Task ClearCacheAsync()
+    private async Task ClearCacheAsync(string cacheMode)
     {
         try
         {
-            var folder = ApplicationData.Current.TemporaryFolder.Path;
-
-            if (Directory.Exists(folder))
+            switch (cacheMode)
             {
-                await Task.Run(() =>
-                {
-                    Directory.Delete(folder, true);
-                    Directory.CreateDirectory(folder);
-                    Directory.CreateDirectory(XunkongCache.Instance.GetCacheFolderAsync().GetAwaiter().GetResult().Path);
-                });
+                case "ClearAll":
+                    await DeleteFolderAsync((await XunkongCache.Instance.GetCacheFolderAsync()).Path);
+                    await DeleteFolderAsync((await VoiceCache.Instance.GetCacheFolderAsync()).Path);
+                    break;
+                case "ClearImage":
+                    await DeleteFolderAsync((await XunkongCache.Instance.GetCacheFolderAsync()).Path);
+                    break;
+                case "ClearVoice":
+                    await DeleteFolderAsync((await VoiceCache.Instance.GetCacheFolderAsync()).Path);
+                    break;
+                default:
+                    break;
             }
 
             NotificationProvider.Success($"完成");
-            OperationHistory.AddToDatabase("ClearCache");
+            OperationHistory.AddToDatabase("ClearCache", cacheMode);
         }
         catch (Exception ex)
         {
@@ -759,6 +801,23 @@ public sealed partial class SettingPage : Page
             Logger.Error(ex, "清除缓存");
         }
     }
+
+
+
+    private async Task DeleteFolderAsync(string folder)
+    {
+        await Task.Run(() =>
+        {
+            if (Directory.Exists(folder))
+            {
+                Directory.Delete(folder, true);
+            }
+            Directory.CreateDirectory(folder);
+        });
+    }
+
+
+
 
 
     /// <summary>

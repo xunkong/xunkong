@@ -668,26 +668,59 @@
                         </xdc:SettingCard.Selector>
                     </xdc:SettingCard>
 
+
                     <!--  文件缓存  -->
-                    <xdc:SettingCard>
-                        <xdc:SettingCard.Icon>
-                            <FontIcon Glyph="&#xE81E;" />
-                        </xdc:SettingCard.Icon>
-                        <xdc:SettingCard.Content>
-                            <TextBlock>
-                                <Run Text="文件缓存" />
-                                <LineBreak />
-                                <Run FontSize="12"
-                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                     Text="{x:Bind CachedFileSizeString}" />
-                            </TextBlock>
-                        </xdc:SettingCard.Content>
-                        <xdc:SettingCard.Selector>
-                            <Button HorizontalAlignment="Right"
-                                    Command="{x:Bind ClearCacheCommand, Mode=OneTime}"
-                                    Content="清除缓存" />
-                        </xdc:SettingCard.Selector>
-                    </xdc:SettingCard>
+                    <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                        <Expander.Header>
+                            <Grid>
+                                <StackPanel Padding="4,16,0,16" Orientation="Horizontal">
+                                    <FontIcon FontSize="20" Glyph="&#xE81E;" />
+                                    <TextBlock Margin="20,0,0,0">
+                                        <Run Text="文件缓存" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="{x:Bind TotalCacheSizeString}" />
+                                    </TextBlock>
+                                </StackPanel>
+                                <Button HorizontalAlignment="Right"
+                                        Command="{x:Bind ClearCacheCommand, Mode=OneTime}"
+                                        CommandParameter="ClearAll"
+                                        Content="全部清除" />
+                            </Grid>
+                        </Expander.Header>
+                        <Expander.Content>
+                            <StackPanel Margin="0,-16,44,-16">
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock TextWrapping="Wrap">
+                                        <Run Text="图片缓存" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="{x:Bind ImageCacheSizeString}" />
+                                    </TextBlock>
+                                    <Button HorizontalAlignment="Right"
+                                            Command="{x:Bind ClearCacheCommand, Mode=OneTime}"
+                                            CommandParameter="ClearImage"
+                                            Content="清除缓存" />
+                                </Grid>
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock TextWrapping="Wrap">
+                                        <Run Text="语音缓存" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="{x:Bind VoiceCacheSizeString}" />
+                                    </TextBlock>
+                                    <Button HorizontalAlignment="Right"
+                                            Command="{x:Bind ClearCacheCommand, Mode=OneTime}"
+                                            CommandParameter="ClearVoice"
+                                            Content="清除缓存" />
+                                </Grid>
+                            </StackPanel>
+                        </Expander.Content>
+                    </Expander>
+
 
                     <!--  预缓存图片  -->
                     <xdc:SettingCard>
