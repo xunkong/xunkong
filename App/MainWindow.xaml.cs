@@ -53,19 +53,21 @@ public sealed partial class MainWindow : Window
         Current = this;
         this.InitializeComponent();
         InitializeWindow();
-#if !DEBUG
         AppSetting.TryGetValue<bool>(SettingKeys.HasShownWelcomePage, out var shown);
         if (shown)
         {
-#endif
-        RootFrame.Content = new MainPage();
-#if !DEBUG
+            RootFrame.Content = new MainPage();
         }
         else
         {
+#if DEBUG
+            BackupService.RestoreSetting();
+            AppSetting.SetValue(SettingKeys.HasShownWelcomePage, true);
+            RootFrame.Content = new MainPage();
+#else
             RootFrame.Content = new WelcomPage();
-        }
 #endif
+        }
     }
 
 
@@ -149,8 +151,9 @@ public sealed partial class MainWindow : Window
     private void MainWindow_Closed(object sender, WindowEventArgs args)
     {
         SaveWindowState();
-        BackupService.AutoBackupDatabase();
         OperationHistory.AddToDatabase("Shutdown");
+        BackupService.BackupSetting();
+        BackupService.AutoBackupDatabase();
     }
 
 

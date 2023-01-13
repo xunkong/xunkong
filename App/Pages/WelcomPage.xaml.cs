@@ -36,6 +36,7 @@ public sealed partial class WelcomPage : Page
         {
             WebView2State = "未检测到 WebView2 Runtime";
         }
+        _ = Task.Run(BackupService.RestoreSetting);
     }
 
 

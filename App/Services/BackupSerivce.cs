@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
+using Windows.Storage;
 using Xunkong.Hoyolab.Wishlog;
 
 namespace Xunkong.Desktop.Services;
@@ -116,6 +117,59 @@ internal class BackupService
         {
             Logger.Error(ex, "自动备份数据库");
         }
+    }
+
+
+
+
+    public static void BackupSetting()
+    {
+        try
+        {
+            var settings = typeof(SettingKeys).GetFields()
+                                              .Where(x => x.GetCustomAttributes(typeof(BackupAttribute), false).Any())
+                                              .Select(x => x.GetRawConstantValue() as string)
+                                              .ToList();
+            var dic = ApplicationData.Current.LocalSettings.Values;
+            var list = new List<object>();
+            foreach (var item in settings)
+            {
+                if (!string.IsNullOrWhiteSpace(item))
+                {
+                    var value = dic[item];
+                    if (value != null)
+                    {
+                        list.Add(new { Key = item, Value = value });
+                    }
+                }
+            }
+            using var dapper = DatabaseProvider.CreateConnection();
+            using var t = dapper.BeginTransaction();
+            dapper.Execute("INSERT OR REPLACE INTO Setting (Key, Value) VALUES (@Key, @Value);", list, t);
+            t.Commit();
+        }
+        catch { }
+    }
+
+
+
+    public static void RestoreSetting()
+    {
+        try
+        {
+            var settings = typeof(SettingKeys).GetFields()
+                                              .Where(x => x.GetCustomAttributes(typeof(BackupAttribute), false).Any())
+                                              .Select(x => x.GetRawConstantValue() as string)
+                                              .ToList();
+            using var dapper = DatabaseProvider.CreateConnection();
+            var list = dapper.Query("SELECT * FROM Setting WHERE Key IN @Keys;", new { Keys = settings });
+            var dic = ApplicationData.Current.LocalSettings.Values;
+            foreach (var item in list)
+            {
+                dic[item.Key] = item.Value;
+            }
+        }
+        catch { }
     }
 
 

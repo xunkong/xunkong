@@ -15,21 +15,25 @@ internal abstract class SettingKeys
     /// <summary>
     /// 最后选中的米游社uid
     /// </summary>
+    [Backup]
     public const string LastSelectUserInfoUid = nameof(LastSelectUserInfoUid);
 
     /// <summary>
     /// 最后选中的原神uid
     /// </summary>
+    [Backup]
     public const string LastSelectGameRoleUid = nameof(LastSelectGameRoleUid);
 
     /// <summary>
     /// 祈愿记录页面最后选中的uid
     /// </summary>
+    [Backup]
     public const string LastSelectedUidInWishlogSummaryPage = nameof(LastSelectedUidInWishlogSummaryPage);
 
     /// <summary>
     /// 成就管理页面最后选中的uid
     /// </summary>
+    [Backup]
     public const string LastSelectedUidInAchievementPage = nameof(LastSelectedUidInAchievementPage);
 
     /// <summary>
@@ -40,11 +44,13 @@ internal abstract class SettingKeys
     /// <summary>
     /// 应用主题
     /// </summary>
+    [Backup]
     public const string ApplicationTheme = nameof(ApplicationTheme);
 
     /// <summary>
     /// 导航栏是否关闭
     /// </summary>
+    [Backup]
     public const string NavigationViewPaneClose = nameof(NavigationViewPaneClose);
 
     /// <summary>
@@ -102,11 +108,13 @@ internal abstract class SettingKeys
     /// <summary>
     /// 目标fps
     /// </summary>
+    [Backup]
     public const string TargetFPS = nameof(TargetFPS);
 
     /// <summary>
     /// 无边框窗口开始游戏
     /// </summary>
+    [Backup]
     public const string IsPopupWindow = nameof(IsPopupWindow);
 
     /// <summary>
@@ -117,6 +125,7 @@ internal abstract class SettingKeys
     /// <summary>
     /// 启动应用时自动签到
     /// </summary>
+    [Backup]
     public const string SignInAllAccountsWhenStartUpApplication = nameof(SignInAllAccountsWhenStartUpApplication);
 
     /// <summary>
@@ -133,6 +142,7 @@ internal abstract class SettingKeys
     /// <summary>
     /// 是否在使用按流量计费的网络时下载主页图片
     /// </summary>
+    [Backup]
     public const string DownloadWallpaperOnMeteredInternet = nameof(DownloadWallpaperOnMeteredInternet);
 
     /// <summary>
@@ -150,6 +160,7 @@ internal abstract class SettingKeys
     /// <summary>
     /// 窗口背景材质
     /// </summary>
+    [Backup]
     public const string WindowBackdrop = nameof(WindowBackdrop);
 
     /// <summary>
@@ -165,6 +176,7 @@ internal abstract class SettingKeys
     /// <summary>
     /// 启用页面缓存
     /// </summary>
+    [Backup]
     public const string EnableNavigationCache = nameof(EnableNavigationCache);
 
     /// <summary>
@@ -175,6 +187,7 @@ internal abstract class SettingKeys
     /// <summary>
     /// 不显示实时便笺
     /// </summary>
+    [Backup]
     public const string DisableDailyNotesInHomePage = nameof(DisableDailyNotesInHomePage);
 
     /// <summary>
@@ -185,6 +198,7 @@ internal abstract class SettingKeys
     /// <summary>
     /// 启用预览版
     /// </summary>
+    [Backup]
     public const string EnablePrerelease = nameof(EnablePrerelease);
 
     /// <summary>
@@ -209,3 +223,7 @@ internal abstract class SettingKeys
 
 
 }
+
+
+
+public class BackupAttribute : Attribute { }
