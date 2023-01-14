@@ -2,7 +2,7 @@
 
 namespace Xunkong.Desktop.Converters;
 
-
+[Obsolete("图片不在包内", true)]
 internal class ElementToGachaShowPanelConverter : IValueConverter
 {
     private const string GachaShowPanel_Default = "ms-appx:///Assets/Images/UI_GachaShowPanel_Bg_Default.png";
