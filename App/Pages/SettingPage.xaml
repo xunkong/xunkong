@@ -147,14 +147,7 @@
                                            Margin="-4"
                                            Source="ms-appx:///Assets/Logos/StoreLogo.png">
                                         <ToolTipService.ToolTip>
-                                            <ToolTip>
-                                                <ToolTip.Style>
-                                                    <Style BasedOn="{StaticResource DefaultToolTipStyle}" TargetType="ToolTip">
-                                                        <Setter Property="MaxWidth" Value="480" />
-                                                    </Style>
-                                                </ToolTip.Style>
-                                                <Image Source="ms-appx:///Assets/Images/102413942_p0.webp" />
-                                            </ToolTip>
+                                            <Image Source="ms-appx:///Assets/Logos/logo.png" />
                                         </ToolTipService.ToolTip>
                                     </Image>
                                     <TextBlock Margin="20,0,0,0">
@@ -764,6 +757,22 @@
                         </xdc:SettingCard.Selector>
                     </xdc:SettingCard>
 
+
+
+                    <!--  其他  -->
+                    <TextBlock Margin="0,20,0,4"
+                               FontSize="20"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               Text="其他" />
+
+
+                    <TextBlock>
+                        <Run Text="感谢" />
+                        <Hyperlink NavigateUri="https://www.pixiv.net/users/9593379" UnderlineStyle="None">Pixiv@灾厄之轮</Hyperlink>
+                        <Run Text="授权使用应用图标和" />
+                        <Hyperlink NavigateUri="https://twitter.com/anna_drw01" UnderlineStyle="None">Twitter@anna_drw01</Hyperlink>
+                        <Run Text="授权使用默认背景图。" />
+                    </TextBlock>
 
 
                 </StackPanel>

@@ -262,7 +262,7 @@
             <NavigationView.FooterMenuItems>
                 <NavigationViewItem Content="帮助" Tag="Help">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{ThemeResource FluentSystemIcons}" Glyph="&#xE187;" />
+                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE9CE;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Icon="Setting" Tag="SettingPage">

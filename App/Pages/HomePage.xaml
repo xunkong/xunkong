@@ -178,9 +178,14 @@
                                     </StackPanel>
 
                                     <Button Grid.Column="1"
+                                            Width="32"
+                                            Height="32"
+                                            Padding="0"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
-                                            Content="?"
+                                            Content="&#xE9CE;"
+                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                            FontSize="16"
                                             Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
                                         <Button.Flyout>
                                             <Flyout>
@@ -237,6 +242,7 @@
                                                             <MenuFlyout>
                                                                 <MenuFlyoutItem Name="MenuFlyoutItem_DeleteAccount"
                                                                                 Click="MenuFlyoutItem_DeleteAccount_Click"
+                                                                                Foreground="{ThemeResource SystemFillColorCautionBrush}"
                                                                                 Text="确认删除" />
                                                             </MenuFlyout>
                                                         </Button.Flyout>

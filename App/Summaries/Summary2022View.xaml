@@ -38,7 +38,7 @@
                 <StackPanel HorizontalAlignment="Center" Spacing="8">
                     <TextBlock Text="寻空在 2022-01-29 发布了第一个预览版，随后一直保持更新，2022-06-13 发布了正式版，2022-08-05 上架微软商店。" />
                     <TextBlock Text="在这一年中累计发布了 48 个版本，GitHub 上安装包的下载量超过 30000 次。" />
-                    <TextBlock Text="服务端从2022年4月开始使用 Cloudflare 代理，截止到年底累计响应网络请求 6000 万次，传输数据 8.54TB。（缺12月的数据）" />
+                    <TextBlock Text="服务端从2022年4月开始使用 Cloudflare 代理，截止到年底累计响应网络请求 7500 万次，传输数据 11.88TB。" />
                     <TextBlock Margin="0,8,0,0" Text="每位用户可以根据保存在本地的祈愿记录、旅行札记、深境螺旋的数据，生成一份2022年度的报告。" />
                     <TextBlock Text="如果从第一个版本就在使用寻空，报告的数据应该是完整的。（个人想法有限，报告内容简单，又不是不能看.jpg）" />
                     <StackPanel Orientation="Horizontal" Spacing="12">
@@ -65,7 +65,7 @@
                     <TextBlock Margin="0,8,0,0"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                Text="没有记录下相关数据"
-                               Visibility="{x:Bind Report.AbyssReport, Converter={StaticResource ObjectToVisibilityReversedConverter}}" />
+                               Visibility="{x:Bind Report.WishlogReport, Converter={StaticResource ObjectToVisibilityReversedConverter}}" />
 
                     <StackPanel Margin="0,8,0,0"
                                 Spacing="8"
@@ -96,7 +96,7 @@
 
 
                         <TextBlock>
-                            <Run Text="推出了" />
+                            <Run Text="一年中推出了" />
                             <Run Text="{x:Bind Report.WishlogReport.Count_Character_2022_Total}" />
                             <Run Text="个新角色，你抽到了" />
                             <Run Text="{x:Bind Report.WishlogReport.Count_Character_2022_New}" />
@@ -134,7 +134,7 @@
                     <TextBlock Margin="0,8,0,0"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                Text="没有记录下相关数据"
-                               Visibility="{x:Bind Report.AbyssReport, Converter={StaticResource ObjectToVisibilityReversedConverter}}" />
+                               Visibility="{x:Bind Report.TravelNotesReport, Converter={StaticResource ObjectToVisibilityReversedConverter}}" />
 
                     <StackPanel Margin="0,8,0,0"
                                 Spacing="8"

@@ -124,7 +124,7 @@
                          Margin="0,0,12,8"
                          HorizontalAlignment="Right"
                          VerticalAlignment="Bottom"
-                         Content="图片作者：アナ"
+                         Content="图片作者：Twitter@anna_drw01"
                          FontSize="14"
                          Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                          NavigateUri="https://twitter.com/anna_drw01" />

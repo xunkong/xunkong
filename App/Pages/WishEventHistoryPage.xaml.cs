@@ -48,7 +48,7 @@ public sealed partial class WishEventHistoryPage : Page
 
     private void WishEventCDPage_Loaded(object sender, RoutedEventArgs e)
     {
-        NotificationProvider.Information("提示", "鼠标左键拖动，鼠标右键打开菜单");
+        NotificationProvider.Information("提示", "鼠标左键拖动，鼠标右键打开菜单，Ctrl+鼠标滚轮缩放。", 5000);
         _ComboBox.SelectedIndex = 0;
     }
 
