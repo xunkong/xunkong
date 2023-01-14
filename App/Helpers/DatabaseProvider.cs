@@ -105,9 +105,9 @@ internal class DatabaseProvider
 
 
     private const string TableStructure_v1 = """
-        BEGIN TRANSACTION;
-
         PRAGMA JOURNAL_MODE = WAL;
+
+        BEGIN TRANSACTION;
         
         CREATE TABLE IF NOT EXISTS Setting
         (

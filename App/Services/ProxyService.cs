@@ -81,14 +81,11 @@ internal class ProxyService : IDisposable
         {
             Process.Start(new ProcessStartInfo
             {
-                FileName = "reg",
-                Arguments = """add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 1 /f""",
-                CreateNoWindow = true,
-            })?.WaitForExit();
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = "reg",
-                Arguments = """add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyServer /d "http=localhost:10086;https=localhost:10086" /f""",
+                FileName = "PowerShell",
+                Arguments = """
+                Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings' -Name 'ProxyEnable' -Value 1 -Force;
+                Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings' -Name 'ProxyServer' -Value 'http=localhost:10086;https=localhost:10086' -Force;
+                """,
                 CreateNoWindow = true,
             })?.WaitForExit();
         }
@@ -96,8 +93,8 @@ internal class ProxyService : IDisposable
         {
             Process.Start(new ProcessStartInfo
             {
-                FileName = "reg",
-                Arguments = """add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f""",
+                FileName = "PowerShell",
+                Arguments = """Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings' -Name 'ProxyEnable' -Value 0 -Force;""",
                 CreateNoWindow = true,
             })?.WaitForExit();
         }

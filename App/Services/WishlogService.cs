@@ -240,7 +240,7 @@ internal class WishlogService
         dapper.Execute("""
             INSERT OR REPLACE INTO WishlogItem (Uid, Id, WishType, Time, Name, Language, ItemType, RankType, QueryType)
             VALUES (@Uid, @Id, @WishType, @Time, @Name, @Language, @ItemType, @RankType, @QueryType);
-            """, wishlogs);
+            """, wishlogs, t);
         t.Commit();
         var newCount = dapper.QuerySingleOrDefault<int>("SELECT COUNT(*) FROM WishlogItem WHERE Uid=@Uid;", uidObj);
         return newCount - oldCount;

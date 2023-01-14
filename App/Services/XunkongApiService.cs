@@ -102,11 +102,14 @@ internal class XunkongApiService
         var oldCount = dapper.QuerySingleOrDefault<int>("SELECT COUNT(*) FROM WishlogItem WHERE Uid=@Uid;", uidObj);
         if (result.List?.Any() ?? false)
         {
+            dapper.Open();
+            using var t = dapper.BeginTransaction();
             progress?.Report("写入数据库");
             dapper.Execute("""
                  INSERT OR REPLACE INTO WishlogItem (Uid, Id, WishType, Time, Name, Language, ItemType, RankType, QueryType)
                  VALUES (@Uid, @Id, @WishType, @Time, @Name, @Language, @ItemType, @RankType, @QueryType);
-                 """, result.List);
+                 """, result.List, t);
+            t.Commit();
         }
         var newCount = dapper.QuerySingleOrDefault<int>("SELECT COUNT(*) FROM WishlogItem WHERE Uid=@Uid;", uidObj);
         result.PutCount = newCount - oldCount;

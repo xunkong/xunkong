@@ -1,10 +1,5 @@
-﻿using Microsoft.Win32;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Text;
-using System.Text.RegularExpressions;
-using Windows.ApplicationModel;
 using Xunkong.Hoyolab;
 
 namespace Xunkong.Desktop.Services;
