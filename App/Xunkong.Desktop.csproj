@@ -15,7 +15,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AngleSharp" Version="1.0.0" />
+		<PackageReference Include="AngleSharp" Version="1.0.1" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
 		<PackageReference Include="CommunityToolkit.WinUI.Notifications" Version="7.1.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Behaviors" Version="7.1.2" />
@@ -36,7 +36,7 @@
 		<PackageReference Include="SingleFileExtractor.Core" Version="1.1.0" />
 		<PackageReference Include="TaskScheduler" Version="2.10.1" />
 		<PackageReference Include="Titanium.Web.Proxy" Version="3.2.0" />
-		<PackageReference Include="Vanara.PInvoke.User32" Version="3.4.11" />
+		<PackageReference Include="Vanara.PInvoke.User32" Version="3.4.12" />
 		<PackageReference Include="Syncfusion.Chart.WinUI" Version="20.1.0.61" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>

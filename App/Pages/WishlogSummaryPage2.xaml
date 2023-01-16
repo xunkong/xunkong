@@ -439,7 +439,9 @@
 
             <PivotItem Header="数据统计">
                 <ScrollViewer Padding="48,0,48,0">
-                    <StackPanel Margin="0,12,0,24" Spacing="16">
+                    <StackPanel Name="StackPanel_Stats"
+                                Margin="0,12,0,24"
+                                Spacing="16">
                         <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                    Style="{ThemeResource SubtitleTextBlockStyle}"
                                    Text="卡池统计"
@@ -504,7 +506,7 @@
 
 
         <FlyoutBase.AttachedFlyout>
-            <Flyout Placement="Full">
+            <Flyout OverlayInputPassThroughElement="{x:Bind StackPanel_Stats}" Placement="Full">
                 <Flyout.FlyoutPresenterStyle>
                     <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
                         <Setter Property="MaxWidth" Value="540" />
