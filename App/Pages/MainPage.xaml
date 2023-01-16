@@ -36,6 +36,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <Border x:Name="_Border_AccountImage"
                             Grid.Column="0"
@@ -78,7 +79,7 @@
                     <!--  上下箭头展开图标，切换账号  -->
                     <Button Grid.Column="2"
                             Width="28"
-                            Margin="0,0,16,0"
+                            Margin="0,0,4,0"
                             Padding="0"
                             VerticalAlignment="Stretch"
                             Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
@@ -192,6 +193,51 @@
                                             </DataTemplate>
                                         </ListView.ItemTemplate>
                                     </ListView>
+                                </Grid>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                    <!--  数据总览  -->
+                    <Button x:Name="_Button_GameRecord"
+                            Grid.Column="3"
+                            Width="28"
+                            Margin="0,0,4,0"
+                            Padding="0"
+                            VerticalAlignment="Stretch"
+                            Command="{x:Bind GetGameRecordCommand, Mode=OneTime}"
+                            Content="&#xE76C;"
+                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                            Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
+                        <Button.Flyout>
+                            <Flyout Placement="RightEdgeAlignedTop">
+                                <Grid>
+                                    <ItemsRepeater ItemsSource="{x:Bind GameRecordList}">
+                                        <ItemsRepeater.Layout>
+                                            <UniformGridLayout MaximumRowsOrColumns="4"
+                                                               MinColumnSpacing="8"
+                                                               MinItemWidth="72"
+                                                               MinRowSpacing="12"
+                                                               Orientation="Horizontal" />
+                                        </ItemsRepeater.Layout>
+                                        <ItemsRepeater.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid RowSpacing="4">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition />
+                                                        <RowDefinition />
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock HorizontalAlignment="Center"
+                                                               FontSize="16"
+                                                               Text="{Binding Value}" />
+                                                    <TextBlock Grid.Row="1"
+                                                               HorizontalAlignment="Center"
+                                                               FontSize="12"
+                                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                               Text="{Binding Description}" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsRepeater.ItemTemplate>
+                                    </ItemsRepeater>
                                 </Grid>
                             </Flyout>
                         </Button.Flyout>

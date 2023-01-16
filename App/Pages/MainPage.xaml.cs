@@ -5,7 +5,9 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Numerics;
+using System.Reflection;
 using Windows.System;
 using Windows.UI.StartScreen;
 using Xunkong.Hoyolab;
@@ -323,6 +325,9 @@ public sealed partial class MainPage : Page
     [ObservableProperty]
     private ObservableCollection<GenshinRoleInfo> genshinRoleInfoList;
 
+    [ObservableProperty]
+    private List<GameRecordItem> gameRecordList;
+
 
 
 
@@ -528,23 +533,44 @@ public sealed partial class MainPage : Page
     [RelayCommand]
     private void NavigateToLoginPage()
     {
-        var action = new Action<string>(async (cookie) =>
-        {
-            try
-            {
-                await AddCookieAsync(cookie);
-                NotificationProvider.Success("已添加账号");
-            }
-            catch (Exception ex)
-            {
-                NotificationProvider.Error(ex, "导航到米游社登录页面");
-                Logger.Error(ex, "导航到米游社登录页面");
-            }
-        });
-        _MainPageFrame.Navigate(typeof(LoginPage), action);
+        _MainPageFrame.Navigate(typeof(LoginPage));
     }
 
 
+
+    [RelayCommand]
+    private async Task GetGameRecordAsync()
+    {
+        try
+        {
+            if (GenshinRoleInfo != null)
+            {
+                var record = await _hoyolabService.GetGameRecordSummaryAsync(GenshinRoleInfo);
+                GameRecordList = record.PlayerStat.GetType()
+                                                  .GetProperties()
+                                                  .Select(x => new GameRecordItem(x.GetCustomAttribute<DescriptionAttribute>()?.Description!, x.GetValue(record.PlayerStat)?.ToString()!))
+                                                  .ToList();
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+    }
+
+
+    public record GameRecordItem
+    {
+        public GameRecordItem(string description, string value)
+        {
+            Description = description;
+            Value = value;
+        }
+
+        public string Description { get; set; }
+
+        public string Value { get; set; }
+    }
 
 
 
@@ -743,4 +769,15 @@ public sealed partial class MainPage : Page
     }
 
 
+}
+
+
+
+file class DescriptionAttributeExtension
+{
+    public static string? GetDescription(object obj)
+    {
+        var descriptionAttribute = obj.GetType().GetCustomAttributes(typeof(DescriptionAttribute), false).FirstOrDefault();
+        return (descriptionAttribute as DescriptionAttribute)?.Description;
+    }
 }
