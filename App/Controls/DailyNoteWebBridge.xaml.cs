@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
+using Xunkong.Desktop.Pages;
 using Xunkong.Hoyolab.Account;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -66,6 +67,13 @@ public sealed partial class DailyNoteWebBridge : UserControl
         {
             return;
         }
+        await InitializeAsync();
+    }
+
+
+
+    private async Task InitializeAsync()
+    {
         try
         {
             await webview2.EnsureCoreWebView2Async();
@@ -156,9 +164,10 @@ public sealed partial class DailyNoteWebBridge : UserControl
 
     private async void CoreWebView2_WebMessageReceived(Microsoft.Web.WebView2.Core.CoreWebView2 sender, Microsoft.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs args)
     {
+        string message = null!;
         try
         {
-            string message = args.TryGetWebMessageAsString();
+            message = args.TryGetWebMessageAsString();
             Debug.WriteLine(message);
             JsParam param = JsonSerializer.Deserialize<JsParam>(message)!;
 
@@ -169,14 +178,14 @@ public sealed partial class DailyNoteWebBridge : UserControl
                 "eventTrack" => null,
                 //"getActionTicket" => await GetActionTicketAsync(param).ConfigureAwait(false),
                 "getCookieInfo" => GetCookieInfo(param),
-                //"getCookieToken" => await GetCookieTokenAsync(param).ConfigureAwait(false),
+                "getCookieToken" => GetCookieToken(param),
                 "getDS" => GetDynamicSecrectV1(param),
                 "getDS2" => GetDynamicSecrectV2(param),
                 "getHTTPRequestHeaders" => GetHttpRequestHeader(param),
                 "getStatusBarHeight" => GetStatusBarHeight(param),
                 "getUserInfo" => GetUserInfo(param),
                 "hideLoading" => null,
-                "login" => ResetState(param),
+                "login" => await LoginAsync(param),
                 "pushPage" => PushPage(param),
                 "showLoading" => null,
                 _ => null,
@@ -186,11 +195,21 @@ public sealed partial class DailyNoteWebBridge : UserControl
         }
         catch (Exception ex)
         {
-
+            Logger.Error(ex, $"WebBridge received: {message}");
         }
     }
 
 
+    private JsResult? GetCookieToken(JsParam param)
+    {
+        return new()
+        {
+            Data = new()
+            {
+                ["cookie_token"] = cookieDic.GetValueOrDefault("cookie_token") ?? cookieDic.GetValueOrDefault("cookie_token_v2") ?? "",
+            },
+        };
+    }
 
     private async Task CallbackAsync(string? callback, JsResult? result)
     {
@@ -233,9 +252,20 @@ public sealed partial class DailyNoteWebBridge : UserControl
         };
     }
 
-    private JsResult? ResetState(JsParam param)
+
+    private bool tryLogin;
+
+    private async Task<JsResult?> LoginAsync(JsParam param)
     {
-        loaded = false;
+        if (tryLogin)
+        {
+            MainPage.Current.Navigate(typeof(LoginPage));
+        }
+        else
+        {
+            await InitializeAsync();
+            tryLogin = true;
+        }
         return null;
     }
 
