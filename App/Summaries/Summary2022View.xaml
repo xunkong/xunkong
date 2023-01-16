@@ -7,6 +7,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="using:Xunkong.Desktop.Summaries"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:xdc="using:Xunkong.Desktop.Controls"
              x:DefaultBindMode="OneWay"
              mc:Ignorable="d">
 
@@ -31,7 +32,7 @@
 
 
         <ScrollViewer>
-            <StackPanel Margin="0,48,0,24"
+            <StackPanel Margin="0,48,0,48"
                         HorizontalAlignment="Center"
                         Spacing="8">
 
@@ -317,12 +318,12 @@
 
                         <StackPanel Orientation="Horizontal">
                             <TextBlock VerticalAlignment="Bottom" Text="所有战斗记录中，最强一击" />
-                            <Image Width="40" Source="{x:Bind Report.AbyssReport.MaxDamage.AvatarIcon}" />
+                            <xdc:CachedImage Width="40" Source="{x:Bind Report.AbyssReport.MaxDamage.AvatarIcon}" />
                             <TextBlock VerticalAlignment="Bottom" Text="{x:Bind Report.AbyssReport.MaxDamage.Value}" />
                             <TextBlock Margin="20,0,0,0"
                                        VerticalAlignment="Bottom"
                                        Text="最多承伤" />
-                            <Image Width="40" Source="{x:Bind Report.AbyssReport.MaxTakeDamage.AvatarIcon}" />
+                            <xdc:CachedImage Width="40" Source="{x:Bind Report.AbyssReport.MaxTakeDamage.AvatarIcon}" />
                             <TextBlock VerticalAlignment="Bottom" Text="{x:Bind Report.AbyssReport.MaxTakeDamage.Value}" />
                         </StackPanel>
 
@@ -338,7 +339,26 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
-                                            <Image Width="40" Source="{Binding Avatar.Icon}" />
+                                            <xdc:CachedImage Width="40" Source="{Binding Avatar.Icon}" />
+                                            <TextBlock VerticalAlignment="Bottom" Text="{Binding Count}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock VerticalAlignment="Bottom" Text="出战最少的角色有" />
+                            <ItemsControl ItemsSource="{x:Bind Report.AbyssReport.LeastUsedAvatars}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" Spacing="8" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <xdc:CachedImage Width="40" Source="{Binding Avatar.Icon}" />
                                             <TextBlock VerticalAlignment="Bottom" Text="{Binding Count}" />
                                         </StackPanel>
                                     </DataTemplate>
@@ -366,7 +386,37 @@
                                                 </ItemsControl.ItemsPanel>
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
-                                                        <Image Width="40" Source="{Binding Icon}" />
+                                                        <xdc:CachedImage Width="40" Source="{Binding Icon}" />
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                            <TextBlock VerticalAlignment="Bottom" Text="{Binding Count}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock VerticalAlignment="Bottom" Text="使用次数最少的阵容有" />
+                            <ItemsControl ItemsSource="{x:Bind Report.AbyssReport.LeastUsedTeams}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" Spacing="16" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <ItemsControl ItemsSource="{Binding Avatars}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel Orientation="Horizontal" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <xdc:CachedImage Width="40" Source="{Binding Icon}" />
                                                     </DataTemplate>
                                                 </ItemsControl.ItemTemplate>
                                             </ItemsControl>

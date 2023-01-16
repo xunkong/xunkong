@@ -43,7 +43,11 @@ public class Summary2022_AbyssReport
 
     public List<Summary2022_AbyssReport_MostUseAvatar> MostUsedAvatars { get; set; }
 
+    public List<Summary2022_AbyssReport_MostUseAvatar> LeastUsedAvatars { get; set; }
+
     public List<Summary2022_AbyssReport_MostUseTeam> MostUsedTeams { get; set; }
+
+    public List<Summary2022_AbyssReport_MostUseTeam> LeastUsedTeams { get; set; }
 
     public int UsedAvatarCount { get; set; }
 

@@ -357,8 +357,15 @@ public sealed partial class Summary2022View : UserControl
 
             var battles_groupby_avatar = avatars.GroupBy(x => x.AvatarId).OrderByDescending(x => x.Count()).ToList();
             var mostUsedAvatars = battles_groupby_avatar.Take(8).Select(x => new Summary2022_AbyssReport_MostUseAvatar { Count = x.Count(), Avatar = x.First() }).ToList();
-
+            var leastUsedAvatars = battles_groupby_avatar.TakeLast(8).Select(x => new Summary2022_AbyssReport_MostUseAvatar { Count = x.Count(), Avatar = x.First() }).ToList();
             foreach (var item in mostUsedAvatars)
+            {
+                if (list_wiki_character.FirstOrDefault(x => x.Id == item.Avatar.AvatarId) is CharacterInfo c)
+                {
+                    item.Avatar.Icon = c.SideIcon;
+                }
+            }
+            foreach (var item in leastUsedAvatars)
             {
                 if (list_wiki_character.FirstOrDefault(x => x.Id == item.Avatar.AvatarId) is CharacterInfo c)
                 {
@@ -368,8 +375,15 @@ public sealed partial class Summary2022View : UserControl
 
             var battles_groupby_team = battles.GroupBy(x => x, new Summary2022_AbyssReport_TeamCompare()).OrderByDescending(x => x.Count()).ToList();
             var mostUsedTeams = battles_groupby_team.Take(2).Select(x => new Summary2022_AbyssReport_MostUseTeam { Count = x.Count(), Avatars = x.First().Avatars }).ToList();
-
+            var leastUsedTeams = battles_groupby_team.TakeLast(2).Select(x => new Summary2022_AbyssReport_MostUseTeam { Count = x.Count(), Avatars = x.First().Avatars }).ToList();
             foreach (var item in mostUsedTeams.SelectMany(x => x.Avatars))
+            {
+                if (list_wiki_character.FirstOrDefault(x => x.Id == item.AvatarId) is CharacterInfo c)
+                {
+                    item.Icon = c.SideIcon;
+                }
+            }
+            foreach (var item in leastUsedTeams.SelectMany(x => x.Avatars))
             {
                 if (list_wiki_character.FirstOrDefault(x => x.Id == item.AvatarId) is CharacterInfo c)
                 {
@@ -394,7 +408,9 @@ public sealed partial class Summary2022View : UserControl
                 MaxDamage = maxDamage,
                 MaxTakeDamage = maxTakeDamage,
                 MostUsedAvatars = mostUsedAvatars,
+                LeastUsedAvatars = leastUsedAvatars,
                 MostUsedTeams = mostUsedTeams,
+                LeastUsedTeams = leastUsedTeams,
                 UsedAvatarCount = avatars.Select(x => x.AvatarId).Distinct().Count(),
                 UsedAvatarCountRank5 = avatars.Where(x => x.Rarity == 5).Select(x => x.AvatarId).Distinct().Count(),
                 UsedAvatarCountRank4 = avatars.Where(x => x.Rarity == 4).Select(x => x.AvatarId).Distinct().Count(),
