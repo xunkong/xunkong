@@ -7,6 +7,7 @@
       xmlns:local="using:Xunkong.Desktop.Pages"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:xha="using:Xunkong.Hoyolab.Account"
+      xmlns:xhg="using:Xunkong.Hoyolab.GameRecord"
       x:DefaultBindMode="OneWay"
       PointerPressed="Page_PointerPressed"
       PointerReleased="Page_PointerReleased"
@@ -210,13 +211,17 @@
                             Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
                         <Button.Flyout>
                             <Flyout Placement="RightEdgeAlignedTop">
-                                <Grid>
+                                <Grid RowSpacing="20">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
                                     <ItemsRepeater ItemsSource="{x:Bind GameRecordList}">
                                         <ItemsRepeater.Layout>
                                             <UniformGridLayout MaximumRowsOrColumns="4"
-                                                               MinColumnSpacing="8"
-                                                               MinItemWidth="72"
-                                                               MinRowSpacing="12"
+                                                               MinColumnSpacing="6"
+                                                               MinItemWidth="100"
+                                                               MinRowSpacing="8"
                                                                Orientation="Horizontal" />
                                         </ItemsRepeater.Layout>
                                         <ItemsRepeater.ItemTemplate>
@@ -234,6 +239,42 @@
                                                                FontSize="12"
                                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                                Text="{Binding Description}" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsRepeater.ItemTemplate>
+                                    </ItemsRepeater>
+                                    <ItemsRepeater Grid.Row="1" ItemsSource="{x:Bind GameRecordSummary.WorldExplorations}">
+                                        <ItemsRepeater.Layout>
+                                            <UniformGridLayout MaximumRowsOrColumns="4"
+                                                               MinColumnSpacing="6"
+                                                               MinItemHeight="112"
+                                                               MinItemWidth="100"
+                                                               MinRowSpacing="12"
+                                                               Orientation="Horizontal" />
+                                        </ItemsRepeater.Layout>
+                                        <ItemsRepeater.ItemTemplate>
+                                            <DataTemplate x:DataType="xhg:WorldExploration">
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="72" />
+                                                        <RowDefinition Height="16" />
+                                                        <RowDefinition />
+                                                    </Grid.RowDefinitions>
+                                                    <controls:CachedImage Grid.RowSpan="3"
+                                                                          CornerRadius="8"
+                                                                          Source="{x:Bind Cover}"
+                                                                          Stretch="UniformToFill" />
+                                                    <controls:CachedImage Margin="0,4,0,4" Source="{x:Bind Icon}" />
+                                                    <TextBlock Grid.Row="1"
+                                                               HorizontalAlignment="Center"
+                                                               FontSize="10"
+                                                               Foreground="AliceBlue"
+                                                               Text="{x:Bind Name}" />
+                                                    <TextBlock Grid.Row="2"
+                                                               HorizontalAlignment="Center"
+                                                               FontSize="12"
+                                                               Foreground="AliceBlue"
+                                                               Text="{x:Bind ExplorationString}" />
                                                 </Grid>
                                             </DataTemplate>
                                         </ItemsRepeater.ItemTemplate>

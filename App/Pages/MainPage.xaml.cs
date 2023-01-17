@@ -12,6 +12,7 @@ using Windows.System;
 using Windows.UI.StartScreen;
 using Xunkong.Hoyolab;
 using Xunkong.Hoyolab.Account;
+using Xunkong.Hoyolab.GameRecord;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -326,7 +327,10 @@ public sealed partial class MainPage : Page
     private ObservableCollection<GenshinRoleInfo> genshinRoleInfoList;
 
     [ObservableProperty]
-    private List<GameRecordItem> gameRecordList;
+    private GameRecordSummary? gameRecordSummary;
+
+    [ObservableProperty]
+    private List<GameRecordItem>? gameRecordList;
 
 
 
@@ -507,6 +511,9 @@ public sealed partial class MainPage : Page
         {
             if (_ListView_Account.SelectedItem is GenshinRoleInfo role)
             {
+                GameRecordList = null;
+                GameRecordSummary = null;
+
                 GenshinRoleInfo = role;
                 AppSetting.SetValue(SettingKeys.LastSelectGameRoleUid, role.Uid);
                 var user = _hoyolabService.GetHoyolabUserInfoFromDatabaseByCookie(role.Cookie!);
@@ -545,11 +552,17 @@ public sealed partial class MainPage : Page
         {
             if (GenshinRoleInfo != null)
             {
-                var record = await _hoyolabService.GetGameRecordSummaryAsync(GenshinRoleInfo);
-                GameRecordList = record.PlayerStat.GetType()
-                                                  .GetProperties()
-                                                  .Select(x => new GameRecordItem(x.GetCustomAttribute<DescriptionAttribute>()?.Description!, x.GetValue(record.PlayerStat)?.ToString()!))
-                                                  .ToList();
+                if (GameRecordSummary == null)
+                {
+                    GameRecordSummary = await _hoyolabService.GetGameRecordSummaryAsync(GenshinRoleInfo);
+                }
+                if (GameRecordList == null)
+                {
+                    GameRecordList = GameRecordSummary.PlayerStat.GetType()
+                                                                 .GetProperties()
+                                                                 .Select(x => new GameRecordItem(x.GetCustomAttribute<DescriptionAttribute>()?.Description!, x.GetValue(GameRecordSummary.PlayerStat)?.ToString()!))
+                                                                 .ToList();
+                }
             }
         }
         catch (Exception ex)

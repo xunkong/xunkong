@@ -779,9 +779,11 @@ public sealed partial class SettingPage : Page
                 case "ClearAll":
                     await DeleteFolderAsync((await XunkongCache.Instance.GetCacheFolderAsync()).Path);
                     await DeleteFolderAsync((await VoiceCache.Instance.GetCacheFolderAsync()).Path);
+                    CachedImage.ClearCache();
                     break;
                 case "ClearImage":
                     await DeleteFolderAsync((await XunkongCache.Instance.GetCacheFolderAsync()).Path);
+                    CachedImage.ClearCache();
                     break;
                 case "ClearVoice":
                     await DeleteFolderAsync((await VoiceCache.Instance.GetCacheFolderAsync()).Path);

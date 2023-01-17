@@ -13,6 +13,9 @@ public sealed class CachedImage : ImageEx
     private static readonly ConcurrentDictionary<Uri, Uri> fileCache = new();
 
 
+    public static void ClearCache() => fileCache.Clear();
+
+
 
     protected override async Task<ImageSource> ProvideCachedResourceAsync(Uri imageUri, CancellationToken token)
     {
