@@ -65,12 +65,14 @@ public sealed partial class MainPage : Page
             left = sender.CompactPaneLength * 2;
             _appTitleBar.Margin = new Thickness(left, currMargin.Top, currMargin.Right, currMargin.Bottom);
             _NavigationView.IsPaneToggleButtonVisible = true;
+            _MainPageFrame.Margin = new Thickness(0, 48, 0, 0);
         }
         else
         {
             left = sender.CompactPaneLength;
             _appTitleBar.Margin = new Thickness(left, currMargin.Top, currMargin.Right, currMargin.Bottom);
             _NavigationView.IsPaneToggleButtonVisible = false;
+            _MainPageFrame.Margin = new Thickness();
         }
         UpdateAppTitleMargin(sender);
     }

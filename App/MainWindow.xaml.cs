@@ -112,12 +112,13 @@ public sealed partial class MainWindow : Window
         if (AppWindowTitleBar.IsCustomizationSupported())
         {
             var scale = this.UIScale;
+            var left = (int)(48 * 2 * scale);
             var top = (int)(48 * scale);
             var titleBar = _appWindow.TitleBar;
             titleBar.ExtendsContentIntoTitleBar = true;
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
-            titleBar.SetDragRectangles(new RectInt32[] { new RectInt32(top, 0, 10000, top) });
+            titleBar.SetDragRectangles(new RectInt32[] { new RectInt32(left, 0, 10000, top) });
             // 解决 Windows 10 上标题栏无法拖动的问题
             // https://github.com/microsoft/WindowsAppSDK/issues/2976
             _appWindow.ResizeClient(_appWindow.ClientSize);
