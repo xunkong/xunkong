@@ -531,6 +531,10 @@ public sealed partial class WishlogSummaryPage2 : Page
             catch (Exception ex) when (ex is HoyolabException or XunkongException)
             {
                 StateText = ex.Message;
+                if (ex is HoyolabException { ReturnCode: -101 })
+                {
+                    WishlogService.DeleteCacheFile(server == "1" ? 1 : 0);
+                }
             }
         }
         catch (Exception ex)

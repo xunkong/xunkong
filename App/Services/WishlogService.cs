@@ -87,6 +87,35 @@ internal class WishlogService
 
 
 
+    public static void DeleteCacheFile(int server)
+    {
+        try
+        {
+            if (GameAccountService.IsGameRunning(server))
+            {
+                return;
+            }
+            var exePath = GameAccountService.GetGameExePath(server);
+            var folder = Path.GetDirectoryName(exePath);
+            string? file = null;
+            if (server == 0)
+            {
+                file = Path.Join(folder, @"YuanShen_Data\webCaches\Cache\Cache_Data\data_2");
+            }
+            if (server == 1)
+            {
+                file = Path.Join(folder, @"GenshinImpact_Data\webCaches\Cache\Cache_Data\data_2");
+            }
+            if (File.Exists(file))
+            {
+                File.Delete(file);
+            }
+        }
+        catch { }
+    }
+
+
+
     /// <summary>
     /// 获取祈愿记录网址对应的uid
     /// </summary>
