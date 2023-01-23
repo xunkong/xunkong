@@ -190,7 +190,7 @@ internal class GameAccountService
         }
         if (!File.Exists(exePath))
         {
-            throw new XunkongException($"没有找到{(GameAccount.GameServer)server}的游戏文件，请在设置页面指定路径。");
+            throw new XunkongException($"没有找到{((GameAccount.GameServer)server).ToDescription()}的游戏文件，请在设置页面指定路径。");
         }
         return exePath;
     }
