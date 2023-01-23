@@ -185,7 +185,7 @@ public sealed partial class DailyNoteWebBridge : UserControl
                 "getStatusBarHeight" => GetStatusBarHeight(param),
                 "getUserInfo" => GetUserInfo(param),
                 "hideLoading" => null,
-                "login" => await LoginAsync(param),
+                "login" => Login(param),
                 "pushPage" => PushPage(param),
                 "showLoading" => null,
                 _ => null,
@@ -253,18 +253,14 @@ public sealed partial class DailyNoteWebBridge : UserControl
     }
 
 
-    private bool tryLogin;
+    private bool navigated;
 
-    private async Task<JsResult?> LoginAsync(JsParam param)
+    private JsResult? Login(JsParam param)
     {
-        if (tryLogin)
+        if (!navigated)
         {
             MainPage.Current.Navigate(typeof(LoginPage));
-        }
-        else
-        {
-            await InitializeAsync();
-            tryLogin = true;
+            navigated = true;
         }
         return null;
     }
