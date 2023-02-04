@@ -388,6 +388,7 @@ public sealed partial class ImageViewer : UserControl
         {
             if (SourceCollection?.Any() ?? false)
             {
+                _GridView_ImageCollection.Focus(FocusState.Programmatic);
                 var index = _GridView_ImageCollection.SelectedIndex;
                 var count = SourceCollection.Count;
                 var pointer = e.GetCurrentPoint(_ScrollViewer_Image);
