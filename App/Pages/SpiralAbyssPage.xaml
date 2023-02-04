@@ -34,7 +34,7 @@
 
 
         <Grid Grid.ColumnSpan="2"
-              Padding="48,0,48,0"
+              Padding="24,0,24,0"
               CornerRadius="4,0,0,4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -108,7 +108,9 @@
                       HorizontalScrollBarVisibility="Auto"
                       Visibility="{x:Bind SelectedAbyssInfo, Converter={StaticResource ObjectToVisibilityConverter}}"
                       ZoomMode="Enabled">
-            <StackPanel Margin="0,0,0,24" Spacing="8">
+            <StackPanel Margin="0,0,0,24"
+                        HorizontalAlignment="Center"
+                        Spacing="8">
                 <!--  上半部分每期统计  -->
                 <Grid ColumnSpacing="48">
                     <Grid.ColumnDefinitions>
@@ -325,21 +327,21 @@
                         <Setter Target="_GridView_LeftPanel.(ScrollViewer.HorizontalScrollMode)" Value="Enabled" />
                         <Setter Target="_GridView_LeftPanel.(ScrollViewer.VerticalScrollMode)" Value="Disabled" />
                         <Setter Target="_GridView_LeftPanel.Padding" Value="0 0 0 12" />
-                        <Setter Target="_GridView_LeftPanel.Margin" Value="48,12,48,12" />
-                        <Setter Target="_ScrollViewer_Abyss.Padding" Value="48,12,48,0" />
+                        <Setter Target="_GridView_LeftPanel.Margin" Value="24,12,24,12" />
+                        <Setter Target="_ScrollViewer_Abyss.Padding" Value="24,12,24,0" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState>
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="1680" />
+                        <AdaptiveTrigger MinWindowWidth="1632" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="_GridView_LeftPanel.(Grid.Row)" Value="2" />
                         <Setter Target="_GridView_LeftPanel.(Grid.Column)" Value="0" />
                         <Setter Target="_GridView_LeftPanel.Margin" Value="0" />
-                        <Setter Target="_GridView_LeftPanel.Padding" Value="48,12,12,12" />
+                        <Setter Target="_GridView_LeftPanel.Padding" Value="24,12,12,12" />
                         <Setter Target="_GridView_LeftPanel.ItemsPanel" Value="{StaticResource VerticalStackPanel}" />
-                        <Setter Target="_ScrollViewer_Abyss.Padding" Value="24,12,48,0" />
+                        <Setter Target="_ScrollViewer_Abyss.Padding" Value="24,12,24,0" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

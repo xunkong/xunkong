@@ -151,7 +151,7 @@
 
             <!--  天赋  -->
             <PivotItem Header="天赋培养">
-                <SemanticZoom Padding="36,0,12,0">
+                <SemanticZoom Padding="24,0,12,0">
                     <SemanticZoom.ZoomedOutView>
                         <ListView Margin="0,0,-12,0"
                                   Padding="0,0,24,0"
@@ -289,7 +289,7 @@
 
             <!--  武器  -->
             <PivotItem Header="武器突破">
-                <SemanticZoom Padding="36,0,12,0">
+                <SemanticZoom Padding="24,0,12,0">
                     <SemanticZoom.ZoomedOutView>
                         <ListView Margin="0,0,-12,0"
                                   Padding="0,0,24,0"
@@ -428,7 +428,7 @@
 
             <!--  周本  -->
             <PivotItem Header="周本掉落">
-                <SemanticZoom Padding="36,0,12,0">
+                <SemanticZoom Padding="24,0,12,0">
                     <SemanticZoom.ZoomedOutView>
                         <ListView Margin="0,0,-12,0"
                                   Padding="0,0,24,0"
@@ -539,7 +539,7 @@
 
         <!--  添加计划按键  -->
         <Button Grid.ColumnSpan="2"
-                Margin="0,16,36,0"
+                Margin="0,16,24,0"
                 Padding="12,8,12,8"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"

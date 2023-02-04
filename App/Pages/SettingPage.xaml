@@ -15,10 +15,6 @@
       mc:Ignorable="d">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="60" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition MaxWidth="1200" />
             <ColumnDefinition />
@@ -26,25 +22,16 @@
         </Grid.ColumnDefinitions>
 
 
-        <Grid Grid.ColumnSpan="2"
-              Padding="48,0,48,0"
-              CornerRadius="4,0,0,4">
-            <TextBlock HorizontalAlignment="Left"
-                       VerticalAlignment="Center"
-                       Style="{ThemeResource SubtitleTextBlockStyle}"
-                       Text="设置" />
-        </Grid>
-
         <ScrollViewer Grid.Row="1"
                       Grid.ColumnSpan="2"
-                      Padding="48,0,48,0">
+                      Padding="24,0,24,0">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition MaxWidth="1200" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Margin="0,8,0,24" Spacing="4">
+                <StackPanel Margin="0,24,0,24" Spacing="4">
 
                     <!--  介绍与好评  -->
                     <Grid Height="120" ColumnSpacing="16">

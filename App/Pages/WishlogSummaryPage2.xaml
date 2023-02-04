@@ -179,7 +179,8 @@
                            VerticalAlignment="Bottom"
                            FontSize="12"
                            Foreground="#84603D"
-                           Text="{x:Bind Name}" />
+                           Text="{x:Bind Name}"
+                           TextTrimming="CharacterEllipsis" />
                 <Border Height="20"
                         MinWidth="20"
                         HorizontalAlignment="Right"
@@ -275,7 +276,8 @@
                                            VerticalAlignment="Bottom"
                                            FontSize="10"
                                            Foreground="#84603D"
-                                           Text="{x:Bind Name}" />
+                                           Text="{x:Bind Name}"
+                                           TextTrimming="CharacterEllipsis" />
                                 <Border Height="18"
                                         MinWidth="18"
                                         HorizontalAlignment="Right"
@@ -326,7 +328,7 @@
 
 
         <!--  工具栏  -->
-        <Grid Padding="48,0,48,0" CornerRadius="4,0,0,4">
+        <Grid Padding="24,0,24,0" CornerRadius="4,0,0,4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
@@ -418,7 +420,7 @@
             </Pivot.Resources>
             <Pivot.LeftHeader>
                 <StackPanel Grid.Row="1"
-                            Margin="48,0,12,0"
+                            Margin="24,0,12,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
@@ -430,7 +432,7 @@
                 </StackPanel>
             </Pivot.LeftHeader>
             <Pivot.RightHeader>
-                <TextBlock Margin="0,0,48,0"
+                <TextBlock Margin="0,0,24,0"
                            VerticalAlignment="Center"
                            FontSize="12"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -438,7 +440,7 @@
             </Pivot.RightHeader>
 
             <PivotItem Header="数据统计">
-                <ScrollViewer Padding="48,0,48,0">
+                <ScrollViewer Padding="24,0,24,0">
                     <StackPanel Name="StackPanel_Stats"
                                 Margin="0,12,0,24"
                                 Spacing="16">

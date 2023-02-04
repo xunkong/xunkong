@@ -21,7 +21,7 @@
         </Grid.ColumnDefinitions>
 
         <Grid Grid.ColumnSpan="2"
-              Padding="48,0,48,0"
+              Padding="24,0,24,0"
               CornerRadius="4,0,0,4">
             <TextBlock HorizontalAlignment="Left"
                        VerticalAlignment="Center"
@@ -38,7 +38,7 @@
 
 
         <StackPanel Grid.Row="1"
-                    Margin="48,8,0,8"
+                    Margin="24,8,0,8"
                     Orientation="Horizontal"
                     Spacing="8">
             <TextBlock VerticalAlignment="Center" Text="选择Uid" />
@@ -56,7 +56,7 @@
 
         <StackPanel x:Name="_StackPanel_GridCommand"
                     Grid.Row="1"
-                    Margin="0,0,48,0"
+                    Margin="0,0,24,0"
                     HorizontalAlignment="Right"
                     Orientation="Horizontal"
                     Spacing="8">

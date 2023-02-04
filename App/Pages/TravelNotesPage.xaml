@@ -68,7 +68,7 @@
 
 
 
-        <Grid Padding="48,0,48,0" CornerRadius="4,0,0,4">
+        <Grid Padding="24,0,24,0" CornerRadius="4,0,0,4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
@@ -102,7 +102,7 @@
 
 
 
-        <ScrollViewer Grid.Row="1" Padding="48,0,48,0">
+        <ScrollViewer Grid.Row="1" Padding="24,0,24,0">
             <StackPanel Margin="0,24,0,24" Spacing="16">
 
                 <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"

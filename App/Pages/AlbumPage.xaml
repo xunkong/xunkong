@@ -48,7 +48,7 @@
         </Grid.ColumnDefinitions>
 
 
-        <Grid Padding="48,0,48,0" CornerRadius="4,0,0,4">
+        <Grid Padding="24,0,24,0" CornerRadius="4,0,0,4">
             <TextBlock HorizontalAlignment="Left"
                        VerticalAlignment="Center"
                        Style="{ThemeResource SubtitleTextBlockStyle}"
@@ -71,7 +71,7 @@
 
         <cc:AdaptiveGridView Name="_GridView_Images"
                              Grid.Row="1"
-                             Padding="48,0,48,24"
+                             Padding="24,0,24,24"
                              animations:ItemsReorderAnimation.Duration="0:0:0.3"
                              DesiredWidth="220"
                              IsItemClickEnabled="True"

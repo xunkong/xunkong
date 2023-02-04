@@ -23,7 +23,7 @@
                         IsPaneToggleButtonVisible="False"
                         IsSettingsVisible="False"
                         ItemInvoked="_NavigationView_ItemInvoked"
-                        OpenPaneLength="260"
+                        OpenPaneLength="240"
                         PaneClosing="_NavigationView_PaneClosing"
                         PaneOpening="_NavigationView_PaneOpening">
             <NavigationView.Resources>
@@ -32,7 +32,7 @@
 
             <!--  导航栏左上部那一块  -->
             <NavigationView.PaneCustomContent>
-                <Grid Margin="0,8,0,8">
+                <Grid Margin="0,4,0,8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
@@ -97,7 +97,7 @@
                                         <Setter Property="Padding" Value="4" />
                                     </Style>
                                 </Flyout.FlyoutPresenterStyle>
-                                <Grid Width="250">
+                                <Grid Width="232">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition />
@@ -149,7 +149,7 @@
                                         <ListView.ItemTemplate>
                                             <DataTemplate x:DataType="xha:GenshinRoleInfo">
                                                 <StackPanel Margin="0,4,0,4" Orientation="Horizontal">
-                                                    <TextBlock Width="176" VerticalAlignment="Center">
+                                                    <TextBlock Width="156" VerticalAlignment="Center">
                                                         <Run Text="{x:Bind Nickname}" />
                                                         <LineBreak />
                                                         <Run FontSize="12"
