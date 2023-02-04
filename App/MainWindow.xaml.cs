@@ -13,6 +13,7 @@ using System.Runtime.InteropServices;
 using Vanara.PInvoke;
 using Windows.ApplicationModel;
 using Windows.Graphics;
+using Windows.UI;
 using WinRT.Interop;
 using Xunkong.Desktop.Pages;
 
@@ -118,6 +119,7 @@ public sealed partial class MainWindow : Window
             titleBar.ExtendsContentIntoTitleBar = true;
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            ChangeTitleBarButtonColor();
             titleBar.SetDragRectangles(new RectInt32[] { new RectInt32(left, 0, 10000, top) });
             // 解决 Windows 10 上标题栏无法拖动的问题
             // https://github.com/microsoft/WindowsAppSDK/issues/2976
@@ -146,6 +148,32 @@ public sealed partial class MainWindow : Window
         }
     }
 
+
+
+    private void ChangeTitleBarButtonColor()
+    {
+        var titleBar = _appWindow.TitleBar;
+        if (titleBar != null)
+        {
+            switch (RootBorder.ActualTheme)
+            {
+                case ElementTheme.Default:
+                    break;
+                case ElementTheme.Light:
+                    titleBar.ButtonForegroundColor = Colors.Black;
+                    titleBar.ButtonHoverForegroundColor = Colors.Black;
+                    titleBar.ButtonHoverBackgroundColor = Color.FromArgb(0x20, 0x00, 0x00, 0x00);
+                    break;
+                case ElementTheme.Dark:
+                    titleBar.ButtonForegroundColor = Colors.White;
+                    titleBar.ButtonHoverForegroundColor = Colors.White;
+                    titleBar.ButtonHoverBackgroundColor = Color.FromArgb(0x20, 0xFF, 0xFF, 0xFF);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
 
 
@@ -203,6 +231,7 @@ public sealed partial class MainWindow : Window
                 2 => ElementTheme.Dark,
                 _ => ElementTheme.Default,
             };
+            ChangeTitleBarButtonColor();
 
             var max = Math.Max(_appWindow.ClientSize.Width, _appWindow.ClientSize.Height);
 
