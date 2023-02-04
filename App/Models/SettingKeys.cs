@@ -222,6 +222,12 @@ internal abstract class SettingKeys
     public const string GameExePathCNCloud = nameof(GameExePathCNCloud);
 
 
+    /// <summary>
+    /// 启动游戏后检查参量质变仪和洞天宝钱
+    /// </summary>
+    [Backup]
+    public const string CheckTransformerAndHomeCoinWhenStartGame = nameof(CheckTransformerAndHomeCoinWhenStartGame);
+
 }
 
 

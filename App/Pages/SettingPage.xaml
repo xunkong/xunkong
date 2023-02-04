@@ -427,6 +427,18 @@
                                                   IsOn="{x:Bind UsePopupWindow, Mode=TwoWay}"
                                                   Style="{ThemeResource RightAlignToggleSwitchStyle}" />
                                 </Grid>
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock>
+                                        <Run Text="检查参量质变仪和洞天宝钱" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="启动游戏成功后，检查所有账号上述两项的状态" />
+                                    </TextBlock>
+                                    <ToggleSwitch HorizontalAlignment="Right"
+                                                  IsOn="{x:Bind CheckTransformerAndHomeCoinWhenStartGame, Mode=TwoWay}"
+                                                  Style="{ThemeResource RightAlignToggleSwitchStyle}" />
+                                </Grid>
                             </StackPanel>
                         </Expander.Content>
                     </Expander>

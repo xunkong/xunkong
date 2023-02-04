@@ -401,6 +401,15 @@ public sealed partial class SettingPage : Page
 
 
 
+    [ObservableProperty]
+    private bool _CheckTransformerAndHomeCoinWhenStartGame = AppSetting.GetValue(SettingKeys.CheckTransformerAndHomeCoinWhenStartGame, true);
+    partial void OnCheckTransformerAndHomeCoinWhenStartGameChanged(bool value)
+    {
+        AppSetting.SetValue(SettingKeys.CheckTransformerAndHomeCoinWhenStartGame, value);
+    }
+
+
+
 
     #endregion
 

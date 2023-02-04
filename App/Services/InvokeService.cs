@@ -62,6 +62,10 @@ internal class InvokeService
     /// <returns></returns>
     public static async Task CheckTransformerReachedAndHomeCoinFullAsync(bool sendInAppNotification = false)
     {
+        if (!AppSetting.GetValue(SettingKeys.CheckTransformerAndHomeCoinWhenStartGame, true))
+        {
+            return;
+        }
         try
         {
             var service = new HoyolabService(new HoyolabClient());
