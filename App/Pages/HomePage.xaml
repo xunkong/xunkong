@@ -149,8 +149,8 @@
                                FontSize="20"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                Text="快捷指令" />
-                    <Button Content="启动游戏">
-                        <Button.Flyout>
+                    <SplitButton Command="{x:Bind StartGameCommand, Mode=OneTime}" Content="启动游戏">
+                        <SplitButton.Flyout>
                             <Flyout>
                                 <Grid MinWidth="280"
                                       ColumnSpacing="12"
@@ -159,12 +159,7 @@
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition />
-                                        <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
 
                                     <StackPanel Grid.ColumnSpan="2"
                                                 Orientation="Horizontal"
@@ -198,9 +193,14 @@
                                         </Button.Flyout>
                                     </Button>
 
-                                    <TextBlock Grid.Row="1"
-                                               Grid.ColumnSpan="2"
-                                               Text="已保存的游戏内账号" />
+                                    <StackPanel Grid.Row="1"
+                                                Orientation="Horizontal"
+                                                Spacing="16">
+                                        <TextBlock VerticalAlignment="Center" Text="已保存的游戏内账号" />
+                                        <Button HorizontalAlignment="Stretch"
+                                                Command="{x:Bind AddGameAccountCommand, Mode=OneTime}"
+                                                Content="添加游戏账号" />
+                                    </StackPanel>
                                     <ItemsControl Grid.Row="2"
                                                   Grid.ColumnSpan="2"
                                                   ItemsSource="{x:Bind GameAccounts}">
@@ -252,20 +252,10 @@
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
 
-                                    <Button Grid.Row="3"
-                                            Grid.Column="0"
-                                            HorizontalAlignment="Stretch"
-                                            Command="{x:Bind StartGameCommand, Mode=OneTime}"
-                                            Content="启动游戏" />
-                                    <Button Grid.Row="3"
-                                            Grid.Column="1"
-                                            HorizontalAlignment="Stretch"
-                                            Command="{x:Bind AddGameAccountCommand, Mode=OneTime}"
-                                            Content="添加游戏账号" />
                                 </Grid>
                             </Flyout>
-                        </Button.Flyout>
-                    </Button>
+                        </SplitButton.Flyout>
+                    </SplitButton>
                     <Button Command="{x:Bind OpenSummary2022Command, Mode=OneTime}" Content="2022 年度总结" />
                 </StackPanel>
 
