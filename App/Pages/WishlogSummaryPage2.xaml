@@ -24,6 +24,7 @@
                   Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                   BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                   BorderThickness="1"
+                  ColumnSpacing="40"
                   CornerRadius="4">
                 <Grid.Resources>
                     <Style BasedOn="{StaticResource BodyTextBlockStyle}" TargetType="TextBlock">
@@ -31,8 +32,8 @@
                     </Style>
                 </Grid.Resources>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="200" />
-                    <ColumnDefinition Width="240" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <StackPanel>
@@ -44,8 +45,14 @@
                              Foreground="Orange"
                              Text="{x:Bind TotalCount}" />
                     </TextBlock>
+                    <TextBlock Margin="0,8,0,0">
+                        <Run Foreground="{ThemeResource Rarity4ForegroundBrush}" Text="四星" /><Run Text="已垫" />
+                        <!--<Run Foreground="#3BA272" Text="保底内" />-->
+                        <Run Foreground="#3BA272" Text="{x:Bind GuaranteeStar4}" />
+                        <Run Foreground="#3BA272" Text="抽" />
+                    </TextBlock>
                     <TextBlock>
-                        <Run Text="已垫" />
+                        <Run Foreground="{ThemeResource Rarity5ForegroundBrush}" Text="五星" /><Run Text="已垫" />
                         <Run Foreground="#3BA272" Text="{x:Bind GuaranteeType}" />
                         <Run Foreground="#3BA272" Text="{x:Bind CurrentGuarantee}" />
                         <Run Foreground="#3BA272" Text="抽" />
@@ -202,7 +209,7 @@
                   Margin="24,6,24,6"
                   ColumnSpacing="8">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="160" />
+                    <ColumnDefinition Width="152" />
                     <ColumnDefinition Width="8" />
                     <ColumnDefinition Width="72" />
                     <ColumnDefinition Width="8" />
@@ -248,7 +255,7 @@
                 <ItemsControl Grid.Column="4" ItemsSource="{x:Bind UpItems}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" Spacing="8" />
+                            <StackPanel Orientation="Horizontal" Spacing="4" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
@@ -463,8 +470,8 @@
                                    Visibility="{x:Bind CharacterThumbs, Converter={StaticResource ObjectToVisibilityConverter}}" />
                         <ItemsRepeater ItemTemplate="{StaticResource WishlogItemStatsDataTemplate}" ItemsSource="{x:Bind CharacterThumbs}">
                             <ItemsRepeater.Layout>
-                                <UniformGridLayout MinColumnSpacing="12"
-                                                   MinRowSpacing="12"
+                                <UniformGridLayout MinColumnSpacing="4"
+                                                   MinRowSpacing="8"
                                                    Orientation="Horizontal" />
                             </ItemsRepeater.Layout>
                         </ItemsRepeater>
@@ -476,8 +483,8 @@
                                    Visibility="{x:Bind WeaponThumbs, Converter={StaticResource ObjectToVisibilityConverter}}" />
                         <ItemsRepeater ItemTemplate="{StaticResource WishlogItemStatsDataTemplate}" ItemsSource="{x:Bind WeaponThumbs}">
                             <ItemsRepeater.Layout>
-                                <UniformGridLayout MinColumnSpacing="12"
-                                                   MinRowSpacing="12"
+                                <UniformGridLayout MinColumnSpacing="4"
+                                                   MinRowSpacing="8"
                                                    Orientation="Horizontal" />
                             </ItemsRepeater.Layout>
                         </ItemsRepeater>
@@ -487,7 +494,7 @@
             </PivotItem>
 
             <PivotItem Header="角色活动祈愿">
-                <ListView Padding="12,0,12,24"
+                <ListView Padding="0,0,0,24"
                           ItemContainerStyle="{StaticResource BlankListViewItemStyle}"
                           ItemTemplate="{StaticResource WishEventStatsDataTemplate}"
                           ItemsSource="{x:Bind CharacterEventStats}"
@@ -495,7 +502,7 @@
             </PivotItem>
 
             <PivotItem Header="武器活动祈愿">
-                <ListView Padding="12,0,12,24"
+                <ListView Padding="0,0,0,24"
                           ItemContainerStyle="{StaticResource BlankListViewItemStyle}"
                           ItemTemplate="{StaticResource WishEventStatsDataTemplate}"
                           ItemsSource="{x:Bind WeaponEventStats}"

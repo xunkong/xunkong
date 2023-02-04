@@ -255,6 +255,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
                     var currentGuarantee = items.Last().RankType == 5 ? 0 : items.Last().GuaranteeIndex;
                     var maxGuarantee = rank5Count == 0 ? currentGuarantee : items.Where(x => x.RankType == 5).Max(x => x.GuaranteeIndex);
                     var minGuarantee = rank5Count == 0 ? currentGuarantee : items.Where(x => x.RankType == 5).Min(x => x.GuaranteeIndex);
+                    var guaranteeStar4 = items.Count - items.FindLastIndex(x => x.RankType == 4) - 1;
                     var rank5Items = items.Where(x => x.RankType == 5).Select(x => new WishlogSummaryPage_Rank5Item(x.Name, x.GuaranteeIndex, x.Time, type == WishType.Permanent || x.IsUp)).ToList();
                     rank5Items.Where(x => !x.IsUp).ToList().ForEach(x => { x.Color = "#808080"; x.Foreground = "#808080"; });
                     var colors = ColorSet.OrderBy(x => Random.Shared.Next()).ToList();
@@ -276,6 +277,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
                                                                       currentGuarantee,
                                                                       maxGuarantee,
                                                                       minGuarantee,
+                                                                      guaranteeStar4,
                                                                       rank5Items,
                                                                       items.LastOrDefault(x => x.RankType == 5)?.IsUp ?? false,
                                                                       items.LastOrDefault(x => x.RankType == 5)?.GuaranteeIndex ?? 0);

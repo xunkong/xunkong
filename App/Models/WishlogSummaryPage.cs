@@ -48,6 +48,7 @@ public class WishlogSummaryPage_QueryTypeStats
                                              int currentGuarantee,
                                              int maxGuarantee,
                                              int minGuarantee,
+                                             int guaranteeStar4,
                                              List<WishlogSummaryPage_Rank5Item> rank5Items,
                                              bool lastRank5ItemIsUp,
                                              int lastRank5ItemGuarantee)
@@ -62,6 +63,7 @@ public class WishlogSummaryPage_QueryTypeStats
         CurrentGuarantee = currentGuarantee;
         MaxGuarantee = maxGuarantee;
         MinGuarantee = minGuarantee;
+        GuaranteeStar4 = guaranteeStar4;
         Rank5Items = rank5Items;
         LastRank5ItemIsUp = lastRank5ItemIsUp;
         LastRank5ItemGuarantee = lastRank5ItemGuarantee;
@@ -86,6 +88,8 @@ public class WishlogSummaryPage_QueryTypeStats
     public int MaxGuarantee { get; set; }
 
     public int MinGuarantee { get; set; }
+
+    public int GuaranteeStar4 { get; set; }
 
     public List<WishlogSummaryPage_Rank5Item> Rank5Items { get; set; }
 
