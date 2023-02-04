@@ -271,7 +271,7 @@ public sealed partial class CharacterInfoPage : Page
                     }
                 }
             }
-            Characters = characters.Where(x => x.Id != exceptId)
+            Characters = characters.Where(x => x.Id != exceptId && x.Id < 20000000)
                                    .OrderByDescending(x => x.Level)
                                    .ThenByDescending(x => x.Rarity)
                                    .ThenByDescending(x => x.ActivedConstellationNumber)

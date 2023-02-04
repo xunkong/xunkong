@@ -876,7 +876,7 @@ public sealed partial class HomePage : Page
                     }
                     else
                     {
-                        var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, "有新版本", "商店版无法获取新版本的信息", "下载并安装", action);
+                        var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, "薛定谔的更新", "只有安装后才知道是不是真的更新", "下载并安装", action);
                         _StackPanel_InfoBar.Children.Insert(0, infoBar);
                     }
                 }

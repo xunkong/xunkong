@@ -18,7 +18,7 @@
     <Page.Resources>
         <DataTemplate x:Key="AnnouncementCardTemplate" x:DataType="xha:Announcement">
             <Grid x:Name="c_Grid_FinishingActivity"
-                  HorizontalAlignment="Left"
+                  HorizontalAlignment="Stretch"
                   Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                   BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                   BorderThickness="1"
@@ -111,7 +111,6 @@
                            Text="游戏公告" />
                 <cc:AdaptiveGridView Margin="0,-12,0,0"
                                      DesiredWidth="300"
-                                     ItemContainerStyle="{StaticResource BlankGridViewItemStyle}"
                                      ItemHeight="180"
                                      ItemTemplate="{StaticResource AnnouncementCardTemplate}"
                                      ItemsSource="{x:Bind GameAnnouncements}"

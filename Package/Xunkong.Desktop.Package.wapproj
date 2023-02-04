@@ -74,7 +74,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1">
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230118.102">
       <IncludeAssets>build</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755">

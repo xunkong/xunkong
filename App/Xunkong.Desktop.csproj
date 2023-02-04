@@ -16,7 +16,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="AngleSharp" Version="1.0.1" />
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
 		<PackageReference Include="CommunityToolkit.WinUI.Notifications" Version="7.1.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Behaviors" Version="7.1.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Core" Version="7.1.2" />
@@ -27,10 +27,10 @@
 		<PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.2" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Graphics.Win2D" Version="1.0.4" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230118.102" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
 		<PackageReference Include="MiniExcel" Version="1.30.0" />
-		<PackageReference Include="protobuf-net" Version="3.1.26" />
+		<PackageReference Include="protobuf-net" Version="3.1.33" />
 		<PackageReference Include="Scighost.WinUILib" Version="0.1.1" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageReference Include="SingleFileExtractor.Core" Version="1.1.0" />

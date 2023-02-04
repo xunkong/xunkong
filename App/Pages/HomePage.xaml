@@ -149,7 +149,9 @@
                                FontSize="20"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                Text="快捷指令" />
-                    <SplitButton Command="{x:Bind StartGameCommand, Mode=OneTime}" Content="启动游戏">
+                    <SplitButton Height="32"
+                                 Command="{x:Bind StartGameCommand, Mode=OneTime}"
+                                 Content="启动游戏">
                         <SplitButton.Flyout>
                             <Flyout>
                                 <Grid MinWidth="280"
