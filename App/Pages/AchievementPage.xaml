@@ -722,7 +722,7 @@
                             <ComboBoxItem Content="剪贴板" />
                             <ComboBoxItem Content="Json 文件" />
                             <ComboBoxItem Content="椰羊" />
-                            <ComboBoxItem Content="Snap Genshin" />
+                            <ComboBoxItem Content="Snap Hutao" />
                         </ComboBox>
                     </StackPanel>
                     <Button Command="{x:Bind ExportAchievementDataCommand, Mode=OneTime}" Content="导出" />

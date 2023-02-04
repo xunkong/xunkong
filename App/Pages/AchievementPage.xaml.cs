@@ -1132,11 +1132,11 @@ public sealed partial class AchievementPage : Page
                         }
                         break;
                     case 3:
-                        // Snap Genshin
+                        // Snap Hutao
                         ClipboardHelper.SetText(text);
-                        if (!await Launcher.LaunchUriAsync(new("snapgenshin://achievement/import/uiaf"), new LauncherOptions { FallbackUri = new("https://www.snapgenshin.com/") }))
+                        if (!await Launcher.LaunchUriAsync(new("hutao://achievement/import"), new LauncherOptions { FallbackUri = new("https://hut.ao/") }))
                         {
-                            NotificationProvider.Warning("启动 Snap Genshin 失败");
+                            NotificationProvider.Warning("启动 Snap Hutao 失败");
                         }
                         break;
                     default:
