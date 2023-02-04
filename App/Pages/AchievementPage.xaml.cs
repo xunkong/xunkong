@@ -633,6 +633,24 @@ public sealed partial class AchievementPage : Page
                 SaveAchievementItemStateChanged(item);
             }
         }
+        if (sender is Image image)
+        {
+            if (image.Tag is AchievementPageModel_Item item)
+            {
+                var newFinish = !item.IsFinish;
+                item.Current = 0;
+                item.Status = newFinish ? 3 : 1;
+                if (newFinish)
+                {
+                    OnAchievementFinisheChanged(item, true);
+                }
+                else
+                {
+                    OnAchievementFinisheChanged(item, false);
+                }
+                SaveAchievementItemStateChanged(item);
+            }
+        }
     }
 
 

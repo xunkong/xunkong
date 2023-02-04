@@ -73,14 +73,14 @@
                     <Run Text="{x:Bind GotRewardCount}" /><Run Text="/" /><Run Text="{x:Bind TotalRewardCount}" />
                 </TextBlock>
             </StackPanel>
-            <AutoSuggestBox x:Name="c_AutoSuggetBox_Search"
+            <!--<AutoSuggestBox
                             Width="340"
                             Height="32"
                             Margin="324,0,0,0"
                             HorizontalAlignment="Left"
                             PlaceholderText="请输入成就的名称、描述、版本、ID 。。。"
                             QueryIcon="Find"
-                            QuerySubmitted="c_AutoSuggetBox_Search_QuerySubmitted" />
+                            QuerySubmitted="c_AutoSuggetBox_Search_QuerySubmitted" />-->
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                 <ComboBox x:Name="c_ComboBox_Uids"
                           MinWidth="124"
@@ -105,21 +105,34 @@
 
 
         <Grid Grid.Row="1"
-              Margin="16,0,16,8"
-              ColumnSpacing="4"
+              Margin="12,0,12,8"
               RequestedTheme="Light">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
+
+            <AutoSuggestBox x:Name="c_AutoSuggetBox_Search"
+                            Width="284"
+                            Height="32"
+                            Margin="16,8,16,0"
+                            HorizontalAlignment="Stretch"
+                            PlaceholderText="输入名称、描述、版本、ID 。。。"
+                            QueryIcon="Find"
+                            QuerySubmitted="c_AutoSuggetBox_Search_QuerySubmitted" />
+
             <!--  成就集合  -->
             <ListView x:Name="c_ListView_AchievementGoal"
                       Grid.Row="1"
                       Grid.Column="0"
                       Margin="0,12,0,24"
-                      Padding="0,0,4,0"
                       ItemsSource="{x:Bind AchievementGoals}"
                       SelectedItem="{x:Bind SelectedGoal, Mode=TwoWay}"
                       SelectionChanged="c_ListView_AchievementGoal_SelectionChanged"
@@ -140,7 +153,8 @@
                         <Border x:Name="c_Border_Achievementgoal"
                                 Width="280"
                                 Height="72"
-                                Margin="16,4,16,4"
+                                Margin="8,4,8,4"
+                                HorizontalAlignment="Stretch"
                                 Background="{ThemeResource GoalNonSelectedBackgroundBrush}"
                                 PointerEntered="c_Border_Achievementgoal_PointerEntered"
                                 PointerExited="c_Border_Achievementgoal_PointerExited">
@@ -183,7 +197,8 @@
             </ListView>
 
             <!--  成就内容  -->
-            <Grid Grid.Row="1"
+            <Grid Grid.Row="0"
+                  Grid.RowSpan="2"
                   Grid.Column="1"
                   UseLayoutRounding="True">
 
@@ -239,7 +254,7 @@
                 <Grid Grid.Row="1"
                       Grid.Column="1"
                       Margin="20,20,24,36"
-                      Padding="12"
+                      Padding="0,12,0,12"
                       Background="{ThemeResource NameCardBackgroundBrush}"
                       CornerRadius="4">
                     <Grid.RowDefinitions>
@@ -251,7 +266,7 @@
                     <Grid x:Name="c_Grid_GoalReward"
                           Grid.Row="0"
                           Height="80"
-                          Margin="16,0,16,16"
+                          Margin="12,0,12,16"
                           Background="{ThemeResource NameCardBackgroundBrush}"
                           BorderBrush="#E0D6CB"
                           BorderThickness="2"
@@ -365,7 +380,7 @@
 
                     <!--  成就项列表  -->
                     <ListView Grid.Row="1"
-                              Padding="16,4,16,4"
+                              Padding="12,4,12,4"
                               ItemsSource="{x:Bind Achievements}">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
@@ -412,7 +427,10 @@
                                            Height="80"
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center"
-                                           Source="{x:Bind Icon}" />
+                                           Source="{x:Bind Icon}"
+                                           Tag="{x:Bind}"
+                                           Tapped="c_CheckBox_AchievementItemFinished_Click"
+                                           ToolTipService.ToolTip="点击成就图片切换状态" />
 
                                     <!--  介绍  -->
                                     <Grid Grid.Column="1">
