@@ -60,12 +60,15 @@ public sealed partial class MainPage : Page
     {
         Thickness currMargin = _appTitleBar.Margin;
         double left = 0;
+        var top = (int)(MainWindow.Current.UIScale * 48);
+
         if (sender.DisplayMode == NavigationViewDisplayMode.Minimal)
         {
             left = sender.CompactPaneLength * 2;
             _appTitleBar.Margin = new Thickness(left, currMargin.Top, currMargin.Right, currMargin.Bottom);
             _NavigationView.IsPaneToggleButtonVisible = true;
             _MainPageFrame.Margin = new Thickness(0, 48, 0, 0);
+            MainWindow.Current.SetDragRectangles(new Windows.Graphics.RectInt32(top * 2, 0, 10000, top));
         }
         else
         {
@@ -73,6 +76,7 @@ public sealed partial class MainPage : Page
             _appTitleBar.Margin = new Thickness(left, currMargin.Top, currMargin.Right, currMargin.Bottom);
             _NavigationView.IsPaneToggleButtonVisible = false;
             _MainPageFrame.Margin = new Thickness();
+            MainWindow.Current.SetDragRectangles(new Windows.Graphics.RectInt32(top, 0, 10000, top));
         }
         UpdateAppTitleMargin(sender);
     }

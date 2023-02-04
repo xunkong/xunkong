@@ -152,9 +152,9 @@ public sealed partial class MainWindow : Window
 
     private void ChangeTitleBarButtonColor()
     {
-        var titleBar = _appWindow.TitleBar;
-        if (titleBar != null)
+        if (AppWindowTitleBar.IsCustomizationSupported())
         {
+            var titleBar = _appWindow.TitleBar;
             switch (RootBorder.ActualTheme)
             {
                 case ElementTheme.Default:
@@ -175,6 +175,15 @@ public sealed partial class MainWindow : Window
         }
     }
 
+
+
+    public void SetDragRectangles(params RectInt32[] rects)
+    {
+        if (AppWindowTitleBar.IsCustomizationSupported())
+        {
+            _appWindow.TitleBar.SetDragRectangles(rects);
+        }
+    }
 
 
     private void MainWindow_Closed(object sender, WindowEventArgs args)
