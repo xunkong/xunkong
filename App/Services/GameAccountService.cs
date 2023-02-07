@@ -283,6 +283,7 @@ internal class GameAccountService
                         Arguments = command.ToString(),
                         UseShellExecute = true,
                         Verb = "runas",
+                        WorkingDirectory = Path.GetDirectoryName(exePath),
                     };
                     Process.Start(info);
                 }
@@ -294,6 +295,7 @@ internal class GameAccountService
                         Arguments = isPopup ? "-popupwindow" : "",
                         UseShellExecute = true,
                         Verb = "runas",
+                        WorkingDirectory = Path.GetDirectoryName(exePath),
                     };
                     Process.Start(info);
                 }
