@@ -380,7 +380,7 @@
                                         <LineBreak />
                                         <Run FontSize="12"
                                              Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                             Text="{x:Bind GameExePathGlobal}" />
+                                             Text="{x:Bind GameExePathCNCloud}" />
                                     </TextBlock>
                                     <Button HorizontalAlignment="Right"
                                             Command="{x:Bind ChangeGameExePathCommand, Mode=OneTime}"
