@@ -361,6 +361,9 @@
                             <MenuFlyoutItem Command="{x:Bind GetWishlogFromCacheFileCommand, Mode=OneTime}"
                                             CommandParameter="1"
                                             Text="国际服" />
+                            <MenuFlyoutItem Command="{x:Bind GetWishlogFromCacheFileCommand, Mode=OneTime}"
+                                            CommandParameter="2"
+                                            Text="云原神" />
                             <MenuFlyoutSeparator />
                             <MenuFlyoutItem Command="{x:Bind StartProxyCommand, Mode=OneTime}" Text="启动代理" />
                             <MenuFlyoutItem Command="{x:Bind CloseProxyCommand, Mode=OneTime}" Text="关闭代理" />

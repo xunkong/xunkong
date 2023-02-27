@@ -87,6 +87,30 @@ internal class WishlogService
 
 
 
+
+
+    public static string? FindWishlogUrlFromCloudServer()
+    {
+        var logFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"GenshinImpactCloudGame\config\logs\MiHoYoSDK.log");
+        if (File.Exists(logFile))
+        {
+            using var fs = File.Open(logFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            using var reader = new StreamReader(fs);
+            var str = reader.ReadToEnd();
+            var matches = Regex.Matches(str, @"https://.+#/log");
+            if (matches.Any())
+            {
+                return matches.Last().Value;
+            }
+        }
+        return null;
+    }
+
+
+
+
+
+
     public static void DeleteCacheFile(int server)
     {
         try
@@ -105,6 +129,10 @@ internal class WishlogService
             if (server == 1)
             {
                 file = Path.Join(folder, @"GenshinImpact_Data\webCaches\Cache\Cache_Data\data_2");
+            }
+            if (server == 2)
+            {
+                file = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"GenshinImpactCloudGame\config\logs\MiHoYoSDK.log");
             }
             if (File.Exists(file))
             {

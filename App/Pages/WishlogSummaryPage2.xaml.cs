@@ -513,8 +513,12 @@ public sealed partial class WishlogSummaryPage2 : Page
     {
         try
         {
-            var exePath = GameAccountService.GetGameExePath(server == "1" ? 1 : 0);
-            var url = WishlogClient.GetWishlogUrlFromCacheFile(exePath);
+            var url = server switch
+            {
+                "0" or "1" => WishlogClient.GetWishlogUrlFromCacheFile(GameAccountService.GetGameExePath(server == "1" ? 1 : 0)),
+                "2" => WishlogService.FindWishlogUrlFromCloudServer(),
+                _ => null,
+            };
             if (url is null)
             {
                 NotificationProvider.Warning("没有找到祈愿记录网址，请在游戏中打开历史记录页面后再重试。");
@@ -535,7 +539,7 @@ public sealed partial class WishlogSummaryPage2 : Page
                 StateText = ex.Message;
                 if (ex is HoyolabException { ReturnCode: -101 })
                 {
-                    WishlogService.DeleteCacheFile(server == "1" ? 1 : 0);
+                    WishlogService.DeleteCacheFile(int.Parse(server));
                 }
             }
         }
