@@ -85,7 +85,11 @@ public sealed partial class WishlogSummaryPage2 : Page
                 return 0;
             }
         }
-        set => ComboBox_AllUids.SelectedItem = value.ToString();
+        set
+        {
+            ComboBox_AllUids.SelectedItem = value.ToString();
+            AppSetting.SetValue(SettingKeys.LastSelectedUidInWishlogSummaryPage, value);
+        }
     }
 
     private List<WishlogItemEx> wishlogList;
