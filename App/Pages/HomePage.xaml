@@ -258,7 +258,6 @@
                             </Flyout>
                         </SplitButton.Flyout>
                     </SplitButton>
-                    <Button Command="{x:Bind OpenSummary2022Command, Mode=OneTime}" Content="2022 年度总结" />
                 </StackPanel>
 
 
