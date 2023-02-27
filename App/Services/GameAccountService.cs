@@ -163,7 +163,7 @@ internal class GameAccountService
     /// <summary>
     /// 游戏路径
     /// </summary>
-    /// <param name="server"></param>
+    /// <param name="server">0-cn, 1-global, 2-cncloud</param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     /// <exception cref="XunkongException"></exception>

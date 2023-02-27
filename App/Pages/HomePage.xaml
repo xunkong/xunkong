@@ -149,6 +149,7 @@
                                FontSize="20"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                Text="快捷指令" />
+                    <!--  启动游戏  -->
                     <SplitButton Height="32"
                                  Command="{x:Bind StartGameCommand, Mode=OneTime}"
                                  Content="启动游戏">
@@ -258,6 +259,8 @@
                             </Flyout>
                         </SplitButton.Flyout>
                     </SplitButton>
+                    <!--  备份游戏截图  -->
+                    <Button Command="{x:Bind BackupGameScreenshotCommand, Mode=OneTime}" Content="备份游戏截图" />
                 </StackPanel>
 
 

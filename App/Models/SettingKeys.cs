@@ -228,6 +228,13 @@ internal abstract class SettingKeys
     [Backup]
     public const string CheckTransformerAndHomeCoinWhenStartGame = nameof(CheckTransformerAndHomeCoinWhenStartGame);
 
+
+    /// <summary>
+    /// 游戏截图备份路径
+    /// </summary>
+    [Backup]
+    public const string GameScreenshotBackupFolder = nameof(GameScreenshotBackupFolder);
+
 }
 
 

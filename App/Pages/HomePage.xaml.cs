@@ -1082,6 +1082,78 @@ public sealed partial class HomePage : Page
 
 
 
+    [RelayCommand]
+    private async Task BackupGameScreenshotAsync()
+    {
+        try
+        {
+            int addCount = 0;
+            var backFolder = AppSetting.GetValue<string>(SettingKeys.GameScreenshotBackupFolder);
+            if (string.IsNullOrWhiteSpace(backFolder))
+            {
+                backFolder = Path.Combine(XunkongEnvironment.UserDataPath, "Screenshot");
+            }
+            var result = await Task.Run<(int AddCount, int TotalCount)>(() =>
+            {
+                if (!Directory.Exists(backFolder))
+                {
+                    Directory.CreateDirectory(backFolder);
+                }
+                for (int i = 0; i < 2; i++)
+                {
+                    try
+                    {
+                        var gameExe = GameAccountService.GetGameExePath(i);
+                        var screenshotFolder = Path.Join(Path.GetDirectoryName(gameExe), "ScreenShot");
+                        if (Directory.Exists(screenshotFolder))
+                        {
+                            var files = Directory.GetFiles(screenshotFolder, "*.png");
+                            foreach (var file in files)
+                            {
+                                var path = Path.Combine(backFolder, Path.GetFileName(file));
+                                if (!File.Exists(path))
+                                {
+                                    File.Copy(file, path, true);
+                                    File.SetCreationTime(path, new FileInfo(file).CreationTime);
+                                    addCount++;
+                                }
+                            }
+                        }
+                    }
+                    catch (XunkongException)
+                    {
+                        continue;
+                    }
+                }
+                var cloudFolder = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "GenshinImpactCloudGame");
+                if (Directory.Exists(cloudFolder))
+                {
+                    var files = Directory.GetFiles(cloudFolder, "*.png");
+                    foreach (var file in files)
+                    {
+                        var path = Path.Combine(backFolder, Path.GetFileName(file));
+                        if (!File.Exists(path))
+                        {
+                            File.Copy(file, path, true);
+                            File.SetCreationTime(path, new FileInfo(file).CreationTime);
+                            addCount++;
+                        }
+                    }
+                }
+                var totalFiles = Directory.GetFiles(backFolder).Length;
+                return (addCount, totalFiles);
+            });
+            NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "备份完成", $"新增图片 {result.AddCount} 张，总计图片 {result.TotalCount} 张。", "打开文件夹", async () => await Launcher.LaunchFolderPathAsync(backFolder), null, 5000);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+            NotificationProvider.Error(ex);
+        }
+    }
+
+
+
 
 
 

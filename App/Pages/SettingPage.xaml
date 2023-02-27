@@ -661,6 +661,28 @@
                     </xdc:SettingCard>
 
 
+                    <!--  截图备份文件夹  -->
+                    <xdc:SettingCard>
+                        <xdc:SettingCard.Icon>
+                            <FontIcon Glyph="&#xE158;" />
+                        </xdc:SettingCard.Icon>
+                        <xdc:SettingCard.Content>
+                            <TextBlock>
+                                <Run Text="截图备份文件夹" />
+                                <LineBreak />
+                                <Run FontSize="12"
+                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                     Text="{x:Bind GameScreenshotBackupFolder}" />
+                            </TextBlock>
+                        </xdc:SettingCard.Content>
+                        <xdc:SettingCard.Selector>
+                            <Button HorizontalAlignment="Right"
+                                    Command="{x:Bind ChangeScreenshotBackupFolderCommand, Mode=OneTime}"
+                                    Content="选择文件夹" />
+                        </xdc:SettingCard.Selector>
+                    </xdc:SettingCard>
+
+
                     <!--  文件缓存  -->
                     <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                         <Expander.Header>

@@ -1,4 +1,5 @@
 ﻿using AngleSharp;
+using Microsoft.Extensions.Primitives;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -671,6 +672,38 @@ public sealed partial class SettingPage : Page
 
 
     #region Data
+
+
+
+    [ObservableProperty]
+    private string _GameScreenshotBackupFolder = AppSetting.GetValue<string>(SettingKeys.GameScreenshotBackupFolder) ?? Path.Combine(XunkongEnvironment.UserDataPath, "Screenshot");
+    partial void OnGameScreenshotBackupFolderChanged(string value)
+    {
+        AppSetting.SetValue(SettingKeys.GameScreenshotBackupFolder, value);
+    }
+
+
+    [RelayCommand]
+    private async Task ChangeScreenshotBackupFolderAsync()
+    {
+        try
+        {
+            var dialog = new FolderPicker();
+            dialog.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+            InitializeWithWindow.Initialize(dialog, MainWindow.Current.HWND);
+            var folder = await dialog.PickSingleFolderAsync();
+            if (folder != null)
+            {
+                GameScreenshotBackupFolder = folder.Path;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "设置截图备份文件夹");
+            NotificationProvider.Error(ex, "设置截图备份文件夹");
+        }
+    }
+
 
 
 
