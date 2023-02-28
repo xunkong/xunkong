@@ -173,10 +173,24 @@ public sealed partial class WishlogSummaryPage2 : Page
     }
 
 
+    private bool loaded;
+
 
     private async Task ChangeUidAsync(int uid)
     {
         var result = await Task.Run(() => LoadWishlog(uid));
+        if (!loaded)
+        {
+            if (wishlogList.Count == 0)
+            {
+                StateText = "在游戏中查看祈愿记录后，点击上方的获取记录->官服/国际服/云原神。";
+            }
+            else
+            {
+                StateText = "双击下方的角色/武器图标查看详细记录";
+            }
+            loaded = true;
+        }
         QueryTypeStats = result.QueryTypeStats;
         CharacterThumbs = result.CharacterThumbs;
         WeaponThumbs = result.WeaponThumbs;
