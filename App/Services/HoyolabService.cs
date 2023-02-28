@@ -1,4 +1,7 @@
-﻿using Xunkong.Hoyolab;
+﻿using System.Collections.Concurrent;
+using System.Collections.Immutable;
+using System.Text.RegularExpressions;
+using Xunkong.Hoyolab;
 using Xunkong.Hoyolab.Account;
 using Xunkong.Hoyolab.Avatar;
 using Xunkong.Hoyolab.DailyNote;
@@ -457,6 +460,145 @@ internal class HoyolabService
         using var dapper = DatabaseProvider.CreateConnection();
         return dapper.Query<TravelNotesMonthData>(sql, new { Uid = uid });
     }
+
+
+
+
+
+
+
+    public async Task<List<CharacterInfoPage2_CharacterInfo>> GetCharacterInfosAsync(GenshinRoleInfo role)
+    {
+        var details = await _hoyolabClient.GetAvatarDetailsAsync(role);
+        var list = new BlockingCollection<CharacterInfoPage2_CharacterInfo>(details.Count);
+        await Parallel.ForEachAsync(details, async (detail, _) =>
+        {
+            var skills = await _hoyolabClient.GetAvatarSkillLevelAsync(role, detail.Id);
+            var info = new CharacterInfoPage2_CharacterInfo
+            {
+                Id = detail.Id,
+                Constellations = detail.ActivedConstellationNumber,
+                Fetter = detail.Fetter,
+                Icon = detail.Icon,
+                Level = detail.Level,
+                Name = detail.Name,
+                Rarity = detail.Rarity,
+                Element = detail.Element,
+            };
+            info.Weapon = new CharacterInfoPage2_WeaponInfo
+            {
+                Rarity = detail.Weapon.Rarity,
+                Name = detail.Weapon.Name,
+                Level = detail.Weapon.Level,
+                AffixLevel = detail.Weapon.AffixLevel,
+                Icon = detail.Weapon.Icon,
+                Id = detail.Weapon.Id,
+                Type = detail.Weapon.Type,
+            };
+            info.Reliquaries = Enumerable.Range(1, 5).Select(x => new CharacterInfoPage2_ReliquaryInfo()).ToList();
+            foreach (var item in detail.Reliquaries)
+            {
+                info.Reliquaries.RemoveAt(item.Position - 1);
+                info.Reliquaries.Insert(item.Position - 1, new CharacterInfoPage2_ReliquaryInfo
+                {
+                    Id = item.Id,
+                    Icon = item.Icon,
+                    Level = item.Level,
+                    Name = item.Name,
+                    Position = item.Position,
+                    Rarity = item.Rarity,
+                });
+            }
+
+            if (info.Id == 10000005)
+            {
+                info.Name = "空";
+                info.Fetter = 10;
+            }
+            if (info.Id == 10000007)
+            {
+                info.Name = "荧";
+                info.Fetter = 10;
+            }
+
+            if (info.Id == 10000033)
+            {
+                // 达达利亚
+                info.SkillBuff_A_Icon = "https://file.xunkong.cc/genshin/talent/UI_Talent_S_Tartaglia_07.png";
+            }
+
+            if (detail.ActivedConstellationNumber >= 3)
+            {
+                var con = detail.Constellations[2];
+                var name = Regex.Match(con.Effect, @">(.+)<").Groups[1].Value;
+                var index = skills.FindIndex(x => x.Name == name);
+                if (index < 2)
+                {
+                    info.SkillBuff_E_Icon = con.Icon;
+                }
+                else
+                {
+                    info.SkillBuff_Q_Icon = con.Icon;
+                }
+            }
+
+            if (detail.ActivedConstellationNumber >= 5)
+            {
+                var con = detail.Constellations[4];
+                var name = Regex.Match(con.Effect, @">(.+)<").Groups[1].Value;
+                var index = skills.FindIndex(x => x.Name == name);
+                if (index < 2)
+                {
+                    info.SkillBuff_E_Icon = con.Icon;
+                }
+                else
+                {
+                    info.SkillBuff_Q_Icon = con.Icon;
+                }
+            }
+
+            int temp = 1;
+            foreach (var skill in skills)
+            {
+                if (skill.MaxLevel > 1)
+                {
+                    switch (temp)
+                    {
+                        case 1:
+                            info.SkillLevel_A = skill.CurrentLevel;
+                            break;
+                        case 2:
+                            info.SkillLevel_E = skill.CurrentLevel;
+                            break;
+                        case 3:
+                            info.SkillLevel_Q = skill.CurrentLevel;
+                            break;
+                        default:
+                            break;
+                    }
+                    temp++;
+                }
+            }
+
+            list.Add(info);
+        });
+        var result = new List<CharacterInfoPage2_CharacterInfo>(list.Count);
+        foreach (var item in details)
+        {
+            var info = list.FirstOrDefault(x => x.Id == item.Id);
+            if (info != null)
+            {
+                result.Add(info);
+            }
+        }
+        for (int i = 0; i < result.Count; i++)
+        {
+            result[i].Index = i + 1;
+        }
+        return result;
+    }
+
+
 
 
 

@@ -28,7 +28,7 @@ internal class DatabaseProvider
     public static int DatabaseVersion => UpdateSqls.Count;
 
 
-    private static List<string> UpdateSqls = new() { TableStructure_v1, TableStructure_v2, TableStructure_v3, TableStructure_v4 };
+    private static List<string> UpdateSqls = new() { TableStructure_v1, TableStructure_v2, TableStructure_v3, TableStructure_v4, TableStructure_v5 };
 
 
 
@@ -296,6 +296,23 @@ internal class DatabaseProvider
         CREATE INDEX IF NOT EXISTS IX_TravelNotesAwardItem_ActionName ON TravelNotesAwardItem (ActionName);
 
         PRAGMA USER_VERSION = 4;
+        COMMIT TRANSACTION;
+        """;
+
+
+    private const string TableStructure_v5 = """
+        BEGIN TRANSACTION;
+
+        CREATE TABLE IF NOT EXISTS CharacterInfo
+        (
+            Uid   INTEGER NOT NULL,
+            Id    INTEGER NOT NULL,
+            Value TEXT    NOT NULL,
+            Time  TEXT    NOT NULL,
+            PRIMARY KEY (Uid, Id)
+        );
+
+        PRAGMA USER_VERSION = 5;
         COMMIT TRANSACTION;
         """;
 

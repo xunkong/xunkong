@@ -1,0 +1,293 @@
+﻿<!--  Copyright (c) Microsoft Corporation and Contributors.  -->
+<!--  Licensed under the MIT License.  -->
+
+<Page x:Class="Xunkong.Desktop.Pages.CharacterInfoPage2"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:cc="using:CommunityToolkit.WinUI.UI.Controls"
+      xmlns:converters="using:Xunkong.Desktop.Converters"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:Xunkong.Desktop.Pages"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:xdc="using:Xunkong.Desktop.Controls"
+      xmlns:xdm="using:Xunkong.Desktop.Models"
+      x:DefaultBindMode="OneWay"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+      RequestedTheme="Light"
+      mc:Ignorable="d">
+
+    <Page.Resources>
+        <converters:RarityToBackgroundBrushConverter x:Key="RarityToBackgroundBrushConverter" />
+        <converters:ConstellationToBackgroundBrushConverter x:Key="ConstellationToBackgroundBrushConverter" />
+        <converters:WeaponAffixToBackgroundBrushConverter x:Key="WeaponAffixToBackgroundBrushConverter" />
+        <converters:FetterToBackgroundColorConverter x:Key="FetterToBackgroundColorConverter" />
+        <converters:FetterToBackgroundBrushConverter x:Key="FetterToBackgroundBrushConverter" />
+        <converters:SkillLevelToBackgroundBrushConverter x:Key="SkillLevelToBackgroundBrushConverter" />
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60" />
+            <RowDefinition Height="40" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+
+        <Grid Padding="24,0,24,0" CornerRadius="4,0,0,4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBlock HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       Style="{ThemeResource SubtitleTextBlockStyle}"
+                       Text="我的角色" />
+            <TextBlock Margin="120,0,0,0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       Text="{x:Bind UidAndTime}" />
+            <StackPanel Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal">
+                <AppBarButton Command="{x:Bind GetCharacterInfosCommand}"
+                              Icon="Refresh"
+                              Label="获取数据" />
+            </StackPanel>
+        </Grid>
+
+
+        <ScrollViewer Grid.Row="1"
+                      Grid.RowSpan="2"
+                      Padding="24,0,24,0">
+
+            <ScrollViewer.TopHeader>
+                <StackPanel Grid.Row="1"
+                            Height="40"
+                            HorizontalAlignment="Left"
+                            Background="{ThemeResource CustomAcrylicBrush}"
+                            Canvas.ZIndex="1"
+                            Orientation="Horizontal">
+                    <Border Width="40"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="0.5" />
+                    <Border Width="160"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="0.5">
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Text="角色" />
+                    </Border>
+                    <Border Width="40"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="0.5">
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Text="等级" />
+                    </Border>
+                    <Border Width="40"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="0.5">
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Text="命座" />
+                    </Border>
+                    <Border Width="40"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="0.5">
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Text="好感" />
+                    </Border>
+                    <Border Width="40"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="0.5">
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Text="A" />
+                    </Border>
+                    <Border Width="40"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="0.5">
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Text="E" />
+                    </Border>
+                    <Border Width="40"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="0.5">
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Text="Q" />
+                    </Border>
+                    <Border Width="200"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="0.5">
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Text="武器" />
+                    </Border>
+                    <Border Width="200"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="0.5">
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Text="圣遗物" />
+                    </Border>
+                </StackPanel>
+            </ScrollViewer.TopHeader>
+
+            <ItemsRepeater Margin="0,0,0,24"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           ItemsSource="{x:Bind CharacterInfos}">
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="xdm:CharacterInfoPage2_CharacterInfo">
+                        <StackPanel Height="40" Orientation="Horizontal">
+                            <Border Width="40"
+                                    Background="{x:Bind Rarity, Converter={StaticResource RarityToBackgroundBrushConverter}}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="0.5">
+                                <TextBlock VerticalAlignment="Center"
+                                           Text="{x:Bind Index}"
+                                           TextAlignment="Center" />
+                            </Border>
+                            <StackPanel Width="160"
+                                        Background="{x:Bind Rarity, Converter={StaticResource RarityToBackgroundBrushConverter}}"
+                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                        BorderThickness="0.5"
+                                        Orientation="Horizontal"
+                                        Spacing="4">
+                                <Image Width="20"
+                                       Margin="4,0,2,0"
+                                       Source="{x:Bind Element, Converter={StaticResource ElementToElementImageConverter}}" />
+                                <xdc:CachedImage Width="40"
+                                                 Height="40"
+                                                 Source="{x:Bind Icon}" />
+                                <TextBlock VerticalAlignment="Center" Text="{x:Bind Name}" />
+                            </StackPanel>
+                            <Border Width="40"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="0.5">
+                                <TextBlock VerticalAlignment="Center"
+                                           Text="{x:Bind Level}"
+                                           TextAlignment="Center" />
+                            </Border>
+                            <Border Width="40"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="0.5">
+                                <Border Width="20"
+                                        Height="20"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Background="{x:Bind Constellations, Converter={StaticResource ConstellationToBackgroundBrushConverter}}"
+                                        CornerRadius="4">
+                                    <TextBlock HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Foreground="white"
+                                               Text="{x:Bind Constellations}" />
+                                </Border>
+                            </Border>
+                            <Grid Width="40"
+                                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                  BorderThickness="0.5">
+                                <BitmapIcon Width="28"
+                                            Margin="0,4,0,0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Foreground="{x:Bind Fetter, Converter={StaticResource FetterToBackgroundBrushConverter}}"
+                                            Opacity="0.2"
+                                            UriSource="ms-appx:///Assets/Images/SpriteUI_Icon_Fetter.png" />
+                                <cc:DropShadowPanel HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    BlurRadius="4"
+                                                    OffsetX="0"
+                                                    OffsetY="0"
+                                                    ShadowOpacity="1"
+                                                    Color="{x:Bind Fetter, Converter={StaticResource FetterToBackgroundColorConverter}}">
+                                    <TextBlock FontWeight="Bold"
+                                               Foreground="White"
+                                               Text="{x:Bind Fetter}" />
+                                </cc:DropShadowPanel>
+                            </Grid>
+                            <Border Width="40"
+                                    Background="{x:Bind SkillLevel_A, Converter={StaticResource SkillLevelToBackgroundBrushConverter}}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="0.5">
+                                <TextBlock VerticalAlignment="Center"
+                                           Text="{x:Bind ActualSkillLevel_A}"
+                                           TextAlignment="Center" />
+                            </Border>
+                            <Grid Width="40"
+                                  Background="{x:Bind SkillLevel_E, Converter={StaticResource SkillLevelToBackgroundBrushConverter}}"
+                                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                  BorderThickness="0.5">
+                                <xdc:CachedImage Source="{x:Bind SkillBuff_E_Icon}" />
+                                <TextBlock VerticalAlignment="Center"
+                                           Text="{x:Bind ActualSkillLevel_E}"
+                                           TextAlignment="Center" />
+                            </Grid>
+                            <Grid Width="40"
+                                  Background="{x:Bind SkillLevel_Q, Converter={StaticResource SkillLevelToBackgroundBrushConverter}}"
+                                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                  BorderThickness="0.5">
+                                <xdc:CachedImage Source="{x:Bind SkillBuff_Q_Icon}" />
+                                <TextBlock VerticalAlignment="Center"
+                                           Text="{x:Bind ActualSkillLevel_Q}"
+                                           TextAlignment="Center" />
+                            </Grid>
+                            <StackPanel Width="200"
+                                        Background="{x:Bind Weapon.Rarity, Converter={StaticResource RarityToBackgroundBrushConverter}}"
+                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                        BorderThickness="0.5"
+                                        Orientation="Horizontal"
+                                        Spacing="4">
+                                <xdc:CachedImage Width="40"
+                                                 Height="40"
+                                                 Source="{x:Bind Weapon.Icon}" />
+                                <TextBlock Width="28"
+                                           VerticalAlignment="Center"
+                                           FontSize="12">
+                                    <Run Text="Lv." /><Run Text="{x:Bind Weapon.Level}" />
+                                </TextBlock>
+                                <Border Width="16"
+                                        Height="16"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Background="{x:Bind Weapon.AffixLevel, Converter={StaticResource ConstellationToBackgroundBrushConverter}}"
+                                        CornerRadius="4">
+                                    <TextBlock HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="12"
+                                               Foreground="white"
+                                               Text="{x:Bind Weapon.AffixLevel}" />
+                                </Border>
+                                <TextBlock VerticalAlignment="Center" Text="{x:Bind Weapon.Name}" />
+                            </StackPanel>
+                            <Border Width="200">
+                                <ItemsControl ItemsSource="{x:Bind Reliquaries}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="xdm:CharacterInfoPage2_ReliquaryInfo">
+                                            <xdc:CachedImage Width="40"
+                                                             Height="40"
+                                                             Background="{x:Bind Rarity, Converter={StaticResource RarityToBackgroundBrushConverter}}"
+                                                             Source="{x:Bind Icon}" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Border>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+
+        </ScrollViewer>
+
+
+    </Grid>
+
+</Page>

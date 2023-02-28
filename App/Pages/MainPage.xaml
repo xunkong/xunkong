@@ -309,7 +309,7 @@
                         <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}" UriSource="ms-appx:///Assets/Images/SpriteUI_BtnIcon_Gacha.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="我的角色" Tag="CharacterInfoPage">
+                <NavigationViewItem Content="我的角色" Tag="CharacterInfoPage2">
                     <NavigationViewItem.Icon>
                         <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}" UriSource="ms-appx:///Assets/Images/SpriteUI_BtnIcon_PlayerGirl.png" />
                     </NavigationViewItem.Icon>
