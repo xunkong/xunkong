@@ -232,7 +232,6 @@ internal abstract class SettingKeys
     /// <summary>
     /// 游戏截图备份路径
     /// </summary>
-    [Backup]
     public const string GameScreenshotBackupFolder = nameof(GameScreenshotBackupFolder);
 
 }

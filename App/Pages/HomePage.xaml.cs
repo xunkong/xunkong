@@ -1087,6 +1087,7 @@ public sealed partial class HomePage : Page
     {
         try
         {
+            OperationHistory.AddToDatabase("BackupScreenshot");
             int addCount = 0;
             var backFolder = AppSetting.GetValue<string>(SettingKeys.GameScreenshotBackupFolder);
             if (string.IsNullOrWhiteSpace(backFolder))

@@ -23,20 +23,20 @@
 		<PackageReference Include="Dapper" Version="2.0.123" />
 		<PackageReference Include="LiteDB" Version="5.0.15" />
 		<PackageReference Include="Mapster" Version="7.3.0" />
-		<PackageReference Include="Markdig" Version="0.30.4" />
-		<PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.2" />
+		<PackageReference Include="Markdig" Version="0.31.0" />
+		<PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.3" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Graphics.Win2D" Version="1.0.4" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230118.102" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230217.4" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
-		<PackageReference Include="MiniExcel" Version="1.30.0" />
-		<PackageReference Include="protobuf-net" Version="3.1.33" />
-		<PackageReference Include="Scighost.WinUILib" Version="0.1.1" />
+		<PackageReference Include="MiniExcel" Version="1.30.2" />
+		<PackageReference Include="protobuf-net" Version="3.2.8" />
+		<PackageReference Include="Scighost.WinUILib" Version="0.1.2" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageReference Include="SingleFileExtractor.Core" Version="1.1.0" />
 		<PackageReference Include="TaskScheduler" Version="2.10.1" />
 		<PackageReference Include="Titanium.Web.Proxy" Version="3.2.0" />
-		<PackageReference Include="Vanara.PInvoke.User32" Version="3.4.12" />
+		<PackageReference Include="Vanara.PInvoke.User32" Version="3.4.13" />
 		<PackageReference Include="Syncfusion.Chart.WinUI" Version="20.1.0.61" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
