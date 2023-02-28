@@ -10,7 +10,7 @@ internal class VoiceCache : CacheBase<StorageFile>
     private static VoiceCache _instance;
 
 
-    public static VoiceCache Instance => _instance ??= new VoiceCache { CacheDuration = TimeSpan.FromDays(30), RetryCount = 3 };
+    public static VoiceCache Instance => _instance ??= new VoiceCache { CacheDuration = TimeSpan.FromDays(90), RetryCount = 3 };
 
 
     protected override Task<StorageFile> InitializeTypeAsync(Stream stream)
