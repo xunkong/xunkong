@@ -812,7 +812,7 @@
                                 <LineBreak />
                                 <Run FontSize="12"
                                      Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                     Text="数据量较大，请耐心等待（一般不需要手动更新）" />
+                                     Text="{x:Bind UpdateGenshinDataText}" />
                             </TextBlock>
                         </xdc:SettingCard.Content>
                         <xdc:SettingCard.Selector>

@@ -196,7 +196,7 @@ internal class XunkongApiService
     public async Task<IEnumerable<CharacterInfo>> GetCharacterInfosFromServerAsync()
     {
         var characterInfos = await _xunkongClient.GetCharacterInfosAsync();
-        using var liteDb = DatabaseProvider.CreateLiteDB();
+        using var liteDb = DatabaseProvider.CreateGenshinDataDb();
         var col = liteDb.GetCollection<CharacterInfo>();
         col.DeleteAll();
         col.InsertBulk(characterInfos);
@@ -207,7 +207,7 @@ internal class XunkongApiService
     public async Task<IEnumerable<WeaponInfo>> GetWeaponInfosFromServerAsync()
     {
         var weaponInfos = await _xunkongClient.GetWeaponInfosAsync();
-        using var liteDb = DatabaseProvider.CreateLiteDB();
+        using var liteDb = DatabaseProvider.CreateGenshinDataDb();
         var col = liteDb.GetCollection<WeaponInfo>();
         col.DeleteAll();
         col.InsertBulk(weaponInfos);
@@ -218,7 +218,7 @@ internal class XunkongApiService
     public async Task<IEnumerable<WishEventInfo>> GetWishEventInfosFromServerAsync()
     {
         var wishEventInfos = await _xunkongClient.GetWishEventInfosAsync();
-        using var liteDb = DatabaseProvider.CreateLiteDB();
+        using var liteDb = DatabaseProvider.CreateGenshinDataDb();
         var col = liteDb.GetCollection<WishEventInfo>();
         col.DeleteAll();
         col.InsertBulk(wishEventInfos);
@@ -228,7 +228,7 @@ internal class XunkongApiService
 
     private static void SaveGenshinData(AllGenshinData data)
     {
-        using var liteDb = DatabaseProvider.CreateLiteDB();
+        using var liteDb = DatabaseProvider.CreateGenshinDataDb();
 
         GenshinDataDic[nameof(CharacterInfo)] = data.Characters;
         var col1 = liteDb.GetCollection<CharacterInfo>();
@@ -267,7 +267,7 @@ internal class XunkongApiService
                 return t;
             }
         }
-        using var liteDb = DatabaseProvider.CreateLiteDB();
+        using var liteDb = DatabaseProvider.CreateGenshinDataDb();
         var list = liteDb.GetCollection<T>().FindAll().ToList();
         GenshinDataDic[typeof(T).Name] = list;
         return list;

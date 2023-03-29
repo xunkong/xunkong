@@ -9,13 +9,13 @@ internal class DatabaseProvider
 
     private static readonly string _sqlitePath;
 
-    private static readonly string _liteDbPath;
+    private static readonly string _genshinDataDbPath;
 
     private static readonly string _docDbPath;
 
     private static readonly string _sqliteConnectionString;
 
-    private static readonly string _liteDbConnectionString;
+    private static readonly string _genshinDataDbConnectionString;
 
     private static readonly string _docDbConnectionString;
 
@@ -23,7 +23,7 @@ internal class DatabaseProvider
 
 
     public static string SqlitePath => _sqlitePath;
-    public static string LiteDbPath => _liteDbPath;
+    public static string GenshinDataDbPath => _genshinDataDbPath;
 
     public static int DatabaseVersion => UpdateSqls.Count;
 
@@ -35,11 +35,11 @@ internal class DatabaseProvider
     static DatabaseProvider()
     {
         Directory.CreateDirectory(Path.Combine(XunkongEnvironment.UserDataPath, "Database"));
-        _liteDbPath = Path.Combine(XunkongEnvironment.UserDataPath, @"Database\GenshinData.db");
+        _genshinDataDbPath = Path.Combine(XunkongEnvironment.UserDataPath, @"Database\GenshinData.db");
         _docDbPath = Path.Combine(XunkongEnvironment.UserDataPath, @"Database\Document.db");
         _sqlitePath = Path.Combine(XunkongEnvironment.UserDataPath, @"Database\XunkongData.db");
         _sqliteConnectionString = $"Data Source={_sqlitePath};";
-        _liteDbConnectionString = $"Filename={_liteDbPath};Connection=shared;";
+        _genshinDataDbConnectionString = $"Filename={_genshinDataDbPath};Connection=shared;";
         _docDbConnectionString = $"Filename={_docDbPath};Connection=shared;";
 
         SqlMapper.AddTypeHandler(new DapperSqlMapper.DateTimeOffsetHandler());
@@ -79,9 +79,9 @@ internal class DatabaseProvider
 
 
 
-    public static LiteDatabase CreateLiteDB()
+    public static LiteDatabase CreateGenshinDataDb()
     {
-        return new LiteDatabase(_liteDbConnectionString);
+        return new LiteDatabase(_genshinDataDbConnectionString);
     }
 
 

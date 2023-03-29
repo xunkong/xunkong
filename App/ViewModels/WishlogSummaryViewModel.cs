@@ -225,10 +225,9 @@ internal partial class WishlogSummaryViewModel : ObservableObject
             // 卡池信息时区
             WishEventInfo.RegionType = WishlogService.UidToRegionType(_SelectedUid);
             // 初始化卡池信息，所有祈愿记录
-            using var liteDb = DatabaseProvider.CreateLiteDB();
-            var characters = liteDb.GetCollection<CharacterInfo>().FindAll().ToList();
+            var characters = XunkongApiService.GetGenshinData<CharacterInfo>().ToList();
             var dic_characters = characters.Where(x => !string.IsNullOrWhiteSpace(x.Name)).ToImmutableDictionary(x => x.Name!);
-            var weapons = liteDb.GetCollection<WeaponInfo>().FindAll().ToList();
+            var weapons = XunkongApiService.GetGenshinData<WeaponInfo>().ToList();
             var dic_weapons = weapons.Where(x => !string.IsNullOrWhiteSpace(x.Name)).ToImmutableDictionary(x => x.Name!);
             var wishlogs = WishlogService.GetWishlogItemExByUid(_SelectedUid);
             var wishlogs_group_dic = wishlogs.GroupBy(x => x.Name).ToImmutableDictionary(x => x.Key);
@@ -300,7 +299,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
             }
 
             // 根据卡池分类计算
-            var eventInfos = liteDb.GetCollection<WishEventInfo>().FindAll().ToList();
+            var eventInfos = XunkongApiService.GetGenshinData<WishEventInfo>().ToList();
 
             var character_groups = eventInfos.Where(x => x.QueryType == WishType.CharacterEvent).GroupBy(x => x.StartTime).ToList();
             var character_eventStats = new List<WishlogSummaryPage_EventStats>();
