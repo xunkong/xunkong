@@ -316,39 +316,39 @@ public sealed partial class WishlogManagePage : Page
                 NotificationProvider.Warning("无法解析导入的文件或文件内没有任何数据");
                 return;
             }
-            var uids = importedItems.Select(x => x.Uid).Distinct().ToList();
-            if (uids.Count(x => x != 0) > 1)
-            {
-                NotificationProvider.Error("导入的数据中存在多个uid");
-                return;
-            }
-            if (importedItems.Any(x => x.Id == 0))
-            {
-                NotificationProvider.Error("导入的数据中存在id为0的项");
-                return;
-            }
-            var langs = importedItems.Select(x => x.Language).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
-            if (langs.Count > 1)
-            {
-                NotificationProvider.Error("导入的数据中存在多个lang");
-                return;
-            }
+            //var uids = importedItems.Select(x => x.Uid).Distinct().ToList();
+            //if (uids.Count(x => x != 0) > 1)
+            //{
+            //    NotificationProvider.Error("导入的数据中存在多个uid");
+            //    return;
+            //}
+            //if (importedItems.Any(x => x.Id == 0))
+            //{
+            //    NotificationProvider.Error("导入的数据中存在id为0的项");
+            //    return;
+            //}
+            //var langs = importedItems.Select(x => x.Language).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
+            //if (langs.Count > 1)
+            //{
+            //    NotificationProvider.Error("导入的数据中存在多个lang");
+            //    return;
+            //}
             if (OverwriteUid == 0)
             {
-                if (importedItems.Any(x => x.Uid == 0))
-                {
-                    NotificationProvider.Error("导入的数据中存在uid为0的项");
-                    return;
-                }
+                //if (importedItems.Any(x => x.Uid == 0))
+                //{
+                //    NotificationProvider.Error("导入的数据中存在uid为0的项");
+                //    return;
+                //}
             }
             else
             {
-                var existUid = importedItems.Where(x => x.Uid != 0).Select(x => x.Uid).FirstOrDefault();
-                if (existUid != 0 && existUid != OverwriteUid)
-                {
-                    NotificationProvider.Error("导入的数据中存在与指定uid不符的项");
-                    return;
-                }
+                //var existUid = importedItems.Where(x => x.Uid != 0).Select(x => x.Uid).FirstOrDefault();
+                //if (existUid != 0 && existUid != OverwriteUid)
+                //{
+                //    NotificationProvider.Error("导入的数据中存在与指定uid不符的项");
+                //    return;
+                //}
                 foreach (var item in importedItems)
                 {
                     item.Uid = OverwriteUid;
@@ -356,30 +356,37 @@ public sealed partial class WishlogManagePage : Page
             }
             if (string.IsNullOrWhiteSpace(OverwriteLang))
             {
-                if (importedItems.Any(x => string.IsNullOrWhiteSpace(x.Language)))
-                {
-                    NotificationProvider.Error("导入的数据中存在lang为空的项");
-                    return;
-                }
+                //if (importedItems.Any(x => string.IsNullOrWhiteSpace(x.Language)))
+                //{
+                //    NotificationProvider.Error("导入的数据中存在lang为空的项");
+                //    return;
+                //}
             }
             else
             {
-                var existLang = importedItems.Where(x => !string.IsNullOrWhiteSpace(x.Language)).Select(x => x.Language).FirstOrDefault();
-                if (existLang != null && existLang != OverwriteLang)
-                {
-                    NotificationProvider.Error("导入的数据中存在与指定lang不符的项");
-                    return;
-                }
+                //var existLang = importedItems.Where(x => !string.IsNullOrWhiteSpace(x.Language)).Select(x => x.Language).FirstOrDefault();
+                //if (existLang != null && existLang != OverwriteLang)
+                //{
+                //    NotificationProvider.Error("导入的数据中存在与指定lang不符的项");
+                //    return;
+                //}
                 foreach (var item in importedItems)
                 {
                     item.Language = OverwriteLang;
                 }
             }
             var wishlogs = importedItems.Adapt<List<WishlogItem>>();
-            if (!wishlogs.Any() || wishlogs.Any(x => x.Uid == 0) || wishlogs.Any(x => string.IsNullOrWhiteSpace(x.Language)))
+            //if (!wishlogs.Any() || wishlogs.Any(x => x.Uid == 0) || wishlogs.Any(x => string.IsNullOrWhiteSpace(x.Language)))
+            //{
+            //    NotificationProvider.Error("校验后仍存在不符合要求的数据");
+            //    return;
+            //}
+            foreach (var item in wishlogs)
             {
-                NotificationProvider.Error("校验后仍存在不符合要求的数据");
-                return;
+                if (item.Language is null)
+                {
+                    item.Language = "";
+                }
             }
             var uid = wishlogs.First().Uid;
             await _backupService.BackupWishlogItemsAsync(uid);
