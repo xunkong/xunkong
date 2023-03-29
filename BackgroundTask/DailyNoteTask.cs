@@ -2,7 +2,7 @@
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Background;
 
-namespace Xunkong.Desktop.Background;
+namespace Xunkong.Desktop.BackgroundTask;
 
 public sealed class DailyNoteTask : IBackgroundTask
 {

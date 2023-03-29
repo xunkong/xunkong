@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32.TaskScheduler;
+using Windows.ApplicationModel.Background;
 using Windows.Storage;
 
 namespace Xunkong.Desktop.Services;
@@ -68,16 +69,22 @@ internal static class TaskSchedulerService
     /// <param name="enable"></param>
     public static void RegisterForRefreshTile(bool enable)
     {
-        using var task = TaskService.Instance.NewTask();
-        task.RegistrationInfo.Description = "寻空刷新磁贴任务";
-        task.Actions.Add(new ExecAction("wscript", $@"/b ""{CreateWscriptFile("RefreshTile", "RefreshTile")}"""));
-        task.Triggers.Add(new TimeTrigger
+        foreach (var item in BackgroundTaskRegistration.AllTasks)
         {
-            Enabled = true,
-            Repetition = new RepetitionPattern(TimeSpan.FromMinutes(16), TimeSpan.Zero),
-        });
-        task.Settings.Enabled = enable;
-        using var _ = TaskService.Instance.RootFolder.RegisterTaskDefinition("Xunkong\\刷新磁贴", task);
+            if (item.Value.Name == "DailyNoteTask")
+            {
+                if (!enable)
+                {
+                    item.Value.Unregister(false);
+                }
+                return;
+            }
+        }
+        var builder = new BackgroundTaskBuilder();
+        builder.Name = "DailyNoteTask";
+        builder.TaskEntryPoint = "Xunkong.Desktop.BackgroundTask.DailyNoteTask";
+        builder.SetTrigger(new Windows.ApplicationModel.Background.TimeTrigger(16, false));
+        _ = builder.Register();
     }
 
 

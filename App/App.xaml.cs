@@ -173,11 +173,23 @@ public partial class App : Application
                 {
                     if (e.Data is IToastNotificationActivatedEventArgs args)
                     {
-                        if (!firstInstance.IsCurrent)
+                        if (args.Argument == "CancelPreCacheAllFiles" && !firstInstance.IsCurrent)
                         {
+                            // 停止下载图片
                             await firstInstance.RedirectActivationToAsync(e);
+                            Environment.Exit(0);
                         }
-                        Environment.Exit(0);
+                        if (args.Argument.StartsWith("DailyNoteTask_DoNotRemind"))
+                        {
+                            AppSetting.SetValue(args.Argument, true);
+                            Environment.Exit(0);
+                        }
+                        if (args.Argument.StartsWith("DailyNoteTask_VerifyAccount"))
+                        {
+                            toolWindow = new ToolWindow(e);
+                            toolWindow.Activate();
+                            handled = true;
+                        }
                     }
                 }
                 if (handled)

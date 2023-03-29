@@ -49,18 +49,18 @@ public static class Program
             return;
         }
 
-        //if (args.FirstOrDefault() == "/InvokerPRAID:")
-        //{
-        //    if (args[2] == "DailyNoteTask")
-        //    {
-        //        InvokeService.RefreshDailyNoteTilesAsync().GetAwaiter().GetResult();
-        //    }
-        //    if (args[2] == "HoyolabCheckInTask")
-        //    {
-        //        InvokeService.SignInAllAccountAsync().GetAwaiter().GetResult();
-        //    }
-        //    return;
-        //}
+        if (args.FirstOrDefault() == "/InvokerPRAID:")
+        {
+            if (args[2] == "DailyNoteTask")
+            {
+                InvokeService.RefreshDailyNoteTilesAsync().GetAwaiter().GetResult();
+            }
+            if (args[2] == "HoyolabCheckInTask")
+            {
+                InvokeService.SignInAllAccountAsync().GetAwaiter().GetResult();
+            }
+            return;
+        }
 
         XamlCheckProcessRequirements();
 

@@ -101,6 +101,17 @@ public sealed partial class ToolWindow : Window
                 }
             }
         }
+        if (e.Kind == ExtendedActivationKind.ToastNotification)
+        {
+            if (e.Data is IToastNotificationActivatedEventArgs args)
+            {
+                if (args.Argument.StartsWith("DailyNoteTask_VerifyAccount"))
+                {
+                    Frame_Root.Content = new VerifyAccountPage(args);
+                    handled = true;
+                }
+            }
+        }
         if (!handled)
         {
             ResizeToCenter(360, 480);

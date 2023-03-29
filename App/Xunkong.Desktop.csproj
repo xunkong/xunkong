@@ -45,6 +45,7 @@
 		<ProjectReference Include="..\..\Common\Xunkong.GenshinData\Xunkong.GenshinData.csproj" />
 		<ProjectReference Include="..\..\Common\Xunkong.Hoyolab\Xunkong.Hoyolab.csproj" />
 		<ProjectReference Include="..\..\Server\ApiClient\Xunkong.ApiClient.csproj" />
+		<ProjectReference Include="..\BackgroundTask\Xunkong.Desktop.BackgroundTask.csproj" />
 	</ItemGroup>
 
 </Project>

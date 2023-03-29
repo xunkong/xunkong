@@ -1,5 +1,7 @@
-﻿using System.Net.Http;
+﻿using CommunityToolkit.WinUI.Notifications;
+using System.Net.Http;
 using System.Text;
+using Windows.UI.Notifications;
 using Xunkong.Hoyolab;
 
 namespace Xunkong.Desktop.Services;
@@ -37,8 +39,8 @@ internal class InvokeService
                     }
                     catch (HoyolabException ex)
                     {
-                        await ToastProvider.SendAsync("刷新磁贴时遇到错误", $"Uid {uid}\n{ex.Message}");
                         Logger.Error(ex, $"刷新磁贴 - Uid {uid}");
+                        SendRefreshDailyNoteErrorToast(uid, ex);
                     }
                 }
             }
@@ -50,8 +52,58 @@ internal class InvokeService
         catch (Exception ex)
         {
             Logger.Error(ex, "刷新磁贴");
-            await ToastProvider.SendAsync("刷新磁贴时遇到错误", ex.Message);
+            SendRefreshDailyNoteErrorToast(0, ex);
         }
+    }
+
+
+
+    public static void SendRefreshDailyNoteErrorToast(int uid, Exception ex)
+    {
+        if (AppSetting.GetValue<bool>($"DailyNoteTask_DoNotRemind_{uid}"))
+        {
+            return;
+        }
+        var tb = new ToastContentBuilder();
+        if (ex is HoyolabException hex)
+        {
+            tb.AddText($"Uid {uid}");
+            if (hex.ReturnCode == 1034)
+            {
+                tb.AddText("需要验证账号");
+                tb.AddButton("验证账号", ToastActivationType.Foreground, $"DailyNoteTask_VerifyAccount_{uid}");
+            }
+            else
+            {
+                tb.AddText("刷新磁贴时遇到错误");
+                tb.AddText(hex.Message);
+            }
+        }
+        else
+        {
+            tb.AddText("刷新磁贴时遇到错误");
+            tb.AddText(ex.Message);
+        }
+        var content = tb.AddButton("不再提醒", ToastActivationType.Foreground, $"DailyNoteTask_DoNotRemind_{uid}")
+                        .AddToastActivationInfo("DoNotClickToast", ToastActivationType.Background)
+                        .AddAttributionText(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"))
+                        .GetToastContent();
+
+        var toast = new ToastNotification(content.GetXml());
+        toast.Group = "DailyNoteTask";
+        toast.Tag = $"DailyNoteTask_{uid}";
+
+        foreach (var item in ToastNotificationManager.History.GetHistory())
+        {
+            if (item.Tag == toast.Tag)
+            {
+                return;
+            }
+        }
+
+        var manager = ToastNotificationManager.CreateToastNotifier();
+        manager.Show(toast);
+
     }
 
 
