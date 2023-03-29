@@ -239,8 +239,18 @@ public sealed partial class CharacterInfoPage : Page
             var wishlogs = WishlogService.GetWishlogItemExByUid(role?.Uid ?? 0);
             var matches = from a in avatars join c in characters on a.Id equals c.Id select (a, c);
             int exceptId = 0;
+
+            var maxTime = DateTime.MaxValue;
+            if (AppSetting.GetValue<bool>(SettingKeys.HideUnusableCharacter))
+            {
+                maxTime = DateTime.Now;
+            }
             foreach (var item in matches)
             {
+                if (item.c.BeginTime > maxTime)
+                {
+                    continue;
+                }
                 item.c.IsOwn = true;
                 item.c.Level = item.a.Level;
                 item.c.Fetter = item.a.Fetter;

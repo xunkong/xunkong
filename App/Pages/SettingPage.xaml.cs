@@ -941,4 +941,15 @@ public sealed partial class SettingPage : Page
     }
 
 
+
+    /// <summary>
+    /// 隐藏未上线的角色
+    /// </summary>
+    [ObservableProperty]
+    private bool _HideUnusableCharacter = AppSetting.GetValue<bool>(SettingKeys.HideUnusableCharacter);
+    partial void OnHideUnusableCharacterChanged(bool value)
+    {
+        AppSetting.SetValue(SettingKeys.HideUnusableCharacter, value);
+    }
+
 }

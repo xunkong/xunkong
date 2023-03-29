@@ -240,6 +240,12 @@ internal abstract class SettingKeys
     [Backup]
     public const string UseCharacterPageOldVersion = nameof(UseCharacterPageOldVersion);
 
+    /// <summary>
+    /// 隐藏未上线的角色
+    /// </summary>
+    [Backup]
+    public const string HideUnusableCharacter = nameof(HideUnusableCharacter);
+
 }
 
 

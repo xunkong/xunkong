@@ -65,8 +65,13 @@ public sealed partial class CharacterWikiPage : Page
         try
         {
             var list = XunkongApiService.GetGenshinData<CharacterInfo>();
+            var maxTime = DateTime.MaxValue;
+            if (AppSetting.GetValue<bool>(SettingKeys.HideUnusableCharacter))
+            {
+                maxTime = DateTime.Now;
+            }
             // 以钟离和阿贝多为分界线，之前的应该用 SordId 升序，之后的应该用降序
-            CharacterInfos = list.Where(x => x.BeginTime > new DateTime(2020, 12, 15))
+            CharacterInfos = list.Where(x => x.BeginTime > new DateTime(2020, 12, 15) && x.BeginTime <= maxTime)
                                  .OrderByDescending(x => x.BeginTime)
                                  .ThenByDescending(x => x.SortId)
                                  .Select(x => new PM_CharacterWiki_CharacterInfo
