@@ -633,6 +633,28 @@
                     </xdc:SettingCard>
 
 
+                    <!--  使用旧版我的角色页面  -->
+                    <xdc:SettingCard>
+                        <xdc:SettingCard.Icon>
+                            <FontIcon FontSize="20" Glyph="&#xE13D;" />
+                        </xdc:SettingCard.Icon>
+                        <xdc:SettingCard.Content>
+                            <TextBlock VerticalAlignment="Center">
+                                <Run Text="使用旧版我的角色页面" />
+                                <LineBreak />
+                                <Run FontSize="12"
+                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                     Text="旧版我的角色页面不再维护" />
+                            </TextBlock>
+                        </xdc:SettingCard.Content>
+                        <xdc:SettingCard.Selector>
+                            <ToggleSwitch HorizontalAlignment="Right"
+                                          IsOn="{x:Bind UseCharacterPageOldVersion, Mode=TwoWay}"
+                                          Style="{ThemeResource RightAlignToggleSwitchStyle}" />
+                        </xdc:SettingCard.Selector>
+                    </xdc:SettingCard>
+
+
                     <!--  数据  -->
                     <TextBlock Margin="0,20,0,4"
                                FontSize="20"

@@ -234,6 +234,12 @@ internal abstract class SettingKeys
     /// </summary>
     public const string GameScreenshotBackupFolder = nameof(GameScreenshotBackupFolder);
 
+    /// <summary>
+    /// 使用旧版我的角色页面
+    /// </summary>
+    [Backup]
+    public const string UseCharacterPageOldVersion = nameof(UseCharacterPageOldVersion);
+
 }
 
 

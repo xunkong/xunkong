@@ -929,4 +929,16 @@ public sealed partial class SettingPage : Page
     }
 
 
+
+    /// <summary>
+    /// 使用旧版我的角色页面
+    /// </summary>
+    [ObservableProperty]
+    private bool _UseCharacterPageOldVersion = AppSetting.GetValue<bool>(SettingKeys.UseCharacterPageOldVersion);
+    partial void OnUseCharacterPageOldVersionChanged(bool value)
+    {
+        AppSetting.SetValue(SettingKeys.UseCharacterPageOldVersion, value);
+    }
+
+
 }

@@ -29,7 +29,7 @@ public sealed partial class CharacterInfoPage2 : Page
     {
         this.InitializeComponent();
         _hoyolabService = ServiceProvider.GetService<HoyolabService>()!;
-        Loaded += (_, _) => LoadCharacterInfos();
+        Loaded += async (_, _) => { await Task.Delay(30); LoadCharacterInfos(); };
         Unloaded += (_, _) => WeakReferenceMessenger.Default.Unregister<SelectedGameRoleChangedMessage>(this);
         WeakReferenceMessenger.Default.Register<SelectedGameRoleChangedMessage>(this, (_, m) =>
         {

@@ -164,6 +164,17 @@ public sealed partial class MainPage : Page
                         _MainPageFrame.Navigate(typeof(WebViewPage), "https://xunkong.cc/help/xunkong/");
                         OperationHistory.AddToDatabase("Navigate", "HelpPage");
                     }
+                    if (tag == "CharacterInfoPage2")
+                    {
+                        if (AppSetting.GetValue<bool>(SettingKeys.UseCharacterPageOldVersion))
+                        {
+                            _MainPageFrame.Navigate(typeof(CharacterInfoPage));
+                        }
+                        else
+                        {
+                            _MainPageFrame.Navigate(typeof(CharacterInfoPage2));
+                        }
+                    }
                     else
                     {
                         if (pageTypeDic.TryGetValue(tag, out var type))
