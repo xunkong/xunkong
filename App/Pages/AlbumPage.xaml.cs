@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Windows.Storage;
 using Xunkong.Desktop.Controls;
 using Xunkong.Desktop.ViewModels;
 
@@ -42,7 +43,8 @@ public sealed partial class AlbumPage : Page
             {
                 try
                 {
-                    ClipboardHelper.SetBitmap(new Uri(fileInfo.FullName));
+                    var file = await StorageFile.GetFileFromPathAsync(fileInfo.FullName);
+                    ClipboardHelper.SetBitmap(file);
                     button.Content = new SymbolIcon(Symbol.Accept);
                     await Task.Delay(3000);
                     button.Content = new SymbolIcon(Symbol.Copy);
