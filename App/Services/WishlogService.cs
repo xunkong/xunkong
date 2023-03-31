@@ -341,7 +341,7 @@ internal class WishlogService
         {
             var groupList = group.OrderBy(x => x.Id).ToList();
 
-            var queryType = group.FirstOrDefault()?.QueryType;
+            var queryType = group.Key;
             if (queryType is WishType.Novice or WishType.Permanent)
             {
                 var eventName = queryType switch
@@ -391,6 +391,9 @@ internal class WishlogService
                         {
                             item.Version = e.Version;
                             item.WishEventName = e.Name;
+                        }
+                        if (item.QueryType == e.QueryType)
+                        {
                             if (item.RankType == 5 && e.Rank5UpItems.Contains(item.Name))
                             {
                                 item.IsUp = true;
