@@ -47,6 +47,7 @@ public sealed partial class MainPage : Page
         _hoyolabService = ServiceProvider.GetService<HoyolabService>()!;
         _xunkongApiService = ServiceProvider.GetService<XunkongApiService>()!;
         Loaded += MainPage_Loaded;
+        _MainPageFrame.RegisterPropertyChangedCallback(Frame.CanGoBackProperty, (_, _) => UpdateAppTitleMargin());
     }
 
 
@@ -58,61 +59,98 @@ public sealed partial class MainPage : Page
 
     private void _NavigationView_DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args)
     {
-        Thickness currMargin = _appTitleBar.Margin;
-        double left = 0;
-        var top = (int)(MainWindow.Current.UIScale * 48);
-
-        if (sender.DisplayMode == NavigationViewDisplayMode.Minimal)
-        {
-            left = sender.CompactPaneLength * 2;
-            _appTitleBar.Margin = new Thickness(left, currMargin.Top, currMargin.Right, currMargin.Bottom);
-            _NavigationView.IsPaneToggleButtonVisible = true;
-            _MainPageFrame.Margin = new Thickness(0, 48, 0, 0);
-            MainWindow.Current.SetDragRectangles(new Windows.Graphics.RectInt32(top * 2, 0, 10000, top));
-        }
-        else
-        {
-            left = sender.CompactPaneLength;
-            _appTitleBar.Margin = new Thickness(left, currMargin.Top, currMargin.Right, currMargin.Bottom);
-            _NavigationView.IsPaneToggleButtonVisible = false;
-            _MainPageFrame.Margin = new Thickness();
-            MainWindow.Current.SetDragRectangles(new Windows.Graphics.RectInt32(top, 0, 10000, top));
-        }
-        UpdateAppTitleMargin(sender);
+        UpdateAppTitleMargin();
     }
 
 
     private void _NavigationView_PaneOpening(NavigationView sender, object args)
     {
-        UpdateAppTitleMargin(sender);
+        UpdateAppTitleMargin();
         _Border_AccountImage.Width = 44;
         _Border_AccountImage.Height = 44;
         _Border_AccountImage.Margin = new Thickness(16, 0, 0, 0);
+        if (!_MainPageFrame.CanGoBack)
+        {
+            TextBlock_AppName.Translation = Vector3.Zero;
+        }
     }
 
     private void _NavigationView_PaneClosing(NavigationView sender, NavigationViewPaneClosingEventArgs args)
     {
-        UpdateAppTitleMargin(sender);
+        UpdateAppTitleMargin();
         _Border_AccountImage.Width = 40;
         _Border_AccountImage.Height = 40;
         _Border_AccountImage.Margin = new Thickness(4, 4, 4, 0);
-    }
-
-    private void UpdateAppTitleMargin(NavigationView sender)
-    {
-        const int smallLeftIndent = 4, largeLeftIndent = 24;
-
-        AppTitle.TranslationTransition = new Vector3Transition();
-
-        if ((sender.DisplayMode == NavigationViewDisplayMode.Expanded && sender.IsPaneOpen) ||
-                 sender.DisplayMode == NavigationViewDisplayMode.Minimal)
+        if (_NavigationView.DisplayMode == NavigationViewDisplayMode.Minimal)
         {
-            AppTitle.Translation = new System.Numerics.Vector3(smallLeftIndent, 0, 0);
+            TextBlock_AppName.Translation = Vector3.Zero;
+            AppTitle.Translation = new Vector3(96, 0, 0);
         }
         else
         {
-            AppTitle.Translation = new System.Numerics.Vector3(largeLeftIndent, 0, 0);
+
+            if (!_MainPageFrame.CanGoBack)
+            {
+                TextBlock_AppName.Translation = new Vector3(8, 0, 0);
+            }
+            else
+            {
+                AppTitle.Translation = new Vector3(((float)_NavigationView.CompactPaneLength) + 16, 0, 0);
+                TextBlock_AppName.Translation = Vector3.Zero;
+            }
         }
+    }
+
+
+    private void UpdateAppTitleMargin()
+    {
+        var top = (int)(MainWindow.Current.UIScale * 48);
+        AppTitle.TranslationTransition = new Vector3Transition();
+        TextBlock_AppName.TranslationTransition = new Vector3Transition();
+
+        double left;
+        if (_NavigationView.DisplayMode == NavigationViewDisplayMode.Minimal)
+        {
+            left = _NavigationView.CompactPaneLength * 2;
+            _NavigationView.IsPaneToggleButtonVisible = true;
+            _MainPageFrame.Margin = new Thickness(0, 48, 0, 0);
+            MainWindow.Current.SetDragRectangles(new Windows.Graphics.RectInt32(top * 2, 0, 10000, top));
+            TextBlock_AppName.Translation = Vector3.Zero;
+            AppTitle.Translation = new Vector3((float)left, 0, 0);
+        }
+        else
+        {
+            if (_MainPageFrame.CanGoBack)
+            {
+                left = _NavigationView.CompactPaneLength;
+                if (_NavigationView.DisplayMode == NavigationViewDisplayMode.Expanded || _NavigationView.IsPaneOpen)
+                {
+                    left += 4;
+                }
+                else
+                {
+                    left += 16;
+                }
+                TextBlock_AppName.Translation = Vector3.Zero;
+            }
+            else
+            {
+                left = 12;
+                if (_NavigationView.DisplayMode == NavigationViewDisplayMode.Expanded || _NavigationView.IsPaneOpen)
+                {
+                    TextBlock_AppName.Translation = Vector3.Zero;
+                }
+                else
+                {
+                    TextBlock_AppName.Translation = new Vector3(8, 0, 0);
+                }
+            }
+            _NavigationView.IsPaneToggleButtonVisible = false;
+            _MainPageFrame.Margin = new Thickness();
+            MainWindow.Current.SetDragRectangles(new Windows.Graphics.RectInt32(top, 0, 10000, top));
+            AppTitle.Translation = new Vector3((float)left, 0, 0);
+        }
+
     }
 
 
@@ -777,6 +815,8 @@ public sealed partial class MainPage : Page
             }
         }
     }
+
+
 
     private void Button_ChangeTheme_Tapped(object sender, TappedRoutedEventArgs e)
     {

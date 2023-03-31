@@ -386,7 +386,11 @@
                         HorizontalAlignment="Left"
                         Orientation="Horizontal"
                         Spacing="16">
-                <TextBlock VerticalAlignment="Center"
+                <Image Width="24"
+                       Height="24"
+                       Source="ms-appx:///Assets/Logos/StoreLogo.png" />
+                <TextBlock Name="TextBlock_AppName"
+                           VerticalAlignment="Center"
                            FontSize="14"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                            Text="{x:Bind AppName}" />
