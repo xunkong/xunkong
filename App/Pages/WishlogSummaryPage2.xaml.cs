@@ -183,7 +183,7 @@ public sealed partial class WishlogSummaryPage2 : Page
         {
             if (wishlogList.Count == 0)
             {
-                StateText = "在游戏中查看祈愿记录后，点击上方的获取记录->官服/国际服/云原神。";
+                StateText = "在游戏中查看祈愿记录后，点击上方的获取记录->国服/国际服/云原神。";
             }
             else
             {

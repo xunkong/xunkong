@@ -357,7 +357,7 @@
                         <MenuFlyout>
                             <MenuFlyoutItem Command="{x:Bind GetWishlogFromCacheFileCommand, Mode=OneTime}"
                                             CommandParameter="0"
-                                            Text="官服" />
+                                            Text="国服" />
                             <MenuFlyoutItem Command="{x:Bind GetWishlogFromCacheFileCommand, Mode=OneTime}"
                                             CommandParameter="1"
                                             Text="国际服" />

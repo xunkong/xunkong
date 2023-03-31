@@ -343,14 +343,14 @@
                                     <ComboBox Width="100"
                                               HorizontalAlignment="Right"
                                               SelectedIndex="{x:Bind GameServerIndex, Mode=TwoWay}">
-                                        <ComboBoxItem Content="官服" />
+                                        <ComboBoxItem Content="国服" />
                                         <ComboBoxItem Content="国际服" />
                                         <ComboBoxItem Content="云原神" />
                                     </ComboBox>
                                 </Grid>
                                 <Grid Padding="44,12,0,12">
                                     <TextBlock TextWrapping="Wrap">
-                                        <Run Text="官服 YuanShen.exe 路径" />
+                                        <Run Text="国服 YuanShen.exe 路径" />
                                         <LineBreak />
                                         <Run FontSize="12"
                                              Foreground="{ThemeResource TextFillColorSecondaryBrush}"

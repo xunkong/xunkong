@@ -207,7 +207,7 @@ internal abstract class SettingKeys
     public const string GameServerIndex = nameof(GameServerIndex);
 
     /// <summary>
-    /// 官服游戏路径
+    /// 国服游戏路径
     /// </summary>
     public const string GameExePathCN = nameof(GameExePathCN);
 

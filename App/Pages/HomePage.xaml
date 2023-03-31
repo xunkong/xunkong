@@ -169,7 +169,7 @@
                                                 Spacing="16">
                                         <TextBlock VerticalAlignment="Center" Text="默认启动程序" />
                                         <ComboBox Width="120" SelectedIndex="{x:Bind GameServerIndex, Mode=TwoWay}">
-                                            <ComboBoxItem Content="官服" />
+                                            <ComboBoxItem Content="国服" />
                                             <ComboBoxItem Content="国际服" />
                                             <ComboBoxItem Content="云原神" />
                                         </ComboBox>

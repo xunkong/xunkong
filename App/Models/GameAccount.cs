@@ -24,7 +24,7 @@ public partial class GameAccount : ObservableObject
     public enum GameServer
     {
 
-        [Description("官服")]
+        [Description("国服")]
         CN = 0,
 
         [Description("国际服")]
