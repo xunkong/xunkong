@@ -118,6 +118,16 @@ internal abstract class SettingKeys
     public const string IsPopupWindow = nameof(IsPopupWindow);
 
     /// <summary>
+    /// 游戏窗口宽度
+    /// </summary>
+    public const string StartGameWindowWidth = nameof(StartGameWindowWidth);
+
+    /// <summary>
+    /// 游戏窗口高度
+    /// </summary>
+    public const string StartGameWindowHeight = nameof(StartGameWindowHeight);
+
+    /// <summary>
     /// 游戏截图文件夹路径
     /// </summary>
     public const string ScreenFolderPath = nameof(ScreenFolderPath);

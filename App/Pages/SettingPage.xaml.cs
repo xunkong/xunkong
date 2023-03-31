@@ -330,6 +330,27 @@ public sealed partial class SettingPage : Page
     }
 
 
+    /// <summary>
+    /// 游戏窗口宽度
+    /// </summary>
+    [ObservableProperty]
+    private int _StartGameWindowWidth = AppSetting.GetValue<int>(SettingKeys.StartGameWindowWidth);
+    partial void OnStartGameWindowWidthChanged(int value)
+    {
+        AppSetting.SetValue(SettingKeys.StartGameWindowWidth, value);
+    }
+
+    /// <summary>
+    /// 游戏窗口高度
+    /// </summary>
+    [ObservableProperty]
+    private int _StartGameWindowHeight = AppSetting.GetValue<int>(SettingKeys.StartGameWindowHeight);
+    partial void OnStartGameWindowHeightChanged(int value)
+    {
+        AppSetting.SetValue(SettingKeys.StartGameWindowHeight, value);
+    }
+
+
 
     /// <summary>
     /// 启动游戏

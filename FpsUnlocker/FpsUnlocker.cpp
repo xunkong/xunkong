@@ -134,13 +134,13 @@ DWORD GetPID(std::string ProcessName)
 
 int main(int argc, char* argv[])
 {
-	
+
 	if (argc < 2)
 	{
 		return 0;
 	}
 	char* exePath = nullptr;
-	int TargetFPS = FpsValue;
+	int TargetFPS = FpsValue, width = 0, height = 0;
 	std::string popup = "";
 	for (size_t i = 1; i < argc; i++)
 	{
@@ -162,6 +162,20 @@ int main(int argc, char* argv[])
 		{
 			popup = "-popupwindow";
 		}
+		if (!strcmp(argv[i], "-screen-width"))
+		{
+			if (i + 1 < argc)
+			{
+				width = atoi(argv[i + 1]);
+			}
+		}
+		if (!strcmp(argv[i], "-screen-height"))
+		{
+			if (i + 1 < argc)
+			{
+				height = atoi(argv[i + 1]);
+			}
+		}
 	}
 
 	if (TargetFPS <= 60)
@@ -170,7 +184,11 @@ int main(int argc, char* argv[])
 	}
 
 	ostringstream comm;
-	comm << popup << endl;
+	comm << popup;
+	if (width > 0 && height > 0)
+	{
+		comm << " -screen-width " << width << " -screen-height " << height;
+	}
 	std::string CommandLine{ comm.str() };
 	std::string ProcessPath = exePath;
 	std::string ProcessDir{};

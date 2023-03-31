@@ -395,12 +395,38 @@
                                              Foreground="{ThemeResource SystemFillColorCautionBrush}"
                                              Text="此功能会修改游戏内存，有一定的风险，设定值超过60才会启用" />
                                     </TextBlock>
-                                    <NumberBox MinWidth="80"
+                                    <NumberBox MinWidth="100"
                                                HorizontalAlignment="Right"
                                                Minimum="60"
                                                SmallChange="10"
                                                SpinButtonPlacementMode="Compact"
                                                Value="{x:Bind UnlockedFPS, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </Grid>
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock>
+                                        <Run Text="窗口宽度" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="为 0 时忽略此项设置" />
+                                    </TextBlock>
+                                    <NumberBox Width="100"
+                                               HorizontalAlignment="Right"
+                                               Minimum="0"
+                                               Value="{x:Bind StartGameWindowWidth, Mode=TwoWay}" />
+                                </Grid>
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock>
+                                        <Run Text="窗口高度" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="为 0 时忽略此项设置" />
+                                    </TextBlock>
+                                    <NumberBox Width="100"
+                                               HorizontalAlignment="Right"
+                                               Minimum="0"
+                                               Value="{x:Bind StartGameWindowHeight, Mode=TwoWay}" />
                                 </Grid>
                                 <Grid Padding="44,12,0,12">
                                     <TextBlock>

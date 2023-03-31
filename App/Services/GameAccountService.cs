@@ -266,16 +266,20 @@ internal class GameAccountService
             {
                 var fps = AppSetting.GetValue(SettingKeys.TargetFPS, 60);
                 var isPopup = AppSetting.GetValue<bool>(SettingKeys.IsPopupWindow);
+                var width = AppSetting.GetValue<int>(SettingKeys.StartGameWindowWidth);
+                var height = AppSetting.GetValue<int>(SettingKeys.StartGameWindowHeight);
                 if (fps > 60)
                 {
                     var command = new StringBuilder();
-                    command.Append("-exe ");
-                    command.Append($@"""{exePath}""");
-                    command.Append(" -fps ");
-                    command.Append(fps);
+                    command.Append($@"-exe ""{exePath}"" ");
+                    command.Append($"-fps {fps} ");
                     if (isPopup)
                     {
-                        command.Append(" -popupwindow");
+                        command.Append("-popupwindow ");
+                    }
+                    if (width > 0 && height > 0)
+                    {
+                        command.Append($"-screen-width {width} -screen-height {height} ");
                     }
                     var info = new ProcessStartInfo
                     {
@@ -289,10 +293,19 @@ internal class GameAccountService
                 }
                 else
                 {
+                    var command = new StringBuilder();
+                    if (isPopup)
+                    {
+                        command.Append("-popupwindow ");
+                    }
+                    if (width > 0 && height > 0)
+                    {
+                        command.Append($"-screen-width {width} -screen-height {height} ");
+                    }
                     var info = new ProcessStartInfo
                     {
                         FileName = exePath,
-                        Arguments = isPopup ? "-popupwindow" : "",
+                        Arguments = command.ToString(),
                         UseShellExecute = true,
                         Verb = "runas",
                         WorkingDirectory = Path.GetDirectoryName(exePath),
