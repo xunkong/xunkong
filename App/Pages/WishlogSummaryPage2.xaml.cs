@@ -714,7 +714,6 @@ public sealed partial class WishlogSummaryPage2 : Page
     /// <summary>
     /// 从输入的祈愿记录网址获取信息祈愿记录
     /// </summary>
-    /// <param name="wishlogUrl"></param>
     /// <returns></returns>
     [RelayCommand]
     private async Task GetWishlogFromInputWishlogUrlAsync()
@@ -754,6 +753,36 @@ public sealed partial class WishlogSummaryPage2 : Page
                 NotificationProvider.Error(ex);
                 Logger.Error(ex, "从输入的网址获取新的祈愿记录");
             }
+        }
+    }
+
+
+    [RelayCommand]
+    private void CopyCurrentAccountWishlogUrl()
+    {
+        try
+        {
+            var uid = SelectedUid;
+            using var dapper = DatabaseProvider.CreateConnection();
+            var url = dapper.QueryFirstOrDefault<string>("SELECT Url FROM WishlogUrl WHERE Uid=@uid LIMIT 1;", new { uid });
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                NotificationProvider.Warning($"没有找到 Uid {uid} 的祈愿记录网址");
+            }
+            else
+            {
+                if (!url.EndsWith("#/log"))
+                {
+                    url += "#/log";
+                }
+                ClipboardHelper.SetText(url);
+                NotificationProvider.Success($"已复制 Uid {uid} 的祈愿记录网址");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+            NotificationProvider.Error(ex);
         }
     }
 

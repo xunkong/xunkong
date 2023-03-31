@@ -375,9 +375,8 @@
                                             CommandParameter="{StaticResource True}"
                                             Text="全量更新" />
                             <MenuFlyoutSeparator />
-                            <MenuFlyoutItem Command="{x:Bind GetWishlogFromInputWishlogUrlCommand, Mode=OneTime}"
-                                            CommandParameter="{StaticResource True}"
-                                            Text="输入网址" />
+                            <MenuFlyoutItem Command="{x:Bind GetWishlogFromInputWishlogUrlCommand, Mode=OneTime}" Text="输入网址" />
+                            <MenuFlyoutItem Command="{x:Bind CopyCurrentAccountWishlogUrlCommand, Mode=OneTime}" Text="复制网址" />
                         </MenuFlyout>
                     </AppBarButton.Flyout>
                 </AppBarButton>
