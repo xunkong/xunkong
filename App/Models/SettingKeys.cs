@@ -246,6 +246,12 @@ internal abstract class SettingKeys
     [Backup]
     public const string HideUnusableCharacter = nameof(HideUnusableCharacter);
 
+    /// <summary>
+    /// 显示新手祈愿记录
+    /// </summary>
+    [Backup]
+    public const string ShowNoviceWishType = nameof(ShowNoviceWishType);
+
 }
 
 

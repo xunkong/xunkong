@@ -994,4 +994,15 @@ public sealed partial class SettingPage : Page
         AppSetting.SetValue(SettingKeys.HideUnusableCharacter, value);
     }
 
+
+    /// <summary>
+    /// 显示新手祈愿统计
+    /// </summary>
+    [ObservableProperty]
+    private bool _ShowNoviceWishType = AppSetting.GetValue<bool>(SettingKeys.ShowNoviceWishType);
+    partial void OnShowNoviceWishTypeChanged(bool value)
+    {
+        AppSetting.SetValue(SettingKeys.ShowNoviceWishType, value);
+    }
+
 }

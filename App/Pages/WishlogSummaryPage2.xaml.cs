@@ -219,7 +219,12 @@ public sealed partial class WishlogSummaryPage2 : Page
 
         // 根据祈愿类型分类计算
         var queryTypeStats = new List<WishlogSummaryPage_QueryTypeStats>();
-        foreach (var type in new WishType[] { WishType.CharacterEvent, WishType.WeaponEvent, WishType.Permanent })
+        var wishtypes = new List<WishType>(4) { WishType.CharacterEvent, WishType.WeaponEvent, WishType.Permanent };
+        if (AppSetting.GetValue<bool>(SettingKeys.ShowNoviceWishType))
+        {
+            wishtypes.Add(WishType.Novice);
+        }
+        foreach (var type in wishtypes)
         {
             var items = wishlogs.Where(x => x.QueryType == type).OrderBy(x => x.Id).ToList();
             var totalCount = items.Count;
