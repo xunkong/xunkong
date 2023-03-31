@@ -500,23 +500,15 @@ public sealed partial class HomePage : Page
             Action openImageAction = () => Process.Start(new ProcessStartInfo { FileName = destPath, UseShellExecute = true });
             if (File.Exists(destPath))
             {
-                Action overwriteAction = () =>
-                {
-                    Directory.CreateDirectory(destFolder);
-                    File.Copy(file.Path, destPath, true);
-                    NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "已保存", fileName, "打开文件", openImageAction, null, 3000);
-                    OperationHistory.AddToDatabase("SaveWallpaper", WallpaperInfo?.Url, WallpaperInfo);
-                };
-                NotificationProvider.ShowWithButton(InfoBarSeverity.Warning, "文件已存在", null, "覆盖文件", overwriteAction, null, 3000);
-                return;
+                NotificationProvider.ShowWithButton(InfoBarSeverity.Warning, "文件已存在", null, "打开文件", openImageAction, null, 3000);
             }
             else
             {
                 Directory.CreateDirectory(destFolder);
                 File.Copy(file.Path, destPath, true);
                 NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "已保存", fileName, "打开文件", openImageAction, null, 3000);
-                OperationHistory.AddToDatabase("SaveWallpaper", WallpaperInfo?.Url, WallpaperInfo);
             }
+            OperationHistory.AddToDatabase("SaveWallpaper", WallpaperInfo?.Url, WallpaperInfo);
         }
         catch (Exception ex)
         {
