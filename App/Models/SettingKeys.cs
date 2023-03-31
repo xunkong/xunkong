@@ -252,6 +252,11 @@ internal abstract class SettingKeys
     [Backup]
     public const string ShowNoviceWishType = nameof(ShowNoviceWishType);
 
+    /// <summary>
+    /// 磁贴刷新遇到错误时不再提醒
+    /// </summary>
+    public const string DoNotRemindDailyNoteTaskError = nameof(DoNotRemindDailyNoteTaskError);
+
 }
 
 

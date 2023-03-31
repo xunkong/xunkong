@@ -179,7 +179,7 @@ public partial class App : Application
                             await firstInstance.RedirectActivationToAsync(e);
                             Environment.Exit(0);
                         }
-                        if (args.Argument.StartsWith("DailyNoteTask_DoNotRemind"))
+                        if (args.Argument == SettingKeys.DoNotRemindDailyNoteTaskError)
                         {
                             AppSetting.SetValue(args.Argument, true);
                             Environment.Exit(0);

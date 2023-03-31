@@ -60,7 +60,7 @@ internal class InvokeService
 
     public static void SendRefreshDailyNoteErrorToast(int uid, Exception ex)
     {
-        if (AppSetting.GetValue<bool>($"DailyNoteTask_DoNotRemind_{uid}"))
+        if (AppSetting.GetValue<bool>(SettingKeys.DoNotRemindDailyNoteTaskError))
         {
             return;
         }
@@ -84,7 +84,7 @@ internal class InvokeService
             tb.AddText("刷新磁贴时遇到错误");
             tb.AddText(ex.Message);
         }
-        var content = tb.AddButton("不再提醒", ToastActivationType.Foreground, $"DailyNoteTask_DoNotRemind_{uid}")
+        var content = tb.AddButton("不再提醒", ToastActivationType.Foreground, SettingKeys.DoNotRemindDailyNoteTaskError)
                         .AddToastActivationInfo("DoNotClickToast", ToastActivationType.Background)
                         .AddAttributionText(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"))
                         .GetToastContent();

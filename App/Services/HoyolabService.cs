@@ -349,8 +349,7 @@ internal class HoyolabService
     public async Task<DailyNoteInfo?> GetDailyNoteAsync(GenshinRoleInfo role)
     {
         var note = await _hoyolabClient.GetDailyNoteAsync(role);
-        AppSetting.SetValue($"DailyNoteTask_DoNotRemind_0", false);
-        AppSetting.SetValue($"DailyNoteTask_DoNotRemind_{role.Uid}", false);
+        AppSetting.SetValue(SettingKeys.DoNotRemindDailyNoteTaskError, false);
         return note;
     }
 
