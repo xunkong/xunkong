@@ -62,6 +62,12 @@ public static class Program
             return;
         }
 
+        if (args.FirstOrDefault()?.StartsWith("StartGameWithAccount") ?? false)
+        {
+            GameAccountService.ChangeGameAccountAndStartGameAsync(args.First().Replace("StartGameWithAccount_", ""));
+            return;
+        }
+
         XamlCheckProcessRequirements();
 
         global::WinRT.ComWrappersSupport.InitializeComWrappers();

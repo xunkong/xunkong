@@ -368,7 +368,7 @@ public sealed partial class MainPage : Page
         {
             _NavigationView.IsPaneOpen = !isClosed;
         }
-        InitializeJumpList();
+        //InitializeJumpList();
         RefreshAllAcount();
         GetGenshinData();
         InitializeNavigationWebToolItem(true);

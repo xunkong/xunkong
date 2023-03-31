@@ -329,5 +329,35 @@ internal class GameAccountService
 
 
 
+    public static void ChangeGameAccountAndStartGameAsync(string sha256)
+    {
+        try
+        {
+            using var dapper = DatabaseProvider.CreateConnection();
+            var account = dapper.QueryFirstOrDefault<GameAccount>("SELECT * FROM GameAccount WHERE SHA256=@sha256 LIMIT 1;", new { sha256 });
+            if (account is null)
+            {
+                ToastProvider.Send("没有找到相关账号的信息");
+                return;
+            }
+            if (IsGameRunning((int)account.Server))
+            {
+                ToastProvider.Send("已有游戏进程正在运行");
+                return;
+            }
+            if (!ChangeGameAccount(account))
+            {
+                ToastProvider.Send("切换账号失败");
+            }
+            StartGameAsync((int)account.Server).GetAwaiter().GetResult();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+            ToastProvider.Send(ex.Message);
+        }
+    }
+
+
 
 }

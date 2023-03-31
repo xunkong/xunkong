@@ -202,7 +202,7 @@
                                         <TextBlock VerticalAlignment="Center" Text="已保存的游戏内账号" />
                                         <Button HorizontalAlignment="Stretch"
                                                 Command="{x:Bind AddGameAccountCommand, Mode=OneTime}"
-                                                Content="添加游戏账号" />
+                                                Content="保存新的账号" />
                                     </StackPanel>
                                     <ItemsControl Grid.Row="2"
                                                   Grid.ColumnSpan="2"
@@ -214,10 +214,11 @@
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate x:DataType="xdm:GameAccount">
-                                                <Grid HorizontalAlignment="Stretch" ColumnSpacing="8">
+                                                <Grid HorizontalAlignment="Stretch">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="60" />
                                                         <ColumnDefinition />
+                                                        <ColumnDefinition Width="Auto" />
                                                         <ColumnDefinition Width="Auto" />
                                                         <ColumnDefinition Width="Auto" />
                                                     </Grid.ColumnDefinitions>
@@ -229,14 +230,21 @@
                                                                VerticalAlignment="Center"
                                                                Text="{x:Bind Name}"
                                                                TextTrimming="CharacterEllipsis" />
-                                                    <Button Name="Button_ChangeAccount"
+                                                    <Button Name="Button_ChangeAccountAndStartGame"
                                                             Grid.Column="2"
+                                                            Click="Button_ChangeAccountAndStartGame_Click"
+                                                            Content="&#xE102;"
+                                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                            Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
+                                                            ToolTipService.ToolTip="切换并启动" />
+                                                    <Button Name="Button_ChangeAccount"
+                                                            Grid.Column="3"
                                                             Click="Button_ChangeAccount_Click"
                                                             Content="&#xE8AB;"
                                                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                             Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
-                                                            ToolTipService.ToolTip="切换" />
-                                                    <Button Grid.Column="3"
+                                                            ToolTipService.ToolTip="仅切换" />
+                                                    <Button Grid.Column="4"
                                                             Content="&#xE107;"
                                                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                             Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"

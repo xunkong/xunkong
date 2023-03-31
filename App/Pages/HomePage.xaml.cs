@@ -19,6 +19,7 @@ using Windows.Services.Store;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Notifications;
+using Windows.UI.StartScreen;
 using Xunkong.ApiClient;
 using Xunkong.Desktop.Controls;
 using Xunkong.Desktop.Summaries;
@@ -985,10 +986,67 @@ public sealed partial class HomePage : Page
         try
         {
             GameAccounts = new(GameAccountService.GetGameAccountsFromDatabase());
+            ChangeJumpList();
         }
         catch (Exception ex)
         {
             Logger.Error(ex);
+        }
+    }
+
+
+
+    private async void ChangeJumpList()
+    {
+        try
+        {
+            var logo = new Uri("ms-appx:///Assets/Logos/StoreLogo.png");
+            var jumpList = await JumpList.LoadCurrentAsync();
+            jumpList.Items.Clear();
+            var firstItem = JumpListItem.CreateWithArguments("StartGame", "启动游戏");
+            firstItem.Logo = logo;
+            jumpList.Items.Add(firstItem);
+            foreach (var account in GameAccounts)
+            {
+                var item = JumpListItem.CreateWithArguments($"StartGameWithAccount_{account.SHA256}", $"{account.Name}（{account.Server.ToDescription()}）");
+                item.Logo = logo;
+                item.Description = "切换账号并启动游戏";
+                jumpList.Items.Add(item);
+            }
+            await jumpList.SaveAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "JumpList");
+        }
+    }
+
+
+
+    private async void Button_ChangeAccountAndStartGame_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (sender is Button button && button.DataContext is GameAccount account)
+            {
+                var serverName = account.Server.ToDescription();
+                if (GameAccountService.IsGameRunning((int)account.Server))
+                {
+                    NotificationProvider.Warning($"{serverName}游戏正在运行，无法切换账号");
+                    return;
+                }
+                if (!GameAccountService.ChangeGameAccount(account))
+                {
+                    NotificationProvider.Warning($"{serverName}账号切换失败");
+                    return;
+                }
+                await GameAccountService.StartGameAsync((int)account.Server);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+            NotificationProvider.Error(ex);
         }
     }
 
@@ -1036,6 +1094,7 @@ public sealed partial class HomePage : Page
                 if (GameAccounts.Contains(account))
                 {
                     GameAccounts.Remove(account);
+                    ChangeJumpList();
                 }
             }
         }
@@ -1059,7 +1118,7 @@ public sealed partial class HomePage : Page
             {
                 var dialog = new ContentDialog
                 {
-                    Title = "添加游戏账号",
+                    Title = "保存游戏账号",
                     Content = new AddGameAccountDialog { GameAccounts = accounts },
                     CloseButtonText = "关闭",
                     XamlRoot = MainWindow.Current.XamlRoot,
