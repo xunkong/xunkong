@@ -267,6 +267,16 @@ internal abstract class SettingKeys
     /// </summary>
     public const string DoNotRemindDailyNoteTaskError = nameof(DoNotRemindDailyNoteTaskError);
 
+    /// <summary>
+    /// 自动磁贴刷新
+    /// </summary>
+    public const string EnableDailyNoteTask = nameof(EnableDailyNoteTask);
+
+    /// <summary>
+    /// 磁贴自动刷新时间间隔（分钟）
+    /// </summary>
+    public const string DailyNoteTaskTimeInterval = nameof(DailyNoteTaskTimeInterval);
+
 }
 
 

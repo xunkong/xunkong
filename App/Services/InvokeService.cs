@@ -46,7 +46,7 @@ internal class InvokeService
             }
             else
             {
-                TaskSchedulerService.RegisterForRefreshTile(false);
+                TaskSchedulerService.UnegisterForRefreshTile();
             }
         }
         catch (Exception ex)

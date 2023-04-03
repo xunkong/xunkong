@@ -67,24 +67,40 @@ internal static class TaskSchedulerService
     /// 注册刷新磁贴的任务
     /// </summary>
     /// <param name="enable"></param>
-    public static void RegisterForRefreshTile(bool enable)
+    public static void RegisterForRefreshTile()
+    {
+        if (AppSetting.GetValue(SettingKeys.EnableDailyNoteTask, true))
+        {
+            foreach (var item in BackgroundTaskRegistration.AllTasks)
+            {
+                if (item.Value.Name == "DailyNoteTask")
+                {
+                    return;
+                }
+            }
+            int interval = AppSetting.GetValue(SettingKeys.DailyNoteTaskTimeInterval, 16);
+            interval = Math.Clamp(interval, 15, int.MaxValue);
+            var builder = new BackgroundTaskBuilder();
+            builder.Name = "DailyNoteTask";
+            builder.TaskEntryPoint = "Xunkong.Desktop.BackgroundTask.DailyNoteTask";
+            builder.SetTrigger(new Windows.ApplicationModel.Background.TimeTrigger((uint)interval, false));
+            _ = builder.Register();
+        }
+    }
+
+
+    /// <summary>
+    /// 取消注册刷新磁贴的任务
+    /// </summary>
+    public static void UnegisterForRefreshTile()
     {
         foreach (var item in BackgroundTaskRegistration.AllTasks)
         {
             if (item.Value.Name == "DailyNoteTask")
             {
-                if (!enable)
-                {
-                    item.Value.Unregister(false);
-                }
-                return;
+                item.Value.Unregister(false);
             }
         }
-        var builder = new BackgroundTaskBuilder();
-        builder.Name = "DailyNoteTask";
-        builder.TaskEntryPoint = "Xunkong.Desktop.BackgroundTask.DailyNoteTask";
-        builder.SetTrigger(new Windows.ApplicationModel.Background.TimeTrigger(16, false));
-        _ = builder.Register();
     }
 
 

@@ -108,7 +108,7 @@ public sealed partial class DailyNoteCard : UserControl
                 var result = await SecondaryTileProvider.RequestPinTileAsync(DailyNoteInfo);
                 if (result)
                 {
-                    TaskSchedulerService.RegisterForRefreshTile(result);
+                    TaskSchedulerService.RegisterForRefreshTile();
                 }
             }
         }

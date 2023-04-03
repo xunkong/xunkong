@@ -725,6 +725,47 @@
                     </xdc:SettingCard>
 
 
+                    <!--  自动刷新磁贴  -->
+                    <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                        <Expander.Header>
+                            <Grid>
+                                <StackPanel Padding="4,16,0,16" Orientation="Horizontal">
+                                    <FontIcon FontSize="20" Glyph="&#xECA5;" />
+                                    <TextBlock Margin="20,0,0,0">
+                                        <Run Text="自动更新实时便笺磁贴内容" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="关闭后可以通过点击磁贴手动更新" />
+                                    </TextBlock>
+                                </StackPanel>
+                                <ToggleSwitch HorizontalAlignment="Right"
+                                              IsOn="{x:Bind EnableDailyNoteTask, Mode=TwoWay}"
+                                              Style="{ThemeResource RightAlignToggleSwitchStyle}" />
+                            </Grid>
+                        </Expander.Header>
+                        <Expander.Content>
+                            <StackPanel Margin="0,-16,44,-16">
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock TextWrapping="Wrap">
+                                        <Run Text="磁贴更新时间间隔" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="不得小于15分钟" />
+                                    </TextBlock>
+                                    <NumberBox Width="100"
+                                               HorizontalAlignment="Right"
+                                               Minimum="15"
+                                               SmallChange="1"
+                                               SpinButtonPlacementMode="Compact"
+                                               Value="{x:Bind DailyNoteTaskTimeInterval, Mode=TwoWay}" />
+                                </Grid>
+                            </StackPanel>
+                        </Expander.Content>
+                    </Expander>
+
+
                     <!--  数据  -->
                     <TextBlock Margin="0,20,0,4"
                                FontSize="20"

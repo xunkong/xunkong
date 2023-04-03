@@ -1026,4 +1026,49 @@ public sealed partial class SettingPage : Page
         AppSetting.SetValue(SettingKeys.ShowNoviceWishType, value);
     }
 
+
+    /// <summary>
+    /// 自动磁贴刷新
+    /// </summary>
+    [ObservableProperty]
+    private bool _EnableDailyNoteTask = AppSetting.GetValue(SettingKeys.EnableDailyNoteTask, true);
+    partial void OnEnableDailyNoteTaskChanged(bool value)
+    {
+        AppSetting.SetValue(SettingKeys.EnableDailyNoteTask, value);
+        try
+        {
+            TaskSchedulerService.UnegisterForRefreshTile();
+            if (value)
+            {
+                TaskSchedulerService.RegisterForRefreshTile();
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+            NotificationProvider.Error(ex);
+        }
+    }
+
+
+    /// <summary>
+    /// 磁贴自动刷新时间间隔
+    /// </summary>
+    [ObservableProperty]
+    private int _DailyNoteTaskTimeInterval = AppSetting.GetValue(SettingKeys.DailyNoteTaskTimeInterval, 16);
+    partial void OnDailyNoteTaskTimeIntervalChanged(int value)
+    {
+        AppSetting.SetValue(SettingKeys.DailyNoteTaskTimeInterval, value);
+        try
+        {
+            TaskSchedulerService.UnegisterForRefreshTile();
+            TaskSchedulerService.RegisterForRefreshTile();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+            NotificationProvider.Error(ex);
+        }
+    }
+
 }
