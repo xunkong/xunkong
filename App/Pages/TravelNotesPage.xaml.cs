@@ -4,7 +4,9 @@ using Microsoft.UI.Xaml.Navigation;
 using MiniExcelLibs;
 using Syncfusion.Licensing;
 using System.Diagnostics;
+using System.Net.Http;
 using Windows.ApplicationModel;
+using Xunkong.Hoyolab;
 using Xunkong.Hoyolab.TravelNotes;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -146,10 +148,18 @@ public sealed partial class TravelNotesPage : Page
             }
             else
             {
-                var summary = await _hoyolabService.GetTravelNotesSummaryAsync(role, DateTime.UtcNow.AddHours(8).Month);
-                DayStats = summary?.DayData?.Adapt<TravelNotesPage_DayOrMonthStats>();
-                MonthStats = summary?.MonthData?.Adapt<TravelNotesPage_DayOrMonthStats>();
-                PrimogemsGroup = summary?.MonthData?.PrimogemsGroupBy;
+                try
+                {
+                    var summary = await _hoyolabService.GetTravelNotesSummaryAsync(role, DateTime.UtcNow.AddHours(4).Month);
+                    DayStats = summary?.DayData?.Adapt<TravelNotesPage_DayOrMonthStats>();
+                    MonthStats = summary?.MonthData?.Adapt<TravelNotesPage_DayOrMonthStats>();
+                    PrimogemsGroup = summary?.MonthData?.PrimogemsGroupBy;
+                }
+                catch (Exception ex) when (ex is HttpRequestException or HoyolabException)
+                {
+                    NotificationProvider.Error(ex, "初始化旅行札记页面");
+                    Logger.Error(ex, "初始化旅行札记页面");
+                }
                 var minTime = DateTime.UtcNow.AddDays(-30).AddHours(12);
                 var recentDays = _hoyolabService.GetTravelNotesAwardItems(role.Uid, minTime, null).ToList();
                 var group = recentDays.GroupBy(x => x.Time.Date).OrderBy(x => x.Key);
@@ -195,7 +205,7 @@ public sealed partial class TravelNotesPage : Page
             }
             else
             {
-                var now = DateTime.UtcNow.AddHours(8);
+                var now = DateTime.UtcNow.AddHours(4);
                 var month = now.Month;
                 await _hoyolabService.GetTravelNotesSummaryAsync(role, month);
                 var primogemsAddCount = await _hoyolabService.GetTravelRecordDetailAsync(role, month, TravelNotesAwardType.Primogems);
