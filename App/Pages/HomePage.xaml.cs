@@ -72,7 +72,7 @@ public sealed partial class HomePage : Page
 
 
     [ObservableProperty]
-    private WallpaperInfo wallpaperInfo;
+    private WallpaperInfo currentWallpaper;
 
 
     [ObservableProperty]
@@ -157,7 +157,7 @@ public sealed partial class HomePage : Page
                 {
                     file = path;
                     skipDownload = true;
-                    WallpaperInfo = new WallpaperInfo { Url = path, FileName = "CustomWallpaper.png" };
+                    CurrentWallpaper = new WallpaperInfo { Url = path, FileName = "CustomWallpaper.png" };
                 }
             }
             if (string.IsNullOrWhiteSpace(file))
@@ -165,7 +165,7 @@ public sealed partial class HomePage : Page
                 var wallpaper = _xunkongApiService.GetPreparedWallpaper();
                 if (wallpaper is null)
                 {
-                    WallpaperInfo = FallbackWallpaper;
+                    CurrentWallpaper = FallbackWallpaper;
                     file = (await StorageFile.GetFileFromApplicationUriAsync(new(FallbackWallpaperUri))).Path;
                 }
                 else
@@ -173,12 +173,12 @@ public sealed partial class HomePage : Page
                     var cachedFile = await XunkongCache.Instance.GetFileFromCacheAsync(new(wallpaper.Url));
                     if (cachedFile != null)
                     {
-                        WallpaperInfo = wallpaper;
+                        CurrentWallpaper = wallpaper;
                         file = cachedFile.Path;
                     }
                     else
                     {
-                        WallpaperInfo = FallbackWallpaper;
+                        CurrentWallpaper = FallbackWallpaper;
                         file = (await StorageFile.GetFileFromApplicationUriAsync(new(FallbackWallpaperUri))).Path;
                     }
                 }
@@ -251,7 +251,7 @@ public sealed partial class HomePage : Page
                     var decoder = await BitmapDecoder.CreateAsync(fs);
                     heightDivWidth = (double)decoder.PixelHeight / decoder.PixelWidth;
                     await LoadBackgroundImage(fs.AsStream());
-                    WallpaperInfo = null!;
+                    CurrentWallpaper = null!;
                     var file = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync("CustomWallpaper.png", CreationCollisionOption.ReplaceExisting);
                     await item.CopyAndReplaceAsync(file);
                 }
@@ -263,7 +263,7 @@ public sealed partial class HomePage : Page
                 var decoder = await BitmapDecoder.CreateAsync(stream);
                 heightDivWidth = (double)decoder.PixelHeight / decoder.PixelWidth;
                 await LoadBackgroundImage(stream.AsStream());
-                WallpaperInfo = null!;
+                CurrentWallpaper = null!;
                 var file = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync("CustomWallpaper.png", CreationCollisionOption.ReplaceExisting);
                 using var fs = await file.OpenStreamForWriteAsync();
                 var s = stream.AsStream();
@@ -418,17 +418,17 @@ public sealed partial class HomePage : Page
     [RelayCommand]
     private void OpenImageViewer()
     {
-        if (WallpaperInfo is not null)
+        if (CurrentWallpaper is not null)
         {
-            if (WallpaperInfo == FallbackWallpaper)
+            if (CurrentWallpaper == FallbackWallpaper)
             {
                 MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = FallbackWallpaperUri });
             }
             else
             {
-                MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = WallpaperInfo.Url, DecodeFromStream = true });
+                MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = CurrentWallpaper.Url, DecodeFromStream = true });
             }
-            OperationHistory.AddToDatabase("OpenWallpaper", WallpaperInfo.Url, WallpaperInfo);
+            OperationHistory.AddToDatabase("OpenWallpaper", CurrentWallpaper.Url, CurrentWallpaper);
         }
     }
 
@@ -443,13 +443,13 @@ public sealed partial class HomePage : Page
         try
         {
             StorageFile? file = null;
-            if (WallpaperInfo == FallbackWallpaper)
+            if (CurrentWallpaper == FallbackWallpaper)
             {
                 file = await StorageFile.GetFileFromApplicationUriAsync(new Uri(FallbackWallpaperUri));
             }
             else
             {
-                file = await XunkongCache.GetFileFromUriAsync(WallpaperInfo?.Url);
+                file = await XunkongCache.GetFileFromUriAsync(CurrentWallpaper?.Url);
             }
             if (file != null)
             {
@@ -474,20 +474,20 @@ public sealed partial class HomePage : Page
     [RelayCommand]
     private async Task SaveWallpaper()
     {
-        if (string.IsNullOrWhiteSpace(WallpaperInfo?.Url))
+        if (string.IsNullOrWhiteSpace(CurrentWallpaper?.Url))
         {
             return;
         }
         try
         {
             StorageFile? file = null;
-            if (WallpaperInfo == FallbackWallpaper)
+            if (CurrentWallpaper == FallbackWallpaper)
             {
                 file = await StorageFile.GetFileFromApplicationUriAsync(new Uri(FallbackWallpaperUri));
             }
             else
             {
-                file = await XunkongCache.GetFileFromUriAsync(WallpaperInfo?.Url);
+                file = await XunkongCache.GetFileFromUriAsync(CurrentWallpaper?.Url);
             }
             if (file is null)
             {
@@ -495,7 +495,7 @@ public sealed partial class HomePage : Page
                 return;
             }
             var destFolder = AppSetting.GetValue<string>(SettingKeys.WallpaperSaveFolder) ?? Path.Combine(XunkongEnvironment.UserDataPath, "Wallpaper");
-            var fileName = WallpaperInfo?.FileName ?? Path.GetFileName(WallpaperInfo?.Url)!;
+            var fileName = CurrentWallpaper?.FileName ?? Path.GetFileName(CurrentWallpaper?.Url)!;
             var destPath = Path.Combine(destFolder, fileName);
             Action openImageAction = () => Process.Start(new ProcessStartInfo { FileName = destPath, UseShellExecute = true });
             if (File.Exists(destPath))
@@ -508,7 +508,7 @@ public sealed partial class HomePage : Page
                 File.Copy(file.Path, destPath, true);
                 NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "已保存", fileName, "打开文件", openImageAction, null, 3000);
             }
-            OperationHistory.AddToDatabase("SaveWallpaper", WallpaperInfo?.Url, WallpaperInfo);
+            OperationHistory.AddToDatabase("SaveWallpaper", CurrentWallpaper?.Url, CurrentWallpaper);
         }
         catch (Exception ex)
         {
@@ -525,18 +525,72 @@ public sealed partial class HomePage : Page
     [RelayCommand]
     private async Task OpenImageSourceAsync()
     {
-        if (string.IsNullOrWhiteSpace(WallpaperInfo?.Source))
+        if (string.IsNullOrWhiteSpace(CurrentWallpaper?.Source))
         {
             return;
         }
         try
         {
-            await Launcher.LaunchUriAsync(new Uri(WallpaperInfo.Source));
+            await Launcher.LaunchUriAsync(new Uri(CurrentWallpaper.Source));
         }
         catch (Exception ex)
         {
             NotificationProvider.Error(ex, "打开图源");
             Logger.Error(ex, "打开图源");
+        }
+    }
+
+
+    /// <summary>
+    /// 下一张图片
+    /// </summary>
+    /// <returns></returns>
+    [RelayCommand]
+    private async Task GetNextWallpaperAsync()
+    {
+        try
+        {
+            var loading = new ProgressRing { Width = 16, Height = 16 };
+            _Button_NextWallpaper.Content = loading;
+            var wallpaper = await _xunkongApiService.GetRandomWallpaperAsync();
+            if (wallpaper != null && wallpaper.Id != (CurrentWallpaper?.Id ?? 0))
+            {
+                var uri = new Uri(wallpaper.Url);
+                var fileTask = XunkongCache.Instance.GetFromCacheAsync(uri);
+                var progress = XunkongCache.Instance.GetProgress(uri);
+                if (progress != null)
+                {
+                    loading.IsIndeterminate = false;
+                    progress.ProgressChanged += (s, e) =>
+                    {
+                        if (e.DownloadState is Scighost.WinUILib.Cache.DownloadState.Completed)
+                        {
+                            loading.Value = 100;
+                        }
+                        else
+                        {
+                            loading.Value = e.BytesReceived * 100 / e.TotalBytesToReceive;
+                        }
+                    };
+                }
+                var file = await fileTask;
+                loading.IsIndeterminate = true;
+                if (file is not null)
+                {
+                    await LoadBackgroundImage(file.Path);
+                    imageMaxHeight = MainWindow.Current.Height * 0.75 / MainWindow.Current.UIScale;
+                    _Grid_Image.MaxHeight = imageMaxHeight;
+                    CurrentWallpaper = wallpaper;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+        finally
+        {
+            _Button_NextWallpaper.Content = "\uE149";
         }
     }
 

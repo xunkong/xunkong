@@ -43,7 +43,7 @@
                                 Margin="48,24,48,96"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Bottom"
-                                Visibility="{x:Bind WallpaperInfo, Converter={StaticResource ObjectToVisibilityConverter}}">
+                                Visibility="{x:Bind CurrentWallpaper, Converter={StaticResource ObjectToVisibilityConverter}}">
                         <StackPanel.ChildrenTransitions>
                             <TransitionCollection>
                                 <AddDeleteThemeTransition />
@@ -51,16 +51,16 @@
                         </StackPanel.ChildrenTransitions>
                         <TextBlock FontSize="16"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                   Text="{x:Bind WallpaperInfo.Author}" />
+                                   Text="{x:Bind CurrentWallpaper.Author}" />
                         <TextBlock FontSize="36"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                   Text="{x:Bind WallpaperInfo.Title}" />
+                                   Text="{x:Bind CurrentWallpaper.Title}" />
                         <TextBlock Margin="0,8,0,0"
                                    FontSize="14"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                   Text="{x:Bind WallpaperInfo.Description}"
+                                   Text="{x:Bind CurrentWallpaper.Description}"
                                    TextWrapping="Wrap"
-                                   Visibility="{x:Bind WallpaperInfo.Description, Converter={StaticResource StringToVisibilityConverter}}" />
+                                   Visibility="{x:Bind CurrentWallpaper.Description, Converter={StaticResource StringToVisibilityConverter}}" />
                         <StackPanel Margin="0,8,0,0"
                                     Orientation="Horizontal"
                                     Spacing="8">
@@ -113,6 +113,17 @@
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
                                     ToolTipService.ToolTip="图源" />
+                            <!--  下一张  -->
+                            <Button x:Name="_Button_NextWallpaper"
+                                    Width="28"
+                                    Height="28"
+                                    Padding="0"
+                                    Command="{x:Bind GetNextWallpaperCommand}"
+                                    Content="&#xE149;"
+                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
+                                    ToolTipService.ToolTip="下一张" />
                         </StackPanel>
                     </StackPanel>
                 </Grid>
