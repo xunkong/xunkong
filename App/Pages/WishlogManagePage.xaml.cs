@@ -62,6 +62,33 @@ public sealed partial class WishlogManagePage : Page
 
 
 
+    #region Filter
+
+
+    [ObservableProperty]
+    private bool filter_Character = true;
+    [ObservableProperty]
+    private bool filter_Weapon = true;
+    [ObservableProperty]
+    private bool filter_Rarity_3 = true;
+    [ObservableProperty]
+    private bool filter_Rarity_4 = true;
+    [ObservableProperty]
+    private bool filter_Rarity_5 = true;
+    [ObservableProperty]
+    private bool filter_Wish_100 = true;
+    [ObservableProperty]
+    private bool filter_Wish_200 = true;
+    [ObservableProperty]
+    private bool filter_Wish_301 = true;
+    [ObservableProperty]
+    private bool filter_Wish_302 = true;
+
+
+    #endregion
+
+
+
 
 
     [ObservableProperty]
@@ -72,6 +99,8 @@ public sealed partial class WishlogManagePage : Page
 
     [ObservableProperty]
     private string? _SelectedUid;
+
+    private List<WishlogItemEx> allWishlogs;
 
     [ObservableProperty]
     private ObservableCollection<WishlogItemEx> _WishlogList;
@@ -110,9 +139,10 @@ public sealed partial class WishlogManagePage : Page
             UidList = uids.Select(x => x.ToString()).ToList();
             if (int.TryParse(SelectedUid, out int uid))
             {
-                var wishlogs = WishlogService.GetWishlogItemExByUid(uid);
-                WishlogList = new(wishlogs.OrderByDescending(x => x.Id));
-                InfoText = $"祈愿记录总计 {wishlogs.Count} 条";
+                allWishlogs = WishlogService.GetWishlogItemExByUid(uid);
+                WishlogList = new(allWishlogs.OrderByDescending(x => x.Id));
+                deletingWishlogItems.Clear();
+                UpdateInfoText();
             }
         }
         catch (Exception ex)
@@ -129,9 +159,10 @@ public sealed partial class WishlogManagePage : Page
         {
             if (int.TryParse(SelectedUid, out int uid))
             {
-                var wishlogs = WishlogService.GetWishlogItemExByUid(uid);
-                WishlogList = new(wishlogs.OrderByDescending(x => x.Id));
-                InfoText = $"祈愿记录总计 {wishlogs.Count} 条";
+                allWishlogs = WishlogService.GetWishlogItemExByUid(uid);
+                WishlogList = new(allWishlogs.OrderByDescending(x => x.Id));
+                deletingWishlogItems.Clear();
+                UpdateInfoText();
             }
         }
         catch (Exception ex)
@@ -142,6 +173,106 @@ public sealed partial class WishlogManagePage : Page
     }
 
 
+    private void UpdateInfoText()
+    {
+        InfoText = $"总计 {allWishlogs.Count}，筛选后 {WishlogList.Count}，待删除 {deletingWishlogItems.Count}";
+    }
+
+
+    /// <summary>
+    /// 筛选全选
+    /// </summary>
+    [RelayCommand]
+    private void FilterSelectAll()
+    {
+        Filter_Character = true;
+        Filter_Weapon = true;
+        Filter_Rarity_3 = true;
+        Filter_Rarity_4 = true;
+        Filter_Rarity_5 = true;
+        Filter_Wish_100 = true;
+        Filter_Wish_200 = true;
+        Filter_Wish_301 = true;
+        Filter_Wish_302 = true;
+    }
+
+
+
+    /// <summary>
+    /// 筛选全部取消
+    /// </summary>
+    [RelayCommand]
+    private void FilterClearAll()
+    {
+        Filter_Character = false;
+        Filter_Weapon = false;
+        Filter_Rarity_3 = false;
+        Filter_Rarity_4 = false;
+        Filter_Rarity_5 = false;
+        Filter_Wish_100 = false;
+        Filter_Wish_200 = false;
+        Filter_Wish_301 = false;
+        Filter_Wish_302 = false;
+    }
+
+
+
+    [RelayCommand]
+    private void FilterApply()
+    {
+        try
+        {
+            var query = allWishlogs.AsEnumerable();
+            if (!Filter_Character)
+            {
+                query = query.Where(x => x.ItemType != "角色");
+            }
+            if (!Filter_Weapon)
+            {
+                query = query.Where(x => x.ItemType != "武器");
+            }
+            if (!Filter_Rarity_3)
+            {
+                query = query.Where(x => x.RankType != 3);
+            }
+            if (!Filter_Rarity_4)
+            {
+                query = query.Where(x => x.RankType != 4);
+            }
+            if (!Filter_Rarity_5)
+            {
+                query = query.Where(x => x.RankType != 5);
+            }
+            if (!Filter_Wish_100)
+            {
+                query = query.Where(x => x.QueryType != WishType.Novice);
+            }
+            if (!Filter_Wish_200)
+            {
+                query = query.Where(x => x.QueryType != WishType.Permanent);
+            }
+            if (!Filter_Wish_301)
+            {
+                query = query.Where(x => x.QueryType != WishType.CharacterEvent);
+            }
+            if (!Filter_Wish_302)
+            {
+                query = query.Where(x => x.QueryType != WishType.WeaponEvent);
+            }
+            var list = query.OrderByDescending(x => x.Id).ToList();
+            foreach (var item in deletingWishlogItems)
+            {
+                list.Remove(item);
+            }
+            WishlogList = new(list);
+            Flyout_Filter.Hide();
+            UpdateInfoText();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+    }
 
 
 
@@ -173,7 +304,7 @@ public sealed partial class WishlogManagePage : Page
                     deletingWishlogItems.Add(item);
                 }
             }
-            InfoText = $"待删除记录 {deletingWishlogItems.Count} 条";
+            UpdateInfoText();
         }
         catch (Exception ex)
         {
@@ -528,8 +659,6 @@ public sealed partial class WishlogManagePage : Page
             Logger.Error(ex, "导出数据");
         }
     }
-
-
 
 
 }

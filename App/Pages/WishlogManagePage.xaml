@@ -60,6 +60,38 @@
                     HorizontalAlignment="Right"
                     Orientation="Horizontal"
                     Spacing="8">
+            <Button Content="筛选">
+                <Button.Flyout>
+                    <Flyout x:Name="Flyout_Filter">
+                        <StackPanel>
+                            <StackPanel Margin="0,0,0,8"
+                                        Orientation="Horizontal"
+                                        Spacing="64">
+                                <Button Command="{x:Bind FilterApplyCommand}" Content="应用" />
+                                <Button Command="{x:Bind FilterSelectAllCommand}" Content="全选" />
+                                <Button Command="{x:Bind FilterClearAllCommand}" Content="全部取消" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox Content="角色" IsChecked="{x:Bind Filter_Character, Mode=TwoWay}" />
+                                <CheckBox Content="武器" IsChecked="{x:Bind Filter_Weapon, Mode=TwoWay}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox Content="3星" IsChecked="{x:Bind Filter_Rarity_3, Mode=TwoWay}" />
+                                <CheckBox Content="4星" IsChecked="{x:Bind Filter_Rarity_4, Mode=TwoWay}" />
+                                <CheckBox Content="5星" IsChecked="{x:Bind Filter_Rarity_5, Mode=TwoWay}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox Content="新手祈愿" IsChecked="{x:Bind Filter_Wish_100, Mode=TwoWay}" />
+                                <CheckBox Content="常驻祈愿" IsChecked="{x:Bind Filter_Wish_200, Mode=TwoWay}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox Content="角色祈愿" IsChecked="{x:Bind Filter_Wish_301, Mode=TwoWay}" />
+                                <CheckBox Content="武器祈愿" IsChecked="{x:Bind Filter_Wish_302, Mode=TwoWay}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
             <Button Command="{x:Bind SelectAllCommand, Mode=OneTime}" Content="全选" />
             <Button Command="{x:Bind DeleteSelectedWishlogItemsCommand, Mode=OneTime}" Content="删除所选项" />
             <Button Content="保存">
@@ -70,6 +102,21 @@
                                        Foreground="{ThemeResource SystemFillColorCautionBrush}"
                                        Text="所选项将被删除" />
                             <Button Command="{x:Bind SaveDeletingOperationCommand, Mode=OneTime}" Content="确认删除" />
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+            <Button Width="24"
+                    Height="24"
+                    Padding="0"
+                    Content="&#xE9CE;"
+                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                    Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
+                <Button.Flyout>
+                    <Flyout>
+                        <StackPanel>
+                            <TextBlock Text="如何删除部分记录：" TextWrapping="Wrap" />
+                            <TextBlock Text="选中需要删除的记录，点击删除所选项，点击保存。" TextWrapping="Wrap" />
                         </StackPanel>
                     </Flyout>
                 </Button.Flyout>
@@ -87,24 +134,26 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <StackPanel Margin="40,0,28,12" Orientation="Horizontal">
+            <StackPanel Margin="28,0,4,12"
+                        Orientation="Horizontal"
+                        Spacing="8">
                 <TextBlock Width="200" Text="Id" />
                 <TextBlock Width="180" Text="时间" />
                 <TextBlock Width="160" Text="名称" />
-                <TextBlock Width="60" Text="星级" />
-                <TextBlock Width="60" Text="类型" />
+                <!--<TextBlock Width="60" Text="星级" />-->
+                <!--<TextBlock Width="60" Text="类型" />-->
                 <TextBlock Width="60" Text="保底内" />
-                <TextBlock Width="180" Text="祈愿类型" />
-                <TextBlock Width="180" Text="卡池名称" />
+                <TextBlock Width="160" Text="祈愿类型" />
+                <TextBlock Width="160" Text="卡池名称" />
             </StackPanel>
             <ListView x:Name="_ListView_Wishlog"
                       Grid.Row="2"
-                      Padding="24,0,24,0"
+                      Padding="12,0,12,0"
                       ItemsSource="{x:Bind WishlogList}"
                       SelectionMode="Extended">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="xdm:WishlogItemEx">
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
                             <StackPanel.Resources>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalTextAlignment" Value="Center" />
@@ -119,19 +168,19 @@
                             <TextBlock Width="160"
                                        Foreground="{x:Bind RankType, Converter={StaticResource WishlogItemRarityToForegroundConverter}}"
                                        Text="{x:Bind Name}" />
-                            <TextBlock Width="60"
+                            <!--<TextBlock Width="60"
                                        Foreground="{x:Bind RankType, Converter={StaticResource WishlogItemRarityToForegroundConverter}}"
-                                       Text="{x:Bind RankType}" />
-                            <TextBlock Width="60"
+                                       Text="{x:Bind RankType}" />-->
+                            <!--<TextBlock Width="60"
                                        Foreground="{x:Bind RankType, Converter={StaticResource WishlogItemRarityToForegroundConverter}}"
-                                       Text="{x:Bind ItemType}" />
+                                       Text="{x:Bind ItemType}" />-->
                             <TextBlock Width="60"
                                        Foreground="{x:Bind RankType, Converter={StaticResource WishlogItemRarityToForegroundConverter}}"
                                        Text="{x:Bind GuaranteeIndex}" />
-                            <TextBlock Width="180"
+                            <TextBlock Width="160"
                                        Foreground="{x:Bind RankType, Converter={StaticResource WishlogItemRarityToForegroundConverter}}"
                                        Text="{x:Bind WishType, Converter={StaticResource EnumToDescriptionOrStringConverter}}" />
-                            <TextBlock Width="180"
+                            <TextBlock Width="160"
                                        Foreground="{x:Bind RankType, Converter={StaticResource WishlogItemRarityToForegroundConverter}}"
                                        Text="{x:Bind VersionAndName}" />
                         </StackPanel>
@@ -151,10 +200,11 @@
               BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
               BorderThickness="1"
               CornerRadius="4,0,0,4"
-              RowSpacing="8"
               Visibility="Collapsed">
             <Grid.Transitions>
-                <EntranceThemeTransition />
+                <TransitionCollection>
+                    <EntranceThemeTransition />
+                </TransitionCollection>
             </Grid.Transitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -170,7 +220,6 @@
             <ScrollViewer Grid.Row="1"
                           Margin="-12,0,-12,0"
                           Padding="12,0,12,0">
-
                 <StackPanel Grid.Row="1" Spacing="8">
                     <TextBlock FontSize="20">
                         <Run FontFamily="{ThemeResource SymbolThemeFontFamily}" Text="&#xE118;" />
