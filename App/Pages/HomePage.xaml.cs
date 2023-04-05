@@ -543,6 +543,8 @@ public sealed partial class HomePage : Page
     }
 
 
+    private int lastRandomWallpaperId;
+
     /// <summary>
     /// 下一张图片
     /// </summary>
@@ -557,14 +559,21 @@ public sealed partial class HomePage : Page
             var loading = new ProgressRing { Width = 16, Height = 16 };
             _Button_NextWallpaper.Content = loading;
             var wallpaper = await _xunkongApiService.GetRandomWallpaperAsync();
-            if (wallpaper != null && wallpaper.Id != (CurrentWallpaper?.Id ?? 0))
+            if (wallpaper != null)
             {
+                if (wallpaper.Id == lastRandomWallpaperId)
+                {
+                    wallpaper = await _xunkongApiService.GetNextWallpaperAsync(CurrentWallpaper.Id);
+                }
+                else
+                {
+                    lastRandomWallpaperId = wallpaper.Id;
+                }
                 var uri = new Uri(wallpaper.Url);
                 var fileTask = XunkongCache.Instance.GetFromCacheAsync(uri);
                 var progress = XunkongCache.Instance.GetProgress(uri);
                 if (progress != null)
                 {
-                    loading.IsIndeterminate = false;
                     progress.ProgressChanged += (s, e) =>
                     {
                         if (e.DownloadState is Scighost.WinUILib.Cache.DownloadState.Completed)
@@ -573,7 +582,11 @@ public sealed partial class HomePage : Page
                         }
                         else
                         {
-                            loading.Value = e.BytesReceived * 100 / e.TotalBytesToReceive;
+                            loading.Value = e.BytesReceived * 100 / (double)e.TotalBytesToReceive;
+                            if (loading.Value > 1)
+                            {
+                                loading.IsIndeterminate = false;
+                            }
                         }
                     };
                 }
