@@ -431,6 +431,7 @@ public sealed partial class AchievementPage : Page
                 };
                 Process.Start(info);
                 OperationHistory.AddToDatabase("StartYaeAchievement");
+                Logger.TrackEvent("StartYaeAchievement");
             }
         }
         catch (Exception ex)

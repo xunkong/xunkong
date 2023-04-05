@@ -1,4 +1,7 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using System.Web;
 using Windows.ApplicationModel.Activation;
@@ -142,6 +145,8 @@ public partial class App : Application
                 mainWindow = new MainWindow();
                 mainWindow.Activate();
 
+                AppCenter.SetUserId(XunkongEnvironment.DeviceId);
+                AppCenter.Start("b9d30257-cbc6-4f35-a2a8-1ea2c4c8f129", typeof(Analytics), typeof(Crashes));
             }
             else
             {

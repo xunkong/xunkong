@@ -383,6 +383,7 @@ public sealed partial class WishlogSummaryPage2 : Page
                     NotificationProvider.Success("完成", $"已复制 Uid {uid} 的祈愿记录网址到剪贴板", 5000);
                     var addCount = await _wishlogService.GetWishlogByUidAsync(uid, StateTextHandler);
                     OperationHistory.AddToDatabase("GetWishlog", uid.ToString());
+                    Logger.TrackEvent("GetWishlog", "Region", WishlogService.UidToRegionType(uid).ToString());
                     StateText = $"新增 {addCount} 条祈愿记录";
                     SelectedUid = uid;
                     InitializePageData();
@@ -553,6 +554,7 @@ public sealed partial class WishlogSummaryPage2 : Page
                 var uid = await _wishlogService.GetUidByWishlogUrl(url);
                 var addCount = await _wishlogService.GetWishlogByUidAsync(uid, StateTextHandler);
                 OperationHistory.AddToDatabase("GetWishlog", uid.ToString());
+                Logger.TrackEvent("GetWishlog", "Region", WishlogService.UidToRegionType(uid).ToString());
                 StateText = $"新增 {addCount} 条祈愿记录";
                 SelectedUid = uid;
                 InitializePageData();
@@ -694,6 +696,7 @@ public sealed partial class WishlogSummaryPage2 : Page
                 return;
             }
             OperationHistory.AddToDatabase("GetWishlog", uid.ToString());
+            Logger.TrackEvent("GetWishlog", "Region", WishlogService.UidToRegionType(uid).ToString());
             SelectedUid = uid;
             InitializePageData();
         }
@@ -739,6 +742,7 @@ public sealed partial class WishlogSummaryPage2 : Page
                 var uid = await _wishlogService.GetUidByWishlogUrl(wishlogUrl);
                 var addCount = await _wishlogService.GetWishlogByUidAsync(uid, StateTextHandler);
                 OperationHistory.AddToDatabase("GetWishlog", uid.ToString());
+                Logger.TrackEvent("GetWishlog", "Region", WishlogService.UidToRegionType(uid).ToString());
                 StateText = $"新增 {addCount} 条祈愿记录";
                 SelectedUid = uid;
                 InitializePageData();
@@ -857,6 +861,8 @@ public sealed partial class WishlogSummaryPage2 : Page
         try
         {
             await _xunkongApiService.GetWishlogBackupLastItemAsync(uid, StateTextHandler);
+            OperationHistory.AddToDatabase("BackupWishlog", "Query", uid);
+            Logger.TrackEvent("BackupWishlog", "Operation", "Query");
         }
         catch (XunkongException ex)
         {
@@ -892,6 +898,8 @@ public sealed partial class WishlogSummaryPage2 : Page
         try
         {
             await _xunkongApiService.PutWishlogListAsync(uid, StateTextHandler, putAll);
+            OperationHistory.AddToDatabase("BackupWishlog", "Upload", uid);
+            Logger.TrackEvent("BackupWishlog", "Operation", "Upload");
         }
         catch (XunkongException ex)
         {
@@ -927,6 +935,8 @@ public sealed partial class WishlogSummaryPage2 : Page
         try
         {
             await _xunkongApiService.GetWishlogBackupListAsync(uid, StateTextHandler, true);
+            OperationHistory.AddToDatabase("BackupWishlog", "Download", uid);
+            Logger.TrackEvent("BackupWishlog", "Operation", "Download");
         }
         catch (XunkongException ex)
         {
@@ -988,6 +998,8 @@ public sealed partial class WishlogSummaryPage2 : Page
             Action action = () => Process.Start(new ProcessStartInfo { FileName = Path.GetDirectoryName(file), UseShellExecute = true, });
             NotificationProvider.ShowWithButton(InfoBarSeverity.Success, null, "云端祈愿记录已备份到本地", "打开文件夹", action, null, 3000);
             await _xunkongApiService.DeleteWishlogBackupAsync(uid, StateTextHandler);
+            OperationHistory.AddToDatabase("BackupWishlog", "Delete", uid);
+            Logger.TrackEvent("BackupWishlog", "Operation", "Delete");
         }
         catch (XunkongException ex)
         {

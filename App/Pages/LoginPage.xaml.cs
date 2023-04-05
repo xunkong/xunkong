@@ -148,6 +148,8 @@ public sealed partial class LoginPage : Page
     {
         try
         {
+            OperationHistory.AddToDatabase("Login", "Web");
+            Logger.TrackEvent("Login", "Type", "Web");
             var manager = _WebView2.CoreWebView2.CookieManager;
             var cookies = await manager.GetCookiesAsync(URL);
             var str = string.Join(";", cookies.Select(x => $"{x.Name}={x.Value}"));

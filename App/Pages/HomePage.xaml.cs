@@ -429,6 +429,7 @@ public sealed partial class HomePage : Page
                 MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = CurrentWallpaper.Url, DecodeFromStream = true });
             }
             OperationHistory.AddToDatabase("OpenWallpaper", CurrentWallpaper.Url, CurrentWallpaper);
+            Logger.TrackEvent("OpenWallpaper", "Id", CurrentWallpaper.Id.ToString());
         }
     }
 
@@ -509,6 +510,7 @@ public sealed partial class HomePage : Page
                 NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "已保存", fileName, "打开文件", openImageAction, null, 3000);
             }
             OperationHistory.AddToDatabase("SaveWallpaper", CurrentWallpaper?.Url, CurrentWallpaper);
+            Logger.TrackEvent("SaveWallpaper", "Id", CurrentWallpaper?.Id.ToString());
         }
         catch (Exception ex)
         {
@@ -550,6 +552,8 @@ public sealed partial class HomePage : Page
     {
         try
         {
+            OperationHistory.AddToDatabase("GetNextWallpaper");
+            Logger.TrackEvent("GetNextWallpaper");
             var loading = new ProgressRing { Width = 16, Height = 16 };
             _Button_NextWallpaper.Content = loading;
             var wallpaper = await _xunkongApiService.GetRandomWallpaperAsync();
@@ -1193,6 +1197,7 @@ public sealed partial class HomePage : Page
         try
         {
             OperationHistory.AddToDatabase("BackupScreenshot");
+            Logger.TrackEvent("BackupScreenshot");
             int addCount = 0;
             var backFolder = AppSetting.GetValue<string>(SettingKeys.GameScreenshotBackupFolder);
             if (string.IsNullOrWhiteSpace(backFolder))

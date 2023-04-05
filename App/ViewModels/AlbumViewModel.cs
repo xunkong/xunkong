@@ -205,6 +205,8 @@ internal partial class AlbumViewModel : ObservableObject
                 FileName = albumFolder,
                 UseShellExecute = true,
             });
+            OperationHistory.AddToDatabase("OpenScreenshotFolder");
+            Logger.TrackEvent("OpenScreenshotFolder");
         }
         catch (Exception ex)
         {

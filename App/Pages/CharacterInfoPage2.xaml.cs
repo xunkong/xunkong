@@ -91,6 +91,7 @@ public sealed partial class CharacterInfoPage2 : Page
             if (role != null)
             {
                 OperationHistory.AddToDatabase("GetCharacterInfo", role.Uid.ToString());
+                Logger.TrackEvent("GetCharacterInfo");
                 var list = await _hoyolabService.GetCharacterInfosAsync(role);
                 UidAndTime = $"Uid {role.Uid}    Update at {DateTimeOffset.Now.LocalDateTime:yyyy-MM-dd HH:mm:ss}";
                 CharacterInfos = list;

@@ -60,10 +60,23 @@
                 <TextBlock Margin="0,0,0,16"
                            FontSize="32"
                            Text="隐私 &amp; 用户数据" />
-                <TextBlock Text="「寻空」充分尊重您的隐私，除了在进行网络通信时需要发送的必要数据外，未经您同意的情况下，不会上传您的其他个人信息。" />
-                <TextBlock Margin="0,-8,0,0"
-                           FontSize="14"
-                           Text="* 必要数据指您的 IP 和匿名设备 ID。" />
+                <TextBlock Text=" AppCenter ">
+                    <Run Text="为了更好地改进应用的体验，「寻空」会使用" />
+                    <Hyperlink NavigateUri="https://appcenter.ms/" UnderlineStyle="None">AppCenter</Hyperlink>
+                    <Run Text="上传事件日志，上传的内容中不包含个人数据，且仅用于统计各功能的使用情况。" />
+                </TextBlock>
+                <TextBlock Margin="0,-8,0,0" Text="上传日志前需要征求您的同意，您也可以随时在设置中开启或关闭此功能。" />
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <Button Name="Button_AgreeAppCenter"
+                            Click="Button_AgreeAppCenter_Click"
+                            Content="同意" />
+                    <Button Name="Button_DeclineAppCenter"
+                            Click="Button_DeclineAppCenter_Click"
+                            Content="拒绝" />
+                    <TextBlock Name="TextBlock_AppCenterState"
+                               VerticalAlignment="Center"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                </StackPanel>
                 <TextBlock Text="您的个人数据和其他文件保存在「我的文档\Xunkong」文件夹中。" />
                 <TextBlock>
                     <Run Text="存储位置：" />
@@ -82,7 +95,7 @@
                            Text="依赖组件" />
                 <TextBlock>
                     <Run Text="「寻空」的部分功能依赖 WebView2，您的设备上需要存在" />
-                    <Hyperlink NavigateUri="https://developer.microsoft.com/zh-cn/microsoft-edge/webview2/">WebView2 Runtime</Hyperlink>
+                    <Hyperlink NavigateUri="https://developer.microsoft.com/zh-cn/microsoft-edge/webview2/" UnderlineStyle="None">WebView2 Runtime</Hyperlink>
                     <Run Text="。" />
                 </TextBlock>
 

@@ -1,4 +1,6 @@
-﻿using Serilog;
+﻿using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+using Serilog;
 using Serilog.Context;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -91,6 +93,39 @@ internal static class Logger
             }
         }
         catch { }
+    }
+
+
+
+    public static void TrackEvent(string name, params string?[] properties)
+    {
+        if (AppSetting.GetValue<bool>(SettingKeys.AgreeTrackEventByAppCenter))
+        {
+            try
+            {
+                var dic = new Dictionary<string, string>();
+                string? key = null;
+                for (int i = 0; i < properties.Length; i++)
+                {
+                    if (i % 2 == 0)
+                    {
+                        key = properties[i];
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrWhiteSpace(key))
+                        {
+                            dic[key] = properties[i]!;
+                        }
+                    }
+                }
+                Analytics.TrackEvent(name, dic);
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex, new Dictionary<string, string> { ["Method"] = "Logger.TrackEvent" });
+            }
+        }
     }
 
 }

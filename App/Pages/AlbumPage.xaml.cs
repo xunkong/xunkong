@@ -43,6 +43,8 @@ public sealed partial class AlbumPage : Page
             {
                 try
                 {
+                    OperationHistory.AddToDatabase("CopyAlbumImage");
+                    Logger.TrackEvent("CopyAlbumImage");
                     var file = await StorageFile.GetFileFromPathAsync(fileInfo.FullName);
                     ClipboardHelper.SetBitmap(file);
                     button.Content = new SymbolIcon(Symbol.Accept);

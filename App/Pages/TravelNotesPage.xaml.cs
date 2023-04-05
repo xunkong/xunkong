@@ -224,6 +224,8 @@ public sealed partial class TravelNotesPage : Page
                     moraAddCount = await _hoyolabService.GetTravelRecordDetailAsync(role, month, TravelNotesAwardType.Mora);
                     NotificationProvider.Success($"{role.Nickname} 的 {month} 月旅行札记新增原石收入记录 {primogemsAddCount} 条、摩拉收入记录 {moraAddCount} 条", 10000);
                 }
+                OperationHistory.AddToDatabase("GetTravelRecordDetail", "OnlyCurrentMonth", onlyCurrentMonth);
+                Logger.TrackEvent("GetTravelRecordDetail", "OnlyCurrentMonth", onlyCurrentMonth.ToString());
             }
         }
         catch (Exception ex)
@@ -273,6 +275,8 @@ public sealed partial class TravelNotesPage : Page
             await MiniExcel.SaveAsByTemplateAsync(fs, templatePath, obj);
             void action() => Process.Start(new ProcessStartInfo { FileName = Path.GetDirectoryName(filename), UseShellExecute = true });
             NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "导出完成", null, "打开文件夹", action);
+            OperationHistory.AddToDatabase("ExportTravelRecordDetail", uid.ToString());
+            Logger.TrackEvent("ExportTravelRecordDetail");
         }
         catch (Exception ex)
         {

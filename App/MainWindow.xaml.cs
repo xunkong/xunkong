@@ -89,6 +89,7 @@ public sealed partial class MainWindow : Window
         Task.Run(() =>
         {
             OperationHistory.AddToDatabase("Startup");
+            Microsoft.AppCenter.Analytics.Analytics.TrackEvent("Startup");
         });
     }
 
@@ -192,6 +193,7 @@ public sealed partial class MainWindow : Window
         OperationHistory.AddToDatabase("Shutdown");
         BackupService.BackupSetting();
         BackupService.AutoBackupDatabase();
+        Microsoft.AppCenter.Analytics.Analytics.TrackEvent("Shutdown");
     }
 
 

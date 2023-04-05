@@ -107,6 +107,7 @@ public sealed partial class SpiralAbyssPage : Page
             var last = await _hoyolabService.GetSpiralAbyssInfoAsync(role, 2);
             var current = await _hoyolabService.GetSpiralAbyssInfoAsync(role, 1);
             OperationHistory.AddToDatabase("GetAbyss", role.Uid.ToString());
+            Logger.TrackEvent("GetAbyss");
             SelectedAbyssInfo = null;
             abyssDic.Clear();
             InitializeData();

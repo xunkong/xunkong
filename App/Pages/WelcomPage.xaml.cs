@@ -164,6 +164,22 @@ public sealed partial class WelcomPage : Page
     }
 
 
+    private void Button_AgreeAppCenter_Click(object sender, RoutedEventArgs e)
+    {
+        AppSetting.SetValue(SettingKeys.AgreeTrackEventByAppCenter, true);
+        OperationHistory.AddToDatabase("AgreeTrackEventByAppCenter", true.ToString());
+        Microsoft.AppCenter.Analytics.Analytics.TrackEvent("AgreeTrackEventByAppCenter", new Dictionary<string, string> { ["Agree"] = true.ToString() });
+        TextBlock_AppCenterState.Text = "已同意";
+    }
+
+    private void Button_DeclineAppCenter_Click(object sender, RoutedEventArgs e)
+    {
+        AppSetting.SetValue(SettingKeys.AgreeTrackEventByAppCenter, false);
+        OperationHistory.AddToDatabase("AgreeTrackEventByAppCenter", false.ToString());
+        Microsoft.AppCenter.Analytics.Analytics.TrackEvent("AgreeTrackEventByAppCenter", new Dictionary<string, string> { ["Agree"] = false.ToString() });
+        TextBlock_AppCenterState.Text = "已拒绝";
+    }
+
 
     private void _Button_Privacy_Click(object sender, RoutedEventArgs e)
     {

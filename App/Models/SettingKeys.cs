@@ -277,6 +277,12 @@ internal abstract class SettingKeys
     /// </summary>
     public const string DailyNoteTaskTimeInterval = nameof(DailyNoteTaskTimeInterval);
 
+    /// <summary>
+    /// 允许使用 AppCenter 上传事件日志
+    /// </summary>
+    [Backup]
+    public const string AgreeTrackEventByAppCenter = nameof(AgreeTrackEventByAppCenter);
+
 }
 
 

@@ -68,6 +68,8 @@ internal static class SecondaryTileProvider
         if (isPinned)
         {
             UpdatePinnedTile(info);
+            OperationHistory.AddToDatabase("PinDailyNoteTile", info.Uid.ToString());
+            Logger.TrackEvent("PinDailyNoteTile");
         }
 
         return isPinned;

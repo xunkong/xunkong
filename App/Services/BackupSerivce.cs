@@ -110,6 +110,7 @@ internal class BackupService
             using var backupConnection = new SqliteConnection($"Data Source={filePath};");
             backupConnection.Open();
             OperationHistory.AddToDatabase("BackupDatabase");
+            Logger.TrackEvent("BackupDatabase");
             dapper.Open();
             dapper.BackupDatabase(backupConnection);
         }

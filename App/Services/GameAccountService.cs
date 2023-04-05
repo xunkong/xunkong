@@ -126,6 +126,8 @@ internal class GameAccountService
             Arguments = script,
             CreateNoWindow = true,
         })?.WaitForExit();
+        OperationHistory.AddToDatabase("ChangeGameAccount", account.Server.ToString(), account.Name);
+        Logger.TrackEvent("ChangeGameAccount", "Server", account.Server.ToString());
         var value = Registry.GetValue($@"HKEY_CURRENT_USER\Software\miHoYo\{key}", name, null) as byte[];
         if (value != null && value.SequenceEqual(account.Value))
         {
@@ -314,6 +316,7 @@ internal class GameAccountService
                 }
             }
             OperationHistory.AddToDatabase("StartGame", ((GameAccount.GameServer)server).ToString());
+            Logger.TrackEvent("StartGame", "Server", ((GameAccount.GameServer)server).ToString());
             return true;
         }
         catch (Exception ex)

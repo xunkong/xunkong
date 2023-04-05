@@ -158,6 +158,8 @@ public sealed partial class MainPage : Page
     {
         _NavigationView.IsPaneOpen = !_NavigationView.IsPaneOpen;
         AppSetting.SetValue(SettingKeys.NavigationViewPaneClose, !_NavigationView.IsPaneOpen);
+        OperationHistory.AddToDatabase("TapAccountImage", "IsNavigationPaneOpen", _NavigationView.IsPaneOpen.ToString());
+        Logger.TrackEvent("TapAccountImage", "IsNavigationPaneOpen", _NavigationView.IsPaneOpen.ToString());
     }
 
 
@@ -181,14 +183,12 @@ public sealed partial class MainPage : Page
             if (args.IsSettingsInvoked)
             {
                 _MainPageFrame.Navigate(typeof(SettingPage));
-                OperationHistory.AddToDatabase("Navigate", "SettingPage");
             }
             else
             {
                 if (args.InvokedItemContainer.DataContext is WebToolItem webToolItem)
                 {
                     _MainPageFrame.Navigate(typeof(WebToolPage), webToolItem);
-                    OperationHistory.AddToDatabase("Navigate", "WebToolPage", webToolItem);
                 }
                 else
                 {
@@ -200,7 +200,6 @@ public sealed partial class MainPage : Page
                     if (tag == "Help")
                     {
                         _MainPageFrame.Navigate(typeof(WebViewPage), "https://xunkong.cc/help/xunkong/");
-                        OperationHistory.AddToDatabase("Navigate", "HelpPage");
                     }
                     if (tag == "CharacterInfoPage2")
                     {
@@ -229,7 +228,6 @@ public sealed partial class MainPage : Page
                                 _MainPageFrame.Navigate(type);
                             }
                         }
-                        OperationHistory.AddToDatabase("Navigate", tag);
                     }
                 }
             }
@@ -296,16 +294,9 @@ public sealed partial class MainPage : Page
         {
             if (e.NavigationMode is NavigationMode.New)
             {
-                var type = e.SourcePageType.Name;
-                if (type is "SettingPage" or "WebToolPage" or "HelpPage")
-                {
-                    return;
-                }
-                if (pageTypeDic.ContainsKey(type))
-                {
-                    return;
-                }
-                OperationHistory.AddToDatabase("Navigate", type);
+                var name = e.SourcePageType.Name;
+                OperationHistory.AddToDatabase("Navigate", name);
+                Logger.TrackEvent("Navigate", "Page", name);
             }
         }
         catch { }
@@ -400,6 +391,7 @@ public sealed partial class MainPage : Page
         else
         {
             OperationHistory.AddToDatabase("UpdateVersion", XunkongEnvironment.AppVersion.ToString());
+            Logger.TrackEvent("UpdateVersion", "Version", XunkongEnvironment.AppVersion.ToString());
             _MainPageFrame.Navigate(typeof(UpdateContentPage));
         }
         if (AppSetting.TryGetValue<bool>(SettingKeys.NavigationViewPaneClose, out var isClosed))
@@ -410,8 +402,47 @@ public sealed partial class MainPage : Page
         RefreshAllAcount();
         GetGenshinData();
         InitializeNavigationWebToolItem(true);
+        RequestAgreeTrackEventByAppCenter();
         // todo 壁纸浏览页
     }
+
+
+    /// <summary>
+    /// 请求同意使用 AppCenter 上传事件日志
+    /// </summary>
+    private async void RequestAgreeTrackEventByAppCenter()
+    {
+        if (!AppSetting.TryGetValue(SettingKeys.AgreeTrackEventByAppCenter, out bool agree))
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "请求上传事件日志",
+                Content = """
+                为了更好地改进应用的体验，寻空会使用 AppCenter 上传事件日志，上传的内容中不包含个人数据，且仅用于统计各功能的使用情况。
+
+                上传日志前需要征求您的同意，您也可以随时在设置中开启或关闭此功能。
+                """,
+                PrimaryButtonText = "同意",
+                SecondaryButtonText = "拒绝",
+                DefaultButton = ContentDialogButton.Primary,
+                XamlRoot = MainWindow.Current.XamlRoot,
+                RequestedTheme = MainWindow.Current.ActualTheme,
+            };
+            if (await dialog.ShowWithZeroMarginAsync() == ContentDialogResult.Primary)
+            {
+                AppSetting.SetValue(SettingKeys.AgreeTrackEventByAppCenter, true);
+                OperationHistory.AddToDatabase("AgreeTrackEventByAppCenter", true.ToString());
+                Microsoft.AppCenter.Analytics.Analytics.TrackEvent("AgreeTrackEventByAppCenter", new Dictionary<string, string> { ["Agree"] = true.ToString() });
+            }
+            else
+            {
+                AppSetting.SetValue(SettingKeys.AgreeTrackEventByAppCenter, false);
+                OperationHistory.AddToDatabase("AgreeTrackEventByAppCenter", false.ToString());
+                Microsoft.AppCenter.Analytics.Analytics.TrackEvent("AgreeTrackEventByAppCenter", new Dictionary<string, string> { ["Agree"] = false.ToString() });
+            }
+        }
+    }
+
 
 
     /// <summary>
@@ -681,6 +712,8 @@ public sealed partial class MainPage : Page
             }
             try
             {
+                OperationHistory.AddToDatabase("Login", "Cookie");
+                Logger.TrackEvent("Login", "Type", "Cookie");
                 await AddCookieAsync(cookie);
             }
             catch (Exception ex)
@@ -731,7 +764,7 @@ public sealed partial class MainPage : Page
                     var result = await SecondaryTileProvider.RequestPinTileAsync(note);
                     if (result)
                     {
-                        TaskSchedulerService.RegisterForRefreshTile(result);
+                        TaskSchedulerService.RegisterForRefreshTile();
                     }
                 }
             }
@@ -834,6 +867,7 @@ public sealed partial class MainPage : Page
             }
             e.Handled = true;
             OperationHistory.AddToDatabase("ChangeTheme", "ClickButton");
+            Logger.TrackEvent("ChangeTheme", "Type", "ClickButton");
         }
         catch { }
     }

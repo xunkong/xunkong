@@ -126,6 +126,7 @@ public sealed partial class SettingPage : Page
             }
             await Launcher.LaunchUriAsync(uri);
             OperationHistory.AddToDatabase("CheckUpdate", XunkongEnvironment.AppVersion.ToString());
+            Logger.TrackEvent("CheckUpdate", "Version", XunkongEnvironment.AppVersion.ToString(), "IsStore", XunkongEnvironment.IsStoreVersion.ToString());
         }
         catch (Exception ex)
         {
@@ -177,6 +178,7 @@ public sealed partial class SettingPage : Page
         var center = new System.Numerics.Vector2(((float)(point.X + FontIcon_Theme.ActualWidth / 2)), ((float)(point.Y + FontIcon_Theme.ActualHeight / 2)));
         MainWindow.Current.ChangeApplicationTheme(value, center);
         OperationHistory.AddToDatabase("ChangeTheme", "SelectItem");
+        Logger.TrackEvent("ChangeTheme", "Type", "SelectItem");
     }
 
 
@@ -857,6 +859,7 @@ public sealed partial class SettingPage : Page
 
             NotificationProvider.Success($"完成");
             OperationHistory.AddToDatabase("ClearCache", cacheMode);
+            Logger.TrackEvent("ClearCache", "CacheMode", cacheMode);
         }
         catch (Exception ex)
         {
@@ -906,6 +909,7 @@ public sealed partial class SettingPage : Page
             UpdateGenshinDataText = $"数据量较大，请耐心等待。上次更新：刚刚";
             NotificationProvider.Success("完成", "本地的原神数据已是最新版本");
             OperationHistory.AddToDatabase("UpdateGenshinData");
+            Logger.TrackEvent("UpdateGenshinData");
         }
         catch (HttpRequestException ex)
         {
@@ -961,6 +965,18 @@ public sealed partial class SettingPage : Page
         }
     }
 
+
+    /// <summary>
+    /// 使用 AppCenter 上传事件日志
+    /// </summary>
+    [ObservableProperty]
+    private bool _AgreeTrackEventByAppCenter = AppSetting.GetValue<bool>(SettingKeys.AgreeTrackEventByAppCenter);
+    partial void OnAgreeTrackEventByAppCenterChanged(bool value)
+    {
+        AppSetting.SetValue(SettingKeys.AgreeTrackEventByAppCenter, value);
+        OperationHistory.AddToDatabase("AgreeTrackEventByAppCenter", value.ToString());
+        Microsoft.AppCenter.Analytics.Analytics.TrackEvent("AgreeTrackEventByAppCenter", new Dictionary<string, string> { ["Agree"] = value.ToString() });
+    }
 
 
 

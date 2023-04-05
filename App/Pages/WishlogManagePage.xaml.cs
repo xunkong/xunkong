@@ -535,6 +535,8 @@ public sealed partial class WishlogManagePage : Page
 
             UidList = WishlogService.GetAllUids().Select(x => x.ToString()).ToList();
             SelectedUid = uid.ToString();
+            OperationHistory.AddToDatabase("ImportWishlog", uid.ToString());
+            Logger.TrackEvent("ImportWishlog", "FileExtension", exten);
         }
         catch (Exception ex)
         {
@@ -652,6 +654,8 @@ public sealed partial class WishlogManagePage : Page
                 Action action = () => Process.Start(new ProcessStartInfo { FileName = Path.GetDirectoryName(filename), UseShellExecute = true });
                 NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "导出完成", null, "打开文件夹", action);
             }
+            OperationHistory.AddToDatabase("ExportWishlog", SelectedUid);
+            Logger.TrackEvent("ExportWishlog", "FileExtension", _ComboBox_Export.SelectedIndex == 0 ? ".xlsx" : ".json");
         }
         catch (Exception ex)
         {

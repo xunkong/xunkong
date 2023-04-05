@@ -86,6 +86,8 @@ public sealed partial class CutscenePage : Page
             {
                 try
                 {
+                    OperationHistory.AddToDatabase("PlayCutscene", $"{cutscene.Title} ({Path.GetFileName(cutscene.Source)})");
+                    Logger.TrackEvent("PlayCutscene", "Title", cutscene.Title, "Player", cutscene.Player.ToString(), "FileName", Path.GetFileName(cutscene.Source));
                     var folder = AppSetting.GetValue<string>(SettingKeys.CutsceneFolder);
                     if (Directory.Exists(folder))
                     {
@@ -229,6 +231,8 @@ public sealed partial class CutscenePage : Page
             if (SelectedCutscene != null)
             {
                 await Launcher.LaunchUriAsync(new Uri(SelectedCutscene.Source));
+                OperationHistory.AddToDatabase("DownloadCutscene", $"{SelectedCutscene.Title} ({Path.GetFileName(SelectedCutscene.Source)})");
+                Logger.TrackEvent("DownloadCutscene", "Title", SelectedCutscene.Title, "Player", SelectedCutscene.Player.ToString(), "FileName", Path.GetFileName(SelectedCutscene.Source));
             }
         }
         catch { }
@@ -383,6 +387,8 @@ public sealed partial class CutscenePage : Page
                 }
                 """";
             Process.Start("PowerShell", script);
+            OperationHistory.AddToDatabase("DownloadCutscene", $"{SelectedCutscene.Title} ({Path.GetFileName(SelectedCutscene.Source)})");
+            Logger.TrackEvent("DownloadCutscene", "Title", SelectedCutscene.Title, "Player", SelectedCutscene.Player.ToString(), "FileName", Path.GetFileName(SelectedCutscene.Source), "UsePowerShell", true.ToString());
         }
         catch (Exception ex)
         {

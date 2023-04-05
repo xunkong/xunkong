@@ -772,6 +772,27 @@
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                Text="数据" />
 
+                    <!--  使用 AppCenter 上传事件日志  -->
+                    <xdc:SettingCard>
+                        <xdc:SettingCard.Icon>
+                            <FontIcon Glyph="&#xE3D7;" />
+                        </xdc:SettingCard.Icon>
+                        <xdc:SettingCard.Content>
+                            <TextBlock>
+                                <Run Text="上传事件日志" />
+                                <LineBreak />
+                                <Run FontSize="12"
+                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                     Text="上传的内容中不包含个人数据，且仅用于统计各功能的使用情况" />
+                            </TextBlock>
+                        </xdc:SettingCard.Content>
+                        <xdc:SettingCard.Selector>
+                            <ToggleSwitch HorizontalAlignment="Right"
+                                          IsOn="{x:Bind AgreeTrackEventByAppCenter, Mode=TwoWay}"
+                                          Style="{ThemeResource RightAlignToggleSwitchStyle}" />
+                        </xdc:SettingCard.Selector>
+                    </xdc:SettingCard>
+
                     <!--  用户数据文件夹  -->
                     <xdc:SettingCard>
                         <xdc:SettingCard.Icon>
