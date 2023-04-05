@@ -89,7 +89,8 @@
                         <!--  名称  -->
                         <TextBlock FontSize="32"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                   Text="{x:Bind SelectedWeapon.WeaponInfo.Name}" />
+                                   Text="{x:Bind SelectedWeapon.WeaponInfo.Name}"
+                                   TextTrimming="CharacterEllipsis" />
                         <!--  星级图片  -->
                         <xdc:CachedImage Height="20"
                                          HorizontalAlignment="Left"

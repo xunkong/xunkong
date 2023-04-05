@@ -43,7 +43,7 @@
                         Height="24"
                         Margin="8,0,0,0"
                         Padding="0"
-                        Content="&#xE946;"
+                        Content="&#xE9CE;"
                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
                         Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
                     <Button.Flyout>
