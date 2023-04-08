@@ -9,18 +9,24 @@
              x:DefaultBindMode="OneWay"
              mc:Ignorable="d">
 
-    <Grid>
+    <Grid Loaded="Grid_Loaded">
 
         <StackPanel Spacing="8">
 
-            <StackPanel Orientation="Horizontal" Spacing="20">
+            <Grid ColumnSpacing="20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
                 <Border Width="48"
                         Height="48"
                         Margin="4,0,0,0"
                         CornerRadius="1000">
                     <Image Source="{x:Bind HoyolabUserInfo.AvatarUrl}" />
                 </Border>
-                <StackPanel VerticalAlignment="Center"
+                <StackPanel Grid.Column="1"
+                            VerticalAlignment="Center"
                             Spacing="4"
                             Visibility="{x:Bind GenshinRoleInfo, Converter={StaticResource ObjectToVisibilityConverter}}">
                     <TextBlock Text="{x:Bind GenshinRoleInfo.Nickname}" />
@@ -30,20 +36,12 @@
                         <Run Text="级" />
                     </TextBlock>
                 </StackPanel>
-                <StackPanel VerticalAlignment="Center"
-                            Spacing="4"
-                            Visibility="{x:Bind TravelNotesDayData, Converter={StaticResource ObjectToVisibilityConverter}}">
-                    <Image Width="20" Source="{StaticResource Image_Primogems}" />
-                    <Image Width="20" Source="{StaticResource Image_Mora}" />
-                </StackPanel>
-                <StackPanel Margin="-12,0,0,0"
-                            VerticalAlignment="Center"
-                            Spacing="4"
-                            Visibility="{x:Bind TravelNotesDayData, Converter={StaticResource ObjectToVisibilityConverter}}">
-                    <TextBlock Text="{x:Bind TravelNotesDayData.CurrentPrimogems}" />
-                    <TextBlock Text="{x:Bind TravelNotesDayData.CurrentMora}" />
-                </StackPanel>
-            </StackPanel>
+                <TextBlock Grid.Column="2"
+                           HorizontalAlignment="Right"
+                           FontSize="12"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                           Text="{x:Bind UpdateTimeAgoText}" />
+            </Grid>
 
             <MenuFlyoutSeparator />
 
@@ -178,7 +176,8 @@
                         <Run Text="{x:Bind DailyNoteInfo.CurrentExpeditionNumber}" />
                         <Run Text=")" />
                     </TextBlock>
-                    <Button Content="&#xE783;"
+                    <Button Padding="4"
+                            Content="&#xE9CE;"
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                             Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
@@ -220,9 +219,11 @@
                 </ItemsControl>
             </StackPanel>
 
-            <MenuFlyoutSeparator />
+            <MenuFlyoutSeparator x:Name="Separator" x:Load="False" />
 
-            <Grid ColumnSpacing="8">
+            <Grid x:Name="Grid_Action"
+                  x:Load="False"
+                  ColumnSpacing="8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition />
@@ -259,13 +260,6 @@
                        TextWrapping="Wrap" />
         </StackPanel>
 
-
-        <Button HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                Command="{x:Bind RefreshCommand}"
-                Content="&#xE72C;"
-                FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                Style="{ThemeResource DateTimePickerFlyoutButtonStyle}" />
 
 
     </Grid>

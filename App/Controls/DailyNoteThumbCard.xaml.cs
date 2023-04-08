@@ -3,7 +3,6 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Xunkong.Hoyolab;
 using Xunkong.Hoyolab.Account;
 using Xunkong.Hoyolab.DailyNote;
-using Xunkong.Hoyolab.TravelNotes;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -30,9 +29,6 @@ public sealed partial class DailyNoteThumbCard : UserControl
 
     [ObservableProperty]
     private DailyNoteInfo _DailyNoteInfo;
-
-    [ObservableProperty]
-    private TravelNotesDayData _TravelNotesDayData;
 
     [ObservableProperty]
     private bool _Error;
@@ -77,10 +73,8 @@ public sealed partial class DailyNoteThumbCard : UserControl
         try
         {
             var client = ServiceProvider.GetService<HoyolabService>()!;
-            var dailynote = await client.GetDailyNoteAsync(GenshinRoleInfo);
-            var travelnotes = await client.GetTravelNotesSummaryAsync(GenshinRoleInfo, DateTime.Now.Month);
+            var dailynote = await client.GetDailyNoteAsync(GenshinRoleInfo, true);
             DailyNoteInfo = dailynote!;
-            TravelNotesDayData = travelnotes.DayData;
             ErrorMessage = "";
             Error = false;
             NeedVerification = false;

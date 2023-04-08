@@ -637,9 +637,8 @@ public sealed partial class HomePage : Page
                     DailyNoteThumbCard card;
                     try
                     {
-                        var dailynote = await _hoyolabClient.GetDailyNoteAsync(role);
-                        var travelnote = await _hoyolabClient.GetTravelNotesSummaryAsync(role);
-                        card = new DailyNoteThumbCard { HoyolabUserInfo = user, GenshinRoleInfo = role, DailyNoteInfo = dailynote, TravelNotesDayData = travelnote.DayData };
+                        var dailynote = await _hoyolabService.GetDailyNoteAsync(role);
+                        card = new DailyNoteThumbCard { HoyolabUserInfo = user, GenshinRoleInfo = role, DailyNoteInfo = dailynote, };
                     }
                     catch (HoyolabException ex)
                     {

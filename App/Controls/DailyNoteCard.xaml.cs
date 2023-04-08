@@ -13,17 +13,11 @@ namespace Xunkong.Desktop.Controls;
 public sealed partial class DailyNoteCard : UserControl
 {
 
-    private readonly HoyolabClient _client;
-
-
-
 
     public DailyNoteCard()
     {
         this.InitializeComponent();
-        _client = ServiceProvider.GetService<HoyolabClient>()!;
     }
-
 
 
 
@@ -39,59 +33,16 @@ public sealed partial class DailyNoteCard : UserControl
     private DailyNoteInfo? dailyNoteInfo;
 
     [ObservableProperty]
-    private TravelNotesDayData? travelNotesDayData;
+    public string updateTimeAgoText;
+
 
     [ObservableProperty]
     private bool error = true;
 
+
     [ObservableProperty]
     private string? errorMessage;
 
-
-
-    partial void OnGenshinRoleInfoChanged(GenshinRoleInfo value)
-    {
-        if (value is null)
-        {
-            return;
-        }
-        DispatcherQueue.TryEnqueue(async () =>
-        {
-            try
-            {
-                DailyNoteInfo = await _client.GetDailyNoteAsync(value);
-                TravelNotesDayData = (await _client.GetTravelNotesSummaryAsync(value, 0)).DayData;
-                Error = false;
-            }
-            catch (Exception ex)
-            {
-                await Task.Delay(100);
-                Error = true;
-                errorMessage = ex.Message;
-            }
-        });
-    }
-
-
-    [RelayCommand(AllowConcurrentExecutions = false)]
-    private async Task RefreshAsync()
-    {
-        if (GenshinRoleInfo is null)
-        {
-            return;
-        }
-        try
-        {
-            DailyNoteInfo = await _client.GetDailyNoteAsync(GenshinRoleInfo);
-            TravelNotesDayData = (await _client.GetTravelNotesSummaryAsync(GenshinRoleInfo, 0)).DayData;
-            Error = false;
-        }
-        catch (Exception ex)
-        {
-            Error = true;
-            errorMessage = ex.Message;
-        }
-    }
 
 
     /// <summary>
@@ -144,4 +95,29 @@ public sealed partial class DailyNoteCard : UserControl
 
 
 
+    private string GetUpdateTimeAgoText()
+    {
+        if (DailyNoteInfo != null)
+        {
+            var span = DateTimeOffset.Now - DailyNoteInfo.UpdateTime;
+            if (span.Hours > 0)
+            {
+                return $"更新于 {span.Hours} 小时前";
+            }
+            if (span.Minutes > 0)
+            {
+                return $"更新于 {span.Minutes} 分钟前";
+            }
+            if (span.Seconds > 0)
+            {
+                return $"更新于 {span.Seconds} 秒前";
+            }
+        }
+        return "";
+    }
+
+    private void Grid_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        UpdateTimeAgoText = GetUpdateTimeAgoText();
+    }
 }

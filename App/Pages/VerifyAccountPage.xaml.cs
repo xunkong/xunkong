@@ -77,7 +77,7 @@ public sealed partial class VerifyAccountPage : Page
             var role = hoyolabService.GetGenshinRoleInfo(uid);
             if (role != null)
             {
-                var note = await hoyolabService.GetDailyNoteAsync(role);
+                var note = await hoyolabService.GetDailyNoteAsync(role, true);
                 if (note != null)
                 {
                     SecondaryTileProvider.UpdatePinnedTile(note);

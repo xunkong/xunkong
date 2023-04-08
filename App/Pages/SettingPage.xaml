@@ -766,6 +766,31 @@
                     </Expander>
 
 
+                    <!--  实时便笺缓存时间  -->
+                    <xdc:SettingCard>
+                        <xdc:SettingCard.Icon>
+                            <FontIcon FontSize="20" Glyph="&#xE121;" />
+                        </xdc:SettingCard.Icon>
+                        <xdc:SettingCard.Content>
+                            <TextBlock VerticalAlignment="Center">
+                                <Run Text="实时便笺缓存时间（分钟）" />
+                                <LineBreak />
+                                <Run FontSize="12"
+                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                     Text="减少网络请求次数，尽量避免验证账号" />
+                            </TextBlock>
+                        </xdc:SettingCard.Content>
+                        <xdc:SettingCard.Selector>
+                            <NumberBox Width="100"
+                                       HorizontalAlignment="Right"
+                                       SmallChange="1"
+                                       SpinButtonPlacementMode="Compact"
+                                       Style="{ThemeResource RightAlignToggleSwitchStyle}"
+                                       Value="{x:Bind DailyNoteCacheMinutes, Mode=TwoWay}" />
+                        </xdc:SettingCard.Selector>
+                    </xdc:SettingCard>
+
+
                     <!--  数据  -->
                     <TextBlock Margin="0,20,0,4"
                                FontSize="20"

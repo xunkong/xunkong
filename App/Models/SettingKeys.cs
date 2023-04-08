@@ -283,6 +283,12 @@ internal abstract class SettingKeys
     [Backup]
     public const string AgreeTrackEventByAppCenter = nameof(AgreeTrackEventByAppCenter);
 
+    /// <summary>
+    /// 实时便笺缓存时间
+    /// </summary>
+    [Backup]
+    public const string DailyNoteCacheMinutes = nameof(DailyNoteCacheMinutes);
+
 }
 
 

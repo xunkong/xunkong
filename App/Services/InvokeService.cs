@@ -30,7 +30,7 @@ internal class InvokeService
                         var role = service.GetGenshinRoleInfo(uid);
                         if (role != null)
                         {
-                            var info = await service.GetDailyNoteAsync(role);
+                            var info = await service.GetDailyNoteAsync(role, true);
                             if (info != null)
                             {
                                 SecondaryTileProvider.UpdatePinnedTile(info);
@@ -131,7 +131,7 @@ internal class InvokeService
             {
                 try
                 {
-                    var note = await service.GetDailyNoteAsync(user);
+                    var note = await service.GetDailyNoteAsync(user, true);
                     if (note != null && (note.Transformer.Obtained && note.Transformer.RecoveryTime.Reached || note.IsHomeCoinFull))
                     {
                         if (note != null)

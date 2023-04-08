@@ -17,6 +17,7 @@ internal class HoyolabService
 
     private readonly HoyolabClient _hoyolabClient;
 
+    private static JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
 
 
     public HoyolabService(HoyolabClient hoyolabClient)
@@ -346,16 +347,27 @@ internal class HoyolabService
     }
 
 
-    public async Task<DailyNoteInfo?> GetDailyNoteAsync(GenshinRoleInfo role)
+    public async Task<DailyNoteInfo?> GetDailyNoteAsync(GenshinRoleInfo role, bool disableCache = false)
     {
+        using var dapper = DatabaseProvider.CreateConnection();
+        if (!disableCache)
+        {
+            var cacheMinutes = AppSetting.GetValue<int>(SettingKeys.DailyNoteCacheMinutes);
+            var value = dapper.QueryFirstOrDefault<string>("SELECT Value FROM DailyNoteInfo WHERE Uid=@Uid AND Time>=@Time ORDER BY Id DESC LIMIT 1;", new { role.Uid, Time = DateTimeOffset.Now.AddMinutes(-cacheMinutes) });
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                return JsonSerializer.Deserialize<DailyNoteInfo>(value);
+            }
+        }
         var note = await _hoyolabClient.GetDailyNoteAsync(role);
         AppSetting.SetValue(SettingKeys.DoNotRemindDailyNoteTaskError, false);
+        dapper.Execute("INSERT INTO DailyNoteInfo (Uid, Time, Value) VALUES (@Uid, @Time, @Value);", new { note.Uid, Time = note.UpdateTime, Value = JsonSerializer.Serialize(note, JsonSerializerOptions) });
         return note;
     }
 
 
 
-    public async Task<TravelNotesSummary> GetTravelNotesSummaryAsync(GenshinRoleInfo role, int month)
+    public async Task<TravelNotesSummary> GetTravelNotesSummaryAsync(GenshinRoleInfo role, int month = 0)
     {
         var summary = await _hoyolabClient.GetTravelNotesSummaryAsync(role, month);
         if (summary.MonthData is null)

@@ -316,6 +316,24 @@ internal class DatabaseProvider
         COMMIT TRANSACTION;
         """;
 
+
+    private const string TableStructure_v6 = """
+        BEGIN TRANSACTION;
+
+        CREATE TABLE IF NOT EXISTS DailyNoteInfo
+        (
+            Id    INTEGER PRIMARY KEY AUTOINCREMENT,
+            Uid   INTEGER NOT NULL,
+            Time  TEXT    NOT NULL,
+            Value TEXT
+        );
+        CREATE INDEX IF NOT EXISTS IX_DailyNoteInfo_Uid ON DailyNoteInfo (Uid);
+        CREATE INDEX IF NOT EXISTS IX_DailyNoteInfo_Time ON DailyNoteInfo (Time);
+
+        PRAGMA USER_VERSION = 6;
+        COMMIT TRANSACTION;
+        """;
+
 }
 
 

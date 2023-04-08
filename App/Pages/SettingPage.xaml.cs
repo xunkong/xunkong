@@ -1087,4 +1087,15 @@ public sealed partial class SettingPage : Page
         }
     }
 
+
+    /// <summary>
+    /// 实时便笺缓存时间
+    /// </summary>
+    [ObservableProperty]
+    private int _DailyNoteCacheMinutes = AppSetting.GetValue<int>(SettingKeys.DailyNoteCacheMinutes);
+    partial void OnDailyNoteCacheMinutesChanged(int value)
+    {
+        AppSetting.SetValue(SettingKeys.DailyNoteCacheMinutes, value);
+    }
+
 }
