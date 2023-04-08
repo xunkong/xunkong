@@ -40,8 +40,9 @@ public sealed partial class HomePage : Page
 {
 
     private const string FallbackWallpaperUri = "ms-appx:///Assets/Images/102203689_p0.jpg";
-    private readonly static WallpaperInfo FallbackWallpaper = new WallpaperInfo
+    private readonly static WallpaperInfoEx FallbackWallpaper = new WallpaperInfoEx
     {
+        Id = 1702,
         Title = "原神2周年記念",
         Author = "アナ",
         Description = "おめでとうございます！\r\nこれからも旅人と共に、星と深淵を目指せ！",
@@ -72,7 +73,7 @@ public sealed partial class HomePage : Page
 
 
     [ObservableProperty]
-    private WallpaperInfo currentWallpaper;
+    private WallpaperInfoEx currentWallpaper;
 
 
     [ObservableProperty]
@@ -115,6 +116,8 @@ public sealed partial class HomePage : Page
         GetNotificationContentAsync();
         // 更新
         CheckUpdateAsync();
+        // 上传评分
+        _xunkongApiService.UploadWallpaperRatingAsync();
     }
 
 
@@ -157,7 +160,7 @@ public sealed partial class HomePage : Page
                 {
                     file = path;
                     skipDownload = true;
-                    CurrentWallpaper = new WallpaperInfo { Url = path, FileName = "CustomWallpaper.png" };
+                    CurrentWallpaper = new WallpaperInfoEx { Url = path, FileName = "CustomWallpaper.png" };
                 }
             }
             if (string.IsNullOrWhiteSpace(file))
@@ -428,7 +431,7 @@ public sealed partial class HomePage : Page
             {
                 MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = CurrentWallpaper.Url, DecodeFromStream = true });
             }
-            OperationHistory.AddToDatabase("OpenWallpaper", CurrentWallpaper.Url, CurrentWallpaper);
+            OperationHistory.AddToDatabase("OpenWallpaper", CurrentWallpaper.Id.ToString());
             Logger.TrackEvent("OpenWallpaper", "Id", CurrentWallpaper.Id.ToString());
         }
     }
@@ -509,7 +512,7 @@ public sealed partial class HomePage : Page
                 File.Copy(file.Path, destPath, true);
                 NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "已保存", fileName, "打开文件", openImageAction, null, 3000);
             }
-            OperationHistory.AddToDatabase("SaveWallpaper", CurrentWallpaper?.Url, CurrentWallpaper);
+            OperationHistory.AddToDatabase("SaveWallpaper", CurrentWallpaper?.Id.ToString());
             Logger.TrackEvent("SaveWallpaper", "Id", CurrentWallpaper?.Id.ToString());
         }
         catch (Exception ex)
@@ -610,6 +613,22 @@ public sealed partial class HomePage : Page
             _Button_NextWallpaper.Content = "\uE149";
         }
     }
+
+
+    /// <summary>
+    /// 保存评分
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
+    private void RatingControl_Wallpaper_ValueChanged(RatingControl sender, object args)
+    {
+        if (CurrentWallpaper != null)
+        {
+            XunkongApiService.SaveWallpaperRating(CurrentWallpaper);
+        }
+    }
+
+
 
 
     #endregion

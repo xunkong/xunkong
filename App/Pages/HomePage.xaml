@@ -124,6 +124,19 @@
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
                                     ToolTipService.ToolTip="下一张" />
+                            <RatingControl x:Name="RatingControl_Wallpaper"
+                                           Margin="8,4,0,0"
+                                           Caption="{x:Bind CurrentWallpaper.RatingText}"
+                                           IsClearEnabled="True"
+                                           PlaceholderValue="{x:Bind CurrentWallpaper.Rating}"
+                                           ValueChanged="RatingControl_Wallpaper_ValueChanged"
+                                           Visibility="{x:Bind CurrentWallpaper.Source, Converter={StaticResource StringToVisibilityConverter}}"
+                                           Value="{x:Bind CurrentWallpaper.MyRating, Mode=TwoWay}">
+                                <RatingControl.Resources>
+                                    <StaticResource x:Key="RatingControlSelectedForeground" ResourceKey="AccentFillColorTertiaryBrush" />
+                                    <StaticResource x:Key="RatingControlPlaceholderForeground" ResourceKey="TextFillColorDisabledBrush" />
+                                </RatingControl.Resources>
+                            </RatingControl>
                         </StackPanel>
                     </StackPanel>
                 </Grid>

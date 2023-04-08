@@ -28,7 +28,7 @@ internal class DatabaseProvider
     public static int DatabaseVersion => UpdateSqls.Count;
 
 
-    private static List<string> UpdateSqls = new() { TableStructure_v1, TableStructure_v2, TableStructure_v3, TableStructure_v4, TableStructure_v5 };
+    private static List<string> UpdateSqls = new() { TableStructure_v1, TableStructure_v2, TableStructure_v3, TableStructure_v4, TableStructure_v5, TableStructure_v6 };
 
 
 
@@ -44,6 +44,7 @@ internal class DatabaseProvider
 
         SqlMapper.AddTypeHandler(new DapperSqlMapper.DateTimeOffsetHandler());
         SqlMapper.AddTypeHandler(new DapperSqlMapper.TravelNotesPrimogemsMonthGroupStatsListHandler());
+        SqlMapper.AddTypeHandler(new DapperSqlMapper.StringListHandler());
     }
 
 
@@ -329,6 +330,57 @@ internal class DatabaseProvider
         );
         CREATE INDEX IF NOT EXISTS IX_DailyNoteInfo_Uid ON DailyNoteInfo (Uid);
         CREATE INDEX IF NOT EXISTS IX_DailyNoteInfo_Time ON DailyNoteInfo (Time);
+
+        CREATE TABLE IF NOT EXISTS WallpaperInfo
+        (
+            Id          INTEGER NOT NULL PRIMARY KEY,
+            Enable      INTEGER NOT NULL DEFAULT 0,
+            Title       TEXT,
+            Author      TEXT,
+            Description TEXT,
+            FileName    TEXT,
+            Tags        TEXT,
+            Url         TEXT,
+            Source      TEXT,
+            Rating      REAL    NOT NULL DEFAULT -1,
+            RatingCount INTEGER NOT NULL DEFAULT 0
+        );
+        CREATE INDEX IF NOT EXISTS IX_WallpaperInfo_Author ON WallpaperInfo (Author);
+        CREATE INDEX IF NOT EXISTS IX_WallpaperInfo_Tags ON WallpaperInfo (Tags);
+        CREATE INDEX IF NOT EXISTS IX_WallpaperInfo_Rating ON WallpaperInfo (Rating);
+
+        CREATE TABLE IF NOT EXISTS WallpaperHistory
+        (
+            Id          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            Time        TEXT    NOT NULL,
+            WallpaperId INTEGER NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS IX_WallpaperHistory_WallpaperId ON WallpaperHistory (WallpaperId);
+
+        CREATE TABLE IF NOT EXISTS WallpaperRating
+        (
+            WallpaperId INTEGER NOT NULL PRIMARY KEY,
+            Time        TEXT    NOT NULL,
+            Rating      INTEGER NOT NULL,
+            Uploaded    INTEGER NOT NULL DEFAULT 0
+        );
+        CREATE INDEX IF NOT EXISTS IX_WallpaperRating_Time ON WallpaperRating (Time);
+        CREATE INDEX IF NOT EXISTS IX_WallpaperRating_Uploaded ON WallpaperRating (Uploaded);
+
+        INSERT OR REPLACE INTO WallpaperInfo (Id, Enable, Title, Author, Description, FileName, Tags, Url, Source)
+        SELECT JSON_EXTRACT(Value, '$.Id'),
+               JSON_EXTRACT(Value, '$.Enable'),
+               JSON_EXTRACT(Value, '$.Title'),
+               JSON_EXTRACT(Value, '$.Author'),
+               JSON_EXTRACT(Value, '$.Description'),
+               JSON_EXTRACT(Value, '$.FileName'),
+               JSON_EXTRACT(Value, '$.Tags'),
+               JSON_EXTRACT(Value, '$.Url'),
+               JSON_EXTRACT(Value, '$.Source')
+        FROM OperationHistory WHERE (Operation = 'OpenWallpaper' OR Operation = 'SaveWallpaper') AND Value IS NOT NULL;
+
+        UPDATE OperationHistory SET Key=JSON_EXTRACT(Value, '$.Id'), Value=NULL
+        WHERE (Operation = 'OpenWallpaper' OR Operation = 'SaveWallpaper') AND Value IS NOT NULL;
 
         PRAGMA USER_VERSION = 6;
         COMMIT TRANSACTION;

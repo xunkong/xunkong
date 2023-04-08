@@ -282,46 +282,87 @@ internal class XunkongApiService
     #region Genshin Wallpaper
 
 
-
-    public async Task<WallpaperInfo> GetWallpaperByIdAsync(int id)
+    private WallpaperInfoEx GetWallpaperInfoEx(WallpaperInfo info)
     {
-        return await _xunkongClient.GetWallpaperByIdAsync(id);
+        using var dapper = DatabaseProvider.CreateConnection();
+        using var t = dapper.BeginTransaction();
+        dapper.Execute("""
+            INSERT OR REPLACE INTO WallpaperInfo (Id, Enable, Title, Author, Description, FileName, Tags, Url, Source, Rating, RatingCount)
+            VALUES (@Id, @Enable, @Title, @Author, @Description, @FileName, @Tags, @Url, @Source, @Rating, @RatingCount);
+            """, info, t);
+        var Time = DateTimeOffset.Now;
+        dapper.Execute("INSERT INTO WallpaperHistory (Time, WallpaperId) VALUES (@Time, @WallpaperId);", new { Time, WallpaperId = info.Id }, t);
+        t.Commit();
+        var ex = WallpaperInfoEx.FromWallpaper(info);
+        ex.MyRating = dapper.QueryFirstOrDefault<int>("SELECT IFNULL((SELECT Rating FROM WallpaperRating WHERE WallpaperId = @Id LIMIT 1), -1);", info);
+        return ex;
     }
 
 
-    public async Task<WallpaperInfo> GetRecommendWallpaperAsync()
+    private List<WallpaperInfoEx> GetWallpaperInfoEx(List<WallpaperInfo> infos)
     {
-        return await _xunkongClient.GetRecommendWallpaperAsync();
+        using var dapper = DatabaseProvider.CreateConnection();
+        using var t = dapper.BeginTransaction();
+        dapper.Execute("""
+            INSERT OR REPLACE INTO WallpaperInfo (Id, Enable, Title, Author, Description, FileName, Tags, Url, Source, Rating, RatingCount)
+            VALUES (@Id, @Enable, @Title, @Author, @Description, @FileName, @Tags, @Url, @Source, @Rating, @RatingCount);
+            """, infos, t);
+        var Time = DateTimeOffset.Now;
+        dapper.Execute("INSERT INTO WallpaperHistory (Time, WallpaperId) VALUES (@Time, @WallpaperId);", infos.Select(x => new { Time, WallpaperId = x.Id }), t);
+        t.Commit();
+        var ex = infos.Select(WallpaperInfoEx.FromWallpaper).ToList();
+        foreach (var item in ex)
+        {
+            item.MyRating = dapper.QueryFirstOrDefault<int>("SELECT IFNULL((SELECT Rating FROM WallpaperRating WHERE WallpaperId = @Id LIMIT 1), -1);", item);
+        }
+        return ex;
+    }
+
+
+    public async Task<WallpaperInfoEx> GetWallpaperByIdAsync(int id)
+    {
+        var info = await _xunkongClient.GetWallpaperByIdAsync(id);
+        return GetWallpaperInfoEx(info);
+
     }
 
 
 
-    public async Task<WallpaperInfo> GetRandomWallpaperAsync()
+    public async Task<WallpaperInfoEx> GetRandomWallpaperAsync()
     {
-        return await _xunkongClient.GetRandomWallpaperAsync();
+        var info = await _xunkongClient.GetRandomWallpaperAsync();
+        return GetWallpaperInfoEx(info);
     }
 
 
-    public async Task<WallpaperInfo> GetNextWallpaperAsync(int lastId = 0)
+    public async Task<WallpaperInfoEx> GetNextWallpaperAsync(int lastId = 0)
     {
-        return await _xunkongClient.GetNextWallpaperAsync(lastId);
+        var info = await _xunkongClient.GetNextWallpaperAsync(lastId);
+        return GetWallpaperInfoEx(info);
     }
 
 
-    public async Task<List<WallpaperInfo>> GetWallpaperInfoListAsync(int page, int size)
+    public async Task<List<WallpaperInfoEx>> GetWallpaperInfoListAsync(int page, int size)
     {
-        return await _xunkongClient.GetWallpaperListAsync(size);
+        var infos = await _xunkongClient.GetWallpaperListAsync(size);
+        return GetWallpaperInfoEx(infos);
     }
 
 
-    public WallpaperInfo? GetPreparedWallpaper()
+    public WallpaperInfoEx? GetPreparedWallpaper()
     {
         try
         {
             var str = AppSetting.GetValue<string>(SettingKeys.RecommendWallpaper);
             if (!string.IsNullOrWhiteSpace(str))
             {
-                return JsonSerializer.Deserialize<WallpaperInfo>(str);
+                var info = JsonSerializer.Deserialize<WallpaperInfoEx>(str);
+                if (info != null)
+                {
+                    using var dapper = DatabaseProvider.CreateConnection();
+                    info.MyRating = dapper.QueryFirstOrDefault<int>("SELECT IFNULL((SELECT Rating FROM WallpaperRating WHERE WallpaperId = @Id LIMIT 1), -1);", info);
+                }
+                return info;
             }
             else
             {
@@ -354,6 +395,48 @@ internal class XunkongApiService
             }
         }
         catch { }
+    }
+
+
+
+
+    public static void SaveWallpaperRating(WallpaperInfoEx info)
+    {
+        try
+        {
+            using var dapper = DatabaseProvider.CreateConnection();
+            dapper.Execute("INSERT OR REPLACE INTO WallpaperRating (WallpaperId, Time, Rating, Uploaded) VALUES (@Id, @Now, @MyRating, FALSE);", new { info.Id, DateTimeOffset.Now, info.MyRating });
+            OperationHistory.AddToDatabase("RatingWallpaper", info.Id.ToString(), info.MyRating.ToString());
+            Logger.TrackEvent("RatingWallpaper", "Id", info.Id.ToString(), "Rating", info.MyRating.ToString());
+        }
+        catch { }
+    }
+
+
+
+    public async void UploadWallpaperRatingAsync()
+    {
+        try
+        {
+            await Task.Delay(5000);
+            using var dapper = DatabaseProvider.CreateConnection();
+            if (dapper.QueryFirstOrDefault<bool>("SELECT EXISTS(SELECT * FROM WallpaperRating WHERE Time < @Time AND Uploaded = FALSE);", new { Time = DateTimeOffset.Now.AddHours(-2) }))
+            {
+                var ratings = dapper.Query<WallpaperRating>("SELECT * FROM WallpaperRating WHERE Uploaded = FALSE;");
+                foreach (var item in ratings)
+                {
+                    item.DeviceId = XunkongEnvironment.DeviceId;
+                }
+                await _xunkongClient.UploadWallpaperRatingAsync(ratings);
+                dapper.Execute("UPDATE WallpaperRating SET Uploaded=TRUE WHERE WallpaperId IN @Ids;", new { Ids = ratings.Select(x => x.WallpaperId).ToList() });
+                OperationHistory.AddToDatabase("UploadWallpaperRating");
+                Logger.TrackEvent("UploadWallpaperRating");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
     }
 
 
