@@ -140,13 +140,16 @@ public partial class App : Application
             // 重定向前, firstInstance.Key 一定是 Main
             if (e.Kind == ExtendedActivationKind.Launch)
             {
+                AppCenter.Start("b9d30257-cbc6-4f35-a2a8-1ea2c4c8f129", typeof(Analytics), typeof(Crashes));
+                AppCenter.SetUserId(XunkongEnvironment.DeviceId);
+#if DEBUG
+                Analytics.TrackEvent("Develop", new Dictionary<string, string> { ["DeviceId"] = XunkongEnvironment.DeviceId, ["Version"] = XunkongEnvironment.AppVersion.ToString() });
+#endif
+
                 // firstInstance.IsCurrent ，若不是，之前已经重定向过了
                 firstInstance.Activated += OnActivated;
                 mainWindow = new MainWindow();
                 mainWindow.Activate();
-
-                AppCenter.Start("b9d30257-cbc6-4f35-a2a8-1ea2c4c8f129", typeof(Analytics), typeof(Crashes));
-                AppCenter.SetUserId(XunkongEnvironment.DeviceId);
             }
             else
             {
