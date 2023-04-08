@@ -231,19 +231,6 @@
             </StackPanel>
 
 
-            <!--  刷新  -->
-            <Button Margin="0,-12,-12,0"
-                    Padding="4"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
-                    Command="{x:Bind RefreshCommand, Mode=OneTime}"
-                    Content="&#xE149;"
-                    CornerRadius="0,4,0,4"
-                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                    FontSize="12"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
-                    Visibility="{x:Bind Error, Converter={StaticResource BoolToVisibilityConverter}}" />
 
             <!--  验证账号  -->
             <Button Grid.Row="1"

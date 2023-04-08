@@ -785,7 +785,6 @@
                                        HorizontalAlignment="Right"
                                        SmallChange="1"
                                        SpinButtonPlacementMode="Compact"
-                                       Style="{ThemeResource RightAlignToggleSwitchStyle}"
                                        Value="{x:Bind DailyNoteCacheMinutes, Mode=TwoWay}" />
                         </xdc:SettingCard.Selector>
                     </xdc:SettingCard>
