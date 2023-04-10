@@ -53,9 +53,10 @@
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            DecodeFromStream="{x:Bind DecodeFromStream}"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                            ImageOpened="_Image_ImageOpened"
                            IsDoubleTapEnabled="True"
-                           ShowLoadingRing="True"
+                           ShowLoadingRing="{x:Bind ShowLoadingRing}"
                            SizeChanged="_Image_SizeChanged"
                            Source="{x:Bind CurrentImage.Url}">
                 <xdc:MenuImage.RotationTransition>

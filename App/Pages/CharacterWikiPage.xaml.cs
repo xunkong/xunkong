@@ -230,7 +230,7 @@ public sealed partial class CharacterWikiPage : Page
             var current = images.FirstOrDefault(x => x.Url == SelectedCharacter.ShowGachaSplash);
             if (current != null)
             {
-                MainWindow.Current.SetFullWindowContent(new ImageViewer { CurrentImage = current, ImageCollection = images });
+                MainWindow.Current.SetFullWindowContent(new ImageViewer { CurrentImage = current, ImageCollection = images, ShowLoadingRing = true });
             }
         }
     }
