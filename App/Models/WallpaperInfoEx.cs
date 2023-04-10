@@ -14,6 +14,12 @@ public class WallpaperInfoEx : WallpaperInfo
     [JsonIgnore]
     public string RatingText => $"{Math.Clamp(Rating, 0, 5):F1}/{RatingCount}";
 
+    [JsonIgnore]
+    public string Thumb => (Url?.Contains("xunkong.cc") ?? false) ? $"{Url}/thumb" : Url!;
+
+    [JsonIgnore]
+    public bool ShowMyRating => MyRating > 0;
+
     public static WallpaperInfoEx FromWallpaper(WallpaperInfo info)
     {
         return new WallpaperInfoEx
@@ -30,6 +36,12 @@ public class WallpaperInfoEx : WallpaperInfo
             Title = info.Title,
             Url = info.Url,
         };
+    }
+
+
+    public static WallpaperInfoEx FromUri(string uri)
+    {
+        return new WallpaperInfoEx { Url = uri };
     }
 
 }

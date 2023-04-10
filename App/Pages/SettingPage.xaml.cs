@@ -60,7 +60,7 @@ public sealed partial class SettingPage : Page
     /// <param name="e"></param>
     private void _Image_RecommendWallpaper_Tapped(object sender, TappedRoutedEventArgs e)
     {
-        MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = "ms-appx:///Assets/Images/102203689_p0.jpg" });
+        MainWindow.Current.SetFullWindowContent(new ImageViewer { CurrentImage = HomePage.FallbackWallpaper });
     }
 
     /// <summary>

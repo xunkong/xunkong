@@ -60,6 +60,8 @@
                        Text="{x:Bind PlaceholderText}" />
             <ProgressRing x:Name="LoadingProgressRing"
                           Grid.Row="1"
+                          Width="48"
+                          Height="48"
                           Foreground="{x:Bind Foreground}"
                           IsActive="False" />
         </Grid>

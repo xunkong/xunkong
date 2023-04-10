@@ -40,7 +40,7 @@ public sealed partial class HomePage : Page
 {
 
     private const string FallbackWallpaperUri = "ms-appx:///Assets/Images/102203689_p0.jpg";
-    private readonly static WallpaperInfoEx FallbackWallpaper = new WallpaperInfoEx
+    public static readonly WallpaperInfoEx FallbackWallpaper = new WallpaperInfoEx
     {
         Id = 1702,
         Title = "原神2周年記念",
@@ -48,7 +48,7 @@ public sealed partial class HomePage : Page
         Description = "おめでとうございます！\r\nこれからも旅人と共に、星と深淵を目指せ！",
         FileName = "[アナ] 原神2周年記念 [102203689_p0].jpg",
         Source = "https://www.pixiv.net/artworks/102203689",
-        Url = "https://file.xunkong.cc/wallpaper/102203689_p0.webp"
+        Url = "ms-appx:///Assets/Images/102203689_p0.jpg"
     };
 
     private readonly XunkongApiService _xunkongApiService;
@@ -425,11 +425,11 @@ public sealed partial class HomePage : Page
         {
             if (CurrentWallpaper == FallbackWallpaper)
             {
-                MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = FallbackWallpaperUri });
+                MainWindow.Current.SetFullWindowContent(new ImageViewer { CurrentImage = FallbackWallpaper });
             }
             else
             {
-                MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = CurrentWallpaper.Url, DecodeFromStream = true });
+                MainWindow.Current.SetFullWindowContent(new ImageViewer { CurrentImage = CurrentWallpaper, DecodeFromStream = true });
             }
             OperationHistory.AddToDatabase("OpenWallpaper", CurrentWallpaper.Id.ToString());
             Logger.TrackEvent("OpenWallpaper", "Id", CurrentWallpaper.Id.ToString());

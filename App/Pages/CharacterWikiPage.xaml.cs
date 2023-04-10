@@ -218,16 +218,20 @@ public sealed partial class CharacterWikiPage : Page
     {
         if (!string.IsNullOrWhiteSpace(SelectedCharacter?.ShowGachaSplash))
         {
-            var images = new List<string>();
+            var images = new List<WallpaperInfoEx>();
             foreach (var info in CharacterInfos)
             {
-                images.Add(info.CharacterInfo.GachaSplash);
+                images.Add(new WallpaperInfoEx { Url = info.CharacterInfo.GachaSplash });
                 if (info.CharacterInfo.Outfits?.Count > 1)
                 {
-                    images.AddRange(info.CharacterInfo.Outfits.Select(x => x.GachaSplash!).Where(x => !string.IsNullOrWhiteSpace(x)));
+                    images.AddRange(info.CharacterInfo.Outfits.Where(x => !string.IsNullOrWhiteSpace(x.GachaSplash)).Select(x => WallpaperInfoEx.FromUri(x.GachaSplash!)));
                 }
             }
-            MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = SelectedCharacter.ShowGachaSplash, SourceCollection = images });
+            var current = images.FirstOrDefault(x => x.Url == SelectedCharacter.ShowGachaSplash);
+            if (current != null)
+            {
+                MainWindow.Current.SetFullWindowContent(new ImageViewer { CurrentImage = current, ImageCollection = images });
+            }
         }
     }
 

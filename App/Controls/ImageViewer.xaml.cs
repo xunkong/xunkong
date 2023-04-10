@@ -38,20 +38,44 @@ public sealed partial class ImageViewer : UserControl
 
 
     [ObservableProperty]
-    private string source;
+    private WallpaperInfoEx currentImage;
 
 
     [ObservableProperty]
-    private List<string>? sourceCollection;
-
-    [ObservableProperty]
-    private bool decodeFromStream;
+    private List<WallpaperInfoEx>? imageCollection;
 
 
+    public bool DecodeFromStream { get; set; }
 
-    partial void OnSourceCollectionChanged(List<string>? value)
+
+    partial void OnCurrentImageChanged(WallpaperInfoEx value)
     {
-        _GridView_ImageCollection.Visibility = Visibility.Visible;
+        _ScrollViewer_Image.HorizontalScrollMode = ScrollMode.Disabled;
+        _ScrollViewer_Image.VerticalScrollMode = ScrollMode.Disabled;
+        if (value.Id > 0)
+        {
+            Grid_WallpaperInfo.Visibility = Visibility.Visible;
+        }
+        else
+        {
+            Grid_WallpaperInfo.Visibility = Visibility.Collapsed;
+        }
+        _ScrollViewer_Image.ZoomToFactor((float)(1 / uiScale));
+        _ScrollViewer_Image.ScrollToHorizontalOffset(_ScrollViewer_Image.ExtentWidth / 2 - _ScrollViewer_Image.ViewportWidth / 2);
+        _ScrollViewer_Image.ScrollToVerticalOffset(_ScrollViewer_Image.ExtentHeight / 2 - _ScrollViewer_Image.ViewportHeight / 2);
+    }
+
+
+    partial void OnImageCollectionChanged(List<WallpaperInfoEx>? value)
+    {
+        if (value?.Any() ?? false)
+        {
+            _GridView_ImageCollection.Visibility = Visibility.Visible;
+        }
+        else
+        {
+            _GridView_ImageCollection.Visibility = Visibility.Collapsed;
+        }
     }
 
 
@@ -154,7 +178,7 @@ public sealed partial class ImageViewer : UserControl
         try
         {
             StorageFile? file = null;
-            var uri = new Uri(Source);
+            var uri = new Uri(CurrentImage.Url);
             if (uri.Scheme is "ms-appx")
             {
                 file = await StorageFile.GetFileFromApplicationUriAsync(uri);
@@ -196,7 +220,7 @@ public sealed partial class ImageViewer : UserControl
     {
         try
         {
-            var file = await XunkongCache.GetFileFromUriAsync(Source);
+            var file = await XunkongCache.GetFileFromUriAsync(CurrentImage.Url);
             if (file is null)
             {
                 NotificationProvider.Warning("找不到缓存的文件", 3000);
@@ -205,10 +229,10 @@ public sealed partial class ImageViewer : UserControl
             {
                 var picker = new FileSavePicker();
                 picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-                var extension = Path.GetExtension(Source);
+                var extension = Path.GetExtension(CurrentImage.Url);
                 if (string.IsNullOrWhiteSpace(extension)) { extension = ".png"; }
                 picker.FileTypeChoices.Add("Image", new List<string>() { extension });
-                picker.SuggestedFileName = Path.GetFileName(Source);
+                picker.SuggestedFileName = Path.GetFileName(CurrentImage.Url);
                 WinRT.Interop.InitializeWithWindow.Initialize(picker, MainWindow.Current.HWND);
                 var saveFile = await picker.PickSaveFileAsync();
                 if (saveFile != null)
@@ -257,6 +281,8 @@ public sealed partial class ImageViewer : UserControl
     /// <param name="e"></param>
     private void _Image_ImageOpened(object sender, RoutedEventArgs _)
     {
+        _ScrollViewer_Image.HorizontalScrollMode = ScrollMode.Enabled;
+        _ScrollViewer_Image.VerticalScrollMode = ScrollMode.Enabled;
         var width = _Image.ActualWidth;
         var height = _Image.ActualHeight;
         if (width * height == 0)
@@ -270,12 +296,14 @@ public sealed partial class ImageViewer : UserControl
     }
 
     /// <summary>
-    /// 图片加载后计算合适的缩放率（部分无法触发 <see cref="CachedImage.ImageOpened"/> 的情况）
+    /// 图片加载后计算合适的缩放率（部分无法触发 <see cref="MenuImage.ImageOpened"/> 的情况）
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
     private void _Image_SizeChanged(object sender, SizeChangedEventArgs e)
     {
+        _ScrollViewer_Image.HorizontalScrollMode = ScrollMode.Enabled;
+        _ScrollViewer_Image.VerticalScrollMode = ScrollMode.Enabled;
         var width = _Image.ActualWidth;
         var height = _Image.ActualHeight;
         if (width * height == 0)
@@ -297,14 +325,14 @@ public sealed partial class ImageViewer : UserControl
         double factor;
         if (_Image.Rotation % 180 == 0)
         {
-            var widthFactor = _ScrollViewer_Image.ViewportWidth / _Image.ActualWidth;
-            var heightFactor = _ScrollViewer_Image.ViewportHeight / _Image.ActualHeight;
+            var widthFactor = _ScrollViewer_Image.ViewportWidth / (_Image.ActualWidth + 1);
+            var heightFactor = _ScrollViewer_Image.ViewportHeight / (_Image.ActualHeight + 1);
             factor = Math.Min(widthFactor, heightFactor);
         }
         else
         {
-            var widthFactor = _ScrollViewer_Image.ViewportHeight / _Image.ActualWidth;
-            var heightFactor = _ScrollViewer_Image.ViewportWidth / _Image.ActualHeight;
+            var widthFactor = _ScrollViewer_Image.ViewportHeight / (_Image.ActualWidth + 1);
+            var heightFactor = _ScrollViewer_Image.ViewportWidth / (_Image.ActualHeight + 1);
             factor = Math.Min(widthFactor, heightFactor);
         }
         return Math.Min(factor, 1 / uiScale);
@@ -331,20 +359,30 @@ public sealed partial class ImageViewer : UserControl
         {
             _Border_ToolBar.Opacity = 0;
             _Border_ToolBar.IsHitTestVisible = false;
-            if (SourceCollection?.Any() ?? false)
+            if (ImageCollection?.Any() ?? false)
             {
                 _GridView_ImageCollection.Opacity = 0;
                 _GridView_ImageCollection.IsHitTestVisible = false;
+            }
+            if (CurrentImage.Id > 0)
+            {
+                Grid_WallpaperInfo.Opacity = 0;
+                Grid_WallpaperInfo.IsHitTestVisible = false;
             }
         }
         else
         {
             _Border_ToolBar.Opacity = 1;
             _Border_ToolBar.IsHitTestVisible = true;
-            if (SourceCollection?.Any() ?? false)
+            if (ImageCollection?.Any() ?? false)
             {
                 _GridView_ImageCollection.Opacity = 1;
                 _GridView_ImageCollection.IsHitTestVisible = true;
+            }
+            if (CurrentImage.Id > 0)
+            {
+                Grid_WallpaperInfo.Opacity = 1;
+                Grid_WallpaperInfo.IsHitTestVisible = true;
             }
         }
     }
@@ -386,11 +424,11 @@ public sealed partial class ImageViewer : UserControl
         var stats = Microsoft.UI.Input.InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control);
         if (stats == CoreVirtualKeyStates.None)
         {
-            if (SourceCollection?.Any() ?? false)
+            if (ImageCollection?.Any() ?? false)
             {
                 _GridView_ImageCollection.Focus(FocusState.Programmatic);
                 var index = _GridView_ImageCollection.SelectedIndex;
-                var count = SourceCollection.Count;
+                var count = ImageCollection.Count;
                 var pointer = e.GetCurrentPoint(_ScrollViewer_Image);
                 if (pointer.Properties.MouseWheelDelta < 0)
                 {
@@ -451,6 +489,51 @@ public sealed partial class ImageViewer : UserControl
     private void _ScrollViewer_Image_PointerReleased(object sender, PointerRoutedEventArgs e)
     {
         canImageMoved = false;
+    }
+
+
+
+    /// <summary>
+    /// 保存评分
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
+    private void RatingControl_Wallpaper_ValueChanged(RatingControl sender, object args)
+    {
+        if (CurrentImage != null)
+        {
+            XunkongApiService.SaveWallpaperRating(CurrentImage);
+        }
+    }
+
+
+    /// <summary>
+    /// 展开壁纸信息卡片
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void Grid_WallpaperInfo_PointerEntered(object sender, PointerRoutedEventArgs e)
+    {
+        Grid_WallpaperInfo.ClearValue(WidthProperty);
+        Grid_WallpaperInfo.ClearValue(HeightProperty);
+        var maxWidth = (this.ActualWidth - _Border_ToolBar.ActualWidth) / 2 - 96;
+        if (maxWidth > 200)
+        {
+            Grid_WallpaperInfo.MaxWidth = maxWidth;
+        }
+    }
+
+
+    /// <summary>
+    /// 缩小壁纸信息卡片
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void Grid_WallpaperInfo_PointerExited(object sender, PointerRoutedEventArgs e)
+    {
+        Grid_WallpaperInfo.Width = 200;
+        Grid_WallpaperInfo.Height = 120;
+        Grid_WallpaperInfo.ClearValue(MaxWidthProperty);
     }
 
 

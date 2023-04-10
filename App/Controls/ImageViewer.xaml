@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:xdc="using:Xunkong.Desktop.Controls"
+             xmlns:xdm="using:Xunkong.Desktop.Models"
              x:DefaultBindMode="OneWay"
              mc:Ignorable="d">
 
@@ -54,8 +55,9 @@
                            DecodeFromStream="{x:Bind DecodeFromStream}"
                            ImageOpened="_Image_ImageOpened"
                            IsDoubleTapEnabled="True"
+                           ShowLoadingRing="True"
                            SizeChanged="_Image_SizeChanged"
-                           Source="{x:Bind Source}">
+                           Source="{x:Bind CurrentImage.Url}">
                 <xdc:MenuImage.RotationTransition>
                     <ScalarTransition />
                 </xdc:MenuImage.RotationTransition>
@@ -75,12 +77,12 @@
                   BorderThickness="1"
                   CornerRadius="8"
                   IsItemClickEnabled="True"
-                  ItemsSource="{x:Bind SourceCollection}"
+                  ItemsSource="{x:Bind ImageCollection}"
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   ScrollViewer.HorizontalScrollMode="Enabled"
                   ScrollViewer.VerticalScrollBarVisibility="Hidden"
                   ScrollViewer.VerticalScrollMode="Disabled"
-                  SelectedItem="{x:Bind Source, Mode=TwoWay}"
+                  SelectedItem="{x:Bind CurrentImage, Mode=TwoWay}"
                   Visibility="Collapsed">
             <GridView.OpacityTransition>
                 <ScalarTransition />
@@ -91,12 +93,73 @@
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
             <GridView.ItemTemplate>
-                <DataTemplate x:DataType="x:String">
-                    <xdc:CachedImage Height="80" Source="{x:Bind}" />
+                <DataTemplate x:DataType="xdm:WallpaperInfoEx">
+                    <xdc:CachedImage Height="80" Source="{x:Bind Thumb}" />
                 </DataTemplate>
             </GridView.ItemTemplate>
         </GridView>
 
+
+        <Grid Name="Grid_WallpaperInfo"
+              Grid.ColumnSpan="3"
+              Width="200"
+              Height="120"
+              MinWidth="200"
+              MinHeight="120"
+              Margin="48"
+              Padding="12,8,12,8"
+              HorizontalAlignment="Left"
+              VerticalAlignment="Top"
+              Background="{ThemeResource CustomAcrylicBrush}"
+              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+              BorderThickness="1"
+              CornerRadius="8"
+              PointerEntered="Grid_WallpaperInfo_PointerEntered"
+              PointerExited="Grid_WallpaperInfo_PointerExited"
+              Visibility="Collapsed">
+            <Grid.OpacityTransition>
+                <ScalarTransition />
+            </Grid.OpacityTransition>
+            <TextBlock HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       FontSize="12"
+                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                       IsTextSelectionEnabled="True"
+                       Text="{x:Bind CurrentImage.Author}"
+                       TextTrimming="WordEllipsis" />
+            <TextBlock Margin="0,20,0,0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       FontSize="14"
+                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                       IsTextSelectionEnabled="True"
+                       Text="{x:Bind CurrentImage.Title}"
+                       TextTrimming="WordEllipsis" />
+            <RatingControl x:Name="RatingControl_Wallpaper"
+                           Margin="0,40,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Caption="{x:Bind CurrentImage.RatingText}"
+                           IsClearEnabled="True"
+                           PlaceholderValue="{x:Bind CurrentImage.Rating}"
+                           ValueChanged="RatingControl_Wallpaper_ValueChanged"
+                           Value="{x:Bind CurrentImage.MyRating, Mode=TwoWay}">
+                <RatingControl.Resources>
+                    <StaticResource x:Key="RatingControlSelectedForeground" ResourceKey="AccentFillColorTertiaryBrush" />
+                    <StaticResource x:Key="RatingControlPlaceholderForeground" ResourceKey="TextFillColorDisabledBrush" />
+                </RatingControl.Resources>
+            </RatingControl>
+            <TextBlock Margin="0,72,0,0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       FontSize="12"
+                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                       IsTextSelectionEnabled="True"
+                       Text="{x:Bind CurrentImage.Description}"
+                       TextTrimming="WordEllipsis"
+                       TextWrapping="Wrap"
+                       Visibility="{x:Bind CurrentImage.Description, Converter={StaticResource StringToVisibilityConverter}}" />
+        </Grid>
 
 
 
@@ -178,8 +241,6 @@
                         ToolTipService.ToolTip="关闭" />
             </StackPanel>
         </Border>
-
-
 
 
 

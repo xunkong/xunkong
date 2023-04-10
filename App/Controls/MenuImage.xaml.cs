@@ -426,6 +426,7 @@ public sealed partial class MenuImage : UserControl
                 {
                     using var stream = await file.OpenReadAsync();
                     var bitmap = new BitmapImage();
+                    bitmap.ImageOpened += (s, e) => ImageOpened?.Invoke(this, e);
                     await bitmap.SetSourceAsync(stream);
                     PixelHeight = bitmap.PixelHeight;
                     PixelWidth = bitmap.PixelWidth;

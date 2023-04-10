@@ -66,7 +66,12 @@ public sealed partial class AlbumPage : Page
     {
         if (e.ClickedItem is FileInfo file)
         {
-            MainWindow.Current.SetFullWindowContent(new ImageViewer { Source = file.FullName, SourceCollection = vm.ImageList.Select(x => x.FullName).ToList() });
+            var list = vm.ImageList.Select(x => WallpaperInfoEx.FromUri(x.FullName)).ToList();
+            var current = list.FirstOrDefault(x => x.Url == file.FullName);
+            if (current != null)
+            {
+                MainWindow.Current.SetFullWindowContent(new ImageViewer { CurrentImage = current, ImageCollection = list });
+            }
         }
     }
 
