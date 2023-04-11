@@ -5,6 +5,8 @@ using Xunkong.ApiClient.GenshinData;
 using Xunkong.ApiClient.Xunkong;
 using Xunkong.GenshinData.Achievement;
 using Xunkong.GenshinData.Character;
+using Xunkong.GenshinData.Material;
+using Xunkong.GenshinData.Text;
 using Xunkong.GenshinData.Weapon;
 using Xunkong.Hoyolab.Wishlog;
 
@@ -27,6 +29,12 @@ internal class XunkongApiService
         _xunkongClient = xunkongClient;
         _wishlogService = wishlogService;
         _backupService = backupService;
+    }
+
+
+    static XunkongApiService()
+    {
+        LiteDB.BsonMapper.Global.Entity<TextMapItem>().Id(x => x.ItemId);
     }
 
 
@@ -193,39 +201,6 @@ internal class XunkongApiService
     }
 
 
-    public async Task<IEnumerable<CharacterInfo>> GetCharacterInfosFromServerAsync()
-    {
-        var characterInfos = await _xunkongClient.GetCharacterInfosAsync();
-        using var liteDb = DatabaseProvider.CreateGenshinDataDb();
-        var col = liteDb.GetCollection<CharacterInfo>();
-        col.DeleteAll();
-        col.InsertBulk(characterInfos);
-        return characterInfos;
-    }
-
-
-    public async Task<IEnumerable<WeaponInfo>> GetWeaponInfosFromServerAsync()
-    {
-        var weaponInfos = await _xunkongClient.GetWeaponInfosAsync();
-        using var liteDb = DatabaseProvider.CreateGenshinDataDb();
-        var col = liteDb.GetCollection<WeaponInfo>();
-        col.DeleteAll();
-        col.InsertBulk(weaponInfos);
-        return weaponInfos;
-    }
-
-
-    public async Task<IEnumerable<WishEventInfo>> GetWishEventInfosFromServerAsync()
-    {
-        var wishEventInfos = await _xunkongClient.GetWishEventInfosAsync();
-        using var liteDb = DatabaseProvider.CreateGenshinDataDb();
-        var col = liteDb.GetCollection<WishEventInfo>();
-        col.DeleteAll();
-        col.InsertBulk(wishEventInfos);
-        return wishEventInfos;
-    }
-
-
     private static void SaveGenshinData(AllGenshinData data)
     {
         using var liteDb = DatabaseProvider.CreateGenshinDataDb();
@@ -254,6 +229,16 @@ internal class XunkongApiService
         var col5 = liteDb.GetCollection<AchievementGoal>();
         col5.DeleteAll();
         col5.InsertBulk(data.Achievement.Goals);
+
+        GenshinDataDic[nameof(MaterialItem)] = data.Materials;
+        var col6 = liteDb.GetCollection<MaterialItem>();
+        col6.DeleteAll();
+        col6.InsertBulk(data.Materials);
+
+        GenshinDataDic[nameof(TextMapItem)] = data.TextMaps;
+        var col7 = liteDb.GetCollection<TextMapItem>();
+        col7.DeleteAll();
+        col7.InsertBulk(data.TextMaps);
     }
 
 
@@ -443,7 +428,6 @@ internal class XunkongApiService
 
 
     #endregion
-
 
 
 

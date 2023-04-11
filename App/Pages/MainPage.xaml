@@ -61,9 +61,6 @@
                              Text="{x:Bind GenshinRoleInfo.RegionName}" />
                         <Run FontSize="12"
                              Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                             Text=" " />
-                        <Run FontSize="12"
-                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                              Text="{x:Bind GenshinRoleInfo.Level}" />
                         <Run FontSize="12"
                              Foreground="{ThemeResource TextFillColorSecondaryBrush}"
