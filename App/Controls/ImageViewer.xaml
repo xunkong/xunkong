@@ -32,7 +32,7 @@
         </Grid.ColumnDefinitions>
 
 
-
+        <!--  图片浏览  -->
         <ScrollViewer x:Name="_ScrollViewer_Image"
                       Grid.ColumnSpan="3"
                       DoubleTapped="_ScrollViewer_Image_DoubleTapped"
@@ -66,6 +66,7 @@
         </ScrollViewer>
 
 
+        <!--  底部图片预览  -->
         <GridView x:Name="_GridView_ImageCollection"
                   Grid.Column="1"
                   Height="100"
@@ -101,6 +102,7 @@
         </GridView>
 
 
+        <!--  左上角图片信息  -->
         <Grid Name="Grid_WallpaperInfo"
               Grid.ColumnSpan="3"
               Width="200"
@@ -173,7 +175,7 @@
         </Grid>
 
 
-
+        <!--  上方工具栏  -->
         <Border x:Name="_Border_ToolBar"
                 Grid.ColumnSpan="3"
                 Margin="0,48,0,0"
@@ -217,6 +219,33 @@
                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
                         Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
                         ToolTipService.ToolTip="旋转" />
+                <!--  背景颜色  -->
+                <Button Width="36"
+                        Height="36"
+                        Content="&#xE793;"
+                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                        Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
+                        ToolTipService.ToolTip="背景颜色">
+                    <Button.Flyout>
+                        <MenuFlyout>
+                            <RadioMenuFlyoutItem Name="RadioMenuFlyoutItem_Theme_Default"
+                                                 Click="RadioMenuFlyoutItem_Theme_Click"
+                                                 GroupName="Theme"
+                                                 Tag="Default"
+                                                 Text="跟随应用" />
+                            <RadioMenuFlyoutItem Name="RadioMenuFlyoutItem_Theme_Light"
+                                                 Click="RadioMenuFlyoutItem_Theme_Click"
+                                                 GroupName="Theme"
+                                                 Tag="Light"
+                                                 Text="浅色模式" />
+                            <RadioMenuFlyoutItem Name="RadioMenuFlyoutItem_Theme_Dark"
+                                                 Click="RadioMenuFlyoutItem_Theme_Click"
+                                                 GroupName="Theme"
+                                                 Tag="Dark"
+                                                 Text="深色模式" />
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
                 <AppBarSeparator Padding="0" />
                 <!--  复制  -->
                 <Button x:Name="_Button_Copy"

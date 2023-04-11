@@ -33,6 +33,21 @@ public sealed partial class ImageViewer : UserControl
         this.InitializeComponent();
         uiScale = MainWindow.Current.UIScale;
         _ScrollViewer_Image.MaxZoomFactor = (float)(2 / uiScale);
+        switch (AppSetting.GetValue<int>(SettingKeys.ImageViewerRequestTheme))
+        {
+            case 1:
+                RequestedTheme = ElementTheme.Light;
+                RadioMenuFlyoutItem_Theme_Light.IsChecked = true;
+                break;
+            case 2:
+                RequestedTheme = ElementTheme.Dark;
+                RadioMenuFlyoutItem_Theme_Dark.IsChecked = true;
+                break;
+            default:
+                RequestedTheme = ElementTheme.Default;
+                RadioMenuFlyoutItem_Theme_Default.IsChecked = true;
+                break;
+        }
     }
 
 
@@ -560,6 +575,40 @@ public sealed partial class ImageViewer : UserControl
         }
         catch { }
     }
+
+
+
+    /// <summary>
+    /// 修改图片浏览器主题
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void RadioMenuFlyoutItem_Theme_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is RadioMenuFlyoutItem item)
+        {
+            switch (item.Tag)
+            {
+                case "Light":
+                    RequestedTheme = ElementTheme.Light;
+                    RadioMenuFlyoutItem_Theme_Light.IsChecked = true;
+                    AppSetting.SetValue(SettingKeys.ImageViewerRequestTheme, 1);
+                    break;
+                case "Dark":
+                    RequestedTheme = ElementTheme.Dark;
+                    RadioMenuFlyoutItem_Theme_Dark.IsChecked = true;
+                    AppSetting.SetValue(SettingKeys.ImageViewerRequestTheme, 2);
+                    break;
+                default:
+                    RequestedTheme = ElementTheme.Default;
+                    RadioMenuFlyoutItem_Theme_Default.IsChecked = true;
+                    AppSetting.SetValue(SettingKeys.ImageViewerRequestTheme, 0);
+                    break;
+            }
+        }
+    }
+
+
 
 
 }
