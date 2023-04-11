@@ -68,10 +68,17 @@ internal class HoyolabService
     }
 
 
-    public IEnumerable<GenshinRoleInfo> GetGenshinRoleInfoList()
+    public IEnumerable<GenshinRoleInfo> GetGenshinRoleInfoList(bool onlyEnableDailyNote = false)
     {
         using var dapper = DatabaseProvider.CreateConnection();
-        return dapper.Query<GenshinRoleInfo>("SELECT * FROM GenshinRoleInfo;");
+        if (onlyEnableDailyNote)
+        {
+            return dapper.Query<GenshinRoleInfo>("SELECT * FROM GenshinRoleInfo WHERE DisableDailyNote = 0 ORDER BY Sort DESC;");
+        }
+        else
+        {
+            return dapper.Query<GenshinRoleInfo>("SELECT * FROM GenshinRoleInfo;");
+        }
     }
 
 
@@ -96,9 +103,9 @@ internal class HoyolabService
         var roles = await _hoyolabClient.GetGenshinRoleInfosAsync(cookie);
         using var dapper = DatabaseProvider.CreateConnection();
         const string sql = """
-                INSERT OR REPLACE INTO GenshinRoleInfo
-                (Uid, GameBiz, Region, Nickname, Level, IsChosen, RegionName, IsOfficial, Cookie)
-                VALUES (@Uid, @GameBiz, @Region, @Nickname, @Level, @IsChosen, @RegionName, @IsOfficial, @Cookie);
+                INSERT INTO GenshinRoleInfo (Uid, GameBiz, Region, Nickname, Level, IsChosen, RegionName, IsOfficial, Cookie)
+                VALUES (@Uid, @GameBiz, @Region, @Nickname, @Level, @IsChosen, @RegionName, @IsOfficial, @Cookie)
+                ON CONFLICT DO UPDATE SET Nickname=@Nickname, Level=@Level, IsChosen=@IsChosen, Cookie=@Cookie;
                 """;
         dapper.Execute(sql, roles);
         return roles;

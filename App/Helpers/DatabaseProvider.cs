@@ -383,6 +383,9 @@ internal class DatabaseProvider
         UPDATE OperationHistory SET Key=JSON_EXTRACT(Value, '$.Id'), Value=NULL
         WHERE (Operation = 'OpenWallpaper' OR Operation = 'SaveWallpaper') AND Value IS NOT NULL;
 
+        ALTER TABLE GenshinRoleInfo ADD COLUMN Sort INTEGER DEFAULT 0 NOT NULL;
+        ALTER TABLE GenshinRoleInfo ADD COLUMN DisableDailyNote INTEGER DEFAULT 0 NOT NULL;
+
         PRAGMA USER_VERSION = 6;
         COMMIT TRANSACTION;
         """;

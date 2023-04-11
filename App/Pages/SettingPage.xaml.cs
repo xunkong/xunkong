@@ -524,6 +524,16 @@ public sealed partial class SettingPage : Page
     }
 
 
+    /// <summary>
+    /// 导航到实时便笺设置页面
+    /// </summary>
+    [RelayCommand]
+    private void NavigateToDailyNoteSettingPage()
+    {
+        MainPage.Current.Navigate(typeof(DailyNoteSettingPage));
+    }
+
+
     #endregion
 
 

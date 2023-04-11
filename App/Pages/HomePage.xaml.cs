@@ -659,7 +659,7 @@ public sealed partial class HomePage : Page
             if (AppSetting.GetValue(SettingKeys.EnableDailyNotesInHomePage, true))
             {
                 var users = _hoyolabService.GetHoyolabUserInfoList();
-                var roles = _hoyolabService.GetGenshinRoleInfoList();
+                var roles = _hoyolabService.GetGenshinRoleInfoList(onlyEnableDailyNote: true);
                 foreach (var role in roles)
                 {
                     if (users.FirstOrDefault(x => x.Cookie == role.Cookie) is HoyolabUserInfo user)
@@ -1075,16 +1075,26 @@ public sealed partial class HomePage : Page
                 var roles = _hoyolabService.GetGenshinRoleInfoList();
                 foreach (var role in roles)
                 {
-                    var index = await _hoyolabService.CheckBirthdayStarAsync(role);
-                    if (index != null)
+                    try
                     {
-                        var name = string.Join("和", index.Role.Select(x => x.Name));
-                        var text = $"今天是{name}的生日，快点去庆祝吧！";
-                        const string url = "https://webstatic.mihoyo.com/ys/event/e20220303-birthday/index.html?game_biz=hk4e_cn&bbs_presentation_style=fullscreen&bbs_auth_required=true&bbs_landscape=true&activity_id=20220301153521";
-                        var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, $"留影叙佳期 - {role.Nickname}", text, "为TA庆祝",
-                            () => MainPage.Current.Navigate(typeof(WebViewPage), new WebViewPage.NavigateParameter("BirthdayStar", url, role)));
+                        var index = await _hoyolabService.CheckBirthdayStarAsync(role);
+                        if (index != null)
+                        {
+                            var name = string.Join("和", index.Role.Select(x => x.Name));
+                            var text = $"今天是{name}的生日，快点去庆祝吧！";
+                            const string url = "https://webstatic.mihoyo.com/ys/event/e20220303-birthday/index.html?game_biz=hk4e_cn&bbs_presentation_style=fullscreen&bbs_auth_required=true&bbs_landscape=true&activity_id=20220301153521";
+                            var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, $"留影叙佳期 - {role.Nickname}", text, "为TA庆祝",
+                                () => MainPage.Current.Navigate(typeof(WebViewPage), new WebViewPage.NavigateParameter("BirthdayStar", url, role)));
+                            AddToInfoBar(infoBar);
+                        }
+                    }
+                    catch (HoyolabException ex)
+                    {
+                        Logger.Error(ex);
+                        var infoBar = NotificationProvider.Create(InfoBarSeverity.Error, $"留影叙佳期 - {role.Nickname}", ex.Message);
                         AddToInfoBar(infoBar);
                     }
+                    
                 }
             }
         }

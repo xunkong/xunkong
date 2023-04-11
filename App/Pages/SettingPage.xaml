@@ -558,6 +558,19 @@
                                                SpinButtonPlacementMode="Compact"
                                                Value="{x:Bind DailyNoteCacheMinutes, Mode=TwoWay}" />
                                 </Grid>
+                                <!--  实时便笺账号单独设置  -->
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock>
+                                        <Run Text="实时便笺账号单独设置" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="可针对单个账号在主页开启或关闭实时便笺显示" />
+                                    </TextBlock>
+                                    <Button HorizontalAlignment="Right"
+                                            Command="{x:Bind NavigateToDailyNoteSettingPageCommand}"
+                                            Content="前往设置" />
+                                </Grid>
                                 <!--  留影叙佳期  -->
                                 <Grid Padding="44,12,0,12">
                                     <TextBlock>
