@@ -17,7 +17,6 @@ public sealed partial class DailyNoteThumbCard : UserControl
     public DailyNoteThumbCard()
     {
         this.InitializeComponent();
-        Loaded += DailyNoteThumbCard_Loaded;
     }
 
 
@@ -38,31 +37,6 @@ public sealed partial class DailyNoteThumbCard : UserControl
 
     [ObservableProperty]
     private bool _NeedVerification;
-
-
-    private async void DailyNoteThumbCard_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
-    {
-        if (Error)
-        {
-            return;
-        }
-        try
-        {
-            if (DailyNoteInfo != null)
-            {
-
-                if (DailyNoteInfo.CurrentResin > 150 ||
-                    DailyNoteInfo.CurrentHomeCoin > 0.95 * DailyNoteInfo.MaxHomeCoin ||
-                    !DailyNoteInfo.IsExtraTaskRewardReceived ||
-                    (DailyNoteInfo.Transformer?.RecoveryTime?.Reached ?? false))
-                {
-                    await Task.Delay(500);
-                    CautionStoryBoard.Begin();
-                }
-            }
-        }
-        catch { }
-    }
 
 
 

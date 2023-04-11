@@ -18,6 +18,7 @@
     <Page.Resources>
         <DataTemplate x:Key="AnnouncementCardTemplate" x:DataType="xha:Announcement">
             <Grid x:Name="c_Grid_FinishingActivity"
+                  Height="180"
                   HorizontalAlignment="Stretch"
                   Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                   BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
@@ -103,7 +104,8 @@
                                      ScrollViewer.HorizontalScrollMode="Disabled"
                                      ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                      ScrollViewer.VerticalScrollMode="Disabled"
-                                     SelectionMode="None" />
+                                     SelectionMode="None"
+                                     StretchContentForSingleRow="False" />
 
                 <TextBlock VerticalAlignment="Center"
                            FontSize="20"
@@ -118,7 +120,8 @@
                                      ScrollViewer.HorizontalScrollMode="Disabled"
                                      ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                      ScrollViewer.VerticalScrollMode="Disabled"
-                                     SelectionMode="None" />
+                                     SelectionMode="None"
+                                     StretchContentForSingleRow="False" />
             </StackPanel>
         </ScrollViewer>
 

@@ -7,45 +7,6 @@
              x:DefaultBindMode="OneWay"
              mc:Ignorable="d">
 
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.ThemeDictionaries>
-                <ResourceDictionary x:Name="Light">
-                    <Color x:Key="CardCaution">#D3FFF4CE</Color>
-                </ResourceDictionary>
-                <ResourceDictionary x:Name="Dark">
-                    <Color x:Key="CardCaution">#4CFCE100</Color>
-                </ResourceDictionary>
-            </ResourceDictionary.ThemeDictionaries>
-            <SineEase x:Key="EasingFunction" EasingMode="EaseInOut" />
-            <Storyboard x:Name="CautionStoryBoard">
-                <ColorAnimationUsingKeyFrames Storyboard.TargetName="c_Grid_Base" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
-                    <EasingColorKeyFrame EasingFunction="{StaticResource EasingFunction}"
-                                         KeyTime="0:0:0"
-                                         Value="{ThemeResource CardBackgroundFillColorDefault}" />
-                    <EasingColorKeyFrame EasingFunction="{StaticResource EasingFunction}"
-                                         KeyTime="0:0:0.5"
-                                         Value="{ThemeResource CardCaution}" />
-                    <EasingColorKeyFrame EasingFunction="{StaticResource EasingFunction}"
-                                         KeyTime="0:0:1"
-                                         Value="{ThemeResource CardBackgroundFillColorDefault}" />
-                    <EasingColorKeyFrame EasingFunction="{StaticResource EasingFunction}"
-                                         KeyTime="0:0:1.5"
-                                         Value="{ThemeResource CardCaution}" />
-                    <EasingColorKeyFrame EasingFunction="{StaticResource EasingFunction}"
-                                         KeyTime="0:0:2"
-                                         Value="{ThemeResource CardBackgroundFillColorDefault}" />
-                    <EasingColorKeyFrame EasingFunction="{StaticResource EasingFunction}"
-                                         KeyTime="0:0:2.5"
-                                         Value="{ThemeResource CardCaution}" />
-                    <EasingColorKeyFrame EasingFunction="{StaticResource EasingFunction}"
-                                         KeyTime="0:0:3"
-                                         Value="{ThemeResource CardBackgroundFillColorDefault}" />
-                </ColorAnimationUsingKeyFrames>
-            </Storyboard>
-        </ResourceDictionary>
-    </UserControl.Resources>
-
     <Button Padding="0">
         <Button.Flyout>
             <Flyout>
@@ -56,7 +17,19 @@
                                      HoyolabUserInfo="{x:Bind HoyolabUserInfo}" />
             </Flyout>
         </Button.Flyout>
-
+        <Button.ContextFlyout>
+            <MenuFlyout>
+                <MenuFlyoutItem Command="{x:Bind RefreshCommand}"
+                                Icon="Refresh"
+                                Text="刷新便笺" />
+                <MenuFlyoutItem Command="{x:Bind PinToStartMenuCommand}"
+                                Icon="Pin"
+                                Text="固定到开始屏幕" />
+                <MenuFlyoutItem Command="{x:Bind CopyCookieCommand}"
+                                Icon="Copy"
+                                Text="复制 Cookie" />
+            </MenuFlyout>
+        </Button.ContextFlyout>
 
 
         <Grid x:Name="c_Grid_Base"

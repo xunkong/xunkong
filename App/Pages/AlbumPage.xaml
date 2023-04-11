@@ -78,7 +78,8 @@
                              ItemClick="_GridView_Images_ItemClick"
                              ItemHeight="120"
                              ItemsSource="{x:Bind ImageViewSource.View}"
-                             SelectionMode="None">
+                             SelectionMode="None"
+                             StretchContentForSingleRow="False">
             <GridView.Transitions>
                 <TransitionCollection>
                     <ReorderThemeTransition />

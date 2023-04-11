@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:ani="using:CommunityToolkit.WinUI.UI.Animations"
       xmlns:behaviors="using:CommunityToolkit.WinUI.UI.Behaviors"
+      xmlns:cc="using:CommunityToolkit.WinUI.UI.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:interactions="using:Microsoft.Xaml.Interactions.Core"
       xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
@@ -515,21 +516,23 @@
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                            Text="即将结束的活动"
                            Visibility="Collapsed" />
-                <GridView x:Name="c_GridView_FinishingActivity"
-                          Margin="0,12,0,0"
-                          ItemContainerStyle="{StaticResource BlankGridViewItemStyle}"
-                          ItemsSource="{x:Bind FinishingActivities}"
-                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                          ScrollViewer.HorizontalScrollMode="Disabled"
-                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                          ScrollViewer.VerticalScrollMode="Disabled"
-                          Visibility="Collapsed">
+                <cc:AdaptiveGridView x:Name="c_GridView_FinishingActivity"
+                                     Margin="0,12,0,0"
+                                     DesiredWidth="300"
+                                     ItemContainerStyle="{StaticResource BlankGridViewItemStyle}"
+                                     ItemHeight="180"
+                                     ItemsSource="{x:Bind FinishingActivities}"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     ScrollViewer.HorizontalScrollMode="Disabled"
+                                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                     ScrollViewer.VerticalScrollMode="Disabled"
+                                     StretchContentForSingleRow="False"
+                                     Visibility="Collapsed">
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="xha:Announcement">
                             <Grid x:Name="c_Grid_FinishingActivity"
-                                  Width="300"
                                   Height="180"
-                                  HorizontalAlignment="Left"
+                                  HorizontalAlignment="Stretch"
                                   Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                                   BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                                   BorderThickness="1"
@@ -596,7 +599,7 @@
                             </Grid>
                         </DataTemplate>
                     </GridView.ItemTemplate>
-                </GridView>
+                </cc:AdaptiveGridView>
 
 
 
