@@ -8,6 +8,8 @@ public class WallpaperInfoEx : WallpaperInfo
 
     public int MyRating { get; set; } = -1;
 
+    public DateTimeOffset Time { get; set; }
+
     [JsonIgnore]
     public string SourceDomain => new Uri(Source ?? "").Host;
 

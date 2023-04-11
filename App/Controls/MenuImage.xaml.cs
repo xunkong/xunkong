@@ -404,6 +404,7 @@ public sealed partial class MenuImage : UserControl
                     var progress = XunkongCache.Instance.GetProgress(imageUri);
                     if (progress != null)
                     {
+                        _progress = progress;
                         progress.ProgressChanged += Progress_ProgressChanged;
                     }
                 }
@@ -453,8 +454,16 @@ public sealed partial class MenuImage : UserControl
         }
     }
 
+
+    private Progress<DownloadProgress>? _progress;
+
     private void Progress_ProgressChanged(object? sender, DownloadProgress e)
     {
+        if (sender is Progress<DownloadProgress> p && sender != _progress)
+        {
+            p.ProgressChanged -= Progress_ProgressChanged;
+            return;
+        }
         if (e.DownloadState is DownloadState.Pending)
         {
             LoadingProgressRing.IsIndeterminate = true;

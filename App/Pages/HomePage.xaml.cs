@@ -546,6 +546,16 @@ public sealed partial class HomePage : Page
     }
 
 
+    /// <summary>
+    /// 导航到图片历史记录页面
+    /// </summary>
+    [RelayCommand]
+    private void NavigateToWallpaperHistoryPage()
+    {
+        MainPage.Current.Navigate(typeof(WallpaperHistoryPage));
+    }
+
+
     private int lastRandomWallpaperId;
 
     /// <summary>

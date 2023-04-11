@@ -543,4 +543,23 @@ public sealed partial class ImageViewer : UserControl
     }
 
 
+
+    /// <summary>
+    /// 打开图源网址
+    /// </summary>
+    /// <returns></returns>
+    [RelayCommand]
+    private async Task OpenImageSourceUrlAsync()
+    {
+        try
+        {
+            if (CurrentImage?.Source != null)
+            {
+                await Launcher.LaunchUriAsync(new Uri(CurrentImage.Source));
+            }
+        }
+        catch { }
+    }
+
+
 }

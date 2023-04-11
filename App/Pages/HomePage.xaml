@@ -49,15 +49,21 @@
                                 <AddDeleteThemeTransition />
                             </TransitionCollection>
                         </StackPanel.ChildrenTransitions>
-                        <TextBlock FontSize="16"
+                        <TextBlock HorizontalAlignment="Left"
+                                   FontSize="16"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   IsTextSelectionEnabled="True"
                                    Text="{x:Bind CurrentWallpaper.Author}" />
-                        <TextBlock FontSize="36"
+                        <TextBlock HorizontalAlignment="Left"
+                                   FontSize="36"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   IsTextSelectionEnabled="True"
                                    Text="{x:Bind CurrentWallpaper.Title}" />
                         <TextBlock Margin="0,8,0,0"
+                                   HorizontalAlignment="Left"
                                    FontSize="14"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   IsTextSelectionEnabled="True"
                                    Text="{x:Bind CurrentWallpaper.Description}"
                                    TextWrapping="Wrap"
                                    Visibility="{x:Bind CurrentWallpaper.Description, Converter={StaticResource StringToVisibilityConverter}}" />
@@ -124,6 +130,16 @@
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
                                     ToolTipService.ToolTip="下一张" />
+                            <!--  历史记录  -->
+                            <Button Width="28"
+                                    Height="28"
+                                    Padding="0"
+                                    Command="{x:Bind NavigateToWallpaperHistoryPageCommand}"
+                                    Content="&#xE81C;"
+                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
+                                    ToolTipService.ToolTip="历史记录" />
                             <RatingControl x:Name="RatingControl_Wallpaper"
                                            Margin="8,4,0,0"
                                            Caption="{x:Bind CurrentWallpaper.RatingText}"
