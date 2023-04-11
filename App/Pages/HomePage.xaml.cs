@@ -101,13 +101,10 @@ public sealed partial class HomePage : Page
     {
         // 推荐图片
         InitializeWallpaperAsync();
-        if (!AppSetting.GetValue<bool>(SettingKeys.DisableDailyNotesInHomePage))
-        {
-            // 实时便笺
-            GetDailyNotesAsync();
-        }
-        // 账号
+        // 游戏账号
         LoadGameAccounts();
+        // 实时便笺
+        GetDailyNotesAsync();
         // 今天刷什么
         GetCalendarAndGrowthScheduleAsync();
         // 即将结束的活动
@@ -659,25 +656,28 @@ public sealed partial class HomePage : Page
     {
         try
         {
-            var users = _hoyolabService.GetHoyolabUserInfoList();
-            var roles = _hoyolabService.GetGenshinRoleInfoList();
-            foreach (var role in roles)
+            if (AppSetting.GetValue(SettingKeys.EnableDailyNotesInHomePage, true))
             {
-                if (users.FirstOrDefault(x => x.Cookie == role.Cookie) is HoyolabUserInfo user)
+                var users = _hoyolabService.GetHoyolabUserInfoList();
+                var roles = _hoyolabService.GetGenshinRoleInfoList();
+                foreach (var role in roles)
                 {
-                    DailyNoteThumbCard card;
-                    try
+                    if (users.FirstOrDefault(x => x.Cookie == role.Cookie) is HoyolabUserInfo user)
                     {
-                        var dailynote = await _hoyolabService.GetDailyNoteAsync(role);
-                        card = new DailyNoteThumbCard { HoyolabUserInfo = user, GenshinRoleInfo = role, DailyNoteInfo = dailynote, };
+                        DailyNoteThumbCard card;
+                        try
+                        {
+                            var dailynote = await _hoyolabService.GetDailyNoteAsync(role);
+                            card = new DailyNoteThumbCard { HoyolabUserInfo = user, GenshinRoleInfo = role, DailyNoteInfo = dailynote, };
+                        }
+                        catch (HoyolabException ex)
+                        {
+                            card = new DailyNoteThumbCard { HoyolabUserInfo = user, GenshinRoleInfo = role, Error = true, ErrorMessage = ex.Message, NeedVerification = ex.ReturnCode == 1034 };
+                        }
+                        c_TextBlock_DailyNote.Visibility = Visibility.Visible;
+                        c_GridView_DailyNotes.Visibility = Visibility.Visible;
+                        c_GridView_DailyNotes.Items.Add(card);
                     }
-                    catch (HoyolabException ex)
-                    {
-                        card = new DailyNoteThumbCard { HoyolabUserInfo = user, GenshinRoleInfo = role, Error = true, ErrorMessage = ex.Message, NeedVerification = ex.ReturnCode == 1034 };
-                    }
-                    c_TextBlock_DailyNote.Visibility = Visibility.Visible;
-                    c_GridView_DailyNotes.Visibility = Visibility.Visible;
-                    c_GridView_DailyNotes.Items.Add(card);
                 }
             }
         }
@@ -799,13 +799,16 @@ public sealed partial class HomePage : Page
     {
         try
         {
-            var announces = await _hoyolabClient.GetGameAnnouncementsAsync();
-            var activities = announces.Where(x => x.Type == 1 && x.IsFinishing).OrderBy(x => x.EndTime).ToList();
-            if (activities.Any())
+            if (AppSetting.GetValue(SettingKeys.EnableFinishingActivityInHomePage, true))
             {
-                c_TextBlock_FinishingActivity.Visibility = Visibility.Visible;
-                c_GridView_FinishingActivity.Visibility = Visibility.Visible;
-                FinishingActivities = activities;
+                var announces = await _hoyolabClient.GetGameAnnouncementsAsync();
+                var activities = announces.Where(x => x.Type == 1 && x.IsFinishing).OrderBy(x => x.EndTime).ToList();
+                if (activities.Any())
+                {
+                    c_TextBlock_FinishingActivity.Visibility = Visibility.Visible;
+                    c_GridView_FinishingActivity.Visibility = Visibility.Visible;
+                    FinishingActivities = activities;
+                }
             }
         }
         catch (Exception ex)

@@ -33,6 +33,7 @@
 
                 <StackPanel Margin="0,24,0,24" Spacing="4">
 
+
                     <!--  介绍与好评  -->
                     <Grid Height="120" ColumnSpacing="16">
                         <Grid.RowDefinitions>
@@ -169,6 +170,7 @@
                         </Expander.Content>
                     </Expander>
 
+
                     <!--  应用主题  -->
                     <xdc:SettingCard>
                         <xdc:SettingCard.Icon>
@@ -193,6 +195,7 @@
                             </ComboBox>
                         </xdc:SettingCard.Selector>
                     </xdc:SettingCard>
+
 
                     <!--  窗口背景材质  -->
                     <Expander Name="_Expander_WindowBackdrop"
@@ -238,6 +241,7 @@
                             </StackPanel>
                         </Expander.Content>
                     </Expander>
+
 
                     <!--  主页壁纸  -->
                     <Expander Name="_Expander_HomePageWallpaper"
@@ -308,6 +312,7 @@
                                FontSize="20"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                Text="功能" />
+
 
                     <!--  启动游戏  -->
                     <Expander Name="_Expander_StartGame"
@@ -456,6 +461,7 @@
                         </Expander.Content>
                     </Expander>
 
+
                     <!--  米游社签到  -->
                     <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                         <Expander.Header>
@@ -505,85 +511,80 @@
                         </Expander.Content>
                     </Expander>
 
-                    <!--  网页快捷方式，已弃用  -->
-                    <Expander Name="_Expander_WebTool"
-                              HorizontalAlignment="Stretch"
-                              HorizontalContentAlignment="Stretch"
-                              x:Load="False"
-                              Collapsed="_Expander_WebTool_Collapsed"
-                              Expanding="_Expander_WebTool_Expanding">
+
+                    <!--  主页功能  -->
+                    <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                         <Expander.Header>
-                            <StackPanel Padding="4,16,0,16" Orientation="Horizontal">
-                                <SymbolIcon Symbol="Globe" />
-                                <TextBlock Margin="20,0,0,0">
-                                    <Run Text="网页快捷方式" />
-                                    <LineBreak />
-                                    <Run FontSize="12"
-                                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                         Text="在左侧导航栏中添加网页快捷方式" />
-                                </TextBlock>
-                            </StackPanel>
+                            <Grid>
+                                <StackPanel Padding="4,16,0,16" Orientation="Horizontal">
+                                    <FontIcon Glyph="&#xE10F;" />
+                                    <TextBlock Margin="20,0,0,0">
+                                        <Run Text="主页功能" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="主页内的相关设置在这里" />
+                                    </TextBlock>
+                                </StackPanel>
+                            </Grid>
                         </Expander.Header>
                         <Expander.Content>
-                            <Grid RowSpacing="12">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
-                                <CommandBar DefaultLabelPosition="Right">
-                                    <CommandBar.Content>
-                                        <TextBlock Margin="12,14,0,0" Text="已添加的网页快捷方式" />
-                                    </CommandBar.Content>
-                                    <AppBarButton Command="{x:Bind AddWebToolItemCommand, Mode=OneTime}"
-                                                  Icon="Add"
-                                                  Label="添加" />
-                                    <AppBarButton Command="{x:Bind DeleteSelectedWebToolItemCommand, Mode=OneTime}"
-                                                  Icon="Delete"
-                                                  Label="删除" />
-                                    <AppBarButton Command="{x:Bind SaveWebToolItemCommand, Mode=OneTime}"
-                                                  Icon="Save"
-                                                  Label="保存" />
-                                </CommandBar>
-                                <!--  网页快捷方式  -->
-                                <ListView Grid.Row="1"
-                                          AllowDrop="True"
-                                          CanDragItems="True"
-                                          CanReorderItems="True"
-                                          ItemsSource="{x:Bind WebToolItemList, Mode=TwoWay}"
-                                          SelectedItem="{x:Bind SelectedWebToolItem, Mode=TwoWay}"
-                                          SelectionMode="Single">
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate x:DataType="xdm:WebToolItem">
-                                            <Grid Margin="0,0,16,0"
-                                                  HorizontalAlignment="Stretch"
-                                                  ColumnSpacing="16">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="40" />
-                                                    <ColumnDefinition Width="*"
-                                                                      MinWidth="80"
-                                                                      MaxWidth="160" />
-                                                    <ColumnDefinition Width="4*" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                </Grid.ColumnDefinitions>
-                                                <Image Grid.Column="0"
-                                                       Width="24"
-                                                       Source="{x:Bind Icon}"
-                                                       Stretch="Uniform" />
-                                                <TextBlock Grid.Column="1"
-                                                           VerticalAlignment="Center"
-                                                           Text="{x:Bind Title}" />
-                                                <TextBlock Grid.Column="2"
-                                                           VerticalAlignment="Center"
-                                                           Text="{x:Bind Url}" />
-                                                <TextBlock Grid.Column="3"
-                                                           VerticalAlignment="Center"
-                                                           FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                           Text="&#xE700;" />
-                                            </Grid>
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                </ListView>
-                            </Grid>
+                            <StackPanel Margin="0,-16,44,-16">
+                                <!--  实时便笺  -->
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock TextWrapping="Wrap">
+                                        <Run Text="实时便笺" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="同时对所有账号生效" />
+                                    </TextBlock>
+                                    <ToggleSwitch HorizontalAlignment="Right"
+                                                  IsOn="{x:Bind DisableDailyNotesInHomePage, Mode=TwoWay}"
+                                                  Style="{ThemeResource RightAlignToggleSwitchStyle}" />
+                                </Grid>
+                                <!--  实时便笺缓存时间  -->
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock>
+                                        <Run Text="实时便笺缓存时间" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="减少网络请求次数，尽量避免验证账号" />
+                                    </TextBlock>
+                                    <NumberBox Width="100"
+                                               HorizontalAlignment="Right"
+                                               SmallChange="1"
+                                               SpinButtonPlacementMode="Compact"
+                                               Value="{x:Bind DailyNoteCacheMinutes, Mode=TwoWay}" />
+                                </Grid>
+                                <!--  留影叙佳期  -->
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock>
+                                        <Run Text="留影叙佳期" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="测试阶段默认关闭" />
+                                    </TextBlock>
+                                    <ToggleSwitch HorizontalAlignment="Right"
+                                                  IsOn="{x:Bind EnableBirthdayStarInHomePage, Mode=TwoWay}"
+                                                  Style="{ThemeResource RightAlignToggleSwitchStyle}" />
+                                </Grid>
+                                <!--  即将结束的活动  -->
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock>
+                                        <Run Text="即将结束的活动" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="3天之内将要结束的活动" />
+                                    </TextBlock>
+                                    <ToggleSwitch HorizontalAlignment="Right"
+                                                  IsOn="{x:Bind EnableFinishingActivityInHomePage, Mode=TwoWay}"
+                                                  Style="{ThemeResource RightAlignToggleSwitchStyle}" />
+                                </Grid>
+                            </StackPanel>
                         </Expander.Content>
                     </Expander>
 
@@ -613,116 +614,6 @@
                                       Glyph="&#xE76C;" />
                         </Grid>
                     </Button>
-
-
-                    <!--  页面缓存  -->
-                    <xdc:SettingCard>
-                        <xdc:SettingCard.Icon>
-                            <FontIcon FontSize="20" Glyph="&#xE160;" />
-                        </xdc:SettingCard.Icon>
-                        <xdc:SettingCard.Content>
-                            <TextBlock VerticalAlignment="Center">
-                                <Run Text="页面缓存" />
-                                <LineBreak />
-                                <Run FontSize="12"
-                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                     Text="开启后部分页面不再重复加载，但是应用占用的内存会增加" />
-                            </TextBlock>
-                        </xdc:SettingCard.Content>
-                        <xdc:SettingCard.Selector>
-                            <ToggleSwitch HorizontalAlignment="Right"
-                                          IsOn="{x:Bind EnableNavigationCache, Mode=TwoWay}"
-                                          Style="{ThemeResource RightAlignToggleSwitchStyle}" />
-                        </xdc:SettingCard.Selector>
-                    </xdc:SettingCard>
-
-
-                    <!--  在主页不显示实时便笺  -->
-                    <xdc:SettingCard>
-                        <xdc:SettingCard.Icon>
-                            <FontIcon FontSize="20" Glyph="&#xE70B;" />
-                        </xdc:SettingCard.Icon>
-                        <xdc:SettingCard.Content>
-                            <TextBlock VerticalAlignment="Center">
-                                <Run Text="在主页不显示实时便笺" />
-                                <LineBreak />
-                                <Run FontSize="12"
-                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                     Text="同时对所有账号生效" />
-                            </TextBlock>
-                        </xdc:SettingCard.Content>
-                        <xdc:SettingCard.Selector>
-                            <ToggleSwitch HorizontalAlignment="Right"
-                                          IsOn="{x:Bind DisableDailyNotesInHomePage, Mode=TwoWay}"
-                                          Style="{ThemeResource RightAlignToggleSwitchStyle}" />
-                        </xdc:SettingCard.Selector>
-                    </xdc:SettingCard>
-
-
-                    <!--  显示新手祈愿统计  -->
-                    <xdc:SettingCard>
-                        <xdc:SettingCard.Icon>
-                            <FontIcon FontSize="20" Glyph="&#xE11D;" />
-                        </xdc:SettingCard.Icon>
-                        <xdc:SettingCard.Content>
-                            <TextBlock VerticalAlignment="Center">
-                                <Run Text="显示新手祈愿统计" />
-                                <LineBreak />
-                                <Run FontSize="12"
-                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                     Text="满足一些欧皇的需求" />
-                            </TextBlock>
-                        </xdc:SettingCard.Content>
-                        <xdc:SettingCard.Selector>
-                            <ToggleSwitch HorizontalAlignment="Right"
-                                          IsOn="{x:Bind ShowNoviceWishType, Mode=TwoWay}"
-                                          Style="{ThemeResource RightAlignToggleSwitchStyle}" />
-                        </xdc:SettingCard.Selector>
-                    </xdc:SettingCard>
-
-
-                    <!--  使用旧版我的角色页面  -->
-                    <xdc:SettingCard>
-                        <xdc:SettingCard.Icon>
-                            <FontIcon FontSize="20" Glyph="&#xE13D;" />
-                        </xdc:SettingCard.Icon>
-                        <xdc:SettingCard.Content>
-                            <TextBlock VerticalAlignment="Center">
-                                <Run Text="使用旧版我的角色页面" />
-                                <LineBreak />
-                                <Run FontSize="12"
-                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                     Text="旧版我的角色页面不再维护" />
-                            </TextBlock>
-                        </xdc:SettingCard.Content>
-                        <xdc:SettingCard.Selector>
-                            <ToggleSwitch HorizontalAlignment="Right"
-                                          IsOn="{x:Bind UseCharacterPageOldVersion, Mode=TwoWay}"
-                                          Style="{ThemeResource RightAlignToggleSwitchStyle}" />
-                        </xdc:SettingCard.Selector>
-                    </xdc:SettingCard>
-
-
-                    <!--  隐藏未上线的角色  -->
-                    <xdc:SettingCard>
-                        <xdc:SettingCard.Icon>
-                            <FontIcon FontSize="20" Glyph="&#xED1A;" />
-                        </xdc:SettingCard.Icon>
-                        <xdc:SettingCard.Content>
-                            <TextBlock VerticalAlignment="Center">
-                                <Run Text="隐藏未上线的角色" />
-                                <LineBreak />
-                                <Run FontSize="12"
-                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                     Text="在角色图鉴中不显示未上线的角色" />
-                            </TextBlock>
-                        </xdc:SettingCard.Content>
-                        <xdc:SettingCard.Selector>
-                            <ToggleSwitch HorizontalAlignment="Right"
-                                          IsOn="{x:Bind HideUnusableCharacter, Mode=TwoWay}"
-                                          Style="{ThemeResource RightAlignToggleSwitchStyle}" />
-                        </xdc:SettingCard.Selector>
-                    </xdc:SettingCard>
 
 
                     <!--  自动刷新磁贴  -->
@@ -766,50 +657,80 @@
                     </Expander>
 
 
-                    <!--  实时便笺缓存时间  -->
-                    <xdc:SettingCard>
-                        <xdc:SettingCard.Icon>
-                            <FontIcon FontSize="20" Glyph="&#xE121;" />
-                        </xdc:SettingCard.Icon>
-                        <xdc:SettingCard.Content>
-                            <TextBlock VerticalAlignment="Center">
-                                <Run Text="实时便笺缓存时间（分钟）" />
-                                <LineBreak />
-                                <Run FontSize="12"
-                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                     Text="减少网络请求次数，尽量避免验证账号" />
-                            </TextBlock>
-                        </xdc:SettingCard.Content>
-                        <xdc:SettingCard.Selector>
-                            <NumberBox Width="100"
-                                       HorizontalAlignment="Right"
-                                       SmallChange="1"
-                                       SpinButtonPlacementMode="Compact"
-                                       Value="{x:Bind DailyNoteCacheMinutes, Mode=TwoWay}" />
-                        </xdc:SettingCard.Selector>
-                    </xdc:SettingCard>
+                    <!--  其他功能  -->
+                    <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                        <Expander.Header>
+                            <Grid>
+                                <StackPanel Padding="4,16,0,16" Orientation="Horizontal">
+                                    <FontIcon Glyph="&#xE154;" />
+                                    <TextBlock Margin="20,0,0,0">
+                                        <Run Text="其他功能" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="一些很少使用到的功能设置" />
+                                    </TextBlock>
+                                </StackPanel>
+                            </Grid>
+                        </Expander.Header>
+                        <Expander.Content>
+                            <StackPanel Margin="0,-16,44,-16">
+                                <!--  显示新手祈愿统计  -->
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock TextWrapping="Wrap">
+                                        <Run Text="显示新手祈愿统计" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="满足一些欧皇的需求" />
+                                    </TextBlock>
+                                    <ToggleSwitch HorizontalAlignment="Right"
+                                                  IsOn="{x:Bind ShowNoviceWishType, Mode=TwoWay}"
+                                                  Style="{ThemeResource RightAlignToggleSwitchStyle}" />
+                                </Grid>
+                                <!--  使用旧版我的角色页面  -->
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock>
+                                        <Run Text="使用旧版我的角色页面" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="旧版我的角色页面不再维护" />
+                                    </TextBlock>
+                                    <ToggleSwitch HorizontalAlignment="Right"
+                                                  IsOn="{x:Bind UseCharacterPageOldVersion, Mode=TwoWay}"
+                                                  Style="{ThemeResource RightAlignToggleSwitchStyle}" />
+                                </Grid>
+                                <!--  隐藏未上线的角色  -->
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock>
+                                        <Run Text="隐藏未上线的角色" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="在角色图鉴中不显示未上线的角色" />
+                                    </TextBlock>
+                                    <ToggleSwitch HorizontalAlignment="Right"
+                                                  IsOn="{x:Bind HideUnusableCharacter, Mode=TwoWay}"
+                                                  Style="{ThemeResource RightAlignToggleSwitchStyle}" />
+                                </Grid>
+                                <!--  页面缓存  -->
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock>
+                                        <Run Text="页面缓存" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="开启后部分页面不再重复加载，但是应用占用的内存会增加" />
+                                    </TextBlock>
+                                    <ToggleSwitch HorizontalAlignment="Right"
+                                                  IsOn="{x:Bind EnableNavigationCache, Mode=TwoWay}"
+                                                  Style="{ThemeResource RightAlignToggleSwitchStyle}" />
+                                </Grid>
+                            </StackPanel>
+                        </Expander.Content>
+                    </Expander>
 
-
-                    <!--  留影叙佳期  -->
-                    <xdc:SettingCard>
-                        <xdc:SettingCard.Icon>
-                            <FontIcon FontSize="20" Glyph="&#xE13D;" />
-                        </xdc:SettingCard.Icon>
-                        <xdc:SettingCard.Content>
-                            <TextBlock VerticalAlignment="Center">
-                                <Run Text="留影叙佳期提醒" />
-                                <LineBreak />
-                                <Run FontSize="12"
-                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                     Text="测试阶段默认关闭" />
-                            </TextBlock>
-                        </xdc:SettingCard.Content>
-                        <xdc:SettingCard.Selector>
-                            <ToggleSwitch HorizontalAlignment="Right"
-                                          IsOn="{x:Bind EnableBirthdayStarInHomePage, Mode=TwoWay}"
-                                          Style="{ThemeResource RightAlignToggleSwitchStyle}" />
-                        </xdc:SettingCard.Selector>
-                    </xdc:SettingCard>
 
 
                     <!--  数据  -->
@@ -817,6 +738,7 @@
                                FontSize="20"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                Text="数据" />
+
 
                     <!--  使用 AppCenter 上传事件日志  -->
                     <xdc:SettingCard>
@@ -839,48 +761,57 @@
                         </xdc:SettingCard.Selector>
                     </xdc:SettingCard>
 
-                    <!--  用户数据文件夹  -->
-                    <xdc:SettingCard>
-                        <xdc:SettingCard.Icon>
-                            <FontIcon Glyph="&#xE8B7;" />
-                        </xdc:SettingCard.Icon>
-                        <xdc:SettingCard.Content>
-                            <TextBlock>
-                                <Run Text="用户数据文件夹" />
-                                <LineBreak />
-                                <Run FontSize="12"
-                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                     Text="{x:Bind UserDataPath}" />
-                            </TextBlock>
-                        </xdc:SettingCard.Content>
-                        <xdc:SettingCard.Selector>
-                            <Button HorizontalAlignment="Right"
-                                    Command="{x:Bind OpenUserDataPathCommand, Mode=OneTime}"
-                                    Content="打开文件夹" />
-                        </xdc:SettingCard.Selector>
-                    </xdc:SettingCard>
 
-
-                    <!--  截图备份文件夹  -->
-                    <xdc:SettingCard>
-                        <xdc:SettingCard.Icon>
-                            <FontIcon Glyph="&#xE158;" />
-                        </xdc:SettingCard.Icon>
-                        <xdc:SettingCard.Content>
-                            <TextBlock>
-                                <Run Text="截图备份文件夹" />
-                                <LineBreak />
-                                <Run FontSize="12"
-                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                     Text="{x:Bind GameScreenshotBackupFolder}" />
-                            </TextBlock>
-                        </xdc:SettingCard.Content>
-                        <xdc:SettingCard.Selector>
-                            <Button HorizontalAlignment="Right"
-                                    Command="{x:Bind ChangeScreenshotBackupFolderCommand, Mode=OneTime}"
-                                    Content="选择文件夹" />
-                        </xdc:SettingCard.Selector>
-                    </xdc:SettingCard>
+                    <!--  数据文件夹  -->
+                    <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                        <Expander.Header>
+                            <Grid>
+                                <StackPanel Padding="4,16,0,16" Orientation="Horizontal">
+                                    <FontIcon FontSize="20" Glyph="&#xE8B7;" />
+                                    <TextBlock Margin="20,0,0,0">
+                                        <Run Text="数据文件夹" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="请妥善保管好您的个人数据" />
+                                    </TextBlock>
+                                </StackPanel>
+                                <Button HorizontalAlignment="Right"
+                                        Command="{x:Bind ClearCacheCommand, Mode=OneTime}"
+                                        CommandParameter="ClearAll"
+                                        Content="全部清除" />
+                            </Grid>
+                        </Expander.Header>
+                        <Expander.Content>
+                            <StackPanel Margin="0,-16,44,-16">
+                                <!--  用户数据文件夹  -->
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock TextWrapping="Wrap">
+                                        <Run Text="用户数据文件夹" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="{x:Bind UserDataPath}" />
+                                    </TextBlock>
+                                    <Button HorizontalAlignment="Right"
+                                            Command="{x:Bind OpenUserDataPathCommand, Mode=OneTime}"
+                                            Content="打开文件夹" />
+                                </Grid>
+                                <Grid Padding="44,12,0,12">
+                                    <TextBlock TextWrapping="Wrap">
+                                        <Run Text="截图备份文件夹" />
+                                        <LineBreak />
+                                        <Run FontSize="12"
+                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                             Text="{x:Bind GameScreenshotBackupFolder}" />
+                                    </TextBlock>
+                                    <Button HorizontalAlignment="Right"
+                                            Command="{x:Bind ChangeScreenshotBackupFolderCommand, Mode=OneTime}"
+                                            Content="选择文件夹" />
+                                </Grid>
+                            </StackPanel>
+                        </Expander.Content>
+                    </Expander>
 
 
                     <!--  文件缓存  -->
@@ -957,6 +888,7 @@
                         </xdc:SettingCard.Selector>
                     </xdc:SettingCard>
 
+
                     <!--  手动更新原神数据  -->
                     <xdc:SettingCard>
                         <xdc:SettingCard.Icon>
@@ -992,59 +924,6 @@
         </ScrollViewer>
 
 
-        <!--  网页快捷方式编辑面板，已弃用  -->
-        <Grid Name="_Grid_EditWebToolItem"
-              Grid.RowSpan="2"
-              Grid.Column="2"
-              Width="400"
-              Padding="12,0,12,0"
-              HorizontalAlignment="Right"
-              x:Load="False"
-              Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-              BorderThickness="1"
-              CornerRadius="4,0,0,4"
-              RowSpacing="12"
-              Visibility="{x:Bind SelectedWebToolItem, Converter={StaticResource ObjectToVisibilityConverter}}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <AppBarButton Width="40"
-                          HorizontalAlignment="Right"
-                          VerticalAlignment="Top"
-                          Command="{x:Bind CloseEditWebToolGridCommand, Mode=OneTime}"
-                          Icon="Clear"
-                          LabelPosition="Collapsed" />
-            <StackPanel Grid.Row="1" Spacing="12">
-                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="基础设置" />
-                <TextBlock Text="网址" />
-                <TextBox IsSpellCheckEnabled="False"
-                         PlaceholderText="优先填这个，然后点下面的按键"
-                         Text="{x:Bind SelectedWebToolItem.Url, Mode=TwoWay}" />
-                <TextBlock Text="标题" />
-                <TextBox IsSpellCheckEnabled="False"
-                         PlaceholderText="不要太长"
-                         Text="{x:Bind SelectedWebToolItem.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock Text="图标" />
-                <TextBox IsSpellCheckEnabled="False"
-                         PlaceholderText="图标的网址"
-                         Text="{x:Bind SelectedWebToolItem.Icon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <Button Command="{x:Bind GetTitleAndIconByUrlCommand}" Content="获取图标" />
-                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="高级设置" />
-                <TextBlock Text="JavaScript" />
-                <TextBox MaxHeight="300"
-                         AcceptsReturn="True"
-                         IsSpellCheckEnabled="False"
-                         PlaceholderText="网页加载完成时会运行此脚本"
-                         ScrollViewer.VerticalScrollBarVisibility="Auto"
-                         Text="{x:Bind SelectedWebToolItem.JavaScript, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         TextWrapping="Wrap" />
-            </StackPanel>
-
-
-        </Grid>
 
 
     </Grid>

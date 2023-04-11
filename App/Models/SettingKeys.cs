@@ -195,10 +195,10 @@ internal abstract class SettingKeys
     public const string CutsceneFolder = nameof(CutsceneFolder);
 
     /// <summary>
-    /// 不显示实时便笺
+    /// 显示实时便笺
     /// </summary>
     [Backup]
-    public const string DisableDailyNotesInHomePage = nameof(DisableDailyNotesInHomePage);
+    public const string EnableDailyNotesInHomePage = nameof(EnableDailyNotesInHomePage);
 
     /// <summary>
     /// 推荐的壁纸
@@ -300,6 +300,12 @@ internal abstract class SettingKeys
     /// </summary>
     [Backup]
     public const string EnableBirthdayStarInHomePage = nameof(EnableBirthdayStarInHomePage);
+
+    /// <summary>
+    /// 即将结束的活动
+    /// </summary>
+    [Backup]
+    public const string EnableFinishingActivityInHomePage = nameof(EnableFinishingActivityInHomePage);
 
 }
 
