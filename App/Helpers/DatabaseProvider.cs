@@ -355,6 +355,7 @@ internal class DatabaseProvider
             Time        TEXT    NOT NULL,
             WallpaperId INTEGER NOT NULL
         );
+        CREATE INDEX IF NOT EXISTS IX_WallpaperHistory_Time ON WallpaperHistory (Time);
         CREATE INDEX IF NOT EXISTS IX_WallpaperHistory_WallpaperId ON WallpaperHistory (WallpaperId);
 
         CREATE TABLE IF NOT EXISTS WallpaperRating

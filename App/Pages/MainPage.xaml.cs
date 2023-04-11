@@ -199,7 +199,7 @@ public sealed partial class MainPage : Page
                     }
                     if (tag == "Help")
                     {
-                        _MainPageFrame.Navigate(typeof(WebViewPage), "https://xunkong.cc/help/xunkong/");
+                        _MainPageFrame.Navigate(typeof(WebViewPage), new WebViewPage.NavigateParameter("", "https://xunkong.cc/help/xunkong/"));
                     }
                     if (tag == "CharacterInfoPage2")
                     {

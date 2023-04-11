@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Web.WebView2.Core;
+using Xunkong.Hoyolab.Account;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -15,6 +16,9 @@ public sealed partial class WebViewPage : Page
 {
 
 
+    public record NavigateParameter(string Key, string Url, object? Data = null);
+
+
     public WebViewPage()
     {
         this.InitializeComponent();
@@ -23,23 +27,59 @@ public sealed partial class WebViewPage : Page
 
 
 
-    protected override void OnNavigatedTo(NavigationEventArgs e)
+    protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
-        if (e.Parameter is string url)
+        try
         {
-            try
+            if (e.Parameter is NavigateParameter parameter)
             {
-                if (Uri.TryCreate(url, UriKind.Absolute, out var uri))
+                if (Uri.TryCreate(parameter.Url, UriKind.Absolute, out var uri))
                 {
+                    if (parameter.Key == "BirthdayStar" && parameter.Data is GenshinRoleInfo role)
+                    {
+                        await _WebView2.EnsureCoreWebView2Async();
+                        var manager = _WebView2.CoreWebView2.CookieManager;
+                        var cookies = await manager.GetCookiesAsync(parameter.Url);
+                        foreach (var cookie in cookies)
+                        {
+                            manager.DeleteCookie(cookie);
+                        }
+                        foreach (var item in ParseCookie(role.Cookie!))
+                        {
+                            manager.AddOrUpdateCookie(manager.CreateCookie(item.Key, item.Value, ".mihoyo.com", "/"));
+                        }
+                    }
                     _WebView2.Source = uri;
-                }
-                else
-                {
-                    _WebView2.Source = new Uri("https://xunkong.cc");
+                    return;
                 }
             }
-            catch { }
+            _WebView2.Source = new Uri("https://xunkong.cc");
         }
+        catch { }
+    }
+
+
+
+    private List<(string Key, string Value)> ParseCookie(string cookie)
+    {
+        var list = new List<(string Key, string Value)>();
+        var cookies = cookie.Split(';');
+        if (cookies != null)
+        {
+            foreach (var item in cookies)
+            {
+                if (item.Contains('='))
+                {
+                    var key = item.Split("=")[0].Trim();
+                    var value = item.Split("=")[1].Trim();
+                    if (!string.IsNullOrWhiteSpace(key) && !string.IsNullOrWhiteSpace(value))
+                    {
+                        list.Add((key, value));
+                    }
+                }
+            }
+        }
+        return list;
     }
 
 

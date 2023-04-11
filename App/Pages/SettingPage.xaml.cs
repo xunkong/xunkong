@@ -1098,4 +1098,16 @@ public sealed partial class SettingPage : Page
         AppSetting.SetValue(SettingKeys.DailyNoteCacheMinutes, value);
     }
 
+
+    /// <summary>
+    /// 留影叙佳期
+    /// </summary>
+    [ObservableProperty]
+    private bool _EnableBirthdayStarInHomePage = AppSetting.GetValue(SettingKeys.EnableBirthdayStarInHomePage, false);
+    partial void OnEnableBirthdayStarInHomePageChanged(bool value)
+    {
+        AppSetting.SetValue(SettingKeys.EnableBirthdayStarInHomePage, value);
+    }
+
+
 }

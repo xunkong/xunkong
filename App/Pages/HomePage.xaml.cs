@@ -116,6 +116,8 @@ public sealed partial class HomePage : Page
         GetNotificationContentAsync();
         // 更新
         CheckUpdateAsync();
+        // 留影叙佳期
+        CheckBirthdayStarAsync();
         // 上传评分
         _xunkongApiService.UploadWallpaperRatingAsync();
     }
@@ -845,6 +847,21 @@ public sealed partial class HomePage : Page
 
     #region 通知和检查更新
 
+
+    private void AddToInfoBar(InfoBar infoBar, int? index = null)
+    {
+        _Grid_InfoBar.Visibility = Visibility.Visible;
+        if (index is null)
+        {
+            _StackPanel_InfoBar.Children.Add(infoBar);
+        }
+        else
+        {
+            _StackPanel_InfoBar.Children.Insert(index.Value, infoBar);
+        }
+    }
+
+
     /// <summary>
     /// 初始化通知栏内容
     /// </summary>
@@ -856,7 +873,6 @@ public sealed partial class HomePage : Page
             var list = await _xunkongApiService.GetInfoBarContentListAsync();
             if (list?.Any() ?? false)
             {
-                _Grid_InfoBar.Visibility = Visibility.Visible;
                 foreach (var item in list)
                 {
                     InfoBar infoBar;
@@ -868,7 +884,7 @@ public sealed partial class HomePage : Page
                     {
                         infoBar = NotificationProvider.Create((InfoBarSeverity)item.Severity, item.Title, item.Message);
                     }
-                    _StackPanel_InfoBar.Children.Add(infoBar);
+                    AddToInfoBar(infoBar);
                 }
             }
         }
@@ -899,9 +915,8 @@ public sealed partial class HomePage : Page
                         {
                             if (version > XunkongEnvironment.AppVersion && release.Prerelease)
                             {
-                                _Grid_InfoBar.Visibility = Visibility.Visible;
                                 var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, $"新预览版 {version}", release.Name, "详细信息", async () => await Launcher.LaunchUriAsync(new Uri(release.HtmlUrl)));
-                                _StackPanel_InfoBar.Children.Insert(0, infoBar);
+                                AddToInfoBar(infoBar, 0);
                             }
                         }
                     }
@@ -917,7 +932,6 @@ public sealed partial class HomePage : Page
                 var updates = await context.GetAppAndOptionalStorePackageUpdatesAsync();
                 if (updates.Any())
                 {
-                    _Grid_InfoBar.Visibility = Visibility.Visible;
                     Action action;
                     if (context.CanSilentlyDownloadStorePackageUpdates)
                     {
@@ -969,7 +983,7 @@ public sealed partial class HomePage : Page
                     else
                     {
                         var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, "薛定谔的更新", "只有安装后才知道是不是真的更新", "下载并安装", action);
-                        _StackPanel_InfoBar.Children.Insert(0, infoBar);
+                        AddToInfoBar(infoBar, 0);
                     }
                 }
             }
@@ -981,9 +995,8 @@ public sealed partial class HomePage : Page
                 {
                     if (version > XunkongEnvironment.AppVersion)
                     {
-                        _Grid_InfoBar.Visibility = Visibility.Visible;
                         var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, release.Prerelease ? $"新预览版 {version}" : $"新版本 {version}", release.Name, "详细信息", async () => await Launcher.LaunchUriAsync(new Uri(release.HtmlUrl)));
-                        _StackPanel_InfoBar.Children.Insert(0, infoBar);
+                        AddToInfoBar(infoBar, 0);
                     }
                 }
             }
@@ -1044,6 +1057,43 @@ public sealed partial class HomePage : Page
             }
         };
     }
+
+
+
+    /// <summary>
+    /// 留影叙佳期
+    /// </summary>
+    private async void CheckBirthdayStarAsync()
+    {
+        try
+        {
+            if (AppSetting.GetValue(SettingKeys.EnableBirthdayStarInHomePage, false))
+            {
+                var roles = _hoyolabService.GetGenshinRoleInfoList();
+                foreach (var role in roles)
+                {
+                    var index = await _hoyolabService.CheckBirthdayStarAsync(role);
+                    if (index != null)
+                    {
+                        var name = string.Join("和", index.Role.Select(x => x.Name));
+                        var text = $"今天是{name}的生日，快点去庆祝吧！";
+                        const string url = "https://webstatic.mihoyo.com/ys/event/e20220303-birthday/index.html?game_biz=hk4e_cn&bbs_presentation_style=fullscreen&bbs_auth_required=true&bbs_landscape=true&activity_id=20220301153521";
+                        var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, $"留影叙佳期 - {role.Nickname}", text, "为TA庆祝",
+                            () => MainPage.Current.Navigate(typeof(WebViewPage), new WebViewPage.NavigateParameter("BirthdayStar", url, role)));
+                        AddToInfoBar(infoBar);
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+            var infoBar = NotificationProvider.Create(InfoBarSeverity.Error, "留影叙佳期", ex.Message);
+            AddToInfoBar(infoBar);
+        }
+    }
+
+
 
     #endregion
 

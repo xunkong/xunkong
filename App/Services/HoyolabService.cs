@@ -1,8 +1,8 @@
 ﻿using System.Collections.Concurrent;
-using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 using Xunkong.Hoyolab;
 using Xunkong.Hoyolab.Account;
+using Xunkong.Hoyolab.Activity;
 using Xunkong.Hoyolab.Avatar;
 using Xunkong.Hoyolab.DailyNote;
 using Xunkong.Hoyolab.GameRecord;
@@ -612,6 +612,33 @@ internal class HoyolabService
         return result;
     }
 
+
+
+
+    /// <summary>
+    /// 留影叙佳期
+    /// </summary>
+    /// <param name="role"></param>
+    /// <returns></returns>
+    public async Task<BirthdayStarIndex?> CheckBirthdayStarAsync(GenshinRoleInfo role)
+    {
+        using var dapper = DatabaseProvider.CreateConnection();
+        var history = dapper.QueryFirstOrDefault<OperationHistory>("SELECT * FROM OperationHistory WHERE Operation='TakeBirthdayStarAlbum' AND Key=@Uid ORDER BY Id DESC LIMIT 1;", new { Uid = role.Uid.ToString() });
+        if (history?.Time.LocalDateTime > DateTimeOffset.UtcNow.AddHours(8).LocalDateTime.Date)
+        {
+            return null;
+        }
+        var index = await _hoyolabClient.GetBirthdayStarIndexAsync(role);
+        if (index.IsShowRemind)
+        {
+            return index;
+        }
+        else
+        {
+            OperationHistory.AddToDatabase("TakeBirthdayStarAlbum", role.Uid.ToString());
+            return null;
+        }
+    }
 
 
 

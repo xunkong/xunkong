@@ -289,12 +289,17 @@ internal abstract class SettingKeys
     [Backup]
     public const string DailyNoteCacheMinutes = nameof(DailyNoteCacheMinutes);
 
-
     /// <summary>
     /// 图片浏览器主题
     /// </summary>
     [Backup]
     public const string ImageViewerRequestTheme = nameof(ImageViewerRequestTheme);
+
+    /// <summary>
+    /// 留影叙佳期
+    /// </summary>
+    [Backup]
+    public const string EnableBirthdayStarInHomePage = nameof(EnableBirthdayStarInHomePage);
 
 }
 
