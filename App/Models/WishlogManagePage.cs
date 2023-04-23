@@ -148,23 +148,23 @@ internal class WishlogManagePage_JsonExport
             throw new NullReferenceException("No wishlog item in list.");
         }
         var uid = List.First().Uid;
-        if (uid == 0)
-        {
-            throw new NullReferenceException("Uid is 0.");
-        }
-        if (List.Any(x => x.Uid != uid))
-        {
-            throw new ArgumentOutOfRangeException("More than one uid in list.");
-        }
-        var lang = List.FirstOrDefault()?.Language;
-        if (string.IsNullOrWhiteSpace(lang))
-        {
-            throw new NullReferenceException("Lang is null.");
-        }
-        if (List.Any(x => x.Language != lang))
-        {
-            throw new ArgumentOutOfRangeException("More than one lang in list.");
-        }
+        //if (uid == 0)
+        //{
+        //    throw new NullReferenceException("Uid is 0.");
+        //}
+        //if (List.Any(x => x.Uid != uid))
+        //{
+        //    throw new ArgumentOutOfRangeException("More than one uid in list.");
+        //}
+        var lang = List.FirstOrDefault()?.Language ?? "";
+        //if (string.IsNullOrWhiteSpace(lang))
+        //{
+        //    throw new NullReferenceException("Lang is null.");
+        //}
+        //if (List.Any(x => x.Language != lang))
+        //{
+        //    throw new ArgumentOutOfRangeException("More than one lang in list.");
+        //}
         var time = DateTimeOffset.Now;
         var version = XunkongEnvironment.AppVersion;
         var info = new WishlogManagePage_JsonExport_Info
