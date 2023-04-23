@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.WinUI.Notifications;
-using Microsoft.Graphics.Canvas.Effects;
+﻿using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
@@ -15,12 +14,9 @@ using System.Runtime.InteropServices;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
-using Windows.Services.Store;
 using Windows.Storage;
 using Windows.System;
-using Windows.UI.Notifications;
 using Windows.UI.StartScreen;
-using Xunkong.ApiClient;
 using Xunkong.Desktop.Controls;
 using Xunkong.Desktop.Summaries;
 using Xunkong.Hoyolab;
@@ -57,7 +53,7 @@ public sealed partial class HomePage : Page
 
     private readonly HoyolabClient _hoyolabClient;
 
-    private readonly GithubService _githubService;
+    private readonly UpdateService _updateService;
 
 
     public HomePage()
@@ -66,7 +62,7 @@ public sealed partial class HomePage : Page
         _xunkongApiService = ServiceProvider.GetService<XunkongApiService>()!;
         _hoyolabService = ServiceProvider.GetService<HoyolabService>()!;
         _hoyolabClient = ServiceProvider.GetService<HoyolabClient>()!;
-        _githubService = ServiceProvider.GetService<GithubService>()!;
+        _updateService = ServiceProvider.GetService<UpdateService>()!;
         Loaded += HomePage_Loaded;
     }
 
@@ -906,101 +902,49 @@ public sealed partial class HomePage : Page
     {
         try
         {
-            if (XunkongEnvironment.IsStoreVersion)
+            var update = await _updateService.CheckUpdateAsync();
+            if (update.Github is GithubService.GithubRelease release)
             {
-                // 预览版检查更新
-                if (AppSetting.GetValue<bool>(SettingKeys.EnablePrerelease))
-                {
-                    try
-                    {
-                        var release = await _githubService.GetLatestReleaseAsync();
-                        if (Version.TryParse(release?.TagName, out var version))
-                        {
-                            if (version > XunkongEnvironment.AppVersion && release.Prerelease)
-                            {
-                                var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, $"新预览版 {version}", release.Name, "详细信息", async () => await Launcher.LaunchUriAsync(new Uri(release.HtmlUrl)));
-                                AddToInfoBar(infoBar, 0);
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error(ex, "主页检查预览版更新");
-                    }
-                }
-                // 商店版检查更新
-                var context = StoreContext.GetDefault();
-                // 调用需要在UI线程运行的函数前
-                WinRT.Interop.InitializeWithWindow.Initialize(context, MainWindow.Current.HWND);
-                var updates = await context.GetAppAndOptionalStorePackageUpdatesAsync();
-                if (updates.Any())
-                {
-                    Action action;
-                    if (context.CanSilentlyDownloadStorePackageUpdates)
-                    {
-                        action = () =>
-                        {
-                            var operation = context.TrySilentDownloadAndInstallStorePackageUpdatesAsync(updates);
-                            DownloadProgressHandle(operation);
-                        };
-                    }
-                    else
-                    {
-                        action = () =>
-                        {
-                            var operation = context.RequestDownloadAndInstallStorePackageUpdatesAsync(updates);
-                            DownloadProgressHandle(operation);
-                        };
-                    }
-                    if (updates[0].Mandatory)
-                    {
-                        var stack1 = new StackPanel { Spacing = 8 };
-                        stack1.Children.Add(new TextBlock { Text = "这是一个强制更新版本" });
-                        var stack2 = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
-                        stack1.Children.Add(stack2);
-                        var button1 = new Button { Content = "下载并安装" };
-                        button1.Click += (_, _) =>
-                        {
-                            try
-                            {
-                                action();
-                            }
-                            catch (Exception ex)
-                            {
-                                Logger.Error(ex, "下载并安装更新");
-                            }
-                        };
-                        stack2.Children.Add(button1);
-                        var button2 = new Button { Content = "打开商店" };
-                        button2.Click += async (_, _) => await Launcher.LaunchUriAsync(new(XunkongEnvironment.StoreProtocolUrl));
-                        stack2.Children.Add(button2);
-                        var dialog = new ContentDialog
-                        {
-                            Title = "有新版本",
-                            Content = stack1,
-                            XamlRoot = MainWindow.Current.XamlRoot,
-                            RequestedTheme = MainWindow.Current.ActualTheme,
-                        };
-                        await dialog.ShowWithZeroMarginAsync();
-                    }
-                    else
-                    {
-                        var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, "薛定谔的更新", "只有安装后才知道是不是真的更新", "下载并安装", action);
-                        AddToInfoBar(infoBar, 0);
-                    }
-                }
+                var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, release.Prerelease ? $"新预览版 {release.TagName}" : $"新版本 {release.TagName}", release.Name, "详细信息", async () => await Launcher.LaunchUriAsync(new Uri(release.HtmlUrl)));
+                AddToInfoBar(infoBar, 0);
             }
-            else
+            if (update.Store is not null)
             {
-                // 侧载版检查更新
-                var release = await _githubService.GetLatestReleaseAsync();
-                if (Version.TryParse(release?.TagName, out var version))
+                if (update.Store[0].Mandatory)
                 {
-                    if (version > XunkongEnvironment.AppVersion)
+                    var stack1 = new StackPanel { Spacing = 8 };
+                    stack1.Children.Add(new TextBlock { Text = "这是一个强制更新版本" });
+                    var stack2 = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
+                    stack1.Children.Add(stack2);
+                    var button1 = new Button { Content = "下载并安装" };
+                    button1.Click += (_, _) =>
                     {
-                        var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, release.Prerelease ? $"新预览版 {version}" : $"新版本 {version}", release.Name, "详细信息", async () => await Launcher.LaunchUriAsync(new Uri(release.HtmlUrl)));
-                        AddToInfoBar(infoBar, 0);
-                    }
+                        try
+                        {
+                            _updateService.RequestDownloadStoreNewVersion(update.Store);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error(ex, "下载并安装更新");
+                        }
+                    };
+                    stack2.Children.Add(button1);
+                    var button2 = new Button { Content = "打开商店" };
+                    button2.Click += async (_, _) => await Launcher.LaunchUriAsync(new(XunkongEnvironment.StoreProtocolUrl));
+                    stack2.Children.Add(button2);
+                    var dialog = new ContentDialog
+                    {
+                        Title = "有新版本",
+                        Content = stack1,
+                        XamlRoot = MainWindow.Current.XamlRoot,
+                        RequestedTheme = MainWindow.Current.ActualTheme,
+                    };
+                    await dialog.ShowWithZeroMarginAsync();
+                }
+                else
+                {
+                    var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, "薛定谔的更新", "只有安装后才知道是不是真的更新", "下载并安装", () => _updateService.RequestDownloadStoreNewVersion(update.Store));
+                    AddToInfoBar(infoBar, 0);
                 }
             }
         }
@@ -1010,56 +954,6 @@ public sealed partial class HomePage : Page
         }
     }
 
-
-    /// <summary>
-    /// 下载并安装新版本的进度条
-    /// </summary>
-    /// <param name="operation"></param>
-    private static void DownloadProgressHandle(IAsyncOperationWithProgress<StorePackageUpdateResult, StorePackageUpdateStatus> operation)
-    {
-        const string tag = "download new version";
-        const string group = "download";
-        uint index = 0;
-        var content = new ToastContentBuilder().AddText("别点我！").AddVisualChild(new AdaptiveProgressBar()
-        {
-            Title = "下载中",
-            Value = new BindableProgressBarValue("progressValue"),
-            ValueStringOverride = new BindableString("progressValueString"),
-            Status = new BindableString("progressStatus")
-        }).AddToastActivationInfo("DownloadNewVersion", ToastActivationType.Background).GetToastContent();
-
-        var toast = new ToastNotification(content.GetXml());
-        toast.Tag = tag;
-        toast.Group = group;
-        toast.Data = new NotificationData();
-        toast.Data.Values["progressValue"] = "0";
-        toast.Data.Values["progressValueString"] = "0%";
-        toast.Data.Values["progressStatus"] = "0MB / 0MB";
-        toast.Data.SequenceNumber = ++index;
-
-        var manager = ToastNotificationManager.CreateToastNotifier();
-        operation.Progress = (_, status) =>
-        {
-            if (status.PackageUpdateState == StorePackageUpdateState.Pending)
-            {
-                manager.Show(toast);
-            }
-            if (status.PackageUpdateState == StorePackageUpdateState.Downloading)
-            {
-                var progress = status.PackageDownloadProgress;
-                var data = new NotificationData { SequenceNumber = ++index };
-                data.Values["progressValue"] = $"{status.PackageDownloadProgress / 0.95}";
-                data.Values["progressValueString"] = $"{status.PackageDownloadProgress / 0.95:P0}";
-                data.Values["progressStatus"] = $"{status.PackageBytesDownloaded / (double)(1 << 20):F1}MB / {status.PackageDownloadSizeInBytes / (double)(1 << 20):F1}MB";
-                manager.Update(data, tag, group);
-            }
-            if (status.PackageUpdateState == StorePackageUpdateState.Deploying)
-            {
-                manager.Hide(toast);
-                Vanara.PInvoke.Kernel32.RegisterApplicationRestart(null, 0);
-            }
-        };
-    }
 
 
 
@@ -1094,7 +988,7 @@ public sealed partial class HomePage : Page
                         var infoBar = NotificationProvider.Create(InfoBarSeverity.Error, $"留影叙佳期 - {role.Nickname}", ex.Message);
                         AddToInfoBar(infoBar);
                     }
-                    
+
                 }
             }
         }

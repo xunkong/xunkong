@@ -23,6 +23,8 @@ public sealed partial class SettingPage : Page
 
     private readonly XunkongApiService _xunkongApiService;
 
+    private readonly UpdateService _updateService;
+
     public string AppName => XunkongEnvironment.AppName;
 
     public string AppVersion => XunkongEnvironment.AppVersion.ToString();
@@ -36,6 +38,7 @@ public sealed partial class SettingPage : Page
         this.InitializeComponent();
         _httpClient = ServiceProvider.GetService<HttpClient>()!;
         _xunkongApiService = ServiceProvider.GetService<XunkongApiService>()!;
+        _updateService = ServiceProvider.GetService<UpdateService>()!;
         Loaded += SettingPage_Loaded;
     }
 
@@ -96,6 +99,17 @@ public sealed partial class SettingPage : Page
     }
 
 
+    /// <summary>
+    /// 打开商店页面
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private async void HyperlinkButton_OpenStore_Click(object sender, RoutedEventArgs e)
+    {
+        await Launcher.LaunchUriAsync(new("ms-windows-store://pdp/?productid=9N2SVG0JMT12"));
+    }
+
+
     #endregion
 
 
@@ -113,18 +127,24 @@ public sealed partial class SettingPage : Page
     {
         try
         {
-            Uri uri;
-            if (XunkongEnvironment.IsStoreVersion)
-            {
-                uri = new("ms-windows-store://pdp/?productid=9N2SVG0JMT12");
-            }
-            else
-            {
-                uri = new("https://github.com/xunkong/xunkong/releases");
-            }
-            await Launcher.LaunchUriAsync(uri);
             OperationHistory.AddToDatabase("CheckUpdate", XunkongEnvironment.AppVersion.ToString());
             Logger.TrackEvent("CheckUpdate", "Version", XunkongEnvironment.AppVersion.ToString(), "IsStore", XunkongEnvironment.IsStoreVersion.ToString());
+            var update = await _updateService.CheckUpdateAsync(true);
+
+            if (update.Github is GithubService.GithubRelease release)
+            {
+                var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, release.Prerelease ? $"新预览版 {release.TagName}" : $"新版本 {release.TagName}", release.Name, "详细信息", async () => await Launcher.LaunchUriAsync(new Uri(release.HtmlUrl)));
+                NotificationProvider.Show(infoBar);
+            }
+            if (update.Store is not null)
+            {
+                var infoBar = NotificationProvider.Create(InfoBarSeverity.Success, "薛定谔的更新", "只有安装后才知道是不是真的更新", "下载并安装", () => _updateService.RequestDownloadStoreNewVersion(update.Store));
+                NotificationProvider.Show(infoBar);
+            }
+            if (update is (null, null))
+            {
+                NotificationProvider.Success("已是最新版本");
+            }
         }
         catch (Exception ex)
         {
@@ -954,7 +974,6 @@ public sealed partial class SettingPage : Page
 
 
     #endregion
-
 
 
 }
