@@ -443,7 +443,7 @@ public sealed partial class ImageViewer : UserControl
     private void _ScrollViewer_Image_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
     {
         var stats = Microsoft.UI.Input.InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control);
-        if (stats == CoreVirtualKeyStates.None)
+        if (stats is CoreVirtualKeyStates.None or CoreVirtualKeyStates.Locked)
         {
             if (ImageCollection?.Any() ?? false)
             {
