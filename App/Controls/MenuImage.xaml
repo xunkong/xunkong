@@ -53,17 +53,16 @@
                 <RowDefinition />
                 <RowDefinition />
             </Grid.RowDefinitions>
+            <ProgressRing x:Name="LoadingProgressRing"
+                          Width="48"
+                          Height="48"
+                          Foreground="{x:Bind Foreground}" />
             <TextBlock x:Name="ImageIndexTextBlock"
+                       Grid.Row="1"
                        HorizontalAlignment="Center"
                        FontSize="{x:Bind FontSize}"
                        Foreground="{x:Bind Foreground}"
                        Text="{x:Bind PlaceholderText}" />
-            <ProgressRing x:Name="LoadingProgressRing"
-                          Grid.Row="1"
-                          Width="48"
-                          Height="48"
-                          Foreground="{x:Bind Foreground}"
-                          IsActive="False" />
         </Grid>
 
         <Image x:Name="FailedImage"

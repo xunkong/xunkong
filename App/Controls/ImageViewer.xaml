@@ -53,6 +53,7 @@
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            DecodeFromStream="{x:Bind DecodeFromStream}"
+                           FontSize="18"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                            ImageOpened="_Image_ImageOpened"
                            IsDoubleTapEnabled="True"

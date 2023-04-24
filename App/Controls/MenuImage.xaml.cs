@@ -204,7 +204,7 @@ public sealed partial class MenuImage : UserControl
     private long fileSize;
 
 
-    public string PixelInfoString => $"{PixelWidth} x {PixelHeight}   {fileSize / 1024:N0} KB";
+    public string PixelInfoString => $"{PixelWidth} x {PixelHeight}   {FileSize / 1024:N0} KB";
 
 
     public event RoutedEventHandler ImageOpened;
@@ -470,16 +470,28 @@ public sealed partial class MenuImage : UserControl
         }
         if (e.DownloadState is DownloadState.Downloading)
         {
-            LoadingProgressRing.IsIndeterminate = false;
+            if (LoadingProgressRing.IsIndeterminate)
+            {
+                LoadingProgressRing.IsIndeterminate = false;
+            }
             var percentage = (double)e.BytesReceived / e.TotalBytesToReceive * 100;
             if (percentage > 0)
             {
                 LoadingProgressRing.Value = percentage;
             }
+            if (e.TotalBytesToReceive >= 1048576)
+            {
+                PlaceholderText = $"{e.BytesReceived / 1048576d:F2}/{e.TotalBytesToReceive / 1048576d:F2} MB";
+            }
+            else
+            {
+                PlaceholderText = $"{e.BytesReceived / 1024d:F0}/{e.TotalBytesToReceive / 1024d:F0} KB";
+            }
         }
         if (e.DownloadState is DownloadState.Completed)
         {
             LoadingProgressRing.IsIndeterminate = true;
+            PlaceholderText = "";
         }
     }
 
