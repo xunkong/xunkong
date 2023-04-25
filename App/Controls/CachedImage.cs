@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.WinUI.UI.Controls;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.Collections.Concurrent;
@@ -8,6 +9,21 @@ namespace Xunkong.Desktop.Controls;
 
 public sealed class CachedImage : ImageEx
 {
+
+
+
+    public bool EnableThumbnail
+    {
+        get { return (bool)GetValue(EnableThumbnailProperty); }
+        set { SetValue(EnableThumbnailProperty, value); }
+    }
+
+    // Using a DependencyProperty as the backing store for EnableThumbnail.  This enables animation, styling, binding, etc...
+    public static readonly DependencyProperty EnableThumbnailProperty =
+        DependencyProperty.Register("EnableThumbnail", typeof(bool), typeof(CachedImage), new PropertyMetadata(false));
+
+
+
 
 
     private static readonly ConcurrentDictionary<Uri, Uri> fileCache = new();
@@ -27,7 +43,14 @@ public sealed class CachedImage : ImageEx
             }
             else if (imageUri.Scheme is "file")
             {
-
+                if (EnableThumbnail)
+                {
+                    var thumb = await ThumbnailCache.GetThumbnailAsync(imageUri.LocalPath);
+                    if (!string.IsNullOrWhiteSpace(thumb))
+                    {
+                        return new BitmapImage(new(thumb));
+                    }
+                }
                 return new BitmapImage(imageUri);
             }
             else

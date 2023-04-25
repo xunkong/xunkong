@@ -97,7 +97,10 @@
             </GridView.ItemsPanel>
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="xdm:WallpaperInfoEx">
-                    <xdc:CachedImage Height="80" Source="{x:Bind Thumb}" />
+                    <xdc:CachedImage Height="80"
+                                     EnableLazyLoading="True"
+                                     EnableThumbnail="True"
+                                     Source="{x:Bind Thumb}" />
                 </DataTemplate>
             </GridView.ItemTemplate>
         </GridView>

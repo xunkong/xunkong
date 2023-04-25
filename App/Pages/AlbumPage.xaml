@@ -13,6 +13,7 @@
       xmlns:media="using:Microsoft.Xaml.Interactions.Media"
       xmlns:ui="using:CommunityToolkit.WinUI.UI"
       xmlns:viewmodels="using:Xunkong.Desktop.ViewModels"
+      xmlns:xdc="using:Xunkong.Desktop.Controls"
       d:DataContext="{x:Bind viewmodels:AlbumViewModel}"
       x:DefaultBindMode="OneWay"
       mc:Ignorable="d">
@@ -120,10 +121,13 @@
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="io:FileInfo">
                     <Grid Height="120">
-                        <Image Name="_Image_Thumb"
-                               ui:VisualExtensions.NormalizedCenterPoint="0.5"
-                               Source="{x:Bind FullName}"
-                               Stretch="UniformToFill">
+                        <xdc:CachedImage Name="_Image_Thumb"
+                                         ui:VisualExtensions.NormalizedCenterPoint="0.5"
+                                         Background="{ThemeResource ControlAltFillColorTertiaryBrush}"
+                                         EnableLazyLoading="True"
+                                         EnableThumbnail="True"
+                                         Source="{x:Bind FullName}"
+                                         Stretch="UniformToFill">
                             <animations:Explicit.Animations>
                                 <animations:AnimationSet x:Name="ImageZoomInAnimation">
                                     <animations:ScaleAnimation EasingMode="EaseOut"
@@ -138,7 +142,7 @@
                                                                Duration="0:0:1.5" />
                                 </animations:AnimationSet>
                             </animations:Explicit.Animations>
-                        </Image>
+                        </xdc:CachedImage>
                         <Grid Name="_Grid_ImageInfo"
                               Background="#40000000"
                               Opacity="0">

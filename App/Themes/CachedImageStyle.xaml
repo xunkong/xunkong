@@ -7,7 +7,7 @@
         <Setter Property="Foreground" Value="{ThemeResource ApplicationForegroundThemeBrush}" />
         <Setter Property="IsCacheEnabled" Value="True" />
         <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="LazyLoadingThreshold" Value="300" />
+        <Setter Property="LazyLoadingThreshold" Value="600" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="xdc:CachedImage">

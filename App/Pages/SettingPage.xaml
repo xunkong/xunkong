@@ -465,6 +465,12 @@
                                         CommandParameter="ClearVoice"
                                         Content="清除缓存" />
                             </labs:SettingsCard>
+                            <!--  缩略图缓存  -->
+                            <labs:SettingsCard Description="{x:Bind ThumbnailCacheSizeString}" Header="缩略图缓存">
+                                <Button Command="{x:Bind ClearCacheCommand, Mode=OneTime}"
+                                        CommandParameter="ClearThumbnail"
+                                        Content="清除缓存" />
+                            </labs:SettingsCard>
                         </labs:SettingsExpander.Items>
                     </labs:SettingsExpander>
 

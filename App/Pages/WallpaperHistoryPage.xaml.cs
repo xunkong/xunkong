@@ -46,7 +46,7 @@ public sealed partial class WallpaperHistoryPage : Page
     {
         if (e.ClickedItem is WallpaperInfoEx info)
         {
-            MainWindow.Current.SetFullWindowContent(new ImageViewer { CurrentImage = info, ImageCollection = WallpaperInfoHistorys, DecodeFromStream = true, ShowLoadingRing = true });
+            MainWindow.Current.SetFullWindowContent(new ImageViewer { CurrentImage = info, ImageCollection = WallpaperInfoHistorys, DecodeFromStream = true, EnableLoadingRing = true });
         }
     }
 

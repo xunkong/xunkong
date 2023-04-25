@@ -761,6 +761,13 @@ public sealed partial class SettingPage : Page
 
 
     /// <summary>
+    /// 缩略图缓存
+    /// </summary>
+    [ObservableProperty]
+    private string _thumbnailCacheSizeString;
+
+
+    /// <summary>
     /// 全部缓存
     /// </summary>
     [ObservableProperty]
@@ -770,19 +777,23 @@ public sealed partial class SettingPage : Page
     /// <summary>
     /// 计算已缓存文件的大小
     /// </summary>
-    private void ComputeCachedFileTotalSize()
+    private async void ComputeCachedFileTotalSize()
     {
         try
         {
             long totalSize = 0;
 
-            var size = GetFolderSize(XunkongCache.Instance.GetCacheFolderAsync().GetAwaiter().GetResult().Path);
+            var size = GetFolderSize((await XunkongCache.Instance.GetCacheFolderAsync()).Path);
             totalSize += size;
             ImageCacheSizeString = GetSizeString(size);
 
-            size = GetFolderSize(VoiceCache.Instance.GetCacheFolderAsync().GetAwaiter().GetResult().Path);
+            size = GetFolderSize((await VoiceCache.Instance.GetCacheFolderAsync()).Path);
             totalSize += size;
             VoiceCacheSizeString = GetSizeString(size);
+
+            size = GetFolderSize((await ThumbnailCache.GetCacheFolderAsync()).Path);
+            totalSize += size;
+            ThumbnailCacheSizeString = GetSizeString(size);
 
             TotalCacheSizeString = GetSizeString(totalSize);
         }
@@ -836,8 +847,10 @@ public sealed partial class SettingPage : Page
             {
                 case "ClearAll":
                     await DeleteFolderAsync((await XunkongCache.Instance.GetCacheFolderAsync()).Path);
-                    await DeleteFolderAsync((await VoiceCache.Instance.GetCacheFolderAsync()).Path);
                     CachedImage.ClearCache();
+                    await DeleteFolderAsync((await VoiceCache.Instance.GetCacheFolderAsync()).Path);
+                    await DeleteFolderAsync((await ThumbnailCache.GetCacheFolderAsync()).Path);
+                    ThumbnailCache.ClearCache();
                     break;
                 case "ClearImage":
                     await DeleteFolderAsync((await XunkongCache.Instance.GetCacheFolderAsync()).Path);
@@ -845,6 +858,10 @@ public sealed partial class SettingPage : Page
                     break;
                 case "ClearVoice":
                     await DeleteFolderAsync((await VoiceCache.Instance.GetCacheFolderAsync()).Path);
+                    break;
+                case "ClearThumbnail":
+                    await DeleteFolderAsync((await ThumbnailCache.GetCacheFolderAsync()).Path);
+                    ThumbnailCache.ClearCache();
                     break;
                 default:
                     break;
