@@ -63,7 +63,8 @@ public sealed partial class ImageViewer : UserControl
     public bool DecodeFromStream { get; set; }
 
 
-    public bool ShowLoadingRing { get; set; }
+    public bool EnableLoadingRing { get; set; }
+
 
 
     partial void OnCurrentImageChanged(WallpaperInfoEx value)
@@ -78,7 +79,7 @@ public sealed partial class ImageViewer : UserControl
         {
             Grid_WallpaperInfo.Visibility = Visibility.Collapsed;
         }
-        if (ShowLoadingRing)
+        if (EnableLoadingRing)
         {
             _ScrollViewer_Image.ZoomToFactor((float)(1 / uiScale));
             _ScrollViewer_Image.ScrollToHorizontalOffset(_ScrollViewer_Image.ExtentWidth / 2 - _ScrollViewer_Image.ViewportWidth / 2);

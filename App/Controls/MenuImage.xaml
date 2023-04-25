@@ -48,7 +48,7 @@
         <Grid HorizontalAlignment="Center"
               VerticalAlignment="Center"
               RowSpacing="24"
-              Visibility="{x:Bind ShowLoadingRing}">
+              Visibility="{x:Bind EnableLoadingRing}">
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />

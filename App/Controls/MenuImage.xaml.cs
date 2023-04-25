@@ -151,17 +151,6 @@ public sealed partial class MenuImage : UserControl
 
 
 
-    public bool ShowLoadingRing
-    {
-        get { return (bool)GetValue(ShowLoadingRingProperty); }
-        set { SetValue(ShowLoadingRingProperty, value); }
-    }
-
-    // Using a DependencyProperty as the backing store for ShowLoadingRing.  This enables animation, styling, binding, etc...
-    public static readonly DependencyProperty ShowLoadingRingProperty =
-        DependencyProperty.Register("ShowLoadingRing", typeof(bool), typeof(MenuImage), new PropertyMetadata(false));
-
-
 
 
     public bool ClearHeightOnLoaded
@@ -188,6 +177,17 @@ public sealed partial class MenuImage : UserControl
         DependencyProperty.Register("DecodeFromStream", typeof(bool), typeof(MenuImage), new PropertyMetadata(false));
 
 
+
+
+    public bool EnableLoadingRing
+    {
+        get { return (bool)GetValue(EnableLoadingRingProperty); }
+        set { SetValue(EnableLoadingRingProperty, value); }
+    }
+
+    // Using a DependencyProperty as the backing store for EnableLoadingRing.  This enables animation, styling, binding, etc...
+    public static readonly DependencyProperty EnableLoadingRingProperty =
+        DependencyProperty.Register("EnableLoadingRing", typeof(bool), typeof(MenuImage), new PropertyMetadata(true));
 
 
 
@@ -244,6 +244,11 @@ public sealed partial class MenuImage : UserControl
     {
 
         _tokenSource?.Cancel();
+        if (_progress != null)
+        {
+            PlaceholderText = "";
+            _progress.ProgressChanged -= Progress_ProgressChanged;
+        }
 
         _tokenSource = new CancellationTokenSource();
 
@@ -398,15 +403,12 @@ public sealed partial class MenuImage : UserControl
             }
             else
             {
-                var fileTask = XunkongCache.Instance.GetFromCacheAsync(imageUri, false, token);
-                if (ShowLoadingRing)
+                var fileTask = XunkongCache.Instance.GetFromCacheAsync(imageUri, false);
+                var progress = XunkongCache.Instance.GetProgress(imageUri);
+                if (progress != null)
                 {
-                    var progress = XunkongCache.Instance.GetProgress(imageUri);
-                    if (progress != null)
-                    {
-                        _progress = progress;
-                        progress.ProgressChanged += Progress_ProgressChanged;
-                    }
+                    _progress = progress;
+                    progress.ProgressChanged += Progress_ProgressChanged;
                 }
                 var file = await fileTask;
                 if (token.IsCancellationRequested)
