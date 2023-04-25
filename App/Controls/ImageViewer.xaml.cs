@@ -347,14 +347,14 @@ public sealed partial class ImageViewer : UserControl
         double factor;
         if (_Image.Rotation % 180 == 0)
         {
-            var widthFactor = _ScrollViewer_Image.ViewportWidth / (_Image.ActualWidth + 1);
-            var heightFactor = _ScrollViewer_Image.ViewportHeight / (_Image.ActualHeight + 1);
+            var widthFactor = _ScrollViewer_Image.ViewportWidth / _Image.ActualWidth;
+            var heightFactor = _ScrollViewer_Image.ViewportHeight / _Image.ActualHeight;
             factor = Math.Min(widthFactor, heightFactor);
         }
         else
         {
-            var widthFactor = _ScrollViewer_Image.ViewportHeight / (_Image.ActualWidth + 1);
-            var heightFactor = _ScrollViewer_Image.ViewportWidth / (_Image.ActualHeight + 1);
+            var widthFactor = _ScrollViewer_Image.ViewportHeight / _Image.ActualWidth;
+            var heightFactor = _ScrollViewer_Image.ViewportWidth / _Image.ActualHeight;
             factor = Math.Min(widthFactor, heightFactor);
         }
         return Math.Min(factor, 1 / uiScale);

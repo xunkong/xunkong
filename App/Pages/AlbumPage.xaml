@@ -7,196 +7,251 @@
       xmlns:behaviors="using:CommunityToolkit.WinUI.UI.Behaviors"
       xmlns:cc="using:CommunityToolkit.WinUI.UI.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:io="using:System.IO"
       xmlns:local="using:Xunkong.Desktop.Pages"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:media="using:Microsoft.Xaml.Interactions.Media"
       xmlns:ui="using:CommunityToolkit.WinUI.UI"
       xmlns:viewmodels="using:Xunkong.Desktop.ViewModels"
       xmlns:xdc="using:Xunkong.Desktop.Controls"
+      xmlns:xdm="using:Xunkong.Desktop.Models"
       d:DataContext="{x:Bind viewmodels:AlbumViewModel}"
       x:DefaultBindMode="OneWay"
       mc:Ignorable="d">
 
     <Page.Resources>
-        <CollectionViewSource x:Name="ImageViewSource"
-                              IsSourceGrouped="True"
-                              Source="{x:Bind vm.ImageGroupList}" />
         <animations:AnimationDictionary x:Key="FadeOutInAnimation">
             <animations:AnimationSet x:Name="GridShowOnInAnimation">
                 <animations:OpacityAnimation EasingMode="EaseOut"
                                              EasingType="Circle"
                                              To="1"
-                                             Duration="0:0:1.5" />
+                                             Duration="0:0:1" />
             </animations:AnimationSet>
             <animations:AnimationSet x:Name="GridShowOffOutAnimation">
                 <animations:OpacityAnimation EasingMode="EaseOut"
                                              EasingType="Circle"
                                              To="0"
-                                             Duration="0:0:1.5" />
+                                             Duration="0:0:1" />
             </animations:AnimationSet>
         </animations:AnimationDictionary>
     </Page.Resources>
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="60" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
 
-        <Grid Padding="24,0,24,0" CornerRadius="4,0,0,4">
-            <TextBlock HorizontalAlignment="Left"
-                       VerticalAlignment="Center"
-                       Style="{ThemeResource SubtitleTextBlockStyle}"
-                       Text="相册" />
-            <StackPanel HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        Orientation="Horizontal"
-                        Spacing="8">
-                <Button Command="{x:Bind vm.OpenImageFolderCommand}"
-                        Content="打开文件夹"
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Style="{ThemeResource DateTimePickerFlyoutButtonStyle}" />
-                <Button Command="{x:Bind vm.SetImageFolderCommand}"
-                        Content="设置文件夹"
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Style="{ThemeResource DateTimePickerFlyoutButtonStyle}" />
-            </StackPanel>
-        </Grid>
 
-
-        <cc:AdaptiveGridView Name="_GridView_Images"
-                             Grid.Row="1"
-                             Padding="24,0,24,24"
-                             animations:ItemsReorderAnimation.Duration="0:0:0.3"
-                             DesiredWidth="220"
-                             IsItemClickEnabled="True"
-                             ItemClick="_GridView_Images_ItemClick"
-                             ItemHeight="120"
-                             ItemsSource="{x:Bind ImageViewSource.View}"
-                             SelectionMode="None"
-                             StretchContentForSingleRow="False">
-            <GridView.Transitions>
-                <TransitionCollection>
-                    <ReorderThemeTransition />
-                    <RepositionThemeTransition />
-                </TransitionCollection>
-            </GridView.Transitions>
-            <GridView.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.HeaderContainerStyle>
-                        <Style TargetType="GridViewHeaderItem">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <!--  Remove default rectangle border  -->
-                                    <ControlTemplate TargetType="ContentControl">
-                                        <ContentPresenter HorizontalAlignment="Left"
-                                                          VerticalAlignment="Center"
-                                                          Content="{Binding}" />
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </GroupStyle.HeaderContainerStyle>
-                    <GroupStyle.HeaderTemplate>
-                        <DataTemplate>
-                            <TextBlock FontSize="14"
-                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                       Text="{Binding Header}" />
-                        </DataTemplate>
-                    </GroupStyle.HeaderTemplate>
-                </GroupStyle>
-            </GridView.GroupStyle>
-            <GridView.ItemContainerStyle>
-                <Style BasedOn="{StaticResource DefaultGridViewItemStyle}" TargetType="GridViewItem">
-                    <Setter Property="Margin" Value="0,0,12,12" />
-                    <Setter Property="CornerRadius" Value="4" />
+        <Pivot Name="Pivot_ImageFolder"
+               Margin="0,12,0,0"
+               ItemsSource="{x:Bind vm.FolderList}">
+            <Pivot.Resources>
+                <Thickness x:Key="PivotItemMargin">0,8,0,0</Thickness>
+                <Thickness x:Key="PivotHeaderItemMargin">12,0,12,0</Thickness>
+                <Style BasedOn="{StaticResource DefaultPivotHeaderItemStyle}" TargetType="PivotHeaderItem">
+                    <Setter Property="Height" Value="36" />
+                    <Setter Property="FontSize" Value="20" />
                 </Style>
-            </GridView.ItemContainerStyle>
-            <GridView.ItemTemplate>
-                <DataTemplate x:DataType="io:FileInfo">
-                    <Grid Height="120">
-                        <xdc:CachedImage Name="_Image_Thumb"
-                                         ui:VisualExtensions.NormalizedCenterPoint="0.5"
-                                         Background="{ThemeResource ControlAltFillColorTertiaryBrush}"
-                                         EnableLazyLoading="True"
-                                         EnableThumbnail="True"
-                                         Source="{x:Bind FullName}"
-                                         Stretch="UniformToFill">
-                            <animations:Explicit.Animations>
-                                <animations:AnimationSet x:Name="ImageZoomInAnimation">
-                                    <animations:ScaleAnimation EasingMode="EaseOut"
-                                                               EasingType="Circle"
-                                                               To="1.2"
-                                                               Duration="0:0:1.5" />
-                                </animations:AnimationSet>
-                                <animations:AnimationSet x:Name="ImageZoomOutAnimation">
-                                    <animations:ScaleAnimation EasingMode="EaseOut"
-                                                               EasingType="Circle"
-                                                               To="1"
-                                                               Duration="0:0:1.5" />
-                                </animations:AnimationSet>
-                            </animations:Explicit.Animations>
-                        </xdc:CachedImage>
-                        <Grid Name="_Grid_ImageInfo"
-                              Background="#40000000"
-                              Opacity="0">
-                            <Button Name="_Button_CopyImage"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Top"
-                                    Click="_Button_CopyImage_Click"
-                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    RequestedTheme="Dark"
-                                    Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
-                                <Button.ContentTransitions>
-                                    <TransitionCollection>
-                                        <ContentThemeTransition />
-                                    </TransitionCollection>
-                                </Button.ContentTransitions>
-                                <SymbolIcon Symbol="Copy" />
-                            </Button>
-                            <TextBlock Margin="0,0,0,4"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Bottom"
-                                       Foreground="#F3F3F3"
-                                       Text="{x:Bind CreationTime, Converter={StaticResource DateTimeOffsetToDateTimeStringConverter}}" />
-                        </Grid>
-                        <Grid.Resources>
-                            <CircleEase x:Key="CircleEase" EasingMode="EaseOut" />
-                            <Storyboard x:Key="GridShowOnStoryboard">
-                                <DoubleAnimation EasingFunction="{StaticResource CircleEase}"
-                                                 Storyboard.TargetName="_Grid_ImageInfo"
-                                                 Storyboard.TargetProperty="Opacity"
-                                                 To="1"
-                                                 Duration="0:0:1.5" />
-                            </Storyboard>
-                            <Storyboard x:Key="GridShowOffStoryboard">
-                                <DoubleAnimation EasingFunction="{StaticResource CircleEase}"
-                                                 Storyboard.TargetName="_Grid_ImageInfo"
-                                                 Storyboard.TargetProperty="Opacity"
-                                                 To="0"
-                                                 Duration="0:0:1.5" />
-                            </Storyboard>
-                        </Grid.Resources>
-                        <activity:Interaction.Behaviors>
-                            <actions:EventTriggerBehavior EventName="PointerEntered">
-                                <behaviors:StartAnimationAction Animation="{Binding ElementName=ImageZoomInAnimation}" />
-                                <media:ControlStoryboardAction Storyboard="{StaticResource GridShowOnStoryboard}" />
-                            </actions:EventTriggerBehavior>
-                            <actions:EventTriggerBehavior EventName="PointerExited">
-                                <behaviors:StartAnimationAction Animation="{Binding ElementName=ImageZoomOutAnimation}" />
-                                <media:ControlStoryboardAction Storyboard="{StaticResource GridShowOffStoryboard}" />
-                            </actions:EventTriggerBehavior>
-                        </activity:Interaction.Behaviors>
-                    </Grid>
+            </Pivot.Resources>
+            <Pivot.LeftHeader>
+                <Border Width="12" />
+            </Pivot.LeftHeader>
+            <Pivot.RightHeader>
+                <StackPanel Margin="0,0,24,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                    <Button Content="打开文件夹"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
+                        <Button.Flyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Command="{x:Bind OpenImageFolderCommand, Mode=OneTime}"
+                                                CommandParameter="0"
+                                                Text="游戏截图" />
+                                <MenuFlyoutItem Command="{x:Bind OpenImageFolderCommand, Mode=OneTime}"
+                                                CommandParameter="1"
+                                                Text="截图备份" />
+                                <MenuFlyoutItem Command="{x:Bind OpenImageFolderCommand, Mode=OneTime}"
+                                                CommandParameter="2"
+                                                Text="壁纸收藏" />
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </Button>
+                    <Button Content="设置文件夹"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
+                        <Button.Flyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Command="{x:Bind SetImageFolderCommand, Mode=OneTime}"
+                                                CommandParameter="0"
+                                                Text="游戏截图" />
+                                <MenuFlyoutItem Command="{x:Bind SetImageFolderCommand, Mode=OneTime}"
+                                                CommandParameter="1"
+                                                Text="截图备份" />
+                                <MenuFlyoutItem Command="{x:Bind SetImageFolderCommand, Mode=OneTime}"
+                                                CommandParameter="2"
+                                                Text="壁纸收藏" />
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </Button>
+                </StackPanel>
+            </Pivot.RightHeader>
+
+            <Pivot.HeaderTemplate>
+                <DataTemplate x:DataType="xdm:AlbumPage_ImageFoler">
+                    <TextBlock Text="{x:Bind Header}" />
                 </DataTemplate>
-            </GridView.ItemTemplate>
-        </cc:AdaptiveGridView>
+            </Pivot.HeaderTemplate>
+            <Pivot.ItemTemplate>
+                <DataTemplate x:DataType="xdm:AlbumPage_ImageFoler">
+                    <SemanticZoom>
+                        <SemanticZoom.ZoomedOutView>
+                            <ListView Padding="12,0,12,24"
+                                      ItemsSource="{x:Bind ImageSource.View.CollectionGroups}"
+                                      SelectionMode="None">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Group.Header}" />
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </SemanticZoom.ZoomedOutView>
+                        <SemanticZoom.ZoomedInView>
+                            <cc:AdaptiveGridView Name="_GridView_Images"
+                                                 Grid.Row="1"
+                                                 Padding="24,0,24,24"
+                                                 DesiredWidth="220"
+                                                 IsItemClickEnabled="True"
+                                                 ItemClick="_GridView_Images_ItemClick"
+                                                 ItemHeight="120"
+                                                 ItemsSource="{x:Bind ImageSource.View}"
+                                                 SelectionMode="None"
+                                                 StretchContentForSingleRow="False">
+                                <GridView.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.HeaderContainerStyle>
+                                            <Style TargetType="GridViewHeaderItem">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <!--  Remove default rectangle border  -->
+                                                        <ControlTemplate TargetType="ContentControl">
+                                                            <ContentPresenter HorizontalAlignment="Stretch"
+                                                                              VerticalAlignment="Center"
+                                                                              Content="{Binding}" />
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </GroupStyle.HeaderContainerStyle>
+                                        <GroupStyle.HeaderTemplate>
+                                            <DataTemplate>
+                                                <TextBlock FontSize="14"
+                                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                           Text="{Binding Header}" />
+                                            </DataTemplate>
+                                        </GroupStyle.HeaderTemplate>
+                                    </GroupStyle>
+                                </GridView.GroupStyle>
+                                <GridView.ItemContainerStyle>
+                                    <Style BasedOn="{StaticResource DefaultGridViewItemStyle}" TargetType="GridViewItem">
+                                        <Setter Property="Margin" Value="0,0,12,12" />
+                                        <Setter Property="CornerRadius" Value="4" />
+                                    </Style>
+                                </GridView.ItemContainerStyle>
+                                <GridView.ItemTemplate>
+                                    <DataTemplate x:DataType="xdm:AlbumPage_ImageItem">
+                                        <Grid Height="120">
+                                            <xdc:CachedImage Name="_Image_Thumb"
+                                                             ui:VisualExtensions.NormalizedCenterPoint="0.5"
+                                                             Background="{ThemeResource ControlAltFillColorTertiaryBrush}"
+                                                             EnableLazyLoading="True"
+                                                             EnableThumbnail="True"
+                                                             Source="{x:Bind FullName}"
+                                                             Stretch="UniformToFill">
+                                                <animations:Explicit.Animations>
+                                                    <animations:AnimationSet x:Name="ImageZoomInAnimation">
+                                                        <animations:ScaleAnimation EasingMode="EaseOut"
+                                                                                   EasingType="Circle"
+                                                                                   To="1.2"
+                                                                                   Duration="0:0:1" />
+                                                    </animations:AnimationSet>
+                                                    <animations:AnimationSet x:Name="ImageZoomOutAnimation">
+                                                        <animations:ScaleAnimation EasingMode="EaseOut"
+                                                                                   EasingType="Circle"
+                                                                                   To="1"
+                                                                                   Duration="0:0:1" />
+                                                    </animations:AnimationSet>
+                                                </animations:Explicit.Animations>
+                                            </xdc:CachedImage>
+                                            <Grid Name="_Grid_ImageInfo"
+                                                  Background="#60000000"
+                                                  Opacity="0">
+                                                <Button Name="_Button_CopyImage"
+                                                        HorizontalAlignment="Right"
+                                                        VerticalAlignment="Top"
+                                                        Click="_Button_CopyImage_Click"
+                                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                        RequestedTheme="Dark"
+                                                        Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
+                                                    <Button.ContentTransitions>
+                                                        <TransitionCollection>
+                                                            <ContentThemeTransition />
+                                                        </TransitionCollection>
+                                                    </Button.ContentTransitions>
+                                                    <SymbolIcon Symbol="Copy" />
+                                                </Button>
+                                                <TextBlock Margin="8,0,8,4"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Bottom"
+                                                           FontSize="12"
+                                                           Foreground="#F3F3F3"
+                                                           Text="{x:Bind Title}"
+                                                           TextTrimming="CharacterEllipsis" />
+                                            </Grid>
+                                            <Grid.Resources>
+                                                <CircleEase x:Key="CircleEase" EasingMode="EaseOut" />
+                                                <Storyboard x:Key="GridShowOnStoryboard">
+                                                    <DoubleAnimation EasingFunction="{StaticResource CircleEase}"
+                                                                     Storyboard.TargetName="_Grid_ImageInfo"
+                                                                     Storyboard.TargetProperty="Opacity"
+                                                                     To="1"
+                                                                     Duration="0:0:1" />
+                                                </Storyboard>
+                                                <Storyboard x:Key="GridShowOffStoryboard">
+                                                    <DoubleAnimation EasingFunction="{StaticResource CircleEase}"
+                                                                     Storyboard.TargetName="_Grid_ImageInfo"
+                                                                     Storyboard.TargetProperty="Opacity"
+                                                                     To="0"
+                                                                     Duration="0:0:1" />
+                                                </Storyboard>
+                                            </Grid.Resources>
+                                            <activity:Interaction.Behaviors>
+                                                <actions:EventTriggerBehavior EventName="PointerEntered">
+                                                    <behaviors:StartAnimationAction Animation="{Binding ElementName=ImageZoomInAnimation}" />
+                                                    <media:ControlStoryboardAction Storyboard="{StaticResource GridShowOnStoryboard}" />
+                                                </actions:EventTriggerBehavior>
+                                                <actions:EventTriggerBehavior EventName="PointerExited">
+                                                    <behaviors:StartAnimationAction Animation="{Binding ElementName=ImageZoomOutAnimation}" />
+                                                    <media:ControlStoryboardAction Storyboard="{StaticResource GridShowOffStoryboard}" />
+                                                </actions:EventTriggerBehavior>
+                                            </activity:Interaction.Behaviors>
+                                        </Grid>
+                                    </DataTemplate>
+                                </GridView.ItemTemplate>
+                            </cc:AdaptiveGridView>
+                        </SemanticZoom.ZoomedInView>
+                    </SemanticZoom>
+                </DataTemplate>
+            </Pivot.ItemTemplate>
+
+
+        </Pivot>
+
+
+
 
 
     </Grid>
