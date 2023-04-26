@@ -65,13 +65,13 @@ public sealed partial class SettingPage : Page
     }
 
     /// <summary>
-    /// 好评
+    /// 超链接点击
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="args"></param>
     private async void Hyperlink_Click(Microsoft.UI.Xaml.Documents.Hyperlink sender, Microsoft.UI.Xaml.Documents.HyperlinkClickEventArgs args)
     {
-        await Launcher.LaunchUriAsync(new("ms-windows-store://review/?ProductId=9N2SVG0JMT12"));
+        await Launcher.LaunchUriAsync(sender.NavigateUri);
     }
 
 
@@ -297,6 +297,20 @@ public sealed partial class SettingPage : Page
             Logger.Error(ex, "修改壁纸保存位置");
             NotificationProvider.Error(ex, "修改壁纸保存位置");
         }
+    }
+
+
+
+    /// <summary>
+    /// 壁纸图片格式
+    /// </summary>
+    [ObservableProperty]
+    private string? _WallpaperRequestFormat = AppSetting.GetValue<string>(SettingKeys.WallpaperRequestFormat);
+    partial void OnWallpaperRequestFormatChanged(string? value)
+    {
+        AppSetting.SetValue(SettingKeys.WallpaperRequestFormat, value);
+        XunkongApiService.WallpaperRequestFormat = value;
+        XunkongApiService.ChangeWallpaperFileExtension(value);
     }
 
 

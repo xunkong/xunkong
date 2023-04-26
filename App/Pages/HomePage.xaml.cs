@@ -299,11 +299,7 @@ public sealed partial class HomePage : Page
             // 使用无透明度效果的图片代替，这个代替方法也没有用
             // 应该去应用商店更新解码组件
             Logger.Error(ex, "使用 Win2D 加载背景图片");
-            if (ex.HResult == unchecked((int)0x88982F8B))
-            {
-                NotificationProvider.ShowWithButton(InfoBarSeverity.Warning, "出错了", "缺少 Webp 图像解码组件，请在应用商店中下载「Webp 图像扩展」", "打开商店",
-                    async () => await Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?productid=9PG2DK419DRG&mode=mini")));
-            }
+            NotificationProvider.Warning("图片加载失败", "缺少必要的解码组件，请在「设置-主页壁纸-图片格式」中查看。", 0);
         }
     }
 

@@ -32,9 +32,14 @@ internal class XunkongApiService
     }
 
 
+
+    public static string? WallpaperRequestFormat { get; set; }
+
+
     static XunkongApiService()
     {
         LiteDB.BsonMapper.Global.Entity<TextMapItem>().Id(x => x.ItemId);
+        WallpaperRequestFormat = AppSetting.GetValue<string>(SettingKeys.WallpaperRequestFormat);
     }
 
 
@@ -306,7 +311,7 @@ internal class XunkongApiService
 
     public async Task<WallpaperInfoEx> GetWallpaperByIdAsync(int id)
     {
-        var info = await _xunkongClient.GetWallpaperByIdAsync(id);
+        var info = await _xunkongClient.GetWallpaperByIdAsync(id, WallpaperRequestFormat);
         return GetWallpaperInfoEx(info);
 
     }
@@ -315,21 +320,21 @@ internal class XunkongApiService
 
     public async Task<WallpaperInfoEx> GetRandomWallpaperAsync()
     {
-        var info = await _xunkongClient.GetRandomWallpaperAsync();
+        var info = await _xunkongClient.GetRandomWallpaperAsync(WallpaperRequestFormat);
         return GetWallpaperInfoEx(info);
     }
 
 
     public async Task<WallpaperInfoEx> GetNextWallpaperAsync(int lastId = 0)
     {
-        var info = await _xunkongClient.GetNextWallpaperAsync(lastId);
+        var info = await _xunkongClient.GetNextWallpaperAsync(lastId, WallpaperRequestFormat);
         return GetWallpaperInfoEx(info);
     }
 
 
-    public async Task<List<WallpaperInfoEx>> GetWallpaperInfoListAsync(int page, int size)
+    public async Task<List<WallpaperInfoEx>> GetWallpaperInfoListAsync(int size)
     {
-        var infos = await _xunkongClient.GetWallpaperListAsync(size);
+        var infos = await _xunkongClient.GetWallpaperListAsync(size, WallpaperRequestFormat);
         return GetWallpaperInfoEx(infos);
     }
 
@@ -424,6 +429,58 @@ internal class XunkongApiService
         }
     }
 
+
+
+    public static void ChangeWallpaperFileExtension(string? format)
+    {
+        try
+        {
+            format = format switch
+            {
+                "avif" or "jpg" or "png" or "webp" => format,
+                _ => "avif",
+            };
+            using var dapper = DatabaseProvider.CreateConnection();
+            using var t = dapper.BeginTransaction();
+            dapper.Execute($"""
+                UPDATE WallpaperInfo SET FileName=(SUBSTR(FileName, 1, LENGTH(FileName) - 3) || @format) WHERE Url LIKE '%xunkong.cc%' AND FileName LIKE '%.jpg';
+                UPDATE WallpaperInfo SET FileName=(SUBSTR(FileName, 1, LENGTH(FileName) - 3) || @format) WHERE Url LIKE '%xunkong.cc%' AND FileName LIKE '%.png';
+                UPDATE WallpaperInfo SET FileName=(SUBSTR(FileName, 1, LENGTH(FileName) - 4) || @format) WHERE Url LIKE '%xunkong.cc%' AND FileName LIKE '%.webp';
+                UPDATE WallpaperInfo SET FileName=(SUBSTR(FileName, 1, LENGTH(FileName) - 4) || @format) WHERE Url LIKE '%xunkong.cc%' AND FileName LIKE '%.avif';
+
+                UPDATE WallpaperInfo SET Url=REPLACE(Url, '!jpg', '') WHERE Url LIKE '%xunkong.cc%!jpg';
+                UPDATE WallpaperInfo SET Url=REPLACE(Url, '!png', '') WHERE Url LIKE '%xunkong.cc%!png';
+                UPDATE WallpaperInfo SET Url=REPLACE(Url, '!webp', '') WHERE Url LIKE '%xunkong.cc%!webp';
+                UPDATE WallpaperInfo SET Url=REPLACE(Url, '.webp', '.avif') WHERE Url LIKE '%xunkong.cc%.webp';
+                """, new { format }, t);
+            if (format is "jpg" or "png" or "webp")
+            {
+                dapper.Execute("""
+                    UPDATE WallpaperInfo SET Url=(Url || '!' || @format) WHERE Url LIKE '%xunkong.cc%.avif';
+                    """, new { format }, t);
+            }
+            t.Commit();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex);
+        }
+    }
+
+
+
+    public async Task RefreshLocalWallpaperInfosAsync()
+    {
+        using var dapper = DatabaseProvider.CreateConnection();
+        var ids = dapper.Query<int>("SELECT Id FROM WallpaperInfo;").ToList();
+        var list = await _xunkongClient.GetWallpaperInfosByIdsAsnyc(ids, WallpaperRequestFormat);
+        using var t = dapper.BeginTransaction();
+        dapper.Execute("""
+            INSERT OR REPLACE INTO WallpaperInfo (Id, Enable, Title, Author, Description, FileName, Tags, Url, Source, Rating, RatingCount)
+            VALUES (@Id, @Enable, @Title, @Author, @Description, @FileName, @Tags, @Url, @Source, @Rating, @RatingCount);
+            """, list, t);
+        t.Commit();
+    }
 
 
 

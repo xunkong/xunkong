@@ -94,7 +94,11 @@
                                    Margin="0,4,0,0"
                                    TextWrapping="Wrap">
                             <Run Text="记录旅途中发生的事，觉得好用就给个" />
-                            <Hyperlink Click="Hyperlink_Click" UnderlineStyle="None">好评</Hyperlink>
+                            <Hyperlink Click="Hyperlink_Click"
+                                       NavigateUri="ms-windows-store://review/?ProductId=9N2SVG0JMT12"
+                                       UnderlineStyle="None">
+                                <Run Text="好评" />
+                            </Hyperlink>
                             <Run Text="或" />
                             <Hyperlink NavigateUri="https://github.com/xunkong/xunkong" UnderlineStyle="None">Star</Hyperlink>
                             <Run Text="吧。" />
@@ -215,6 +219,143 @@
                             <!--  保存位置  -->
                             <labs:SettingsCard Description="{x:Bind WallpaperSaveFolder}" Header="保存位置">
                                 <Button Command="{x:Bind ChangeWallpaperSaveFolderCommand, Mode=OneTime}" Content="修改路径" />
+                            </labs:SettingsCard>
+                            <!--  图片格式  -->
+                            <labs:SettingsCard Description="推荐并且默认使用 avif 格式，jpg 格式兼容性最佳，不推荐使用 png 格式" Header="图片格式">
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <Button Width="32"
+                                            Height="32"
+                                            Padding="0"
+                                            Content="&#xE9CE;"
+                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                            Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
+                                        <Button.Flyout>
+                                            <Flyout>
+                                                <StackPanel Spacing="8">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Width="48" />
+                                                        <TextBlock Width="80" Text="文件大小" />
+                                                        <TextBlock Width="80" Text="图像质量" />
+                                                        <TextBlock Width="80" Text="解码速度" />
+                                                        <TextBlock Text="所需额外组件" />
+
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Width="48"
+                                                                   VerticalAlignment="Center"
+                                                                   Text="jpg" />
+                                                        <TextBlock Width="80"
+                                                                   VerticalAlignment="Center"
+                                                                   FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                                   FontSize="10"
+                                                                   Text="&#xEA3A; &#xEA3A; &#xEA3A;"
+                                                                   VariableSizedWrapGrid.ColumnSpan="3" />
+                                                        <TextBlock Width="80"
+                                                                   VerticalAlignment="Center"
+                                                                   FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                                   FontSize="10"
+                                                                   Text="&#xEA3A; &#xEA3A; &#xEA3A;" />
+                                                        <TextBlock Width="80"
+                                                                   VerticalAlignment="Center"
+                                                                   FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                                   FontSize="10"
+                                                                   Text="&#xEA3A; &#xEA3A; &#xEA3A; &#xEA3A;" />
+                                                        <TextBlock FontSize="12" Text="无" />
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Width="48"
+                                                                   VerticalAlignment="Center"
+                                                                   Text="png" />
+                                                        <TextBlock Width="80"
+                                                                   VerticalAlignment="Center"
+                                                                   FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                                   FontSize="10"
+                                                                   Text="&#xEA3A; &#xEA3A; &#xEA3A; &#xEA3A; &#xEA3A;" />
+                                                        <TextBlock Width="80"
+                                                                   VerticalAlignment="Center"
+                                                                   FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                                   FontSize="10"
+                                                                   Text="&#xEA3A; &#xEA3A; &#xEA3A; &#xEA3A;" />
+                                                        <TextBlock Width="80"
+                                                                   VerticalAlignment="Center"
+                                                                   FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                                   FontSize="10"
+                                                                   Text="&#xEA3A; &#xEA3A; &#xEA3A; &#xEA3A;" />
+                                                        <TextBlock FontSize="12" Text="无" />
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Width="48"
+                                                                   VerticalAlignment="Center"
+                                                                   Text="webp" />
+                                                        <TextBlock Width="80"
+                                                                   VerticalAlignment="Center"
+                                                                   FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                                   FontSize="10"
+                                                                   Text="&#xEA3A; &#xEA3A;" />
+                                                        <TextBlock Width="80"
+                                                                   VerticalAlignment="Center"
+                                                                   FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                                   FontSize="10"
+                                                                   Text="&#xEA3A; &#xEA3A; &#xEA3A; &#xEA3A;" />
+                                                        <TextBlock Width="80"
+                                                                   VerticalAlignment="Center"
+                                                                   FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                                   FontSize="10"
+                                                                   Text="&#xEA3A; &#xEA3A;" />
+                                                        <TextBlock FontSize="12" IsTextSelectionEnabled="True">
+                                                            <Hyperlink Click="Hyperlink_Click"
+                                                                       NavigateUri="ms-windows-store://pdp/?productid=9PG2DK419DRG"
+                                                                       UnderlineStyle="None">
+                                                                <Run Text="Webp 图像扩展" />
+                                                            </Hyperlink>
+                                                        </TextBlock>
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Width="48"
+                                                                   VerticalAlignment="Center"
+                                                                   Text="avif" />
+                                                        <TextBlock Width="80"
+                                                                   VerticalAlignment="Center"
+                                                                   FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                                   FontSize="10"
+                                                                   Text="&#xEA3A;" />
+                                                        <TextBlock Width="80"
+                                                                   VerticalAlignment="Center"
+                                                                   FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                                   FontSize="10"
+                                                                   Text="&#xEA3A; &#xEA3A; &#xEA3A; &#xEA3A;" />
+                                                        <TextBlock Width="80"
+                                                                   VerticalAlignment="Center"
+                                                                   FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                                   FontSize="10"
+                                                                   Text="&#xEA3A;" />
+                                                        <TextBlock FontSize="12" IsTextSelectionEnabled="True">
+                                                            <Hyperlink Click="Hyperlink_Click"
+                                                                       NavigateUri="ms-windows-store://pdp/?productid=9PMMSR1CGPWG"
+                                                                       UnderlineStyle="None">
+                                                                <Run Text="HEIF 图像扩展" />
+                                                            </Hyperlink>
+                                                            <LineBreak />
+                                                            <Hyperlink Click="Hyperlink_Click"
+                                                                       NavigateUri="ms-windows-store://pdp/?productid=9MVZQVXJBQ9V"
+                                                                       UnderlineStyle="None">
+                                                                <Run Text="AV1 Video Extension" />
+                                                            </Hyperlink>
+                                                        </TextBlock>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Flyout>
+                                        </Button.Flyout>
+                                    </Button>
+                                    <ComboBox SelectedItem="{x:Bind WallpaperRequestFormat, Mode=TwoWay}">
+                                        <ComboBox.Items>
+                                            <x:String>jpg</x:String>
+                                            <x:String>png</x:String>
+                                            <x:String>webp</x:String>
+                                            <x:String>avif</x:String>
+                                        </ComboBox.Items>
+                                    </ComboBox>
+                                </StackPanel>
                             </labs:SettingsCard>
                         </labs:SettingsExpander.Items>
                     </labs:SettingsExpander>

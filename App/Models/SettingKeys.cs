@@ -307,6 +307,12 @@ internal abstract class SettingKeys
     [Backup]
     public const string EnableFinishingActivityInHomePage = nameof(EnableFinishingActivityInHomePage);
 
+    /// <summary>
+    /// 壁纸图片格式
+    /// </summary>
+    [Backup]
+    public const string WallpaperRequestFormat = nameof(WallpaperRequestFormat);
+
 }
 
 
