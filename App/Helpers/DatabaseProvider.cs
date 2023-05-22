@@ -48,20 +48,23 @@ internal class DatabaseProvider
     }
 
 
-
+    private static object _lock = new();
 
     private static void Initialize()
     {
-        using var dapper = new SqliteConnection(_sqliteConnectionString);
-        var version = dapper.QueryFirstOrDefault<int>("PRAGMA USER_VERSION;");
-        if (version < UpdateSqls.Count)
+        lock (_lock)
         {
-            foreach (var sql in UpdateSqls.Skip(version))
+            using var dapper = new SqliteConnection(_sqliteConnectionString);
+            var version = dapper.QueryFirstOrDefault<int>("PRAGMA USER_VERSION;");
+            if (version < UpdateSqls.Count)
             {
-                dapper.Execute(sql);
+                foreach (var sql in UpdateSqls.Skip(version))
+                {
+                    dapper.Execute(sql);
+                }
             }
+            _initialized = true;
         }
-        _initialized = true;
     }
 
 
