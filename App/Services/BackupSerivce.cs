@@ -161,7 +161,7 @@ internal class BackupService
             var settings = typeof(SettingKeys).GetFields()
                                               .Where(x => x.GetCustomAttributes(typeof(BackupAttribute), false).Any())
                                               .Select(x => x.GetRawConstantValue() as string)
-                                              .ToList();
+                                              .ToArray();
             using var dapper = DatabaseProvider.CreateConnection();
             var list = dapper.Query("SELECT * FROM Setting WHERE Key IN @Keys;", new { Keys = settings });
             var dic = ApplicationData.Current.LocalSettings.Values;
