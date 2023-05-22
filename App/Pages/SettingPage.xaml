@@ -357,6 +357,10 @@
                                     </ComboBox>
                                 </StackPanel>
                             </labs:SettingsCard>
+                            <!--  刷新壁纸信息  -->
+                            <labs:SettingsCard Description="重新获取本地所有壁纸的信息" Header="刷新壁纸信息">
+                                <Button Command="{x:Bind RefreshLocalWallpaperInfosCommand, Mode=OneTime}" Content="刷新壁纸信息" />
+                            </labs:SettingsCard>
                         </labs:SettingsExpander.Items>
                     </labs:SettingsExpander>
 

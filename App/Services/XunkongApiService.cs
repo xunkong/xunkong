@@ -469,7 +469,7 @@ internal class XunkongApiService
 
 
 
-    public async Task RefreshLocalWallpaperInfosAsync()
+    public async Task<int> RefreshLocalWallpaperInfosAsync()
     {
         using var dapper = DatabaseProvider.CreateConnection();
         var ids = dapper.Query<int>("SELECT Id FROM WallpaperInfo;").ToList();
@@ -480,6 +480,7 @@ internal class XunkongApiService
             VALUES (@Id, @Enable, @Title, @Author, @Description, @FileName, @Tags, @Url, @Source, @Rating, @RatingCount);
             """, list, t);
         t.Commit();
+        return list?.Count ?? 0;
     }
 
 

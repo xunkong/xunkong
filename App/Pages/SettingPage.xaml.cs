@@ -308,6 +308,30 @@ public sealed partial class SettingPage : Page
     }
 
 
+    [RelayCommand]
+    private async Task RefreshLocalWallpaperInfosAsync()
+    {
+        try
+        {
+            if (DateTime.Now - lastRefreshWallpaperTime > TimeSpan.FromMinutes(1))
+            {
+                int count = await _xunkongApiService.RefreshLocalWallpaperInfosAsync();
+                NotificationProvider.Success("刷新壁纸信息", $"成功获取了 {count} 张壁纸的信息");
+                lastRefreshWallpaperTime = DateTime.Now;
+            }
+            else
+            {
+                NotificationProvider.Information("请稍后再试");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "刷新壁纸信息");
+            NotificationProvider.Error(ex, "刷新壁纸信息");
+        }
+    }
+
+    private static DateTime lastRefreshWallpaperTime;
 
 
     #endregion
