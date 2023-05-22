@@ -16,10 +16,8 @@ using System.Numerics;
 using System.Reflection;
 using System.Text.Json.Nodes;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI;
-using WinRT.Interop;
 using Xunkong.Desktop.Controls;
 using Xunkong.GenshinData.Achievement;
 
@@ -923,13 +921,11 @@ public sealed partial class AchievementPage : Page
     {
         try
         {
-            var dialog = new FileOpenPicker();
-            dialog.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-            dialog.FileTypeFilter.Add("*");
-            dialog.FileTypeFilter.Add(".json");
-            InitializeWithWindow.Initialize(dialog, MainWindow.Current.HWND);
-            var files = await dialog.PickMultipleFilesAsync();
-            await ParseImportFileAsync(files.FirstOrDefault()?.Path!);
+            var file = await FileDialogHelper.PickSingleFileAsync(MainWindow.Current.HWND, new List<(string, string)> { ("json", "*.json") });
+            if (File.Exists(file))
+            {
+                await ParseImportFileAsync(file);
+            }
         }
         catch (Exception ex)
         {

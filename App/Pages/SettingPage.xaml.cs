@@ -2,9 +2,7 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using System.Net.Http;
-using Windows.Storage.Pickers;
 using Windows.System;
-using WinRT.Interop;
 using Xunkong.Desktop.Controls;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -281,15 +279,11 @@ public sealed partial class SettingPage : Page
     {
         try
         {
-            var folderPicker = new FolderPicker();
-            folderPicker.SuggestedStartLocation = PickerLocationId.Desktop;
-            folderPicker.FileTypeFilter.Add("*");
-            InitializeWithWindow.Initialize(folderPicker, MainWindow.Current.HWND);
-            var folder = await folderPicker.PickSingleFolderAsync();
-            if (folder is not null)
+            var folder = await FileDialogHelper.PickFolderAsync(MainWindow.Current.HWND);
+            if (Directory.Exists(folder))
             {
-                WallpaperSaveFolder = folder.Path;
-                AppSetting.SetValue(SettingKeys.WallpaperSaveFolder, folder.Path);
+                WallpaperSaveFolder = folder;
+                AppSetting.SetValue(SettingKeys.WallpaperSaveFolder, folder);
             }
         }
         catch (Exception ex)
@@ -414,29 +408,24 @@ public sealed partial class SettingPage : Page
     {
         try
         {
-            var dialog = new FileOpenPicker();
-            dialog.SuggestedStartLocation = PickerLocationId.ComputerFolder;
-            dialog.FileTypeFilter.Add(".exe");
-            InitializeWithWindow.Initialize(dialog, MainWindow.Current.HWND);
-            var file = await dialog.PickSingleFileAsync();
-            if (file != null)
+            var file = await FileDialogHelper.PickSingleFileAsync(MainWindow.Current.HWND, new List<(string, string)> { ("Executable", "*.exe") });
+            if (File.Exists(file))
             {
-                var path = file.Path;
-                if (path.EndsWith(".exe"))
+                if (file.EndsWith(".exe"))
                 {
                     switch (server)
                     {
                         case "0":
-                            AppSetting.SetValue(SettingKeys.GameExePathCN, path);
-                            GameExePathCN = file.Path;
+                            AppSetting.SetValue(SettingKeys.GameExePathCN, file);
+                            GameExePathCN = file;
                             break;
                         case "1":
-                            AppSetting.SetValue(SettingKeys.GameExePathGlobal, path);
-                            GameExePathGlobal = file.Path;
+                            AppSetting.SetValue(SettingKeys.GameExePathGlobal, file);
+                            GameExePathGlobal = file;
                             break;
                         case "2":
-                            AppSetting.SetValue(SettingKeys.GameExePathCNCloud, path);
-                            GameExePathCNCloud = file.Path;
+                            AppSetting.SetValue(SettingKeys.GameExePathCNCloud, file);
+                            GameExePathCNCloud = file;
                             break;
                         default:
                             break;
@@ -718,13 +707,10 @@ public sealed partial class SettingPage : Page
     {
         try
         {
-            var dialog = new FolderPicker();
-            dialog.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-            InitializeWithWindow.Initialize(dialog, MainWindow.Current.HWND);
-            var folder = await dialog.PickSingleFolderAsync();
-            if (folder != null)
+            var folder = await FileDialogHelper.PickFolderAsync(MainWindow.Current.HWND);
+            if (Directory.Exists(folder))
             {
-                GameScreenshotBackupFolder = folder.Path;
+                GameScreenshotBackupFolder = folder;
             }
         }
         catch (Exception ex)

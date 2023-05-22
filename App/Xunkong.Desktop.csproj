@@ -12,6 +12,7 @@
 		<DebugType>embedded</DebugType>
 		<DefineConstants>DISABLE_XAML_GENERATED_MAIN</DefineConstants>
 		<ApplicationIcon>..\Package\Assets\Logos\logo.ico</ApplicationIcon>
+		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -39,7 +40,7 @@
 		<PackageReference Include="SingleFileExtractor.Core" Version="1.1.0" />
 		<PackageReference Include="TaskScheduler" Version="2.10.1" />
 		<PackageReference Include="Titanium.Web.Proxy" Version="3.2.0" />
-		<PackageReference Include="Vanara.PInvoke.User32" Version="3.4.13" />
+		<PackageReference Include="Vanara.PInvoke.Shell32" Version="3.4.15" />
 		<PackageReference Include="Syncfusion.Chart.WinUI" Version="20.1.0.61" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>

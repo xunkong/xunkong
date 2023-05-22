@@ -7,8 +7,6 @@ using System.Diagnostics;
 using System.Text.Json.Nodes;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Storage.Pickers;
-using WinRT.Interop;
 using Xunkong.Hoyolab.Wishlog;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -373,14 +371,11 @@ public sealed partial class WishlogManagePage : Page
     {
         try
         {
-            var dialog = new FileOpenPicker();
-            dialog.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-            dialog.FileTypeFilter.Add("*");
-            dialog.FileTypeFilter.Add(".xlsx");
-            dialog.FileTypeFilter.Add(".json");
-            InitializeWithWindow.Initialize(dialog, MainWindow.Current.HWND);
-            var files = await dialog.PickMultipleFilesAsync();
-            await ImportWishlogAsync(files.FirstOrDefault()?.Path);
+            var file = await FileDialogHelper.PickSingleFileAsync(MainWindow.Current.HWND, new List<(string, string)> { ("Excel", "*.xlsx"), ("Json", "*.json") });
+            if (File.Exists(file))
+            {
+                await ImportWishlogAsync(file);
+            }
         }
         catch (Exception ex)
         {

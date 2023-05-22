@@ -3,7 +3,6 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Windows.Foundation;
 using Windows.Storage;
-using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI.Core;
 
@@ -249,18 +248,17 @@ public sealed partial class ImageViewer : UserControl
             }
             else
             {
-                var picker = new FileSavePicker();
-                picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
                 var extension = Path.GetExtension(CurrentImage.Url);
+                if (extension.Contains('!') && !extension.EndsWith('!'))
+                {
+                    extension = "." + extension.Substring(extension.IndexOf('!') + 1);
+                }
                 if (string.IsNullOrWhiteSpace(extension)) { extension = ".png"; }
-                picker.FileTypeChoices.Add("Image", new List<string>() { extension });
-                picker.SuggestedFileName = Path.GetFileName(CurrentImage.Url);
-                WinRT.Interop.InitializeWithWindow.Initialize(picker, MainWindow.Current.HWND);
-                var saveFile = await picker.PickSaveFileAsync();
+                var saveFile = await FileDialogHelper.OpenSaveFileDialogAsync(MainWindow.Current.HWND, Path.GetFileNameWithoutExtension(CurrentImage.Url), false, new List<(string, string)> { ("Image", $"*{extension}") });
                 if (saveFile != null)
                 {
-                    await file.CopyAndReplaceAsync(saveFile);
-                    NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "已保存", saveFile.Name, "打开文件", async () => await Launcher.LaunchFileAsync(saveFile), null, 3000);
+                    File.Copy(file.Path, saveFile, true);
+                    NotificationProvider.ShowWithButton(InfoBarSeverity.Success, "已保存", Path.GetFileName(saveFile), "打开文件", async () => await Launcher.LaunchUriAsync(new Uri(saveFile)), null, 3000);
                 }
             }
         }

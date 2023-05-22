@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
 using Windows.Storage;
-using Windows.Storage.Pickers;
 using Windows.System;
 using Xunkong.Desktop.Controls;
 using Xunkong.GenshinData;
@@ -156,12 +155,10 @@ public sealed partial class CutscenePage : Page
             var result = await dialog.ShowAsync();
             if (result is ContentDialogResult.Primary)
             {
-                var picker = new FolderPicker();
-                WinRT.Interop.InitializeWithWindow.Initialize(picker, MainWindow.Current.HWND);
-                var folder = await picker.PickSingleFolderAsync();
-                if (folder != null)
+                var folder = await FileDialogHelper.PickFolderAsync(MainWindow.Current.HWND);
+                if (Directory.Exists(folder))
                 {
-                    AppSetting.SetValue(SettingKeys.CutsceneFolder, folder.Path);
+                    AppSetting.SetValue(SettingKeys.CutsceneFolder, folder);
                 }
             }
             if (result is ContentDialogResult.Secondary)

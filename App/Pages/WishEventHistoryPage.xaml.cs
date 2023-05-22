@@ -9,7 +9,6 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
-using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI;
 using WinRT.Interop;
@@ -313,19 +312,13 @@ public sealed partial class WishEventHistoryPage : Page
             }
 
 
-            var picker = new FileSavePicker();
-            picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-            picker.FileTypeChoices.Add("Jpg File", new List<string>() { ".jpg" });
-            picker.SuggestedFileName = "WishEventHistory";
-            InitializeWithWindow.Initialize(picker, MainWindow.Current.HWND);
-
-            var file = await picker.PickSaveFileAsync();
+            var file = await FileDialogHelper.OpenSaveFileDialogAsync(MainWindow.Current.HWND, "WishEventHistory", false, new List<(string, string)> { ("Jpg File", "*.jpg") });
             if (file != null)
             {
-                using var stream = await file.OpenAsync(Windows.Storage.FileAccessMode.ReadWrite);
-                await offscreen.SaveAsync(stream, CanvasBitmapFileFormat.Jpeg, 0.9f);
+                using var stream = File.OpenWrite(file);
+                await offscreen.SaveAsync(stream.AsRandomAccessStream(), CanvasBitmapFileFormat.Jpeg, 0.9f);
                 stream.Dispose();
-                NotificationProvider.ShowWithButton(InfoBarSeverity.Success, null, "已保存", "打开文件", async () => await Launcher.LaunchFileAsync(file), null, 3000);
+                NotificationProvider.ShowWithButton(InfoBarSeverity.Success, null, "已保存", "打开文件", async () => await Launcher.LaunchUriAsync(new Uri(file)), null, 3000);
             }
         }
         catch (Exception ex)

@@ -9,7 +9,6 @@ using Scighost.WinUILib.Cache;
 using System.Threading;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
-using Windows.Storage.Pickers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -640,19 +639,18 @@ public sealed partial class MenuImage : UserControl
                 if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out var uri))
                 {
                     var extension = Path.GetExtension(uri.ToString());
+                    if (extension.Contains('!') && !extension.EndsWith('!'))
+                    {
+                        extension = "." + extension.Substring(extension.IndexOf('!') + 1);
+                    }
                     if (string.IsNullOrWhiteSpace(extension)) { extension = ".png"; }
                     var file = await XunkongCache.GetFileFromUriAsync(uri);
                     if (file != null)
                     {
-                        var picker = new FileSavePicker();
-                        picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-                        picker.FileTypeChoices.Add("Image", new List<string> { extension });
-                        picker.SuggestedFileName = Path.GetFileName(uri.ToString());
-                        WinRT.Interop.InitializeWithWindow.Initialize(picker, MainWindow.Current.HWND);
-                        var saveFile = await picker.PickSaveFileAsync();
+                        var saveFile = await FileDialogHelper.OpenSaveFileDialogAsync(MainWindow.Current.HWND, Path.GetFileNameWithoutExtension(uri.ToString()), false, new List<(string, string)> { ("Image", $"*{extension}") });
                         if (saveFile != null)
                         {
-                            await file.CopyAndReplaceAsync(saveFile);
+                            File.Copy(file.Path, saveFile, true);
                         }
                     }
                 }
