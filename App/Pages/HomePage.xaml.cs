@@ -110,7 +110,7 @@ public sealed partial class HomePage : Page
         // 更新
         CheckUpdateAsync();
         // 留影叙佳期
-        CheckBirthdayStarAsync();
+        //CheckBirthdayStarAsync();
         // 上传评分
         _xunkongApiService.UploadWallpaperRatingAsync();
     }

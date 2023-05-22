@@ -539,12 +539,12 @@ public sealed partial class SettingPage : Page
     /// <summary>
     /// 留影叙佳期
     /// </summary>
-    [ObservableProperty]
-    private bool _EnableBirthdayStarInHomePage = AppSetting.GetValue(SettingKeys.EnableBirthdayStarInHomePage, false);
-    partial void OnEnableBirthdayStarInHomePageChanged(bool value)
-    {
-        AppSetting.SetValue(SettingKeys.EnableBirthdayStarInHomePage, value);
-    }
+    //[ObservableProperty]
+    //private bool _EnableBirthdayStarInHomePage = AppSetting.GetValue(SettingKeys.EnableBirthdayStarInHomePage, false);
+    //partial void OnEnableBirthdayStarInHomePageChanged(bool value)
+    //{
+    //    AppSetting.SetValue(SettingKeys.EnableBirthdayStarInHomePage, value);
+    //}
 
 
     /// <summary>

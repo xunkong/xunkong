@@ -480,9 +480,9 @@
                                 <Button Command="{x:Bind NavigateToDailyNoteSettingPageCommand}" Content="前往设置" />
                             </labs:SettingsCard>
                             <!--  留影叙佳期  -->
-                            <labs:SettingsCard Description="测试阶段默认关闭" Header="留影叙佳期">
+                            <!--<labs:SettingsCard Description="测试阶段默认关闭" Header="留影叙佳期">
                                 <ToggleSwitch IsOn="{x:Bind EnableBirthdayStarInHomePage, Mode=TwoWay}" Style="{ThemeResource RightAlignToggleSwitchStyle}" />
-                            </labs:SettingsCard>
+                            </labs:SettingsCard>-->
                             <!--  即将结束的活动  -->
                             <labs:SettingsCard Description="3天之内将要结束的活动" Header="即将结束的活动">
                                 <ToggleSwitch IsOn="{x:Bind EnableFinishingActivityInHomePage, Mode=TwoWay}" Style="{ThemeResource RightAlignToggleSwitchStyle}" />

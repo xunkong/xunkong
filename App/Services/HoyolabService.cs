@@ -631,7 +631,7 @@ internal class HoyolabService
     {
         using var dapper = DatabaseProvider.CreateConnection();
         var history = dapper.QueryFirstOrDefault<OperationHistory>("SELECT * FROM OperationHistory WHERE Operation='TakeBirthdayStarAlbum' AND Key=@Uid ORDER BY Id DESC LIMIT 1;", new { Uid = role.Uid.ToString() });
-        if (history?.Time.LocalDateTime > DateTimeOffset.UtcNow.AddHours(8).LocalDateTime.Date)
+        if (history?.Time.LocalDateTime > DateTimeOffset.UtcNow.LocalDateTime.Date)
         {
             return null;
         }
