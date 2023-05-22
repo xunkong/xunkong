@@ -323,7 +323,7 @@
                         <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}" UriSource="ms-appx:///Assets/Images/SpriteUI_Icon_Tower_Star.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="成就管理" Tag="AchievementPage">
+                <NavigationViewItem Content="成就图鉴" Tag="AchievementPage">
                     <NavigationViewItem.Icon>
                         <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}" UriSource="ms-appx:///Assets/Images/SpriteUI_Icon_Achievement.png" />
                     </NavigationViewItem.Icon>
