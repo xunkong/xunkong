@@ -442,8 +442,8 @@ public sealed partial class AchievementPage : Page
                     return;
                 }
             }
-            NotificationProvider.Error(ex, "启动 YeaAchievement");
-            Logger.Error(ex, "启动 YeaAchievement");
+            NotificationProvider.Error(ex, "启动 YaeAchievement");
+            Logger.Error(ex, "启动 YaeAchievement");
         }
     }
 
@@ -489,7 +489,7 @@ public sealed partial class AchievementPage : Page
             var version = Serializer.Deserialize<YaeVersion>(new ReadOnlySpan<byte>(versionBytes));
             if (version.VersionCode != versionCode)
             {
-                NotificationProvider.Information("正在下载 YeaAchievement");
+                NotificationProvider.Information("正在下载 YaeAchievement");
                 Directory.CreateDirectory(Path.GetDirectoryName(path)!);
                 var bytes = await client.GetByteArrayAsync($"{HOST}/{version.PackageLink}");
                 await File.WriteAllBytesAsync(path, bytes);
