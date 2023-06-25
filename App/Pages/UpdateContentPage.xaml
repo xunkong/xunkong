@@ -7,18 +7,7 @@
       x:DefaultBindMode="OneWay"
       mc:Ignorable="d">
 
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.ThemeDictionaries>
-                <ResourceDictionary x:Key="Light">
-                    <Color x:Key="WebViewBackgroud">#F3F3F3</Color>
-                </ResourceDictionary>
-                <ResourceDictionary x:Key="Dark">
-                    <Color x:Key="WebViewBackgroud">#202020</Color>
-                </ResourceDictionary>
-            </ResourceDictionary.ThemeDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
+
 
     <Grid>
         <Grid.RowDefinitions>
@@ -58,13 +47,15 @@
             </StackPanel>
         </Grid>
 
-        <Grid Grid.Row="1"
-              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-              CornerRadius="8,0,0,0">
+        <Grid Grid.Row="1" CornerRadius="8,0,0,0">
             <WebView2 x:Name="webview"
                       Margin="24,0,24,0"
-                      DefaultBackgroundColor="{ThemeResource WebViewBackgroud}"
-                      IsRightTapEnabled="False" />
+                      DefaultBackgroundColor="Transparent"
+                      IsRightTapEnabled="False">
+                <WebView2.Resources>
+                    <SolidColorBrush x:Key="BrushForThemeBackgroundColor" Color="Transparent" />
+                </WebView2.Resources>
+            </WebView2>
             <ProgressRing Grid.Row="1"
                           Width="48"
                           Height="48"

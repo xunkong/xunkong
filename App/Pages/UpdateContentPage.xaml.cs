@@ -1,7 +1,9 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Microsoft.UI;
+using Microsoft.UI.Xaml;
 using System.Text;
 using Windows.ApplicationModel;
 using Windows.System;
+using Windows.UI;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -76,6 +78,15 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
                 }
             }
 
+            if (MainWindow.Current.IsMicaOrAcrylic())
+            {
+                webview.DefaultBackgroundColor = Colors.Transparent;
+            }
+            else
+            {
+                webview.DefaultBackgroundColor = MainWindow.Current.ActualTheme is ElementTheme.Light ? Color.FromArgb(0xFF, 0xF3, 0xF3, 0xF3) : Color.FromArgb(0xFF, 0x20, 0x20, 0x20);
+            }
+
             var html = Markdig.Markdown.ToHtml(sb.ToString());
             var theme = MainWindow.Current.ActualTheme;
             var path = theme switch
@@ -96,7 +107,7 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
                 {{css}}
                 </style>
                 </head>
-                <body style="background-color: transparent;">
+                <body style="background-color: {{(theme is ElementTheme.Light ? "#FFFFFF40" : "#FFFFFF09")}};">
                 <br>
                 <article class="markdown-body" style="background-color: transparent;">
                 {{html}}

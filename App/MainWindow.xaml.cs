@@ -387,6 +387,13 @@ public sealed partial class MainWindow : Window
 
 
 
+    public bool IsMicaOrAcrylic()
+    {
+        return windowBackground.Visibility == Visibility.Collapsed;
+    }
+
+
+
     [StructLayout(LayoutKind.Explicit)]
     private struct WindowRect
     {
