@@ -124,11 +124,11 @@ internal class WishlogService
             string? file = null;
             if (server == 0)
             {
-                file = Path.Join(folder, @"YuanShen_Data\webCaches\Cache\Cache_Data\data_2");
+                file = Path.Join(folder, @"YuanShen_Data\webCaches\2.13.0.1\Cache\Cache_Data\data_2");
             }
             if (server == 1)
             {
-                file = Path.Join(folder, @"GenshinImpact_Data\webCaches\Cache\Cache_Data\data_2");
+                file = Path.Join(folder, @"GenshinImpact_Data\webCaches\2.13.0.1\Cache\Cache_Data\data_2");
             }
             if (server == 2)
             {
