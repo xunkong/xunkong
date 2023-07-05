@@ -1,4 +1,4 @@
-﻿//#pragma comment(linker,"/subsystem:\"Windows\" /entry:\"mainCRTStartup\"")
+﻿#pragma comment(linker,"/subsystem:\"Windows\" /entry:\"mainCRTStartup\"")
 
 #define KEY_TOGGLE VK_END
 #define KEY_INCREASE VK_UP
