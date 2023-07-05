@@ -1,4 +1,4 @@
-﻿#pragma comment(linker,"/subsystem:\"Windows\" /entry:\"mainCRTStartup\"")
+﻿//#pragma comment(linker,"/subsystem:\"Windows\" /entry:\"mainCRTStartup\"")
 
 #define KEY_TOGGLE VK_END
 #define KEY_INCREASE VK_UP
@@ -87,28 +87,39 @@ std::string GetLastErrorAsString(DWORD code)
 }
 
 // 获取目标进程DLL信息
-bool GetModule(DWORD pid, std::string ModuleName, PMODULEENTRY32 pEntry)
+bool GetModule(HANDLE hProcess, std::string ModuleName, PMODULEENTRY32 pEntry)
 {
 	if (!pEntry)
 		return false;
 
-	MODULEENTRY32 mod32{};
-	mod32.dwSize = sizeof(mod32);
-	HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, pid);
-	for (Module32First(snap, &mod32); Module32Next(snap, &mod32);)
+	std::vector<HMODULE> modules(1024);
+	ZeroMemory(modules.data(), modules.size() * sizeof(HMODULE));
+	DWORD cbNeeded = 0;
+
+	if (!K32EnumProcessModules(hProcess, modules.data(), modules.size() * sizeof(HMODULE), &cbNeeded))
+		return false;
+
+	modules.resize(cbNeeded / sizeof(HMODULE));
+	for (auto& it : modules)
 	{
-		if (mod32.th32ProcessID != pid)
+		char szModuleName[MAX_PATH]{};
+		if (!K32GetModuleBaseNameA(hProcess, it, szModuleName, MAX_PATH))
 			continue;
 
-		if (mod32.szModule == ModuleName)
-		{
-			*pEntry = mod32;
-			break;
-		}
-	}
-	CloseHandle(snap);
+		if (ModuleName != szModuleName)
+			continue;
 
-	return pEntry->modBaseAddr;
+		MODULEINFO modInfo{};
+		if (!K32GetModuleInformation(hProcess, it, &modInfo, sizeof(MODULEINFO)))
+			continue;
+
+		pEntry->modBaseAddr = (BYTE*)modInfo.lpBaseOfDll;
+		pEntry->modBaseSize = modInfo.SizeOfImage;
+		return true;
+	}
+
+
+	return false;
 }
 
 // 通过进程名搜索进程ID
@@ -231,13 +242,18 @@ int main(int argc, char* argv[])
 
 	// 等待UnityPlayer.dll加载和获取DLL信息
 	MODULEENTRY32 hUnityPlayer{};
-	while (!GetModule(pi.dwProcessId, "UnityPlayer.dll", &hUnityPlayer))
+	MODULEENTRY32 hUserAssembly{};
+
+
+	while (!GetModule(pi.hProcess, "UnityPlayer.dll", &hUnityPlayer))
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-	printf("UnityPlayer: %X%X\n", (uintptr_t)hUnityPlayer.modBaseAddr >> 32 & -1, hUnityPlayer.modBaseAddr);
+	while (!GetModule(pi.hProcess, "UserAssembly.dll", &hUserAssembly))
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
 
 	// 在本进程内申请UnityPlayer.dll大小的内存 - 用于特征搜索
-	LPVOID mem = VirtualAlloc(nullptr, hUnityPlayer.modBaseSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+	LPVOID mem = VirtualAlloc(nullptr, hUnityPlayer.modBaseSize + hUserAssembly.modBaseSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 	if (!mem)
 	{
 		DWORD code = GetLastError();
@@ -248,31 +264,71 @@ int main(int argc, char* argv[])
 	// 把整个模块读出来
 	ReadProcessMemory(pi.hProcess, hUnityPlayer.modBaseAddr, mem, hUnityPlayer.modBaseSize, nullptr);
 
-	printf("Searching for pattern...\n");
-	/*
-		 7F 0F              jg   0x11
-		 8B 05 ? ? ? ?      mov eax, dword ptr[rip+?]
-	*/
-	uintptr_t address = PatternScan(mem, "7F 0F 8B 05 ? ? ? ?");
-	if (!address)
-	{
-		printf("outdated pattern\n");
-		return 0;
-	}
+	LPVOID ua = (LPVOID)((uintptr_t)mem + hUnityPlayer.modBaseSize);
+	ReadProcessMemory(pi.hProcess, hUserAssembly.modBaseAddr, ua, hUserAssembly.modBaseSize, nullptr);
 
-	// 计算相对地址 (FPS)
+	PIMAGE_DOS_HEADER dos = (PIMAGE_DOS_HEADER)mem;
+	PIMAGE_NT_HEADERS nt = (PIMAGE_NT_HEADERS)((uintptr_t)mem + dos->e_lfanew);
+
+	printf("Searching for pattern...\n");
+
 	uintptr_t pfps = 0;
+	if (nt->FileHeader.TimeDateStamp < 0x645B245A) // <3.7
 	{
+		/*
+			 7F 0F              jg   0x11
+			 8B 05 ? ? ? ?      mov eax, dword ptr[rip+?]
+		*/
+		uintptr_t address = PatternScan(mem, "7F 0F 8B 05 ? ? ? ?");
+		if (!address)
+			return MessageBoxA(nullptr, "outdated fps pattern", "Error", MB_OK | MB_ICONERROR) == -1 && VirtualFree(mem, 0, MEM_RELEASE) == -1; // lazy returns, should always evaluate to false
+
+
 		uintptr_t rip = address + 2;
-		uint32_t rel = *(uint32_t*)(rip + 2);
+		int32_t rel = *(int32_t*)(rip + 2);
 		pfps = rip + rel + 6;
 		pfps -= (uintptr_t)mem;
-		printf("FPS Offset: %X\n", pfps);
 		pfps = (uintptr_t)hUnityPlayer.modBaseAddr + pfps;
+	}
+	else
+	{
+
+
+		/*
+			 7F 0F              jg   0x11
+			 8B 05 ? ? ? ?      mov eax, dword ptr[rip+?]
+		*/
+		uintptr_t address = PatternScan(ua, "E8 ? ? ? ? 85 C0 7E 07 E8 ? ? ? ? EB 05");
+		if (!address)
+			return MessageBoxA(nullptr, "outdated fps pattern", "Error", MB_OK | MB_ICONERROR) == -1 && VirtualFree(mem, 0, MEM_RELEASE) == -1;
+
+
+		// 计算相对地址 (FPS)
+		{
+			uintptr_t rip = address;
+			rip += *(int32_t*)(rip + 1) + 5;
+			rip += *(int32_t*)(rip + 3) + 7;
+
+			uintptr_t ptr = 0;
+			uintptr_t data = rip - (uintptr_t)ua + (uintptr_t)hUserAssembly.modBaseAddr;
+			while (!ptr)
+			{
+				ReadProcessMemory(pi.hProcess, (LPCVOID)data, &ptr, sizeof(uintptr_t), nullptr);
+				std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			}
+
+			rip = ptr - (uintptr_t)hUnityPlayer.modBaseAddr + (uintptr_t)mem;
+			while (*(uint8_t*)rip == 0xE8 || *(uint8_t*)rip == 0xE9)
+				rip += *(int32_t*)(rip + 1) + 5;
+
+			pfps = rip + *(int32_t*)(rip + 2) + 6;
+			pfps -= (uintptr_t)mem;
+			pfps = (uintptr_t)hUnityPlayer.modBaseAddr + pfps;
+		}
 	}
 
 	// 计算相对地址 (垂直同步)
-	address = PatternScan(mem, "E8 ? ? ? ? 8B E8 49 8B 1E");
+	uintptr_t address = PatternScan(mem, "E8 ? ? ? ? 8B E8 49 8B 1E");
 	uintptr_t pvsync = 0;
 	if (address)
 	{
