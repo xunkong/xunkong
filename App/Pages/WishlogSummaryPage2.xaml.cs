@@ -15,6 +15,7 @@ using Xunkong.GenshinData.Character;
 using Xunkong.GenshinData.Weapon;
 using Xunkong.Hoyolab;
 using Xunkong.Hoyolab.Wishlog;
+using Xunkong.SnapMetadata;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -43,6 +44,9 @@ public sealed partial class WishlogSummaryPage2 : Page
     {
         TypeAdapterConfig<CharacterInfo, WishlogSummaryPage_UpItem>.NewConfig().Map(dest => dest.Icon, src => src.FaceIcon);
         TypeAdapterConfig<WeaponInfo, WishlogSummaryPage_UpItem>.NewConfig().Map(dest => dest.Icon, src => src.Icon);
+        TypeAdapterConfig<SnapAvatarInfo, WishlogSummaryPage_UpItem>.NewConfig().Map(dest => dest.Rarity, src => src.Quality);
+        TypeAdapterConfig<SnapWeaponInfo, WishlogSummaryPage_UpItem>.NewConfig().Map(dest => dest.Rarity, src => src.RankLevel);
+        TypeAdapterConfig<SnapGachaEventInfo, WishlogSummaryPage_EventStats>.NewConfig().Map(dest => dest.StartTime, src => src.From).Map(dest => dest.EndTime, src => src.To);
     }
 
 
@@ -207,11 +211,11 @@ public sealed partial class WishlogSummaryPage2 : Page
         // 卡池信息时区
         WishEventInfo.RegionType = WishlogService.UidToRegionType(uid);
         // 初始化卡池信息，所有祈愿记录
-        var characters = XunkongApiService.GetGenshinData<CharacterInfo>();
-        var weapons = XunkongApiService.GetGenshinData<WeaponInfo>();
+        var characters = XunkongApiService.GetGenshinData<SnapAvatarInfo>();
+        var weapons = XunkongApiService.GetGenshinData<SnapWeaponInfo>();
 
         var dic_characters = characters.Where(x => !string.IsNullOrWhiteSpace(x.Name)).ToImmutableDictionary(x => x.Name!);
-        var dic_weapons = weapons.Where(x => !string.IsNullOrWhiteSpace(x.Name)).ToImmutableDictionary(x => x.Name!);
+        var dic_weapons = weapons.Where(x => !string.IsNullOrWhiteSpace(x.Name)).GroupBy(x => x.Name).ToImmutableDictionary(x => x.First().Name, x => x.First());
 
         var wishlogs = WishlogService.GetWishlogItemExByUid(uid);
         wishlogList = wishlogs;
@@ -274,28 +278,32 @@ public sealed partial class WishlogSummaryPage2 : Page
         var query_character = from g in wishlogs_group_byname
                               join c in dic_characters
                               on g.Key equals c.Key
-                              select new WishlogSummaryPage_ItemThumb(g.Key, c.Value.Rarity, c.Value.Element, c.Value.WeaponType, g.Value.Count(), c.Value.FaceIcon, g.Value.Last().Time);
+                              select new WishlogSummaryPage_ItemThumb(g.Key, c.Value.Quality, StringToElementType(c.Value.FetterInfo.VisionBefore), g.Value.Count(), c.Value.Icon, g.Value.Last().Time);
         var characterThumbs = query_character.OrderByDescending(x => x.Rarity).ThenByDescending(x => x.Count).ThenByDescending(x => x.LastTime).ToList();
 
         var query_weapon = from g in wishlogs_group_byname
                            join c in dic_weapons
                            on g.Key equals c.Key
-                           select new WishlogSummaryPage_ItemThumb(g.Key, c.Value.Rarity, ElementType.None, c.Value.WeaponType, g.Value.Count(), c.Value.Icon, g.Value.Last().Time);
+                           select new WishlogSummaryPage_ItemThumb(g.Key, c.Value.RankLevel, ElementType.None, g.Value.Count(), c.Value.Icon, g.Value.Last().Time);
         var weaponThumbs = query_weapon.OrderByDescending(x => x.Rarity).ThenByDescending(x => x.Count).ThenByDescending(x => x.LastTime).ToList();
 
 
         // 根据卡池分类计算
-        var eventInfos = XunkongApiService.GetGenshinData<WishEventInfo>();
+        var eventInfos = XunkongApiService.GetGenshinData<SnapGachaEventInfo>();
 
-        var character_groups = eventInfos.Where(x => x.QueryType == WishType.CharacterEvent).GroupBy(x => x.StartTime).ToList();
+        var character_groups = eventInfos.Where(x => x.QueryType == ((int)WishType.CharacterEvent)).GroupBy(x => x.From).ToList();
         var character_eventStats = new List<WishlogSummaryPage_EventStats>();
         foreach (var group in character_groups)
         {
             var stats = group.FirstOrDefault()?.Adapt<WishlogSummaryPage_EventStats>()!;
             character_eventStats.Add(stats);
             stats.Name = string.Join("\n", group.Select(x => x.Name));
-            stats.UpItems = group.SelectMany(x => x.Rank5UpItems).Join(dic_characters, str => str, dic => dic.Key, (str, dic) => dic.Value).ToList().Adapt<List<WishlogSummaryPage_UpItem>>();
-            stats.UpItems.AddRange(group.FirstOrDefault()!.Rank4UpItems.Join(dic_characters, str => str, dic => dic.Key, (str, dic) => dic.Value).Adapt<IEnumerable<WishlogSummaryPage_UpItem>>());
+            stats.UpItems = group.SelectMany(x => x.UpOrangeList).Join(dic_characters, id => id, dic => dic.Value.Id, (str, dic) => dic.Value).ToList().Adapt<List<WishlogSummaryPage_UpItem>>();
+            stats.UpItems.AddRange(group.FirstOrDefault()!.UpPurpleList.Join(dic_characters, id => id, dic => dic.Value.Id, (str, dic) => dic.Value).Adapt<IEnumerable<WishlogSummaryPage_UpItem>>());
+            //foreach (var item in stats.UpItems)
+            //{
+            //    item.Rarity = dic_characters.GetValueOrDefault(item.Name)?.Quality ?? 0;
+            //}
             var currentEventItems = wishlogs.Where(x => x.QueryType == WishType.CharacterEvent && stats.StartTime <= x.Time && x.Time <= stats.EndTime).OrderByDescending(x => x.Id).ToList();
             stats.TotalCount = currentEventItems.Count;
             stats.Rank3Count = currentEventItems.Count(x => x.RankType == 3);
@@ -310,15 +318,19 @@ public sealed partial class WishlogSummaryPage2 : Page
 
 
 
-        var weapon_groups = eventInfos.Where(x => x.QueryType == WishType.WeaponEvent).GroupBy(x => x.StartTime).ToList();
+        var weapon_groups = eventInfos.Where(x => x.QueryType == ((int)WishType.WeaponEvent)).GroupBy(x => x.From).ToList();
         var weapon_eventStats = new List<WishlogSummaryPage_EventStats>();
         foreach (var group in weapon_groups)
         {
             var stats = group.FirstOrDefault()?.Adapt<WishlogSummaryPage_EventStats>()!;
             weapon_eventStats.Add(stats);
             stats.Name = string.Join("\n", group.Select(x => x.Name));
-            stats.UpItems = group.SelectMany(x => x.Rank5UpItems).Join(dic_weapons, str => str, dic => dic.Key, (str, dic) => dic.Value).ToList().Adapt<List<WishlogSummaryPage_UpItem>>();
-            stats.UpItems.AddRange(group.FirstOrDefault()!.Rank4UpItems.Join(dic_weapons, str => str, dic => dic.Key, (str, dic) => dic.Value).Adapt<IEnumerable<WishlogSummaryPage_UpItem>>());
+            stats.UpItems = group.SelectMany(x => x.UpOrangeList).Join(dic_weapons, id => id, dic => dic.Value.Id, (str, dic) => dic.Value).ToList().Adapt<List<WishlogSummaryPage_UpItem>>();
+            stats.UpItems.AddRange(group.FirstOrDefault()!.UpPurpleList.Join(dic_weapons, id => id, dic => dic.Value.Id, (str, dic) => dic.Value).Adapt<IEnumerable<WishlogSummaryPage_UpItem>>());
+            //foreach (var item in stats.UpItems)
+            //{
+            //    item.Rarity = dic_weapons.GetValueOrDefault(item.Name)?.RankLevel ?? 0;
+            //}
             var currentEventItems = wishlogs.Where(x => x.QueryType == WishType.WeaponEvent && stats.StartTime <= x.Time && x.Time <= stats.EndTime).OrderByDescending(x => x.Id).ToList();
             stats.TotalCount = currentEventItems.Count;
             stats.Rank3Count = currentEventItems.Count(x => x.RankType == 3);
@@ -1067,6 +1079,25 @@ public sealed partial class WishlogSummaryPage2 : Page
             FlyoutBase.ShowAttachedFlyout(Grid_Content);
         }
     }
+
+
+
+
+    private static ElementType StringToElementType(string str)
+    {
+        return str switch
+        {
+            "火" => ElementType.Fire,
+            "水" => ElementType.Water,
+            "风" => ElementType.Wind,
+            "雷" => ElementType.Electro,
+            "草" => ElementType.Grass,
+            "冰" => ElementType.Ice,
+            "岩" => ElementType.Rock,
+            _ => ElementType.None,
+        };
+    }
+
 
 
 

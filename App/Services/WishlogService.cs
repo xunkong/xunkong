@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Xunkong.Hoyolab;
 using Xunkong.Hoyolab.Wishlog;
+using Xunkong.SnapMetadata;
 
 namespace Xunkong.Desktop.Services;
 
@@ -334,7 +335,9 @@ internal class WishlogService
     {
         using var dapper = DatabaseProvider.CreateConnection();
         var items = dapper.Query<WishlogItemEx>("SELECT * FROM WishlogItem WHERE Uid=@Uid ORDER BY Id;", new { Uid = uid }).ToList();
-        var events = XunkongApiService.GetGenshinData<WishEventInfo>();
+        var events = XunkongApiService.GetGenshinData<SnapGachaEventInfo>();
+        var avatars = XunkongApiService.GetGenshinData<SnapAvatarInfo>().ToDictionary(x => x.Name, x => x.Id);
+        var weapons = XunkongApiService.GetGenshinData<SnapWeaponInfo>().GroupBy(x => x.Name).ToDictionary(x => x.First().Name, x => x.First().Id);
         var groups = items.GroupBy(x => x.QueryType).ToList();
 
         foreach (var group in groups)
@@ -368,37 +371,46 @@ internal class WishlogService
             if (queryType is WishType.CharacterEvent or WishType.WeaponEvent)
             {
                 int startIndex = 0, endIndex = 0;
-                foreach (var e in events.Where(x => x.QueryType == queryType))
+                foreach (var e in events.Where(x => x.QueryType == ((int)queryType)))
                 {
                     var index = endIndex == 0 ? 0 : endIndex - 1;
-                    if (groupList[index].Time < e.StartTime)
+                    if (groupList[index].Time < e.From)
                     {
                         startIndex = endIndex;
                     }
                     for (int i = startIndex; i < groupList.Count; i++)
                     {
                         var item = groupList[i];
-                        if (item.Time < e.StartTime)
+                        if (item.Time < e.From)
                         {
                             continue;
                         }
-                        if (item.Time > e.EndTime)
+                        if (item.Time > e.To)
                         {
                             endIndex = i;
                             break;
                         }
-                        if (item.WishType == e.WishType)
+                        if (((int)item.WishType) == e.Type)
                         {
                             item.Version = e.Version;
                             item.WishEventName = e.Name;
                         }
-                        if (item.QueryType == e.QueryType)
+                        if (((int)item.QueryType) == e.QueryType)
                         {
-                            if (item.RankType == 5 && e.Rank5UpItems.Contains(item.Name))
+                            int id = 0;
+                            if (queryType == WishType.CharacterEvent)
+                            {
+                                id = avatars.GetValueOrDefault(item.Name);
+                            }
+                            if (queryType == WishType.WeaponEvent)
+                            {
+                                id = weapons.GetValueOrDefault(item.Name);
+                            }
+                            if (item.RankType == 5 && e.UpOrangeList.Contains(id))
                             {
                                 item.IsUp = true;
                             }
-                            if (item.RankType == 4 && e.Rank4UpItems.Contains(item.Name))
+                            if (item.RankType == 4 && e.UpOrangeList.Contains(id))
                             {
                                 item.IsUp = true;
                             }

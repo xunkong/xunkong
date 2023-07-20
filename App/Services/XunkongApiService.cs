@@ -9,6 +9,7 @@ using Xunkong.GenshinData.Material;
 using Xunkong.GenshinData.Text;
 using Xunkong.GenshinData.Weapon;
 using Xunkong.Hoyolab.Wishlog;
+using Xunkong.SnapMetadata;
 
 namespace Xunkong.Desktop.Services;
 
@@ -23,12 +24,15 @@ internal class XunkongApiService
 
     private readonly BackupService _backupService;
 
-    public XunkongApiService(HttpClient httpClient, XunkongApiClient xunkongClient, WishlogService wishlogService, BackupService backupService)
+    private readonly SnapMetadataClient _snapMetadataClient;
+
+    public XunkongApiService(HttpClient httpClient, XunkongApiClient xunkongClient, WishlogService wishlogService, BackupService backupService, SnapMetadataClient snapMetadataClient)
     {
         _httpClient = httpClient;
         _xunkongClient = xunkongClient;
         _wishlogService = wishlogService;
         _backupService = backupService;
+        _snapMetadataClient = snapMetadataClient;
     }
 
 
@@ -201,6 +205,12 @@ internal class XunkongApiService
 
     public async Task GetAllGenshinDataFromServerAsync()
     {
+        var avatar = await _snapMetadataClient.GetAvatarInfosAsync();
+        SaveSnapMetadata(avatar);
+        var weapon = await _snapMetadataClient.GetWeaponInfosAsync();
+        SaveSnapMetadata(weapon);
+        var gacha = await _snapMetadataClient.GetGachaEventInfosAsync();
+        SaveSnapMetadata(gacha);
         var data = await _xunkongClient.GetAllGenshinDataAsync();
         SaveGenshinData(data);
     }
@@ -246,6 +256,15 @@ internal class XunkongApiService
         col7.InsertBulk(data.TextMaps);
     }
 
+
+    private static void SaveSnapMetadata<T>(List<T> data)
+    {
+        using var liteDb = DatabaseProvider.CreateGenshinDataDb();
+        GenshinDataDic[typeof(T).Name] = data;
+        var col1 = liteDb.GetCollection<T>();
+        col1.DeleteAll();
+        col1.InsertBulk(data);
+    }
 
 
     public static List<T> GetGenshinData<T>()

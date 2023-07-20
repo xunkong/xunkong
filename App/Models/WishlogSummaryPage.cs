@@ -8,12 +8,11 @@ namespace Xunkong.Desktop.Models;
 
 public class WishlogSummaryPage_ItemThumb
 {
-    public WishlogSummaryPage_ItemThumb(string? name, int rarity, ElementType element, WeaponType weaponType, int count, string? icon, DateTimeOffset lastTime)
+    public WishlogSummaryPage_ItemThumb(string? name, int rarity, ElementType element, int count, string? icon, DateTimeOffset lastTime)
     {
         Name = name;
         Rarity = rarity;
         Element = element;
-        WeaponType = weaponType;
         Count = count;
         Icon = icon;
         LastTime = lastTime;

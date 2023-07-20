@@ -6,6 +6,7 @@ using Xunkong.ApiClient;
 using Xunkong.Desktop.ViewModels;
 using Xunkong.Hoyolab;
 using Xunkong.Hoyolab.Wishlog;
+using Xunkong.SnapMetadata;
 
 namespace Xunkong.Desktop.Helpers;
 
@@ -51,6 +52,12 @@ internal static class ServiceProvider
               client.DefaultRequestHeaders.Add("X-Channel", XunkongEnvironment.Channel.ToString());
               client.DefaultRequestHeaders.Add("X-Version", XunkongEnvironment.AppVersion.ToString());
               client.DefaultRequestHeaders.Add("X-Device-Id", XunkongEnvironment.DeviceId);
+          })
+          .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AutomaticDecompression = System.Net.DecompressionMethods.All });
+        sc.AddHttpClient<SnapMetadataClient>()
+          .ConfigureHttpClient(client =>
+          {
+              client.DefaultRequestHeaders.Add("User-Agent", $"XunkongDesktop/{XunkongEnvironment.AppVersion}");
           })
           .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AutomaticDecompression = System.Net.DecompressionMethods.All });
     }

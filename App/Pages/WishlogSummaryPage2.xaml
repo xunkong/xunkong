@@ -174,7 +174,7 @@
                                  Height="80"
                                  VerticalAlignment="Top"
                                  CornerRadius="4,4,16,4"
-                                 Source="{x:Bind Icon}" />
+                                 Source="{x:Bind Icon, Converter={StaticResource IconNameToImageUrlCoverter}}" />
                 <Image Width="18"
                        Height="18"
                        Margin="1"
@@ -271,7 +271,7 @@
                                                  Height="64"
                                                  VerticalAlignment="Top"
                                                  CornerRadius="4,4,16,4"
-                                                 Source="{x:Bind Icon}" />
+                                                 Source="{x:Bind Icon, Converter={StaticResource IconNameToImageUrlCoverter}}" />
                                 <Image Width="16"
                                        Height="16"
                                        Margin="1"

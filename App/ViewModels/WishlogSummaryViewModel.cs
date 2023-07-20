@@ -289,12 +289,12 @@ internal partial class WishlogSummaryViewModel : ObservableObject
                 var query_character = from g in wishlogs_group_dic
                                       join c in dic_characters
                                       on g.Key equals c.Key
-                                      select new WishlogSummaryPage_ItemThumb(g.Key, c.Value.Rarity, c.Value.Element, c.Value.WeaponType, g.Value.Count(), c.Value.FaceIcon, g.Value.Last().Time);
+                                      select new WishlogSummaryPage_ItemThumb(g.Key, c.Value.Rarity, c.Value.Element, g.Value.Count(), c.Value.FaceIcon, g.Value.Last().Time);
                 CharacterThumbs = query_character.OrderByDescending(x => x.Rarity).ThenByDescending(x => x.Count).ThenByDescending(x => x.LastTime).ToList();
                 var query_weapon = from g in wishlogs_group_dic
                                    join c in dic_weapons
                                    on g.Key equals c.Key
-                                   select new WishlogSummaryPage_ItemThumb(g.Key, c.Value.Rarity, ElementType.None, c.Value.WeaponType, g.Value.Count(), c.Value.Icon, g.Value.Last().Time);
+                                   select new WishlogSummaryPage_ItemThumb(g.Key, c.Value.Rarity, ElementType.None, g.Value.Count(), c.Value.Icon, g.Value.Last().Time);
                 WeaponThumbs = query_weapon.OrderByDescending(x => x.Rarity).ThenByDescending(x => x.Count).ThenByDescending(x => x.LastTime).ToList();
             }
 
