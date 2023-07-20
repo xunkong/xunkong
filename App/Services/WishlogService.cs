@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using Microsoft.Extensions.FileSystemGlobbing;
+using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
+using System.Text.RegularExpressions;
 using Xunkong.Hoyolab;
 using Xunkong.Hoyolab.Wishlog;
 using Xunkong.SnapMetadata;
@@ -125,11 +127,21 @@ internal class WishlogService
             string? file = null;
             if (server == 0)
             {
-                file = Path.Join(folder, @"YuanShen_Data\webCaches\2.13.0.1\Cache\Cache_Data\data_2");
+                var matcher = new Matcher();
+                matcher.AddInclude(@"YuanShen_Data\webCaches\Cache\Cache_Data\data_2");
+                matcher.AddInclude(@"YuanShen_Data\webCaches\*\Cache\Cache_Data\data_2");
+                var result = matcher.Execute(new DirectoryInfoWrapper(new FileInfo(exePath).Directory!));
+                var files = result.Files.Select(x => Path.Combine(Path.GetDirectoryName(exePath)!, x.Path));
+                file = files.OrderByDescending(x => new FileInfo(x).LastWriteTime).FirstOrDefault();
             }
             if (server == 1)
             {
-                file = Path.Join(folder, @"GenshinImpact_Data\webCaches\2.13.0.1\Cache\Cache_Data\data_2");
+                var matcher = new Matcher();
+                matcher.AddInclude(@"GenshinImpact_Data\webCaches\Cache\Cache_Data\data_2");
+                matcher.AddInclude(@"GenshinImpact_Data\webCaches\*\Cache\Cache_Data\data_2");
+                var result = matcher.Execute(new DirectoryInfoWrapper(new FileInfo(exePath).Directory!));
+                var files = result.Files.Select(x => Path.Combine(Path.GetDirectoryName(exePath)!, x.Path));
+                file = files.OrderByDescending(x => new FileInfo(x).LastWriteTime).FirstOrDefault();
             }
             if (server == 2)
             {

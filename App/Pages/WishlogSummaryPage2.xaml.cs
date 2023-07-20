@@ -576,7 +576,7 @@ public sealed partial class WishlogSummaryPage2 : Page
                 StateText = ex.Message;
                 if (ex is HoyolabException { ReturnCode: -101 })
                 {
-                    WishlogService.DeleteCacheFile(int.Parse(server));
+                    //WishlogService.DeleteCacheFile(int.Parse(server));
                 }
             }
         }
