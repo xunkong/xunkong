@@ -828,7 +828,7 @@ internal partial class WishlogSummaryViewModel : ObservableObject
         await Task.Delay(100);
         try
         {
-            await _xunkongApiService.GetAllGenshinDataFromServerAsync();
+            await _xunkongApiService.GetAllGenshinDataFromServerAsync(true);
             StateText = "完成";
             IsRefreshPageTeachingTipOpen = true;
         }

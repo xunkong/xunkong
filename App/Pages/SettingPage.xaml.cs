@@ -939,7 +939,7 @@ public sealed partial class SettingPage : Page
     {
         try
         {
-            await _xunkongApiService.GetAllGenshinDataFromServerAsync();
+            await _xunkongApiService.GetAllGenshinDataFromServerAsync(true);
             UpdateGenshinDataText = $"数据量较大，请耐心等待。上次更新：刚刚";
             NotificationProvider.Success("完成", "本地的原神数据已是最新版本");
             OperationHistory.AddToDatabase("UpdateGenshinData");

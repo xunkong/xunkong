@@ -359,7 +359,7 @@ public sealed partial class CharacterInfoPage : Page
     {
         try
         {
-            await _xunkongApiService.GetAllGenshinDataFromServerAsync();
+            await _xunkongApiService.GetAllGenshinDataFromServerAsync(true);
             IsRefreshPageTeachingTipOpen = true;
         }
         catch (Exception ex)

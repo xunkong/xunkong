@@ -203,16 +203,56 @@ internal class XunkongApiService
 
 
 
-    public async Task GetAllGenshinDataFromServerAsync()
+    public async Task GetAllGenshinDataFromServerAsync(bool force = false)
     {
-        var avatar = await _snapMetadataClient.GetAvatarInfosAsync();
-        SaveSnapMetadata(avatar);
-        var weapon = await _snapMetadataClient.GetWeaponInfosAsync();
-        SaveSnapMetadata(weapon);
-        var gacha = await _snapMetadataClient.GetGachaEventInfosAsync();
-        SaveSnapMetadata(gacha);
+        await GetSnapMetadataAsync(force);
         var data = await _xunkongClient.GetAllGenshinDataAsync();
         SaveGenshinData(data);
+    }
+
+
+    private async Task GetSnapMetadataAsync(bool force = false)
+    {
+        var meta = await _snapMetadataClient.GetSnapMetaAsync();
+        string? hash = AppSetting.GetValue<string>(nameof(meta.Achievement));
+        if (force || meta.Achievement != hash)
+        {
+            var data = await _snapMetadataClient.GetAchievementItemsAsync();
+            SaveSnapMetadata(data);
+            AppSetting.SetValue(nameof(meta.Achievement), meta.Achievement);
+        }
+        hash = AppSetting.GetValue<string>(nameof(meta.AchievementGoal));
+        if (force || meta.AchievementGoal != hash)
+        {
+            var data = await _snapMetadataClient.GetAchievementGoalsAsync();
+            if (data.FirstOrDefault(x => x.Id == 0) is SnapAchievementGoal goal)
+            {
+                goal.Id = 10001;
+            }
+            SaveSnapMetadata(data);
+            AppSetting.SetValue(nameof(meta.AchievementGoal), meta.AchievementGoal);
+        }
+        hash = AppSetting.GetValue<string>(nameof(meta.Avatar));
+        if (force || meta.Avatar != hash)
+        {
+            var data = await _snapMetadataClient.GetAvatarInfosAsync();
+            SaveSnapMetadata(data);
+            AppSetting.SetValue(nameof(meta.Avatar), meta.Avatar);
+        }
+        hash = AppSetting.GetValue<string>(nameof(meta.Weapon));
+        if (force || meta.Weapon != hash)
+        {
+            var data = await _snapMetadataClient.GetWeaponInfosAsync();
+            SaveSnapMetadata(data);
+            AppSetting.SetValue(nameof(meta.Weapon), meta.Weapon);
+        }
+        hash = AppSetting.GetValue<string>(nameof(meta.GachaEvent));
+        if (force || meta.GachaEvent != hash)
+        {
+            var data = await _snapMetadataClient.GetGachaEventInfosAsync();
+            SaveSnapMetadata(data);
+            AppSetting.SetValue(nameof(meta.GachaEvent), meta.GachaEvent);
+        }
     }
 
 
