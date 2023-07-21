@@ -120,11 +120,11 @@
 
 
             <AutoSuggestBox x:Name="c_AutoSuggetBox_Search"
-                            Width="284"
+                            Width="244"
                             Height="32"
                             Margin="16,8,16,0"
                             HorizontalAlignment="Stretch"
-                            PlaceholderText="输入名称、描述、版本、ID 。。。"
+                            PlaceholderText="输入名称、描述、ID 。。。"
                             QueryIcon="Find"
                             QuerySubmitted="c_AutoSuggetBox_Search_QuerySubmitted" />
 
@@ -151,8 +151,8 @@
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="xdm:AchievementPageModel_Goal">
                         <Border x:Name="c_Border_Achievementgoal"
-                                Width="280"
-                                Height="72"
+                                Width="240"
+                                Height="60"
                                 Margin="8,4,8,4"
                                 HorizontalAlignment="Stretch"
                                 Background="{ThemeResource GoalNonSelectedBackgroundBrush}"
@@ -168,28 +168,38 @@
                                   BorderBrush="{ThemeResource GoalNonSelectedBorderBrush}"
                                   BorderThickness="1">
                                 <xdc:CachedImage HorizontalAlignment="Right" Source="ms-appx:///Assets/Images/UI_Img_MapTitle_Bg_NonSelected.png" />
-                                <StackPanel Margin="48,0,0,0">
+                                <StackPanel Margin="12,0,12,0">
                                     <TextBlock Margin="0,6,0,0"
                                                FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
                                                FontSize="14"
                                                Foreground="{ThemeResource GoalNonSelectedNameBrush}"
                                                Text="{x:Bind Name}" />
-                                    <TextBlock Margin="0,4,0,0"
-                                               FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
-                                               FontSize="14"
-                                               Foreground="{ThemeResource GoalNonSelectedProgressBrush}">
-                                        <Run Text="{x:Bind Progress}" />
-                                        <Run Text="" />
-                                        <Run Text="{x:Bind Current}" /><Run Text="/" /><Run Text="{x:Bind Total}" />
-                                        <Run Text="" />
-                                        <Run Text="{x:Bind GotRewardCount}" /><Run Text="/" /><Run Text="{x:Bind TotalRewardCount}" />
-                                    </TextBlock>
+                                    <Grid Margin="0,4,0,0">
+                                        <TextBlock HorizontalAlignment="Left"
+                                                   FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
+                                                   FontSize="14"
+                                                   Foreground="{ThemeResource GoalNonSelectedProgressBrush}">
+                                            <Run Text="{x:Bind Progress}" />
+                                            <Run Text="" />
+                                            <Run Text="{x:Bind Current}" /><Run Text="/" /><Run Text="{x:Bind Total}" />
+                                        </TextBlock>
+                                        <StackPanel HorizontalAlignment="Right"
+                                                    Orientation="Horizontal"
+                                                    Spacing="4">
+                                            <Image Width="16" Source="ms-appx:///Assets/Images/UI_ItemIcon_201.png" />
+                                            <TextBlock FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
+                                                       FontSize="14"
+                                                       Foreground="{ThemeResource GoalNonSelectedProgressBrush}">
+                                                <Run Text="{x:Bind GotRewardCount}" /><Run Text="/" /><Run Text="{x:Bind TotalRewardCount}" />
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Grid>
                                 </StackPanel>
-                                <xdc:CachedImage Height="28"
+                                <!--<xdc:CachedImage Height="28"
                                                  Margin="12,8,0,0"
                                                  HorizontalAlignment="Left"
                                                  VerticalAlignment="Top"
-                                                 Source="{x:Bind SmallIcon}" />
+                                                 Source="{x:Bind SmallIcon}" />-->
                             </Grid>
                         </Border>
                     </DataTemplate>
@@ -272,19 +282,19 @@
                           BorderThickness="2"
                           Visibility="{x:Bind SelectedGoal, Converter={StaticResource ObjectToVisibilityConverter}}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="16" />
                             <ColumnDefinition />
                             <ColumnDefinition Width="110" />
                         </Grid.ColumnDefinitions>
                         <!--  名片  -->
-                        <Grid Grid.Column="0">
+                        <Grid Grid.Column="0" Visibility="Collapsed">
                             <Image Width="60"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
                                    Source="ms-appx:///Assets/Images/Rarity_4_Background_Square.png" />
-                            <xdc:CachedImage Width="60"
+                            <!--<xdc:CachedImage Width="60"
                                              Source="{x:Bind SelectedGoal.RewardNameCard.Icon}"
-                                             Visibility="{x:Bind SelectedGoal.RewardNameCard, Converter={StaticResource ObjectToVisibilityConverter}}" />
+                                             Visibility="{x:Bind SelectedGoal.RewardNameCard, Converter={StaticResource ObjectToVisibilityConverter}}" />-->
                         </Grid>
                         <!--  进度  -->
                         <Grid Grid.Column="1" Margin="0,0,16,0">
@@ -444,10 +454,10 @@
                                                        Foreground="{ThemeResource ItemGridTitleBrush}"
                                                        IsTextSelectionEnabled="True">
                                                 <Run Text="{Binding Title}" />
-                                                <Run Text="" />
+                                                <!--<Run Text="" />
                                                 <Run FontSize="14"
                                                      Foreground="{ThemeResource ItemGridDescriptionBrush}"
-                                                     Text="{x:Bind Version}" />
+                                                     Text="{x:Bind Version}" />-->
                                             </TextBlock>
                                             <TextBlock Margin="0,0,80,0"
                                                        HorizontalAlignment="Left"
@@ -502,7 +512,7 @@
                                                    FontFamily="{ThemeResource HanyiAndHarmonyOSSans}"
                                                    FontSize="12"
                                                    Foreground="White"
-                                                   Text="{x:Bind RewardCount}" />
+                                                   Text="{x:Bind FinishReward.Count}" />
                                     </Grid>
                                     <!--  进度或结果  -->
                                     <Grid Grid.Column="2" Background="{ThemeResource ItemGridFinishedBackgroundBrush}">

@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using ProtoBuf;
 using SingleFileExtractor.Core;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -20,6 +21,7 @@ using Windows.System;
 using Windows.UI;
 using Xunkong.Desktop.Controls;
 using Xunkong.GenshinData.Achievement;
+using Xunkong.SnapMetadata;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -73,7 +75,7 @@ public sealed partial class AchievementPage : Page
                     // 手动刷新页面
                     if (lastSelctedUid == SelectedUid)
                     {
-                        OnSelectedUidChanged(selectedUid);
+                        OnSelectedUidChanged(SelectedUid);
                     }
                 }
             }
@@ -169,7 +171,7 @@ public sealed partial class AchievementPage : Page
             {
                 SelectedUid = Uids.FirstOrDefault();
             }
-            if (selectedUid > 0)
+            if (SelectedUid > 0)
             {
                 c_ComboBox_Uids.SelectedValue = SelectedUid;
             }
@@ -177,7 +179,7 @@ public sealed partial class AchievementPage : Page
             if (lastSelectedUid == SelectedUid)
             {
 
-                OnSelectedUidChanged(selectedUid);
+                OnSelectedUidChanged(SelectedUid);
             }
         }
         catch (Exception ex)
@@ -217,16 +219,16 @@ public sealed partial class AchievementPage : Page
             TotalRewardCount = 0;
             editable = false;
 
-            var goals = XunkongApiService.GetGenshinData<AchievementGoal>().Adapt<List<AchievementPageModel_Goal>>();
-            var items = XunkongApiService.GetGenshinData<AchievementItem>().Adapt<List<AchievementPageModel_Item>>();
+            var goals = XunkongApiService.GetGenshinData<SnapAchievementGoal>().Adapt<List<AchievementPageModel_Goal>>();
+            var items = XunkongApiService.GetGenshinData<SnapAchievementItem>().Adapt<List<AchievementPageModel_Item>>();
             var items_dic = items.ToDictionary(x => x.Id);
 
-            if (!preCached)
-            {
-                // 预下载图片
-                goals.Select(x => XunkongCache.Instance.PreCacheAsync(new Uri(x.IconPath))).ToList();
-                preCached = true;
-            }
+            //if (!preCached)
+            //{
+            //    // 预下载图片
+            //    goals.Select(x => XunkongCache.Instance.PreCacheAsync(new Uri(x.IconPath))).ToList();
+            //    preCached = true;
+            //}
 
             var data_dic = LoadAchievementDataItems(value).ToDictionary(x => x.Id);
 
@@ -278,12 +280,16 @@ public sealed partial class AchievementPage : Page
             // 分组
             foreach (var goal in goals)
             {
-                var goalItems = items.Where(x => x.GoalId == goal.Id).OrderBy(x => x.IsFinish).ThenBy(x => x.OrderId).ToList();
+                if (goal.Id == 10001)
+                {
+                    goal.Id = 0;
+                }
+                var goalItems = items.Where(x => x.Goal == goal.Id).OrderBy(x => x.IsFinish).ThenBy(x => x.Order).ToList();
                 goal.Items = goalItems;
                 goal.Total = goalItems.Count;
                 goal.Current = goalItems.Count(x => x.IsFinish);
-                goal.GotRewardCount = goalItems.Where(x => x.IsFinish).Sum(x => x.RewardCount);
-                goal.TotalRewardCount = goalItems.Sum(x => x.RewardCount);
+                goal.GotRewardCount = goalItems.Where(x => x.IsFinish).Sum(x => x.FinishReward.Count);
+                goal.TotalRewardCount = goalItems.Sum(x => x.FinishReward.Count);
                 GotRewardCount += goal.GotRewardCount;
                 TotalRewardCount += goal.TotalRewardCount;
                 if (goal.IsFinish)
@@ -294,7 +300,7 @@ public sealed partial class AchievementPage : Page
 
             c_Grid_GoalReward.Visibility = Visibility.Visible;
             var lastSelectedGoalId = SelectedGoal?.Id;
-            AchievementGoals = goals.OrderBy(x => x.OrderId).ToList();
+            AchievementGoals = goals.OrderBy(x => x.Order).ToList();
             SelectedGoal = AchievementGoals.FirstOrDefault(x => x.Id == lastSelectedGoalId) ?? AchievementGoals.FirstOrDefault()!;
             Achievements = SelectedGoal?.Items!;
 
@@ -369,17 +375,17 @@ public sealed partial class AchievementPage : Page
                 var result = original_items;
                 foreach (var text in splitText)
                 {
-                    if (int.TryParse(text, out int id))
+                    if (int.TryParse(text, out int id) && id > 80000)
                     {
                         result = result.Where(x => x.Id == id).ToList();
                     }
                     else
                     {
-                        result = result.Where(x => x.Title.Contains(text) || x.Description.Contains(text) || (x.Version?.Contains(text) ?? false)).ToList();
+                        result = result.Where(x => x.Title.Contains(text) || x.Description.Contains(text)).ToList();
                     }
                 }
                 c_Grid_GoalReward.Visibility = Visibility.Collapsed;
-                Achievements = result.OrderBy(x => x.IsFinish).ThenBy(x => x.OrderId).ToList();
+                Achievements = result.OrderBy(x => x.IsFinish).ThenBy(x => x.Order).ToList();
             }
         }
         catch (Exception ex)
@@ -688,7 +694,7 @@ public sealed partial class AchievementPage : Page
                         nextId = nextItem.NextAchievementId;
                     }
 
-                    var goal = AchievementGoals.FirstOrDefault(x => x.Id == thisItem.GoalId);
+                    var goal = AchievementGoals.FirstOrDefault(x => x.Id == thisItem.Goal);
 
                     // 修改属性
                     list = list.OrderBy(x => x.Id).ToList();
@@ -808,7 +814,7 @@ public sealed partial class AchievementPage : Page
         {
             if (item != null)
             {
-                if (AchievementGoals?.FirstOrDefault(x => x.Id == item.GoalId) is AchievementPageModel_Goal goal)
+                if (AchievementGoals?.FirstOrDefault(x => x.Id == item.Goal) is AchievementPageModel_Goal goal)
                 {
                     if (isFinished)
                     {
@@ -816,26 +822,26 @@ public sealed partial class AchievementPage : Page
                         item.FinishedTime = DateTimeOffset.Now;
                         FinishedCount++;
                         SelectedGoal.Current++;
-                        GotRewardCount += item.RewardCount;
-                        goal.GotRewardCount += item.RewardCount;
-                        if (goal.Current == goal.Total)
-                        {
-                            goal.FinishedTime = DateTimeOffset.Now;
-                            MainWindow.Current.SetFullWindowContent(new AchievementGoalFinishedPush(goal));
-                        }
-                        else
-                        {
-                            var id = Random.Shared.Next();
-                            randomId = id;
-                            c_Grid_Push.Opacity = 1;
-                            c_TextBlock_Push.Text = item.Title;
-                            c_Image_Push.Source = goal.IconPath;
-                            await Task.Delay(2000);
-                            if (randomId == id)
-                            {
-                                c_Grid_Push.Opacity = 0;
-                            }
-                        }
+                        GotRewardCount += item.FinishReward.Count;
+                        goal.GotRewardCount += item.FinishReward.Count;
+                        //if (goal.Current == goal.Total)
+                        //{
+                        //    goal.FinishedTime = DateTimeOffset.Now;
+                        //    MainWindow.Current.SetFullWindowContent(new AchievementGoalFinishedPush(goal));
+                        //}
+                        //else
+                        //{
+                        //    var id = Random.Shared.Next();
+                        //    randomId = id;
+                        //    c_Grid_Push.Opacity = 1;
+                        //    c_TextBlock_Push.Text = item.Title;
+                        //    c_Image_Push.Source = goal.IconPath;
+                        //    await Task.Delay(2000);
+                        //    if (randomId == id)
+                        //    {
+                        //        c_Grid_Push.Opacity = 0;
+                        //    }
+                        //}
                     }
                     else
                     {
@@ -843,8 +849,8 @@ public sealed partial class AchievementPage : Page
                         item.FinishedTime = DateTimeOffset.UnixEpoch;
                         FinishedCount--;
                         SelectedGoal.Current--;
-                        GotRewardCount -= item.RewardCount;
-                        goal.GotRewardCount -= item.RewardCount;
+                        GotRewardCount -= item.FinishReward.Count;
+                        goal.GotRewardCount -= item.FinishReward.Count;
                     }
                 }
             }

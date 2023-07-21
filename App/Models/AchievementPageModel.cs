@@ -1,9 +1,10 @@
 ﻿using Xunkong.GenshinData.Achievement;
+using Xunkong.SnapMetadata;
 
 namespace Xunkong.Desktop.Models;
 
 [INotifyPropertyChanged]
-public partial class AchievementPageModel_Goal : AchievementGoal
+public partial class AchievementPageModel_Goal : SnapAchievementGoal
 {
 
     public List<AchievementPageModel_Item> Items { get; set; }
@@ -36,7 +37,7 @@ public partial class AchievementPageModel_Goal : AchievementGoal
 
 
 [INotifyPropertyChanged]
-public partial class AchievementPageModel_Item : AchievementItem
+public partial class AchievementPageModel_Item : SnapAchievementItem
 {
 
     public int NextAchievementId { get; set; }
