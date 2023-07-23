@@ -246,17 +246,17 @@ public sealed partial class AchievementPage : Page
                 }
 
                 // 关联相同名称的成就
-                if (item.PreStageAchievementId != 0)
+                if (item.PreviousId != 0)
                 {
                     var stack = new Stack<AchievementPageModel_Item>();
                     stack.Push(item);
                     var nextId = item.Id;
-                    var lastId = item.PreStageAchievementId;
+                    var lastId = item.PreviousId;
                     while (items_dic.TryGetValue(lastId, out var lastItem))
                     {
                         stack.Push(lastItem);
                         lastItem.NextAchievementId = nextId;
-                        lastId = lastItem.PreStageAchievementId;
+                        lastId = lastItem.PreviousId;
                         nextId = lastItem.Id;
                     }
                     int maxStar = 0;
@@ -681,11 +681,11 @@ public sealed partial class AchievementPage : Page
                     // 找到所有相关成就
                     var list = new List<AchievementPageModel_Item>();
                     list.Add(thisItem);
-                    int preId = thisItem.PreStageAchievementId;
+                    int preId = thisItem.PreviousId;
                     while (original_items_dic?.TryGetValue(preId, out var lastItem) ?? false)
                     {
                         list.Add(lastItem);
-                        preId = lastItem.PreStageAchievementId;
+                        preId = lastItem.PreviousId;
                     }
                     int nextId = thisItem.NextAchievementId;
                     while (original_items_dic?.TryGetValue(nextId, out var nextItem) ?? false)
