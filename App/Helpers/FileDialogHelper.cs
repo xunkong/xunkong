@@ -1,6 +1,5 @@
 ﻿using System.Runtime.InteropServices;
 using Vanara.PInvoke;
-using Windows.Security.EnterpriseData;
 using static Xunkong.Desktop.Helpers.FileDialogNative;
 
 namespace Xunkong.Desktop.Helpers;

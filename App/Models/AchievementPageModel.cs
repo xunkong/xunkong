@@ -1,5 +1,4 @@
-﻿using Xunkong.GenshinData.Achievement;
-using Xunkong.SnapMetadata;
+﻿using Xunkong.SnapMetadata;
 
 namespace Xunkong.Desktop.Models;
 

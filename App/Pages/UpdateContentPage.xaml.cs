@@ -59,17 +59,6 @@ public sealed partial class UpdateContentPage : Microsoft.UI.Xaml.Controls.Page
                         sb.AppendLine();
                         sb.AppendLine(release.Body);
                         sb.AppendLine();
-                        if (count == 10)
-                        {
-                            sb.AppendLine("""
-                                # 赞助
-
-                                如果你觉得软件好用，可以通过下面的链接支持我。赞助者没有额外的权益，但是你的支持能增加我维护软件的动力。
-
-                                [https://xunkong.cc/donate/](https://xunkong.cc/donate/)
-
-                                """);
-                        }
                         if (--count == 0)
                         {
                             break;
