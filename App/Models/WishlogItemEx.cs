@@ -5,6 +5,12 @@ namespace Xunkong.Desktop.Models;
 public class WishlogItemEx : WishlogItem
 {
 
+    public string Icon { get; set; }
+
+
+    public int Element { get; set; }
+
+
     public int Index { get; set; }
 
 

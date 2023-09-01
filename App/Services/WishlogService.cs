@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Xunkong.Hoyolab;
 using Xunkong.Hoyolab.Wishlog;
 using Xunkong.SnapMetadata;
@@ -346,10 +347,12 @@ internal class WishlogService
     public static List<WishlogItemEx> GetWishlogItemExByUid(int uid)
     {
         using var dapper = DatabaseProvider.CreateConnection();
-        var items = dapper.Query<WishlogItemEx>("SELECT * FROM WishlogItem WHERE Uid=@Uid ORDER BY Id;", new { Uid = uid }).ToList();
+        var items = dapper.Query<WishlogItemEx>("""
+            SELECT item.*, info.Icon FROM WishlogItem item LEFT JOIN WishlogItemInfo info ON item.ItemId=info.Id WHERE Uid=@Uid ORDER BY item.Id;
+            """, new { Uid = uid }).ToList();
         var events = XunkongApiService.GetGenshinData<SnapGachaEventInfo>();
-        var avatars = XunkongApiService.GetGenshinData<SnapAvatarInfo>().ToDictionary(x => x.Name, x => x.Id);
-        var weapons = XunkongApiService.GetGenshinData<SnapWeaponInfo>().GroupBy(x => x.Name).ToDictionary(x => x.First().Name, x => x.First().Id);
+        //var avatars = XunkongApiService.GetGenshinData<SnapAvatarInfo>().ToDictionary(x => x.Name, x => x.Id);
+        //var weapons = XunkongApiService.GetGenshinData<SnapWeaponInfo>().GroupBy(x => x.Name).ToDictionary(x => x.First().Name, x => x.First().Id);
         var groups = items.GroupBy(x => x.QueryType).ToList();
 
         foreach (var group in groups)
@@ -409,15 +412,7 @@ internal class WishlogService
                         }
                         if (((int)item.QueryType) == e.QueryType)
                         {
-                            int id = 0;
-                            if (queryType == WishType.CharacterEvent)
-                            {
-                                id = avatars.GetValueOrDefault(item.Name);
-                            }
-                            if (queryType == WishType.WeaponEvent)
-                            {
-                                id = weapons.GetValueOrDefault(item.Name);
-                            }
+                            int id = item.ItemId;
                             if (item.RankType == 5 && e.UpOrangeList.Contains(id))
                             {
                                 item.IsUp = true;
@@ -503,6 +498,41 @@ internal class WishlogService
         return items;
     }
 
+
+
+    public async Task UpdateWishlogItemInfoAsync(CancellationToken cancellationToken = default)
+    {
+        var data = await _wishlogClient.GetWishlogItemWikiAsync(cancellationToken);
+        using var dapper = DatabaseProvider.CreateConnection();
+        using var t = dapper.BeginTransaction();
+        const string insertSql = """
+            INSERT OR REPLACE INTO WishlogItemInfo (Id, Name, Icon, Element, Level, CatId, WeaponCatId)
+            VALUES (@Id, @Name, @Icon, @Element, @Level, @CatId, @WeaponCatId);
+            """;
+        dapper.Execute(insertSql, data.AllAvatar, t);
+        dapper.Execute(insertSql, data.AllWeapon, t);
+        t.Commit();
+        UpdateGachaItemId();
+    }
+
+
+    private void UpdateGachaItemId()
+    {
+        using var dapper = DatabaseProvider.CreateConnection();
+        dapper.Execute("""
+            INSERT OR REPLACE INTO WishlogItem (Uid, Id, WishType, Time, Name, Language, ItemType, RankType, QueryType, ItemId) 
+            SELECT Uid, item.Id, WishType, Time, item.Name, Language, ItemType, RankType, item.QueryType, info.Id
+            FROM WishlogItem item INNER JOIN WishlogItemInfo info ON item.Name = info.Name WHERE item.ItemId = 0;
+            """);
+    }
+
+
+
+    public static List<WishlogItemInfo> LoadWishlogItemInfos()
+    {
+        using var dapper = DatabaseProvider.CreateConnection();
+        return dapper.Query<WishlogItemInfo>("SELECT * FROM WishlogItemInfo;").ToList();
+    }
 
 
 }

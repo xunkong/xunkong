@@ -136,6 +136,7 @@ public sealed partial class WishlogSummaryPage2 : Page
         {
             InitializePageData();
         }
+        UpdateWishlogItemInfoAsync();
     }
 
 
@@ -177,6 +178,20 @@ public sealed partial class WishlogSummaryPage2 : Page
     }
 
 
+    private async void UpdateWishlogItemInfoAsync()
+    {
+        try
+        {
+            await _wishlogService.UpdateWishlogItemInfoAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "Update wishlog item info");
+        }
+    }
+
+
+
     private bool loaded;
 
 
@@ -211,15 +226,17 @@ public sealed partial class WishlogSummaryPage2 : Page
         // 卡池信息时区
         WishEventInfo.RegionType = WishlogService.UidToRegionType(uid);
         // 初始化卡池信息，所有祈愿记录
-        var characters = XunkongApiService.GetGenshinData<SnapAvatarInfo>();
-        var weapons = XunkongApiService.GetGenshinData<SnapWeaponInfo>();
+        //var characters = XunkongApiService.GetGenshinData<SnapAvatarInfo>();
+        //var weapons = XunkongApiService.GetGenshinData<SnapWeaponInfo>();
+        var itemInfos = WishlogService.LoadWishlogItemInfos();
 
-        var dic_characters = characters.Where(x => !string.IsNullOrWhiteSpace(x.Name)).ToImmutableDictionary(x => x.Name!);
-        var dic_weapons = weapons.Where(x => !string.IsNullOrWhiteSpace(x.Name)).GroupBy(x => x.Name).ToImmutableDictionary(x => x.First().Name, x => x.First());
+        //var dic_characters = characters.Where(x => !string.IsNullOrWhiteSpace(x.Name)).ToImmutableDictionary(x => x.Name!);
+        //var dic_weapons = weapons.Where(x => !string.IsNullOrWhiteSpace(x.Name)).GroupBy(x => x.Name).ToImmutableDictionary(x => x.First().Name, x => x.First());
 
         var wishlogs = WishlogService.GetWishlogItemExByUid(uid);
         wishlogList = wishlogs;
-        var wishlogs_group_byname = wishlogs.GroupBy(x => x.Name).ToImmutableDictionary(x => x.Key);
+        //var wishlogs_group_byname = wishlogs.GroupBy(x => x.Name).ToImmutableDictionary(x => x.Key);
+        //var wishlogs_group_itemId = wishlogs.GroupBy(x => x.ItemId).ToImmutableDictionary(x => x.Key);
 
         // 根据祈愿类型分类计算
         var queryTypeStats = new List<WishlogSummaryPage_QueryTypeStats>();
@@ -274,17 +291,18 @@ public sealed partial class WishlogSummaryPage2 : Page
         }
 
 
-
-        var query_character = from g in wishlogs_group_byname
-                              join c in dic_characters
-                              on g.Key equals c.Key
-                              select new WishlogSummaryPage_ItemThumb(g.Key, c.Value.Quality, StringToElementType(c.Value.FetterInfo.VisionBefore), g.Value.Count(), c.Value.Icon, g.Value.Last().Time);
+        var query_character = wishlogs.Where(x => x.ItemId > 10000000).GroupBy(x => x.Name).Select(x => new WishlogSummaryPage_ItemThumb(x.Key, x.First().RankType, NumberToElementType(x.First().Element), x.Count(), x.First().Icon, x.Last().Time));
+        //var query_character = from g in wishlogs_group_byname
+        //                      join c in dic_characters
+        //                      on g.Key equals c.Key
+        //                      select new WishlogSummaryPage_ItemThumb(g.Key, g.Value.First().RankType, NumberToElementType(g.Value.First().Element), g.Value.Count(), g.Value.First().Icon, g.Value.Last().Time);
         var characterThumbs = query_character.OrderByDescending(x => x.Rarity).ThenByDescending(x => x.Count).ThenByDescending(x => x.LastTime).ToList();
 
-        var query_weapon = from g in wishlogs_group_byname
-                           join c in dic_weapons
-                           on g.Key equals c.Key
-                           select new WishlogSummaryPage_ItemThumb(g.Key, c.Value.RankLevel, ElementType.None, g.Value.Count(), c.Value.Icon, g.Value.Last().Time);
+        var query_weapon = wishlogs.Where(x => x.ItemId < 10000000).GroupBy(x => x.Name).Select(x => new WishlogSummaryPage_ItemThumb(x.Key, x.First().RankType, NumberToElementType(x.First().Element), x.Count(), x.First().Icon, x.Last().Time));
+        //var query_weapon = from g in wishlogs_group_byname
+        //                   join c in dic_weapons
+        //                   on g.Key equals c.Key
+        //                   select new WishlogSummaryPage_ItemThumb(g.Key, c.Value.RankLevel, ElementType.None, g.Value.Count(), c.Value.Icon, g.Value.Last().Time);
         var weaponThumbs = query_weapon.OrderByDescending(x => x.Rarity).ThenByDescending(x => x.Count).ThenByDescending(x => x.LastTime).ToList();
 
 
@@ -298,8 +316,20 @@ public sealed partial class WishlogSummaryPage2 : Page
             var stats = group.FirstOrDefault()?.Adapt<WishlogSummaryPage_EventStats>()!;
             character_eventStats.Add(stats);
             stats.Name = string.Join("\n", group.Select(x => x.Name));
-            stats.UpItems = group.SelectMany(x => x.UpOrangeList).Join(dic_characters, id => id, dic => dic.Value.Id, (str, dic) => dic.Value).ToList().Adapt<List<WishlogSummaryPage_UpItem>>();
-            stats.UpItems.AddRange(group.FirstOrDefault()!.UpPurpleList.Join(dic_characters, id => id, dic => dic.Value.Id, (str, dic) => dic.Value).Adapt<IEnumerable<WishlogSummaryPage_UpItem>>());
+            stats.UpItems = group.SelectMany(x => x.UpOrangeList).Join(itemInfos, id => id, dic => dic.Id, (str, dic) => dic).Select(x => new WishlogSummaryPage_UpItem
+            {
+                Element = NumberToElementType(x.Element),
+                Icon = x.Icon,
+                Name = x.Name,
+                Rarity = x.Level,
+            }).ToList();
+            stats.UpItems.AddRange(group.FirstOrDefault()!.UpPurpleList.Join(itemInfos, id => id, dic => dic.Id, (str, dic) => dic).Select(x => new WishlogSummaryPage_UpItem
+            {
+                Element = NumberToElementType(x.Element),
+                Icon = x.Icon,
+                Name = x.Name,
+                Rarity = x.Level,
+            }).ToList());
             //foreach (var item in stats.UpItems)
             //{
             //    item.Rarity = dic_characters.GetValueOrDefault(item.Name)?.Quality ?? 0;
@@ -325,8 +355,20 @@ public sealed partial class WishlogSummaryPage2 : Page
             var stats = group.FirstOrDefault()?.Adapt<WishlogSummaryPage_EventStats>()!;
             weapon_eventStats.Add(stats);
             stats.Name = string.Join("\n", group.Select(x => x.Name));
-            stats.UpItems = group.SelectMany(x => x.UpOrangeList).Join(dic_weapons, id => id, dic => dic.Value.Id, (str, dic) => dic.Value).ToList().Adapt<List<WishlogSummaryPage_UpItem>>();
-            stats.UpItems.AddRange(group.FirstOrDefault()!.UpPurpleList.Join(dic_weapons, id => id, dic => dic.Value.Id, (str, dic) => dic.Value).Adapt<IEnumerable<WishlogSummaryPage_UpItem>>());
+            stats.UpItems = group.SelectMany(x => x.UpOrangeList).Join(itemInfos, id => id, dic => dic.Id, (str, dic) => dic).Select(x => new WishlogSummaryPage_UpItem
+            {
+                Element = NumberToElementType(x.Element),
+                Icon = x.Icon,
+                Name = x.Name,
+                Rarity = x.Level,
+            }).ToList();
+            stats.UpItems.AddRange(group.FirstOrDefault()!.UpPurpleList.Join(itemInfos, id => id, dic => dic.Id, (str, dic) => dic).Select(x => new WishlogSummaryPage_UpItem
+            {
+                Element = NumberToElementType(x.Element),
+                Icon = x.Icon,
+                Name = x.Name,
+                Rarity = x.Level,
+            }).ToList());
             //foreach (var item in stats.UpItems)
             //{
             //    item.Rarity = dic_weapons.GetValueOrDefault(item.Name)?.RankLevel ?? 0;
@@ -1094,6 +1136,22 @@ public sealed partial class WishlogSummaryPage2 : Page
             "草" => ElementType.Grass,
             "冰" => ElementType.Ice,
             "岩" => ElementType.Rock,
+            _ => ElementType.None,
+        };
+    }
+
+
+    private static ElementType NumberToElementType(int num)
+    {
+        return num switch
+        {
+            1 => ElementType.Fire,
+            6 => ElementType.Water,
+            2 => ElementType.Wind,
+            5 => ElementType.Electro,
+            4 => ElementType.Grass,
+            7 => ElementType.Ice,
+            3 => ElementType.Rock,
             _ => ElementType.None,
         };
     }

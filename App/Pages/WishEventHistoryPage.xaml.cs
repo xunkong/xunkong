@@ -11,10 +11,8 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI;
-using WinRT.Interop;
-using Xunkong.GenshinData.Character;
-using Xunkong.GenshinData.Weapon;
 using Xunkong.Hoyolab.Wishlog;
+using Xunkong.SnapMetadata;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -82,17 +80,18 @@ public sealed partial class WishEventHistoryPage : Page
 
     private void LoadCharacterEventData()
     {
-        var characters = XunkongApiService.GetGenshinData<CharacterInfo>();
-        var wishevents = XunkongApiService.GetGenshinData<WishEventInfo>();
-        var chaevents = wishevents.Where(x => x.QueryType == WishType.CharacterEvent).GroupBy(x => x.StartTime).ToList();
+        var itemInfos = WishlogService.LoadWishlogItemInfos();
+        //var characters = XunkongApiService.GetGenshinData<CharacterInfo>();
+        var wishevents = XunkongApiService.GetGenshinData<SnapGachaEventInfo>();
+        var chaevents = wishevents.Where(x => x.QueryType == ((int)WishType.CharacterEvent)).GroupBy(x => x.From).ToList();
         var leftHeader = chaevents.Select(x => new WishEventHistoryPage_LeftHeader
         {
             Version = x.First().Version,
-            StartTime = x.First().StartTime,
-            EndTime = x.First().EndTime,
-            UpItems = x.SelectMany(y => y.Rank5UpItems).Concat(x.SelectMany(y => y.Rank4UpItems).Distinct()).ToList()
+            StartTime = x.First().From,
+            EndTime = x.First().To,
+            UpItems = x.SelectMany(y => y.UpOrangeList).Concat(x.SelectMany(y => y.UpPurpleList).Distinct()).Join(itemInfos, x => x, x => x.Id, (x, y) => y.Name).ToList()
         }).ToList();
-        var columns = characters.Select(x => new WishEventHistoryPage_Column { Name = x.Name!, Icon = x.FaceIcon!, Rarity = x.Rarity, Element = x.Element }).ToList();
+        var columns = itemInfos.Where(x => x.Id > 10000000).Select(x => new WishEventHistoryPage_Column { Name = x.Name, Icon = x.Icon, Rarity = x.Level, Element = NumberToElementType(x.Element) }).ToList();
         foreach (var column in columns)
         {
             int index = 0;
@@ -143,17 +142,18 @@ public sealed partial class WishEventHistoryPage : Page
 
     private void LoadWeaponEventData()
     {
-        var weapons = XunkongApiService.GetGenshinData<WeaponInfo>();
-        var wishevents = XunkongApiService.GetGenshinData<WishEventInfo>();
-        var weaevents = wishevents.Where(x => x.QueryType == WishType.WeaponEvent).GroupBy(x => x.StartTime).ToList();
+        var itemInfos = WishlogService.LoadWishlogItemInfos();
+        //var weapons = XunkongApiService.GetGenshinData<WeaponInfo>();
+        var wishevents = XunkongApiService.GetGenshinData<SnapGachaEventInfo>();
+        var weaevents = wishevents.Where(x => x.QueryType == ((int)WishType.WeaponEvent)).GroupBy(x => x.From).ToList();
         var leftHeader = weaevents.Select(x => new WishEventHistoryPage_LeftHeader
         {
             Version = x.First().Version,
-            StartTime = x.First().StartTime,
-            EndTime = x.First().EndTime,
-            UpItems = x.SelectMany(y => y.Rank5UpItems).Concat(x.SelectMany(y => y.Rank4UpItems).Distinct()).ToList()
+            StartTime = x.First().From,
+            EndTime = x.First().To,
+            UpItems = x.SelectMany(y => y.UpOrangeList).Concat(x.SelectMany(y => y.UpPurpleList).Distinct()).Join(itemInfos, x => x, x => x.Id, (x, y) => y.Name).ToList()
         }).ToList();
-        var columns = weapons.Select(x => new WishEventHistoryPage_Column { Name = x.Name!, Icon = x.Icon!, Rarity = x.Rarity, Element = (ElementType)((int)x.WeaponType * 2) }).ToList();
+        var columns = itemInfos.Where(x => x.Id < 10000000).Select(x => new WishEventHistoryPage_Column { Name = x.Name, Icon = x.Icon, Rarity = x.Level, Element = CatIdToElement(x.CatId) }).ToList();
         foreach (var column in columns)
         {
             int index = 0;
@@ -201,6 +201,33 @@ public sealed partial class WishEventHistoryPage : Page
         TopHeaders = Columns.Select(x => new WishEventHistoryPage_TopHeader { Icon = x.Icon, Rarity = x.Rarity }).ToList();
     }
 
+
+
+
+    private static ElementType NumberToElementType(int num)
+    {
+        return num switch
+        {
+            1 => ElementType.Fire,
+            6 => ElementType.Water,
+            2 => ElementType.Wind,
+            5 => ElementType.Electro,
+            4 => ElementType.Grass,
+            7 => ElementType.Ice,
+            3 => ElementType.Rock,
+            _ => ElementType.None,
+        };
+    }
+
+
+    private static ElementType CatIdToElement(int num)
+    {
+        if (num > 1)
+        {
+            num -= 8;
+        }
+        return (ElementType)Math.Pow(2, num);
+    }
 
 
 

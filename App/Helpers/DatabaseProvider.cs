@@ -28,7 +28,7 @@ internal class DatabaseProvider
     public static int DatabaseVersion => UpdateSqls.Count;
 
 
-    private static List<string> UpdateSqls = new() { TableStructure_v1, TableStructure_v2, TableStructure_v3, TableStructure_v4, TableStructure_v5, TableStructure_v6 };
+    private static List<string> UpdateSqls = new() { TableStructure_v1, TableStructure_v2, TableStructure_v3, TableStructure_v4, TableStructure_v5, TableStructure_v6, TableStructure_v7 };
 
 
 
@@ -390,6 +390,30 @@ internal class DatabaseProvider
         ALTER TABLE GenshinRoleInfo ADD COLUMN DisableDailyNote INTEGER DEFAULT 0 NOT NULL;
 
         PRAGMA USER_VERSION = 6;
+        COMMIT TRANSACTION;
+        """;
+
+
+    private const string TableStructure_v7 = """
+        BEGIN TRANSACTION;
+
+        CREATE TABLE IF NOT EXISTS WishlogItemInfo
+        (
+            Id          INTEGER NOT NULL PRIMARY KEY,
+            Name        TEXT,
+            Icon        TEXT,
+            Element     INTEGER NOT NULL,
+            Level       INTEGER NOT NULL,
+            CatId       INTEGER NOT NULL,
+            WeaponCatId INTEGER NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS IX_WishlogItemInfo_Name ON WishlogItemInfo (Name);
+
+        ALTER TABLE WishlogItem ADD COLUMN ItemId INTEGER NOT NULL DEFAULT 0;
+        CREATE INDEX IF NOT EXISTS IX_WishlogItem_ItemId ON WishlogItem (ItemId);
+        CREATE INDEX IF NOT EXISTS IX_WishlogItem_Name ON WishlogItem (Name);
+
+        PRAGMA USER_VERSION = 7;
         COMMIT TRANSACTION;
         """;
 
