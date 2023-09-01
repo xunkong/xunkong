@@ -202,7 +202,7 @@ internal class WishlogManagePage_JsonExport_Info
     public string ExportAppVersion { get; set; }
 
     [JsonPropertyName("uigf_version")]
-    public string UIGFVersion { get; set; } = "v2.2";
+    public string UIGFVersion { get; set; } = "v2.3";
 
 }
 
@@ -303,12 +303,26 @@ internal class WishlogItemIdJsonConverter : JsonConverter<int>
 {
     public override int Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        return 0;
+        if (int.TryParse(reader.GetString(), out int id))
+        {
+            return id;
+        }
+        else
+        {
+            return 0;
+        }
     }
 
     public override void Write(Utf8JsonWriter writer, int value, JsonSerializerOptions options)
     {
-        writer.WriteStringValue("");
+        if (value == 0)
+        {
+            writer.WriteStringValue("");
+        }
+        else
+        {
+            writer.WriteStringValue(value.ToString());
+        }
     }
 }
 

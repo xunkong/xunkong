@@ -114,7 +114,7 @@ public sealed partial class WishlogManagePage : Page
 
 
     [ObservableProperty]
-    private List<string> exportTemplates = new List<string> { "UIGF Excel v2.2", "UIGF Json v2.2" };
+    private List<string> exportTemplates = new List<string> { "UIGF Excel v2.2", "UIGF Json v2.3" };
 
 
     [ObservableProperty]
