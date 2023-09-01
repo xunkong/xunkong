@@ -313,6 +313,7 @@ internal class WishlogService
             VALUES (@Uid, @Id, @WishType, @Time, @Name, @Language, @ItemType, @RankType, @QueryType);
             """, wishlogs, t);
         t.Commit();
+        UpdateGachaItemId();
         var newCount = dapper.QuerySingleOrDefault<int>("SELECT COUNT(*) FROM WishlogItem WHERE Uid=@Uid;", uidObj);
         return newCount - oldCount;
     }
@@ -516,7 +517,7 @@ internal class WishlogService
     }
 
 
-    private void UpdateGachaItemId()
+    private static void UpdateGachaItemId()
     {
         using var dapper = DatabaseProvider.CreateConnection();
         dapper.Execute("""
