@@ -226,8 +226,8 @@ public sealed partial class WishlogSummaryPage2 : Page
         // 卡池信息时区
         WishEventInfo.RegionType = WishlogService.UidToRegionType(uid);
         // 初始化卡池信息，所有祈愿记录
-        //var characters = XunkongApiService.GetGenshinData<SnapAvatarInfo>();
-        //var weapons = XunkongApiService.GetGenshinData<SnapWeaponInfo>();
+        var characters = XunkongApiService.GetGenshinData<SnapAvatarInfo>();
+        var weapons = XunkongApiService.GetGenshinData<SnapWeaponInfo>();
         var itemInfos = WishlogService.LoadWishlogItemInfos();
 
         //var dic_characters = characters.Where(x => !string.IsNullOrWhiteSpace(x.Name)).ToImmutableDictionary(x => x.Name!);
@@ -316,24 +316,50 @@ public sealed partial class WishlogSummaryPage2 : Page
             var stats = group.FirstOrDefault()?.Adapt<WishlogSummaryPage_EventStats>()!;
             character_eventStats.Add(stats);
             stats.Name = string.Join("\n", group.Select(x => x.Name));
-            stats.UpItems = group.SelectMany(x => x.UpOrangeList).Join(itemInfos, id => id, dic => dic.Id, (str, dic) => dic).Select(x => new WishlogSummaryPage_UpItem
+            stats.UpItems = new List<WishlogSummaryPage_UpItem>();
+            foreach (var item5 in group.SelectMany(x => x.UpOrangeList))
             {
-                Element = NumberToElementType(x.Element),
-                Icon = x.Icon,
-                Name = x.Name,
-                Rarity = x.Level,
-            }).ToList();
-            stats.UpItems.AddRange(group.FirstOrDefault()!.UpPurpleList.Join(itemInfos, id => id, dic => dic.Id, (str, dic) => dic).Select(x => new WishlogSummaryPage_UpItem
+                if (itemInfos.FirstOrDefault(x => x.Id == item5) is WishlogItemInfo info)
+                {
+                    stats.UpItems.Add(new WishlogSummaryPage_UpItem
+                    {
+                        Element = NumberToElementType(info.Element),
+                        Icon = info.Icon,
+                        Name = info.Name,
+                        Rarity = info.Level,
+                    });
+                }
+                else if (characters.FirstOrDefault(x => x.Id == item5) is SnapAvatarInfo sai)
+                {
+                    stats.UpItems.Add(new WishlogSummaryPage_UpItem
+                    {
+                        Name = sai.Name,
+                        Rarity = sai.Quality,
+                    });
+                }
+            }
+            foreach (var item4 in group.FirstOrDefault()!.UpPurpleList)
             {
-                Element = NumberToElementType(x.Element),
-                Icon = x.Icon,
-                Name = x.Name,
-                Rarity = x.Level,
-            }).ToList());
-            //foreach (var item in stats.UpItems)
-            //{
-            //    item.Rarity = dic_characters.GetValueOrDefault(item.Name)?.Quality ?? 0;
-            //}
+                if (itemInfos.FirstOrDefault(x => x.Id == item4) is WishlogItemInfo info)
+                {
+                    stats.UpItems.Add(new WishlogSummaryPage_UpItem
+                    {
+                        Element = NumberToElementType(info.Element),
+                        Icon = info.Icon,
+                        Name = info.Name,
+                        Rarity = info.Level,
+                    });
+                }
+                else if (characters.FirstOrDefault(x => x.Id == item4) is SnapAvatarInfo sai)
+                {
+                    stats.UpItems.Add(new WishlogSummaryPage_UpItem
+                    {
+                        Name = sai.Name,
+                        Rarity = sai.Quality,
+                    });
+                }
+            }
+
             var currentEventItems = wishlogs.Where(x => x.QueryType == WishType.CharacterEvent && stats.StartTime <= x.Time && x.Time <= stats.EndTime).OrderByDescending(x => x.Id).ToList();
             stats.TotalCount = currentEventItems.Count;
             stats.Rank3Count = currentEventItems.Count(x => x.RankType == 3);
@@ -355,24 +381,49 @@ public sealed partial class WishlogSummaryPage2 : Page
             var stats = group.FirstOrDefault()?.Adapt<WishlogSummaryPage_EventStats>()!;
             weapon_eventStats.Add(stats);
             stats.Name = string.Join("\n", group.Select(x => x.Name));
-            stats.UpItems = group.SelectMany(x => x.UpOrangeList).Join(itemInfos, id => id, dic => dic.Id, (str, dic) => dic).Select(x => new WishlogSummaryPage_UpItem
+            stats.UpItems = new List<WishlogSummaryPage_UpItem>();
+            foreach (var item5 in group.SelectMany(x => x.UpOrangeList))
             {
-                Element = NumberToElementType(x.Element),
-                Icon = x.Icon,
-                Name = x.Name,
-                Rarity = x.Level,
-            }).ToList();
-            stats.UpItems.AddRange(group.FirstOrDefault()!.UpPurpleList.Join(itemInfos, id => id, dic => dic.Id, (str, dic) => dic).Select(x => new WishlogSummaryPage_UpItem
+                if (itemInfos.FirstOrDefault(x => x.Id == item5) is WishlogItemInfo info)
+                {
+                    stats.UpItems.Add(new WishlogSummaryPage_UpItem
+                    {
+                        Element = NumberToElementType(info.Element),
+                        Icon = info.Icon,
+                        Name = info.Name,
+                        Rarity = info.Level,
+                    });
+                }
+                else if (weapons.FirstOrDefault(x => x.Id == item5) is SnapWeaponInfo sai)
+                {
+                    stats.UpItems.Add(new WishlogSummaryPage_UpItem
+                    {
+                        Name = sai.Name,
+                        Rarity = sai.RankLevel,
+                    });
+                }
+            }
+            foreach (var item4 in group.FirstOrDefault()!.UpPurpleList)
             {
-                Element = NumberToElementType(x.Element),
-                Icon = x.Icon,
-                Name = x.Name,
-                Rarity = x.Level,
-            }).ToList());
-            //foreach (var item in stats.UpItems)
-            //{
-            //    item.Rarity = dic_weapons.GetValueOrDefault(item.Name)?.RankLevel ?? 0;
-            //}
+                if (itemInfos.FirstOrDefault(x => x.Id == item4) is WishlogItemInfo info)
+                {
+                    stats.UpItems.Add(new WishlogSummaryPage_UpItem
+                    {
+                        Element = NumberToElementType(info.Element),
+                        Icon = info.Icon,
+                        Name = info.Name,
+                        Rarity = info.Level,
+                    });
+                }
+                else if (weapons.FirstOrDefault(x => x.Id == item4) is SnapWeaponInfo sai)
+                {
+                    stats.UpItems.Add(new WishlogSummaryPage_UpItem
+                    {
+                        Name = sai.Name,
+                        Rarity = sai.RankLevel,
+                    });
+                }
+            }
             var currentEventItems = wishlogs.Where(x => x.QueryType == WishType.WeaponEvent && stats.StartTime <= x.Time && x.Time <= stats.EndTime).OrderByDescending(x => x.Id).ToList();
             stats.TotalCount = currentEventItems.Count;
             stats.Rank3Count = currentEventItems.Count(x => x.RankType == 3);
