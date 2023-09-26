@@ -381,7 +381,7 @@ public sealed partial class AchievementPage : Page
                     }
                     else
                     {
-                        result = result.Where(x => x.Title.Contains(text) || x.Description.Contains(text)).ToList();
+                        result = result.Where(x => x.Title.Contains(text) || x.Description.Contains(text) || x.Version == text).ToList();
                     }
                 }
                 c_Grid_GoalReward.Visibility = Visibility.Collapsed;

@@ -454,10 +454,10 @@
                                                        Foreground="{ThemeResource ItemGridTitleBrush}"
                                                        IsTextSelectionEnabled="True">
                                                 <Run Text="{Binding Title}" />
-                                                <!--<Run Text="" />
+                                                <Run Text="" />
                                                 <Run FontSize="14"
                                                      Foreground="{ThemeResource ItemGridDescriptionBrush}"
-                                                     Text="{x:Bind Version}" />-->
+                                                     Text="{x:Bind Version}" />
                                             </TextBlock>
                                             <TextBlock Margin="0,0,80,0"
                                                        HorizontalAlignment="Left"
