@@ -19,7 +19,6 @@
       xmlns:xdc="using:Xunkong.Desktop.Controls"
       xmlns:xg="using:Xunkong.GenshinData"
       x:DefaultBindMode="OneWay"
-      Loaded="Page_Loaded"
       mc:Ignorable="d">
 
     <Page.Resources>
@@ -34,7 +33,9 @@
         </Grid.RowDefinitions>
 
 
-        <Grid Padding="24,0,36,0">
+        <Grid x:Name="Grid_Tool"
+              Padding="24,0,36,0"
+              x:Load="False">
             <StackPanel HorizontalAlignment="Left"
                         VerticalAlignment="Center"
                         Orientation="Horizontal">
@@ -98,6 +99,7 @@
         <cc:AdaptiveGridView x:Name="GridView_Cutscene"
                              Grid.Row="1"
                              Padding="24,0,24,24"
+                             x:Load="False"
                              DesiredWidth="248"
                              ItemsSource="{x:Bind Cutscenes}"
                              SelectedItem="{x:Bind SelectedCutscene, Mode=TwoWay}"
@@ -179,6 +181,7 @@
         <Grid x:Name="Grid_Info"
               Grid.Row="2"
               Height="220"
+              x:Load="False"
               Background="{ThemeResource ControlAltFillColorTransparent}"
               Visibility="Collapsed">
             <StackPanel Orientation="Horizontal">
@@ -238,6 +241,16 @@
                     FontSize="16" />
         </Grid>
 
+
+        <StackPanel Grid.RowSpan="3"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="8">
+            <TextBlock HorizontalAlignment="Center" Text="请前往以下网站查看过场动画" />
+            <HyperlinkButton HorizontalAlignment="Center"
+                             Content="https://github.com/xunkong/cutscene"
+                             NavigateUri="https://github.com/xunkong/cutscene" />
+        </StackPanel>
 
 
     </Grid>
