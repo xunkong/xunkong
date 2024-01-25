@@ -155,7 +155,7 @@ internal static class FileDialogHelper
         {
             count++;
             types = new COMDLG_FILTERSPEC[count];
-            types[0] = new COMDLG_FILTERSPEC { pszName = "all", pszSpec = string.Join(';', fileTypeFilter) };
+            types[0] = new COMDLG_FILTERSPEC { pszName = "all", pszSpec = string.Join(';', fileTypeFilter.Select(x => x.Spec)) };
             fileTypeFilter.Select(x => new COMDLG_FILTERSPEC { pszName = x.Name, pszSpec = x.Spec }).ToArray().CopyTo(types, 1);
         }
         dialog.SetFileTypes(count, types);
