@@ -240,7 +240,7 @@ public sealed partial class WishlogSummaryPage2 : Page
 
         // 根据祈愿类型分类计算
         var queryTypeStats = new List<WishlogSummaryPage_QueryTypeStats>();
-        var wishtypes = new List<WishType>(4) { WishType.CharacterEvent, WishType.WeaponEvent, WishType.Permanent };
+        var wishtypes = new List<WishType>(5) { WishType.CharacterEvent, WishType.WeaponEvent, WishType.ChronicledWish, WishType.Permanent };
         if (AppSetting.GetValue<bool>(SettingKeys.ShowNoviceWishType))
         {
             wishtypes.Add(WishType.Novice);
@@ -262,7 +262,7 @@ public sealed partial class WishlogSummaryPage2 : Page
             var maxGuarantee = rank5Count == 0 ? currentGuarantee : items.Where(x => x.RankType == 5).Max(x => x.GuaranteeIndex);
             var minGuarantee = rank5Count == 0 ? currentGuarantee : items.Where(x => x.RankType == 5).Min(x => x.GuaranteeIndex);
             var guaranteeStar4 = items.Count - items.FindLastIndex(x => x.RankType == 4) - 1;
-            var rank5Items = items.Where(x => x.RankType == 5).Select(x => new WishlogSummaryPage_Rank5Item(x.Name, x.GuaranteeIndex, x.Time, type == WishType.Permanent || x.IsUp)).ToList();
+            var rank5Items = items.Where(x => x.RankType == 5).Select(x => new WishlogSummaryPage_Rank5Item(x.Name, x.GuaranteeIndex, x.Time, type is WishType.Permanent or WishType.ChronicledWish || x.IsUp)).ToList();
             rank5Items.Where(x => !x.IsUp).ToList().ForEach(x => { x.Color = "#808080"; x.Foreground = "#808080"; });
             var colors = ColorSet.OrderBy(x => Random.Shared.Next()).ToList();
             var gi = rank5Items.Where(x => x.IsUp).GroupBy(x => x.Name).OrderBy(x => x.Min(y => y.Time));

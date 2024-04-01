@@ -107,15 +107,17 @@ public class WishlogSummaryPage_QueryTypeStats
 
     public string Rank3Ratio => ((double)Rank3Count / TotalCount).ToString("P3");
 
-    public string GuaranteeType => QueryType == WishType.Permanent ? "保底内" : LastRank5ItemIsUp ? "小保底内" : "大保底内";
+    public string GuaranteeType => QueryType is WishType.Permanent or WishType.ChronicledWish ? "保底内" : LastRank5ItemIsUp ? "小保底内" : "大保底内";
 
-    public int BaodiWai => QueryType == WishType.Permanent ? 0 : (Rank5Count - UpItemCount);
+    public int BaodiWai => QueryType is WishType.Permanent or WishType.ChronicledWish ? 0 : (Rank5Count - UpItemCount);
 
-    public int BaodiBuwai => QueryType == WishType.Permanent ? Rank5Count : Rank5Count == 0 ? 0 : (2 * UpItemCount - Rank5Count + (LastRank5ItemIsUp ? 0 : 1));
+    public int BaodiBuwai => QueryType is WishType.Permanent or WishType.ChronicledWish ? Rank5Count : Rank5Count == 0 ? 0 : (2 * UpItemCount - Rank5Count + (LastRank5ItemIsUp ? 0 : 1));
 
     public string AverageRank5Count => ((TotalCount - CurrentGuarantee) / (double)Rank5Count).ToString("F2");
 
-    public string AverageUpRank5Count => QueryType == WishType.Permanent ? "0" : ((TotalCount - CurrentGuarantee - (LastRank5ItemIsUp ? 0 : LastRank5ItemGuarantee)) / (double)UpItemCount).ToString("F2");
+    public string AverageUpRank5Count => QueryType is WishType.Permanent or WishType.ChronicledWish ? "0" : ((TotalCount - CurrentGuarantee - (LastRank5ItemIsUp ? 0 : LastRank5ItemGuarantee)) / (double)UpItemCount).ToString("F2");
+
+    public bool ShowBaodiCount => QueryType is WishType.CharacterEvent or WishType.WeaponEvent;
 
 }
 

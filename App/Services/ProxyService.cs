@@ -34,7 +34,7 @@ internal class ProxyService : IDisposable
     {
         var request = e.HttpClient.Request;
         Debug.WriteLine(request.Url);
-        if (request.Host is "webstatic.mihoyo.com" or "webstatic-sea.hoyoverse.com" && request.RequestUri.AbsolutePath is "/hk4e/event/e20190909gacha-v2/index.html" or "/genshin/event/e20190909gacha-v2/index.html")
+        if (request.Host is "webstatic.mihoyo.com" or "webstatic-sea.hoyoverse.com" && request.RequestUri.AbsolutePath is "/hk4e/event/e20190909gacha-v3/index.html" or "/genshin/event/e20190909gacha-v3/index.html")
         {
             GotWishlogUrl(this, request.Url);
         }

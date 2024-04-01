@@ -92,7 +92,7 @@
                         <Run Text="平均Up五星所用抽数" />
                         <Run Foreground="#3BA272" Text="{x:Bind AverageUpRank5Count}" />
                     </TextBlock>
-                    <TextBlock>
+                    <TextBlock Visibility="{x:Bind ShowBaodiCount}">
                         <Run Text="小保底不歪" />
                         <Run Foreground="{ThemeResource Rarity5ForegroundBrush}" Text="{x:Bind BaodiBuwai}" />
                         <Run Text=" " />
