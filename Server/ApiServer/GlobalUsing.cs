@@ -1,0 +1,10 @@
+﻿global using Dapper;
+global using Mapster;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
+global using Xunkong.ApiClient;
+global using Xunkong.ApiServer.Filters;
+global using Xunkong.ApiServer.Models;
+global using Xunkong.ApiServer.Services;
+global using Xunkong.Core;
+global using Xunkong.Hoyolab.Wishlog;

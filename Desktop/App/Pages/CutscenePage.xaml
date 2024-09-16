@@ -1,0 +1,257 @@
+﻿<!--  Copyright (c) Microsoft Corporation. All rights reserved.  -->
+<!--  Licensed under the MIT License. See LICENSE in the project root for license information.  -->
+
+<Page x:Class="Xunkong.Desktop.Pages.CutscenePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:actions="using:Microsoft.Xaml.Interactions.Core"
+      xmlns:activity="using:Microsoft.Xaml.Interactivity"
+      xmlns:animations="using:CommunityToolkit.WinUI.UI.Animations"
+      xmlns:behaviors="using:CommunityToolkit.WinUI.UI.Behaviors"
+      xmlns:cc="using:CommunityToolkit.WinUI.UI.Controls"
+      xmlns:converters="using:Xunkong.Desktop.Converters"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:io="using:System.IO"
+      xmlns:local="using:Xunkong.Desktop.Pages"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:media="using:Microsoft.Xaml.Interactions.Media"
+      xmlns:ui="using:CommunityToolkit.WinUI.UI"
+      xmlns:xdc="using:Xunkong.Desktop.Controls"
+      xmlns:xg="using:Xunkong.GenshinData"
+      x:DefaultBindMode="OneWay"
+      mc:Ignorable="d">
+
+    <Page.Resources>
+        <converters:PlayerToIconConverter x:Key="PlayerToIconConverter" />
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+
+        <Grid x:Name="Grid_Tool"
+              Padding="24,0,36,0"
+              x:Load="False">
+            <StackPanel HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal">
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="过场动画" />
+                <Button Width="24"
+                        Height="24"
+                        Margin="8,0,0,0"
+                        Padding="0"
+                        Content="&#xE9CE;"
+                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                        Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
+                    <Button.Flyout>
+                        <Flyout>
+                            <Flyout.FlyoutPresenterStyle>
+                                <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
+                                    <Setter Property="MaxWidth" Value="600" />
+                                </Style>
+                            </Flyout.FlyoutPresenterStyle>
+                            <StackPanel>
+                                <TextBlock Text="页面内仅包含视频动画，不包含实时渲染动画；" />
+                                <TextBlock Text="大部分动画没有官方标题，命名时参考了观测枢和原声专辑；" />
+                                <TextBlock Text="建议下载至本地文件夹后观看，文件扩展名应修改为.mkv；" />
+                                <TextBlock Text="如果下载时消耗的流量过大，可能会出现拒绝访问的情况；" />
+                                <TextBlock>
+                                    <Run Text="使用内置播放器需要安装" />
+                                    <Hyperlink NavigateUri="https://www.microsoft.com/store/apps/9N4D0MSMP0PT" UnderlineStyle="None">VP9 视频扩展</Hyperlink>
+                                    <Run Text="，网络不好时体验比较糟糕。" />
+                                </TextBlock>
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                <AppBarButton Command="{x:Bind SetCutsceneFolderCommand}" Label="本地文件夹">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE8B7;" />
+                    </AppBarButton.Icon>
+                </AppBarButton>
+                <AppBarButton Icon="Link" Label="复制链接">
+                    <AppBarButton.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Command="{x:Bind CopyAllLinksCommand}" Text="全部" />
+                            <MenuFlyoutItem Command="{x:Bind CopySelectionLinksCommand}" Text="已选择" />
+                        </MenuFlyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+                <AppBarToggleButton x:Name="AppBarToggleButton_MutliSelction"
+                                    Click="AppBarToggleButton_MutliSelction_Click"
+                                    Label="多选">
+                    <AppBarToggleButton.Icon>
+                        <FontIcon Glyph="&#xE73A;" />
+                    </AppBarToggleButton.Icon>
+                </AppBarToggleButton>
+            </StackPanel>
+        </Grid>
+
+
+
+
+        <cc:AdaptiveGridView x:Name="GridView_Cutscene"
+                             Grid.Row="1"
+                             Padding="24,0,24,24"
+                             x:Load="False"
+                             DesiredWidth="248"
+                             ItemsSource="{x:Bind Cutscenes}"
+                             SelectedItem="{x:Bind SelectedCutscene, Mode=TwoWay}"
+                             SelectionMode="Single">
+            <GridView.ItemContainerStyle>
+                <Style BasedOn="{StaticResource DefaultGridViewItemStyle}" TargetType="GridViewItem">
+                    <Setter Property="Margin" Value="0,0,12,8" />
+                    <Setter Property="CornerRadius" Value="4" />
+                </Style>
+            </GridView.ItemContainerStyle>
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="xg:Cutscene">
+                    <Grid Height="135">
+                        <xdc:CachedImage HorizontalAlignment="Center"
+                                         ui:VisualExtensions.NormalizedCenterPoint="0.5"
+                                         Source="{x:Bind Poster}"
+                                         Stretch="UniformToFill">
+                            <animations:Explicit.Animations>
+                                <animations:AnimationSet x:Name="ImageZoomInAnimation">
+                                    <animations:ScaleAnimation EasingMode="EaseOut"
+                                                               EasingType="Circle"
+                                                               To="1.2"
+                                                               Duration="0:0:1.5" />
+                                </animations:AnimationSet>
+                                <animations:AnimationSet x:Name="ImageZoomOutAnimation">
+                                    <animations:ScaleAnimation EasingMode="EaseOut"
+                                                               EasingType="Circle"
+                                                               To="1"
+                                                               Duration="0:0:1.5" />
+                                </animations:AnimationSet>
+                            </animations:Explicit.Animations>
+                        </xdc:CachedImage>
+                        <Grid x:Name="Grid_Info"
+                              Background="#40000000"
+                              IsHitTestVisible="False"
+                              RequestedTheme="Dark">
+                            <Image Width="24"
+                                   Height="24"
+                                   Margin="4,2,0,0"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Top"
+                                   Opacity="0.8"
+                                   Source="{x:Bind Player, Converter={StaticResource PlayerToIconConverter}}" />
+                            <StackPanel Margin="8,0,0,4" VerticalAlignment="Bottom">
+                                <TextBlock Text="{x:Bind Title}" />
+                                <TextBlock FontSize="12"
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           Text="{x:Bind Chapter}" />
+                            </StackPanel>
+                        </Grid>
+                        <Button x:Name="Button_PlayCutscene"
+                                Width="36"
+                                Height="32"
+                                Padding="0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Click="Button_PlayCutscene_Click"
+                                Content="&#xE173;"
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                FontSize="16"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                RequestedTheme="Dark"
+                                Style="{ThemeResource DateTimePickerFlyoutButtonStyle}" />
+                        <activity:Interaction.Behaviors>
+                            <actions:EventTriggerBehavior EventName="PointerEntered">
+                                <behaviors:StartAnimationAction Animation="{Binding ElementName=ImageZoomInAnimation}" />
+                            </actions:EventTriggerBehavior>
+                            <actions:EventTriggerBehavior EventName="PointerExited">
+                                <behaviors:StartAnimationAction Animation="{Binding ElementName=ImageZoomOutAnimation}" />
+                            </actions:EventTriggerBehavior>
+                        </activity:Interaction.Behaviors>
+                    </Grid>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </cc:AdaptiveGridView>
+
+
+
+        <Grid x:Name="Grid_Info"
+              Grid.Row="2"
+              Height="220"
+              x:Load="False"
+              Background="{ThemeResource ControlAltFillColorTransparent}"
+              Visibility="Collapsed">
+            <StackPanel Orientation="Horizontal">
+                <xdc:CachedImage MinWidth="348"
+                                 Margin="24,12,24,12"
+                                 CornerRadius="8"
+                                 Source="{x:Bind SelectedCutscene.Poster}" />
+                <StackPanel Margin="0,24,0,0">
+                    <TextBlock FontSize="20"
+                               IsTextSelectionEnabled="True"
+                               Text="{x:Bind SelectedCutscene.Title}" />
+                    <TextBlock Margin="0,8,0,0"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               IsTextSelectionEnabled="True">
+                        <Run Text="{x:Bind SelectedCutscene.Group}" />
+                        <Run Text="" />
+                        <Run Text="{x:Bind SelectedCutscene.Chapter}" />
+                    </TextBlock>
+                    <TextBlock Margin="0,8,0,0"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               IsTextSelectionEnabled="True">
+                        <Run Text="文件名 " />
+                        <Run Text="{x:Bind io:Path.GetFileName(SelectedCutscene.Source)}" />
+                    </TextBlock>
+                    <TextBlock Margin="0,4,0,0"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               IsTextSelectionEnabled="True">
+                        <Run Text="文件大小 " />
+                        <Run Text="{x:Bind SelectedCutscene.SizeString}" />
+                    </TextBlock>
+                    <TextBlock Margin="0,4,0,0"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               IsTextSelectionEnabled="True"
+                               Visibility="{x:Bind SelectedCutscene.Comment, Converter={StaticResource StringToVisibilityConverter}}">
+                        <Run Text="备注 " />
+                        <Run Text="{x:Bind SelectedCutscene.Comment, TargetNullValue=}" />
+                    </TextBlock>
+                    <StackPanel Margin="0,8,0,0"
+                                Orientation="Horizontal"
+                                Spacing="8">
+                        <Button Command="{x:Bind DownloadSelctedCutsceneCommand}" Content="下载" />
+                        <Button Command="{x:Bind CopySelctedCutsceneLinkCommand}" Content="复制链接" />
+                        <!--<Button Command="{x:Bind DownloadWithPowerShellCommand}" Content="PowerShell 下载" />-->
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+            <Button x:Name="Button_CloseInfoGrid"
+                    Width="32"
+                    Height="32"
+                    Margin="0,12,36,0"
+                    Padding="0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Command="{x:Bind CloseInfoGridCommand}"
+                    Content="&#xE10A;"
+                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                    FontSize="16" />
+        </Grid>
+
+
+        <StackPanel Grid.RowSpan="3"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="8">
+            <TextBlock HorizontalAlignment="Center" Text="请前往以下网站查看过场动画" />
+            <HyperlinkButton HorizontalAlignment="Center"
+                             Content="https://github.com/xunkong/cutscene"
+                             NavigateUri="https://github.com/xunkong/cutscene" />
+        </StackPanel>
+
+
+    </Grid>
+</Page>

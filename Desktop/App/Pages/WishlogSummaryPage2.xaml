@@ -1,0 +1,566 @@
+﻿<!--  Copyright (c) Microsoft Corporation and Contributors.  -->
+<!--  Licensed under the MIT License.  -->
+
+<Page x:Class="Xunkong.Desktop.Pages.WishlogSummaryPage2"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:cc="using:CommunityToolkit.WinUI.UI.Controls"
+      xmlns:converters="using:Xunkong.Desktop.Converters"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:Xunkong.Desktop.Pages"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:models="using:Xunkong.Desktop.Models"
+      xmlns:xdc="using:Xunkong.Desktop.Controls"
+      x:DefaultBindMode="OneWay"
+      mc:Ignorable="d">
+
+
+    <Page.Resources>
+        <!--  卡池统计模板  -->
+        <DataTemplate x:Key="QueryTypeStatsDataTemplate" x:DataType="models:WishlogSummaryPage_QueryTypeStats">
+            <Grid Name="_Grid_QueryTypeStats"
+                  MaxHeight="240"
+                  Padding="12,8,12,12"
+                  Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                  BorderThickness="1"
+                  ColumnSpacing="40"
+                  CornerRadius="4">
+                <Grid.Resources>
+                    <Style BasedOn="{StaticResource BodyTextBlockStyle}" TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+                    </Style>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="{x:Bind QueryType, Converter={StaticResource EnumToDescriptionOrStringConverter}}" />
+                    <TextBlock FontSize="6" />
+                    <TextBlock>
+                        <Run Text="总计" />
+                        <Run FontSize="24"
+                             Foreground="Orange"
+                             Text="{x:Bind TotalCount}" />
+                    </TextBlock>
+                    <TextBlock Margin="0,8,0,0">
+                        <Run Foreground="{ThemeResource Rarity4ForegroundBrush}" Text="四星" /><Run Text="已垫" />
+                        <!--<Run Foreground="#3BA272" Text="保底内" />-->
+                        <Run Foreground="#3BA272" Text="{x:Bind GuaranteeStar4}" />
+                        <Run Foreground="#3BA272" Text="抽" />
+                    </TextBlock>
+                    <TextBlock>
+                        <Run Foreground="{ThemeResource Rarity5ForegroundBrush}" Text="五星" /><Run Text="已垫" />
+                        <Run Foreground="#3BA272" Text="{x:Bind GuaranteeType}" />
+                        <Run Foreground="#3BA272" Text="{x:Bind CurrentGuarantee}" />
+                        <Run Foreground="#3BA272" Text="抽" />
+                    </TextBlock>
+                    <TextBlock Margin="0,8,0,0">
+                        <Run Text="{x:Bind StartTime, Converter={StaticResource DateTimeOffsetToDateTimeStringConverter}}" />
+                        <LineBreak />
+                        <Run Text="{x:Bind EndTime, Converter={StaticResource DateTimeOffsetToDateTimeStringConverter}}" />
+                    </TextBlock>
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="概率" />
+                    <TextBlock FontSize="6" />
+                    <VariableSizedWrapGrid MaximumRowsOrColumns="4" Orientation="Horizontal">
+                        <TextBlock Foreground="{ThemeResource Rarity5ForegroundBrush}" Text="五星：" />
+                        <TextBlock Foreground="{ThemeResource Rarity5ForegroundBrush}" Text="{x:Bind Rank5Count}" />
+                        <TextBlock Foreground="{ThemeResource Rarity5ForegroundBrush}" VariableSizedWrapGrid.ColumnSpan="2">
+                            <Run Text="[" /><Run Text="{x:Bind Rank5Ratio}" /><Run Text="]" />
+                        </TextBlock>
+                        <TextBlock Foreground="{ThemeResource Rarity4ForegroundBrush}" Text="四星：" />
+                        <TextBlock Foreground="{ThemeResource Rarity4ForegroundBrush}" Text="{x:Bind Rank4Count}" />
+                        <TextBlock Foreground="{ThemeResource Rarity4ForegroundBrush}" VariableSizedWrapGrid.ColumnSpan="2">
+                            <Run Text="[" /><Run Text="{x:Bind Rank4Ratio}" /><Run Text="]" />
+                        </TextBlock>
+                        <TextBlock Foreground="{ThemeResource Rarity3ForegroundBrush}" Text="三星：" />
+                        <TextBlock Foreground="{ThemeResource Rarity3ForegroundBrush}" Text="{x:Bind Rank3Count}" />
+                        <TextBlock Foreground="{ThemeResource Rarity3ForegroundBrush}" VariableSizedWrapGrid.ColumnSpan="2">
+                            <Run Text="[" /><Run Text="{x:Bind Rank3Ratio}" /><Run Text="]" />
+                        </TextBlock>
+                    </VariableSizedWrapGrid>
+                    <TextBlock FontSize="6" />
+                    <TextBlock>
+                        <Run Text="平均五星所用抽数" />
+                        <Run Foreground="#3BA272" Text="{x:Bind AverageRank5Count}" />
+                    </TextBlock>
+                    <TextBlock>
+                        <Run Text="平均Up五星所用抽数" />
+                        <Run Foreground="#3BA272" Text="{x:Bind AverageUpRank5Count}" />
+                    </TextBlock>
+                    <TextBlock Visibility="{x:Bind ShowBaodiCount}">
+                        <Run Text="小保底不歪" />
+                        <Run Foreground="{ThemeResource Rarity5ForegroundBrush}" Text="{x:Bind BaodiBuwai}" />
+                        <Run Text=" " />
+                        <Run Text="小保底歪" />
+                        <Run Foreground="{ThemeResource Rarity4ForegroundBrush}" Text="{x:Bind BaodiWai}" />
+                    </TextBlock>
+                    <TextBlock>
+                        <Run Text="最欧" />
+                        <Run Foreground="{ThemeResource Rarity5ForegroundBrush}" Text="{x:Bind MinGuarantee}" />
+                        <Run Text=" " />
+                        <Run Text="最非" />
+                        <Run Foreground="{ThemeResource Rarity4ForegroundBrush}" Text="{x:Bind MaxGuarantee}" />
+                    </TextBlock>
+                </StackPanel>
+                <Grid Grid.Column="2" RowSpacing="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="五星记录" />
+                    <Button Name="_Button_ExpandScrollViewer"
+                            Padding="8,2,8,2"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Click="_Button_ExpandScrollViewer_Click"
+                            Content="&#xE70D;"
+                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                            Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
+                            Tag="{Binding ElementName=_ScrollViewer_Rank5Item}"
+                            ToolTipService.ToolTip="展开或收起">
+                        <Button.ContentTransitions>
+                            <TransitionCollection>
+                                <ContentThemeTransition />
+                            </TransitionCollection>
+                        </Button.ContentTransitions>
+                    </Button>
+                    <ScrollViewer x:Name="_ScrollViewer_Rank5Item"
+                                  Grid.Row="1"
+                                  Padding="0,0,16,0"
+                                  PointerExited="_ScrollViewer_Rank5Item_PointerExited"
+                                  Tag="{Binding ElementName=_Grid_QueryTypeStats}">
+                        <ItemsControl ItemsSource="{x:Bind Rank5Items}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <cc:WrapPanel HorizontalSpacing="4" Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="models:WishlogSummaryPage_Rank5Item">
+                                    <TextBlock Name="_TextBlock_Rank5Item"
+                                               FontFamily="{ThemeResource CustomFont}"
+                                               Foreground="{x:Bind Foreground}"
+                                               PointerEntered="_TextBlock_Rank5Item_PointerEntered"
+                                               Tag="{Binding ElementName=_ScrollViewer_Rank5Item, Path=DataContext}"
+                                               ToolTipService.ToolTip="{x:Bind Time, Converter={StaticResource DateTimeOffsetToDateTimeStringConverter}}">
+                                        <Run Text="{x:Bind Name}" /><Run Text="[" /><Run Text="{x:Bind Guarantee}" /><Run Text="]" />
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                </Grid>
+            </Grid>
+        </DataTemplate>
+        <!--  角色武器一览模板  -->
+        <DataTemplate x:Key="WishlogItemStatsDataTemplate" x:DataType="models:WishlogSummaryPage_ItemThumb">
+            <Grid x:Name="Grid_ItemThumb"
+                  Width="80"
+                  Height="98"
+                  CornerRadius="4"
+                  DoubleTapped="Grid_ItemThumb_DoubleTapped"
+                  IsDoubleTapEnabled="True"
+                  Tag="{x:Bind}">
+                <Image Width="80"
+                       Height="98"
+                       Source="{x:Bind Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}" />
+                <xdc:CachedImage Width="80"
+                                 Height="80"
+                                 VerticalAlignment="Top"
+                                 CornerRadius="4,4,16,4"
+                                 Source="{x:Bind Icon, Converter={StaticResource IconNameToImageUrlCoverter}}" />
+                <Image Width="18"
+                       Height="18"
+                       Margin="1"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       Source="{x:Bind Element, Converter={StaticResource ElementToElementImageConverter}}" />
+                <TextBlock Margin="0,0,0,1"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Bottom"
+                           FontSize="12"
+                           Foreground="#84603D"
+                           Text="{x:Bind Name}"
+                           TextTrimming="CharacterEllipsis" />
+                <Border Height="20"
+                        MinWidth="20"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Background="#60000000"
+                        CornerRadius="0,4,0,4">
+                    <TextBlock Margin="2"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               FontSize="12"
+                               Foreground="#F3F3F3"
+                               Text="{x:Bind Count}" />
+                </Border>
+            </Grid>
+        </DataTemplate>
+        <!--  角色武器活动祈愿模板  -->
+        <DataTemplate x:Key="WishEventStatsDataTemplate" x:DataType="models:WishlogSummaryPage_EventStats">
+            <Grid MinHeight="80"
+                  Margin="24,6,24,6"
+                  ColumnSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="152" />
+                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="72" />
+                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="Auto" MinWidth="350" />
+                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <StackPanel VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock FontSize="28" Text="{x:Bind Version}" />
+                        <TextBlock VerticalAlignment="Center"
+                                   FontSize="14"
+                                   Text="{x:Bind Name}"
+                                   TextLineBounds="TrimToBaseline" />
+                    </StackPanel>
+                    <TextBlock>
+                        <Run FontSize="12"
+                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                             Text="{x:Bind StartTime, Converter={StaticResource DateTimeOffsetToDateTimeStringConverter}}" />
+                        <LineBreak />
+                        <Run FontSize="12"
+                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                             Text="{x:Bind EndTime, Converter={StaticResource DateTimeOffsetToDateTimeStringConverter}}" />
+                    </TextBlock>
+                </StackPanel>
+                <AppBarSeparator Grid.Column="1" />
+                <TextBlock Grid.Column="2"
+                           VerticalAlignment="Center"
+                           FontSize="12">
+                    <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="总计" />
+                    <Run Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind TotalCount}" />
+                    <LineBreak />
+                    <Run Foreground="{ThemeResource Rarity5ForegroundBrush}" Text="五星" />
+                    <Run Foreground="{ThemeResource Rarity5ForegroundBrush}" Text="{x:Bind Rank5Count}" />
+                    <LineBreak />
+                    <Run Foreground="{ThemeResource Rarity4ForegroundBrush}" Text="四星" />
+                    <Run Foreground="{ThemeResource Rarity4ForegroundBrush}" Text="{x:Bind Rank4Count}" />
+                    <LineBreak />
+                    <Run Foreground="{ThemeResource Rarity3ForegroundBrush}" Text="三星" />
+                    <Run Foreground="{ThemeResource Rarity3ForegroundBrush}" Text="{x:Bind Rank3Count}" />
+                </TextBlock>
+                <AppBarSeparator Grid.Column="3" />
+                <ItemsControl Grid.Column="4" ItemsSource="{x:Bind UpItems}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="4" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="models:WishlogSummaryPage_UpItem">
+                            <Grid Width="64"
+                                  Height="78"
+                                  CornerRadius="4">
+                                <Image Width="64"
+                                       Height="78"
+                                       Source="{x:Bind Rarity, Converter={StaticResource RarityToBackgroundImageConverter}}"
+                                       Stretch="Uniform" />
+                                <xdc:CachedImage Width="64"
+                                                 Height="64"
+                                                 VerticalAlignment="Top"
+                                                 CornerRadius="4,4,16,4"
+                                                 Source="{x:Bind Icon, Converter={StaticResource IconNameToImageUrlCoverter}}" />
+                                <Image Width="16"
+                                       Height="16"
+                                       Margin="1"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Top"
+                                       Source="{x:Bind Element, Converter={StaticResource ElementToElementImageConverter}}" />
+                                <TextBlock Margin="0,0,0,1"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Bottom"
+                                           FontSize="10"
+                                           Foreground="#84603D"
+                                           Text="{x:Bind Name}"
+                                           TextTrimming="CharacterEllipsis" />
+                                <Border Height="18"
+                                        MinWidth="18"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top"
+                                        Background="#80000000"
+                                        CornerRadius="0,4,0,4"
+                                        IsHitTestVisible="False"
+                                        Visibility="{x:Bind AnyData, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <TextBlock Margin="2"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="12"
+                                               Foreground="#F3F3F3"
+                                               Text="{x:Bind Count}" />
+                                </Border>
+                                <Rectangle Fill="#60000000"
+                                           IsHitTestVisible="False"
+                                           Visibility="{x:Bind AnyData, Converter={StaticResource BoolToVisibilityReversedConverter}}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <AppBarSeparator Grid.Column="5" />
+                <ItemsControl Grid.Column="6" ItemsSource="{x:Bind Rank5Items}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <cc:WrapPanel HorizontalSpacing="4" Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="models:WishlogSummaryPage_Rank5Item">
+                            <TextBlock Foreground="{x:Bind Foreground}" ToolTipService.ToolTip="{x:Bind Time, Converter={StaticResource DateTimeOffsetToDateTimeStringConverter}}">
+                                <Run Text="{x:Bind Name}" /><Run Text="[" /><Run Text="{x:Bind Guarantee}" /><Run Text="]" />
+                            </TextBlock>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid x:Name="Grid_Content">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+
+
+        <!--  工具栏  -->
+        <Grid Padding="24,0,24,0" CornerRadius="4,0,0,4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBlock VerticalAlignment="Center"
+                       Style="{ThemeResource SubtitleTextBlockStyle}"
+                       Text="祈愿记录" />
+            <StackPanel Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal">
+                <AppBarButton Name="_AppBarButton_RefreshPage"
+                              Command="{x:Bind InitializePageDataCommand, Mode=OneTime}"
+                              CommandParameter="{StaticResource False}"
+                              Icon="Refresh"
+                              Label="刷新页面" />
+                <AppBarSeparator />
+                <AppBarButton Icon="OpenFile" Label="获取记录">
+                    <AppBarButton.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Command="{x:Bind GetWishlogFromCacheFileCommand, Mode=OneTime}"
+                                            CommandParameter="0"
+                                            Text="国服" />
+                            <MenuFlyoutItem Command="{x:Bind GetWishlogFromCacheFileCommand, Mode=OneTime}"
+                                            CommandParameter="1"
+                                            Text="国际服" />
+                            <MenuFlyoutItem Command="{x:Bind GetWishlogFromCacheFileCommand, Mode=OneTime}"
+                                            CommandParameter="2"
+                                            Text="云原神" />
+                            <MenuFlyoutSeparator />
+                            <MenuFlyoutItem Command="{x:Bind StartProxyCommand, Mode=OneTime}" Text="启动代理" />
+                            <MenuFlyoutItem Command="{x:Bind CloseProxyCommand, Mode=OneTime}" Text="关闭代理" />
+                            <MenuFlyoutSeparator />
+                            <MenuFlyoutItem Command="{x:Bind GetWishlogFromSavedWishlogUrlCommand, Mode=OneTime}"
+                                            CommandParameter="{StaticResource False}"
+                                            Text="增量更新" />
+                            <MenuFlyoutItem Command="{x:Bind GetWishlogFromSavedWishlogUrlCommand, Mode=OneTime}"
+                                            CommandParameter="{StaticResource True}"
+                                            Text="全量更新" />
+                            <MenuFlyoutSeparator />
+                            <MenuFlyoutItem Command="{x:Bind GetWishlogFromInputWishlogUrlCommand, Mode=OneTime}" Text="输入网址" />
+                            <MenuFlyoutItem Command="{x:Bind CopyCurrentAccountWishlogUrlCommand, Mode=OneTime}" Text="复制网址" />
+                        </MenuFlyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+                <AppBarButton Name="_AppBarButton_WishlogManage"
+                              Command="{x:Bind NavigateToWishlogManagePageCommand, Mode=OneTime}"
+                              Icon="Shuffle"
+                              Label="管理记录" />
+                <AppBarButton Name="_AppBarButton_WishEventHistory"
+                              Command="{x:Bind NavigateToWishEventHistoryPageCommand, Mode=OneTime}"
+                              Icon="Clock"
+                              Label="卡池历史" />
+                <AppBarSeparator />
+                <AppBarButton Label="记录备份">
+                    <AppBarButton.Icon>
+                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE753;" />
+                    </AppBarButton.Icon>
+                    <AppBarButton.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Command="{x:Bind QueryWishlogInCloudCommand, Mode=OneTime}" Text="查询记录数量" />
+                            <MenuFlyoutItem Command="{x:Bind UploadWishlogToCloudCommand, Mode=OneTime}"
+                                            CommandParameter="{StaticResource False}"
+                                            Text="增量上传" />
+                            <MenuFlyoutItem Command="{x:Bind UploadWishlogToCloudCommand, Mode=OneTime}"
+                                            CommandParameter="{StaticResource True}"
+                                            Text="全量上传" />
+                            <MenuFlyoutItem Command="{x:Bind DownloadWishlogFromCloudCompletelyCommand, Mode=OneTime}" Text="从云端恢复" />
+                            <MenuFlyoutSubItem Text="删除云端记录">
+                                <MenuFlyoutItem Foreground="OrangeRed"
+                                                IsHitTestVisible="False"
+                                                Text="删除云端记录？" />
+                                <MenuFlyoutItem Command="{x:Bind DeleteWishlogInCloudCompletelyCommand, Mode=OneTime}"
+                                                Foreground="OrangeRed"
+                                                Text="确认删除" />
+                            </MenuFlyoutSubItem>
+                        </MenuFlyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+            </StackPanel>
+        </Grid>
+
+
+
+        <Pivot Grid.Row="1">
+            <Pivot.Resources>
+                <Thickness x:Key="PivotItemMargin">0</Thickness>
+                <Style BasedOn="{StaticResource DefaultPivotHeaderItemStyle}" TargetType="PivotHeaderItem">
+                    <Setter Property="FontSize" Value="20" />
+                    <Setter Property="Height" Value="38" />
+                </Style>
+            </Pivot.Resources>
+            <Pivot.LeftHeader>
+                <StackPanel Grid.Row="1"
+                            Margin="24,0,12,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                    <ComboBox Name="ComboBox_AllUids"
+                              MinWidth="124"
+                              VerticalAlignment="Center"
+                              ItemsSource="{x:Bind AllUids}"
+                              SelectionChanged="ComboBox_AllUids_SelectionChanged" />
+                </StackPanel>
+            </Pivot.LeftHeader>
+            <Pivot.RightHeader>
+                <TextBlock Margin="0,0,24,0"
+                           VerticalAlignment="Center"
+                           FontSize="12"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                           Text="{x:Bind StateText}" />
+            </Pivot.RightHeader>
+
+            <PivotItem Header="数据统计">
+                <ScrollViewer Padding="24,0,24,0">
+                    <StackPanel Name="StackPanel_Stats"
+                                Margin="0,12,0,24"
+                                Spacing="16">
+                        <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   Style="{ThemeResource SubtitleTextBlockStyle}"
+                                   Text="卡池统计"
+                                   Visibility="{x:Bind QueryTypeStats, Converter={StaticResource ObjectToVisibilityConverter}}" />
+                        <ItemsControl ItemTemplate="{StaticResource QueryTypeStatsDataTemplate}" ItemsSource="{x:Bind QueryTypeStats}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Spacing="12" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+
+                        <MenuFlyoutSeparator Visibility="{x:Bind CharacterThumbs, Converter={StaticResource ObjectToVisibilityConverter}}" />
+                        <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   Style="{ThemeResource SubtitleTextBlockStyle}"
+                                   Text="角色一览"
+                                   Visibility="{x:Bind CharacterThumbs, Converter={StaticResource ObjectToVisibilityConverter}}" />
+                        <ItemsRepeater ItemTemplate="{StaticResource WishlogItemStatsDataTemplate}" ItemsSource="{x:Bind CharacterThumbs}">
+                            <ItemsRepeater.Layout>
+                                <UniformGridLayout MinColumnSpacing="4"
+                                                   MinRowSpacing="8"
+                                                   Orientation="Horizontal" />
+                            </ItemsRepeater.Layout>
+                        </ItemsRepeater>
+
+                        <MenuFlyoutSeparator Visibility="{x:Bind WeaponThumbs, Converter={StaticResource ObjectToVisibilityConverter}}" />
+                        <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   Style="{ThemeResource SubtitleTextBlockStyle}"
+                                   Text="武器一览"
+                                   Visibility="{x:Bind WeaponThumbs, Converter={StaticResource ObjectToVisibilityConverter}}" />
+                        <ItemsRepeater ItemTemplate="{StaticResource WishlogItemStatsDataTemplate}" ItemsSource="{x:Bind WeaponThumbs}">
+                            <ItemsRepeater.Layout>
+                                <UniformGridLayout MinColumnSpacing="4"
+                                                   MinRowSpacing="8"
+                                                   Orientation="Horizontal" />
+                            </ItemsRepeater.Layout>
+                        </ItemsRepeater>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </PivotItem>
+
+            <PivotItem Header="角色活动祈愿">
+                <ListView Padding="0,0,0,24"
+                          ItemContainerStyle="{StaticResource BlankListViewItemStyle}"
+                          ItemTemplate="{StaticResource WishEventStatsDataTemplate}"
+                          ItemsSource="{x:Bind CharacterEventStats}"
+                          SelectionMode="None" />
+            </PivotItem>
+
+            <PivotItem Header="武器活动祈愿">
+                <ListView Padding="0,0,0,24"
+                          ItemContainerStyle="{StaticResource BlankListViewItemStyle}"
+                          ItemTemplate="{StaticResource WishEventStatsDataTemplate}"
+                          ItemsSource="{x:Bind WeaponEventStats}"
+                          SelectionMode="None" />
+            </PivotItem>
+
+        </Pivot>
+
+
+
+
+        <FlyoutBase.AttachedFlyout>
+            <Flyout OverlayInputPassThroughElement="{x:Bind StackPanel_Stats}" Placement="Full">
+                <Flyout.FlyoutPresenterStyle>
+                    <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
+                        <Setter Property="MaxWidth" Value="540" />
+                        <Setter Property="MaxHeight" Value="600" />
+                    </Style>
+                </Flyout.FlyoutPresenterStyle>
+                <Grid RowSpacing="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Width="140" Text="卡池" />
+                        <TextBlock Width="180" Text="时间" />
+                        <TextBlock Width="100" Text="保底内抽数" />
+                        <TextBlock Width="80" Text="保底类型" />
+                    </StackPanel>
+                    <MenuFlyoutSeparator Grid.Row="1" />
+                    <ItemsRepeater Grid.Row="2" ItemsSource="{x:Bind ItemShowList}">
+                        <ItemsRepeater.Layout>
+                            <StackLayout Spacing="8" />
+                        </ItemsRepeater.Layout>
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="models:WishlogItemEx">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Width="140" Text="{x:Bind VersionAndName}" />
+                                    <TextBlock Width="180" Text="{x:Bind Time, Converter={StaticResource DateTimeOffsetToDateTimeStringConverter}}" />
+                                    <TextBlock Width="100" Text="{x:Bind GuaranteeIndex}" />
+                                    <TextBlock Width="80" Text="{x:Bind GuaranteeType}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                    </ItemsRepeater>
+                </Grid>
+            </Flyout>
+        </FlyoutBase.AttachedFlyout>
+
+
+
+
+
+
+
+    </Grid>
+</Page>

@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Version>0.1.0</Version>
+		<Authors>Scighost</Authors>
+		<Company>Xunkong</Company>
+		<Description>Xunkong API client.</Description>
+		<PackageProjectUrl>https://github.com/xunkong</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/xunkong/server</RepositoryUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageTags>xunkong genshin</PackageTags>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Common\Xunkong.GenshinData\Xunkong.GenshinData.csproj" />
+		<ProjectReference Include="..\..\Common\Xunkong.Hoyolab\Xunkong.Hoyolab.csproj" />
+	</ItemGroup>
+
+</Project>

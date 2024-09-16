@@ -1,0 +1,239 @@
+﻿<UserControl x:Class="Xunkong.Desktop.Controls.DailyNoteThumbCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:Xunkong.Desktop.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             x:DefaultBindMode="OneWay"
+             mc:Ignorable="d">
+
+    <Button Padding="0">
+        <Button.Flyout>
+            <Flyout>
+                <local:DailyNoteCard DailyNoteInfo="{x:Bind DailyNoteInfo}"
+                                     Error="{x:Bind Error}"
+                                     ErrorMessage="{x:Bind ErrorMessage}"
+                                     GenshinRoleInfo="{x:Bind GenshinRoleInfo}"
+                                     HoyolabUserInfo="{x:Bind HoyolabUserInfo}" />
+            </Flyout>
+        </Button.Flyout>
+        <Button.ContextFlyout>
+            <MenuFlyout>
+                <MenuFlyoutItem Command="{x:Bind RefreshCommand}"
+                                Icon="Refresh"
+                                Text="刷新便笺" />
+                <MenuFlyoutItem Command="{x:Bind PinToStartMenuCommand}"
+                                Icon="Pin"
+                                Text="固定到开始屏幕" />
+                <MenuFlyoutItem Command="{x:Bind CopyCookieCommand}"
+                                Icon="Copy"
+                                Text="复制 Cookie" />
+            </MenuFlyout>
+        </Button.ContextFlyout>
+
+
+        <Grid x:Name="c_Grid_Base"
+              MinWidth="284"
+              Padding="12"
+              RowSpacing="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+
+            <StackPanel Orientation="Horizontal" Spacing="16">
+                <!--  头像  -->
+                <Border Width="48"
+                        Height="48"
+                        Margin="4,0,0,0"
+                        CornerRadius="1000">
+                    <local:CachedImage Source="{x:Bind HoyolabUserInfo.AvatarUrl}" />
+                </Border>
+                <!--  昵称、等级  -->
+                <StackPanel VerticalAlignment="Center" Spacing="4">
+                    <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind GenshinRoleInfo.Nickname}" />
+                    <TextBlock FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                        <Run Text="{x:Bind GenshinRoleInfo.RegionName}" />
+                        <Run Text="{x:Bind GenshinRoleInfo.Level}" />
+                        <Run Text="级" />
+                    </TextBlock>
+                </StackPanel>
+                <!--  探索派遣  -->
+                <StackPanel Margin="4,-4,0,0"
+                            VerticalAlignment="Center"
+                            Visibility="{x:Bind DailyNoteInfo, Converter={StaticResource ObjectToVisibilityConverter}}">
+                    <Image Width="28"
+                           Height="28"
+                           Source="{StaticResource Image_Explore}"
+                           Stretch="Uniform" />
+                    <TextBlock HorizontalAlignment="Center"
+                               FontSize="12"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                        <Run Text="{x:Bind DailyNoteInfo.FinishedExpeditionNumber}" />
+                        <Run Text="/" />
+                        <Run Text="{x:Bind DailyNoteInfo.CurrentExpeditionNumber}" />
+                    </TextBlock>
+                </StackPanel>
+                <!--  参量质变仪  -->
+                <StackPanel VerticalAlignment="Center" Visibility="{x:Bind DailyNoteInfo, Converter={StaticResource ObjectToVisibilityConverter}}">
+                    <Image Width="20"
+                           Margin="0,0,0,4"
+                           Source="{StaticResource Image_Transformer}" />
+                    <TextBlock VerticalAlignment="Center"
+                               FontSize="12"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               Text="未获得"
+                               Visibility="{x:Bind DailyNoteInfo.Transformer.Obtained, Converter={StaticResource BoolToVisibilityReversedConverter}}" />
+                    <Grid Visibility="{x:Bind DailyNoteInfo.Transformer.Obtained, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock VerticalAlignment="Center"
+                                   FontSize="12"
+                                   Foreground="OrangeRed"
+                                   Text="可使用"
+                                   Visibility="{x:Bind DailyNoteInfo.Transformer.RecoveryTime.Reached, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <TextBlock VerticalAlignment="Center"
+                                   FontSize="12"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   Text="冷却中"
+                                   Visibility="{x:Bind DailyNoteInfo.Transformer.RecoveryTime.Reached, Converter={StaticResource BoolToVisibilityReversedConverter}}" />
+                    </Grid>
+                </StackPanel>
+            </StackPanel>
+
+
+            <StackPanel Grid.Row="1"
+                        Grid.ColumnSpan="2"
+                        VerticalAlignment="Bottom"
+                        Orientation="Horizontal"
+                        Spacing="12"
+                        Visibility="{x:Bind Error, Converter={StaticResource BoolToVisibilityReversedConverter}}">
+                <!--  树脂  -->
+                <StackPanel Spacing="4">
+                    <Image Width="20"
+                           Height="20"
+                           Source="{StaticResource Image_Resin}"
+                           Stretch="Uniform" />
+                    <TextBlock HorizontalAlignment="Center"
+                               FontSize="12"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                        <Run Text="{x:Bind DailyNoteInfo.CurrentResin}" />
+                        <Run Text="/" />
+                        <Run Text="{x:Bind DailyNoteInfo.MaxResin}" />
+                    </TextBlock>
+                </StackPanel>
+                <!--  树脂满时间  -->
+                <StackPanel Grid.Column="1">
+                    <StackPanel Spacing="4">
+                        <Image Width="20"
+                               Height="20"
+                               Source="{StaticResource Image_ResinMax}"
+                               Stretch="Uniform" />
+                        <TextBlock HorizontalAlignment="Center"
+                                   FontSize="12"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   Text="{x:Bind DailyNoteInfo.ResinFullTime, Converter={StaticResource DateTimeOffsetToTimeStringConverter}}" />
+                    </StackPanel>
+                </StackPanel>
+                <!--  洞天宝钱  -->
+                <StackPanel Spacing="4">
+                    <Image Width="20"
+                           Height="20"
+                           Source="{StaticResource Image_HomeCoin}"
+                           Stretch="Uniform" />
+                    <TextBlock HorizontalAlignment="Center"
+                               FontSize="12"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                        <Run Text="{x:Bind DailyNoteInfo.CurrentHomeCoin}" />
+                        <Run Text="/" />
+                        <Run Text="{x:Bind DailyNoteInfo.MaxHomeCoin}" />
+                    </TextBlock>
+                </StackPanel>
+                <!--  每日任务  -->
+                <StackPanel Grid.Column="1">
+                    <StackPanel Spacing="4">
+                        <Image Width="20"
+                               Height="20"
+                               Source="{StaticResource Image_QuestEvent}"
+                               Stretch="Uniform" />
+                        <TextBlock HorizontalAlignment="Center"
+                                   FontSize="12"
+                                   Foreground="{x:Bind DailyNoteInfo, Converter={StaticResource QuestEventStatsColorConverter}}"
+                                   Text="{x:Bind DailyNoteInfo, Converter={StaticResource QuestEventStatsStringConverter}}" />
+                    </StackPanel>
+                </StackPanel>
+
+            </StackPanel>
+
+
+            <Button Margin="0,-12,-12,0"
+                    Padding="4,2,4,2"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Content="&#xE712;"
+                    CornerRadius="0,4,0,4"
+                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
+                <Button.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Command="{x:Bind RefreshCommand}"
+                                        Icon="Refresh"
+                                        Text="刷新便笺" />
+                        <MenuFlyoutItem Command="{x:Bind PinToStartMenuCommand}"
+                                        Icon="Pin"
+                                        Text="固定到开始屏幕" />
+                        <MenuFlyoutItem Command="{x:Bind CopyCookieCommand}"
+                                        Icon="Copy"
+                                        Text="复制 Cookie" />
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+
+
+            <!--  出错了  -->
+            <StackPanel Grid.Row="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Visibility="{x:Bind Error, Converter={StaticResource BoolToVisibilityConverter}}">
+                <TextBlock HorizontalAlignment="Center"
+                           Foreground="{ThemeResource SystemFillColorCautionBrush}"
+                           Text="出错了" />
+                <TextBlock FontSize="12"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                           Text="{x:Bind ErrorMessage}" />
+            </StackPanel>
+
+
+
+            <!--  验证账号  -->
+            <Button Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                    Command="{x:Bind VerifyCommand, Mode=OneTime}"
+                    Content="验证账号"
+                    Visibility="{x:Bind NeedVerification, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+
+
+            <FlyoutBase.AttachedFlyout>
+                <Flyout x:Name="Flyout_WebBridge" Placement="Full">
+                    <Flyout.FlyoutPresenterStyle>
+                        <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
+                            <Setter Property="Padding" Value="0" />
+                        </Style>
+                    </Flyout.FlyoutPresenterStyle>
+                </Flyout>
+            </FlyoutBase.AttachedFlyout>
+
+
+
+
+
+
+
+        </Grid>
+
+    </Button>
+
+</UserControl>

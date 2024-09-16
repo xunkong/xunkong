@@ -1,0 +1,149 @@
+﻿<Page x:Class="Xunkong.Desktop.Pages.WelcomPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:Xunkong.Desktop.Pages"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:xdc="using:Xunkong.Desktop.Controls"
+      x:DefaultBindMode="OneWay"
+      mc:Ignorable="d">
+
+    <Page.Resources>
+        <Style BasedOn="{StaticResource BodyTextBlockStyle}" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="FontSize" Value="16" />
+        </Style>
+    </Page.Resources>
+
+    <Grid>
+
+        <xdc:CachedImage HorizontalAlignment="Center"
+                         VerticalAlignment="Top"
+                         Source="ms-appx:///Assets/Images/102203689_p0.jpg"
+                         Stretch="UniformToFill" />
+
+        <Rectangle HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch"
+                   Fill="{ThemeResource ControlOnImageFillColorDefaultBrush}" />
+
+
+        <StackPanel Margin="96,48,96,48"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+
+            <StackPanel x:Name="Tip_1" Spacing="16">
+                <Image Width="80"
+                       HorizontalAlignment="Left"
+                       Source="ms-appx:///Assets/Logos/logo.png" />
+                <TextBlock FontSize="32" Text="寻空" />
+                <TextBlock Margin="0,-8,0,16"
+                           FontSize="20"
+                           Text="记录旅途中发生的事" />
+                <TextBlock Text="本应用使用 MIT 许可证协议开源，并免费发布，但是不提供任何可用性保证。" />
+                <TextBlock Text="在使用之前，您需要了解以下内容：" />
+            </StackPanel>
+
+            <StackPanel x:Name="Tip_2"
+                        Spacing="16"
+                        Visibility="Collapsed">
+                <TextBlock Margin="0,0,0,16"
+                           FontSize="32"
+                           Text="风险提醒" />
+                <TextBlock Text="「寻空」是原神的第三方工具，本应用严格遵守相关法律，不会新增、修改、删除您的个人账号的数据，但是任何第三方工具都可能会有一定的风险。" />
+                <TextBlock Text="点击下一步则代表您理解并接受未知的风险，如不接受请关闭并卸载本应用。" />
+            </StackPanel>
+
+            <StackPanel x:Name="Tip_3"
+                        Spacing="16"
+                        Visibility="Collapsed">
+                <TextBlock Margin="0,0,0,16"
+                           FontSize="32"
+                           Text="隐私 &amp; 用户数据" />
+                <TextBlock Text=" AppCenter ">
+                    <Run Text="为了更好地改进应用的体验，「寻空」会使用" />
+                    <Hyperlink NavigateUri="https://appcenter.ms/" UnderlineStyle="None">AppCenter</Hyperlink>
+                    <Run Text="上传事件日志，上传的内容中不包含个人数据，且仅用于统计各功能的使用情况。" />
+                </TextBlock>
+                <TextBlock Margin="0,-8,0,0" Text="上传日志前需要征求您的同意，您也可以随时在设置中开启或关闭此功能。" />
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <Button Name="Button_AgreeAppCenter"
+                            Click="Button_AgreeAppCenter_Click"
+                            Content="同意" />
+                    <Button Name="Button_DeclineAppCenter"
+                            Click="Button_DeclineAppCenter_Click"
+                            Content="拒绝" />
+                    <TextBlock Name="TextBlock_AppCenterState"
+                               VerticalAlignment="Center"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                </StackPanel>
+                <TextBlock Text="您的个人数据和其他文件保存在「我的文档\Xunkong」文件夹中。" />
+                <TextBlock>
+                    <Run Text="存储位置：" />
+                    <Run Text="{x:Bind GetXunkongDataPath()}" />
+                </TextBlock>
+                <Button Name="_Button_Privacy"
+                        Click="_Button_Privacy_Click"
+                        Content="隐私策略" />
+            </StackPanel>
+
+            <StackPanel x:Name="Tip_4"
+                        Spacing="16"
+                        Visibility="Collapsed">
+                <TextBlock Margin="0,0,0,16"
+                           FontSize="32"
+                           Text="依赖组件" />
+                <TextBlock>
+                    <Run Text="「寻空」的部分功能依赖 WebView2，您的设备上需要存在" />
+                    <Hyperlink NavigateUri="https://developer.microsoft.com/zh-cn/microsoft-edge/webview2/" UnderlineStyle="None">WebView2 Runtime</Hyperlink>
+                    <Run Text="。" />
+                </TextBlock>
+
+                <TextBlock>
+                    <Run Text="状态:" />
+                    <Run Text="{x:Bind WebView2State}" />
+                </TextBlock>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <Button Name="_Button_RefreshStats"
+                            Click="_Button_RefreshStats_Click"
+                            Content="刷新状态" />
+                </StackPanel>
+                <TextBlock Text="「寻空」使用了 Windows 11 系统上的图标字体，在 Windows 10 系统上可能会出现乱码问题。" />
+                <TextBlock Text="下行左侧是一个点赞图标，如果不是，您需要安装缺失的字体。" />
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <SymbolIcon HorizontalAlignment="Left" Symbol="Like" />
+                    <Button Name="_Button_InstallFont"
+                            Click="_Button_InstallFont_Click"
+                            Content="安装 Segoe Fluent Icons" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Margin="0,48,0,0"
+                        Orientation="Horizontal"
+                        Spacing="16">
+                <Button x:Name="_Button_Next"
+                        Click="_Button_Next_Click"
+                        Content="下一步" />
+                <TextBlock x:Name="_TextBlock_ClockDown"
+                           VerticalAlignment="Center"
+                           Visibility="Collapsed" />
+            </StackPanel>
+
+
+        </StackPanel>
+
+        <HyperlinkButton Grid.Row="1"
+                         Grid.Column="1"
+                         Margin="0,0,12,8"
+                         HorizontalAlignment="Right"
+                         VerticalAlignment="Bottom"
+                         Content="图片作者：Twitter@anna_drw01"
+                         FontSize="14"
+                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                         NavigateUri="https://twitter.com/anna_drw01" />
+
+    </Grid>
+
+
+
+</Page>
