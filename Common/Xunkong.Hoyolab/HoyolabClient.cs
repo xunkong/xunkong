@@ -31,11 +31,17 @@ public class HoyolabClient
     private const string x_rpc_app_version = "x-rpc-app_version";
     private const string x_rpc_device_id = "x-rpc-device_id";
     private const string x_rpc_client_type = "x-rpc-client_type";
-    private const string UAContent = $"Mozilla/5.0 miHoYoBBS/{AppVersion}";
-    private const string AppVersion = "2.58.2";
-    private static readonly string DeviceId = Guid.NewGuid().ToString("D");
+    private const string x_rpc_device_fp = "x-rpc-device_fp";
+    private const string x_rpc_language = "X-Rpc-Language";
+    public const string UAContent = $"Mozilla/5.0 (Linux; Android 13; Pixel 5 Build/TQ3A.230901.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/118.0.0.0 Mobile Safari/537.36 miHoYoBBS/{AppVersion}";
+    public const string AppVersion = "2.75.2";
 
     #endregion
+
+
+    public string DeviceId { get; set; } = Guid.NewGuid().ToString("D");
+
+    public string DeviceFp { get; set; } = "0000000000000";
 
 
     private readonly HttpClient _httpClient;
@@ -83,6 +89,57 @@ public class HoyolabClient
         await CommonSendAsync<object>(request, cancellationToken ?? CancellationToken.None);
         return;
     }
+
+
+
+    /// <summary>
+    /// 获取设备指纹信息
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public async Task<string> GetDeviceFpAsync(CancellationToken cancellationToken = default)
+    {
+        static string GenerateSeedId()
+        {
+            var bytes = new byte[8];
+            Random.Shared.NextBytes(bytes);
+            return Convert.ToHexString(bytes).ToLower();
+        }
+        static string GenerateProductName()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            char[] name = Random.Shared.GetItems<char>(chars, 6);
+            return new string(name);
+        }
+        const string url = "https://public-data-api.mihoyo.com/device-fp/api/getFp";
+        string productName = GenerateProductName();
+        string postContent = $$"""
+            {
+                "device_id": "{{GenerateSeedId()}}",
+                "seed_id": "{{Guid.NewGuid():D}}",
+                "seed_time": "{{DateTimeOffset.Now.ToUnixTimeMilliseconds()}}",
+                "platform": "2",
+                "device_fp": "{{DeviceFp}}",
+                "app_name": "bbs_cn",
+                "ext_fields": "{\"proxyStatus\":0,\"isRoot\":0,\"romCapacity\":\"512\",\"deviceName\":\"Pixel5\",\"productName\":\"{{productName}}\",\"romRemain\":\"512\",\"hostname\":\"db1ba5f7c000000\",\"screenSize\":\"1080x2400\",\"isTablet\":0,\"aaid\":\"\",\"model\":\"Pixel5\",\"brand\":\"google\",\"hardware\":\"windows_x86_64\",\"deviceType\":\"redfin\",\"devId\":\"REL\",\"serialNumber\":\"unknown\",\"sdCapacity\":125943,\"buildTime\":\"1704316741000\",\"buildUser\":\"cloudtest\",\"simState\":0,\"ramRemain\":\"124603\",\"appUpdateTimeDiff\":1716369357492,\"deviceInfo\":\"google\\\/{{productName}}\\\/redfin:13\\\/TQ3A.230901.001\\\/2311.40000.5.0:user\\\/release-keys\",\"vaid\":\"\",\"buildType\":\"user\",\"sdkVersion\":\"33\",\"ui_mode\":\"UI_MODE_TYPE_NORMAL\",\"isMockLocation\":0,\"cpuType\":\"arm64-v8a\",\"isAirMode\":0,\"ringMode\":2,\"chargeStatus\":3,\"manufacturer\":\"Google\",\"emulatorStatus\":0,\"appMemory\":\"512\",\"osVersion\":\"13\",\"vendor\":\"unknown\",\"accelerometer\":\"\",\"sdRemain\":123276,\"buildTags\":\"release-keys\",\"packageName\":\"com.mihoyo.hyperion\",\"networkType\":\"WiFi\",\"oaid\":\"\",\"debugStatus\":1,\"ramCapacity\":\"125943\",\"magnetometer\":\"\",\"display\":\"TQ3A.230901.001\",\"appInstallTimeDiff\":1706444666737,\"packageVersion\":\"2.20.2\",\"gyroscope\":\"\",\"batteryStatus\":85,\"hasKeyboard\":10,\"board\":\"windows\"}",
+                "bbs_device_id": "{{DeviceId}}"
+            }
+            """;
+        var request = new HttpRequestMessage(HttpMethod.Post, url)
+        {
+            Content = new StringContent(postContent),
+        };
+        request.Headers.TryAddWithoutValidation("Content-Type", "application/json");
+        var data = await CommonSendAsync<DeviceFpResult>(request, cancellationToken);
+        if (data.Code != 200)
+        {
+            throw new HoyolabException(data.Code, data.Message);
+        }
+        DeviceFp = data.DeviceFp;
+        return data.DeviceFp;
+    }
+
+
 
 
     /// <summary>
@@ -146,6 +203,7 @@ public class HoyolabClient
         var request = new HttpRequestMessage(HttpMethod.Get, $"https://api-takumi.mihoyo.com/event/bbs_sign_reward/info?act_id=e202009291139501&region={role.Region}&uid={role.Uid}");
         request.Headers.Add(Cookie, role.Cookie);
         request.Headers.Add(x_rpc_device_id, DeviceId);
+        request.Headers.Add(x_rpc_device_fp, DeviceFp);
         request.Headers.Add(X_Reuqest_With, com_mihoyo_hyperion);
         request.Headers.Add(Referer, "https://webstatic.mihoyo.com/bbs/event/signin-ys/index.html?bbs_auth_required=true&act_id=e202009291139501&utm_source=bbs&utm_medium=mys&utm_campaign=icon");
         return await CommonSendAsync<SignInInfo>(request, cancellationToken);
@@ -174,6 +232,7 @@ public class HoyolabClient
         request.Headers.Add(DS, DynamicSecret.CreateSecret());
         request.Headers.Add(x_rpc_app_version, AppVersion);
         request.Headers.Add(x_rpc_device_id, DeviceId);
+        request.Headers.Add(x_rpc_device_fp, DeviceFp);
         request.Headers.Add(x_rpc_client_type, "5");
         request.Headers.Add(X_Reuqest_With, com_mihoyo_hyperion);
         request.Headers.Add(Referer, "https://webstatic.mihoyo.com/bbs/event/signin-ys/index.html?bbs_auth_required=true&act_id=e202009291139501&utm_source=bbs&utm_medium=mys&utm_campaign=icon");
@@ -204,6 +263,8 @@ public class HoyolabClient
         request.Headers.Add(Referer, "https://webstatic.mihoyo.com/app/community-game-records/?game_id=2&utm_source=bbs&utm_medium=mys&utm_campaign=box");
         request.Headers.Add(x_rpc_app_version, AppVersion);
         request.Headers.Add(x_rpc_client_type, "5");
+        request.Headers.Add(x_rpc_device_id, DeviceId);
+        request.Headers.Add(x_rpc_device_fp, DeviceFp);
         request.Headers.Add(X_Reuqest_With, com_mihoyo_hyperion);
         return await CommonSendAsync<GameRecordSummary>(request);
     }
@@ -227,6 +288,8 @@ public class HoyolabClient
         request.Headers.Add(DS, DynamicSecret.CreateSecret2(url, obj));
         request.Headers.Add(Referer, "https://webstatic.mihoyo.com/app/community-game-records/?bbs_presentation_style=fullscreen");
         request.Headers.Add(x_rpc_app_version, AppVersion);
+        request.Headers.Add(x_rpc_device_id, DeviceId);
+        request.Headers.Add(x_rpc_device_fp, DeviceFp);
         request.Headers.Add(x_rpc_client_type, "5");
         request.Headers.Add(X_Reuqest_With, com_mihoyo_hyperion);
         request.Content = JsonContent.Create(obj);
@@ -267,6 +330,8 @@ public class HoyolabClient
         request.Headers.Add(DS, DynamicSecret.CreateSecret2(url));
         request.Headers.Add(Referer, "https://webstatic.mihoyo.com/app/community-game-records/?game_id=2&utm_source=bbs&utm_medium=mys&utm_campaign=box");
         request.Headers.Add(x_rpc_app_version, AppVersion);
+        request.Headers.Add(x_rpc_device_id, DeviceId);
+        request.Headers.Add(x_rpc_device_fp, DeviceFp);
         request.Headers.Add(x_rpc_client_type, "5");
         request.Headers.Add(X_Reuqest_With, com_mihoyo_hyperion);
         return await CommonSendAsync<JsonNode>(request);
@@ -287,6 +352,8 @@ public class HoyolabClient
         request.Headers.Add(DS, DynamicSecret.CreateSecret2(url));
         request.Headers.Add(Referer, "https://webstatic.mihoyo.com/app/community-game-records/?game_id=2&utm_source=bbs&utm_medium=mys&utm_campaign=box");
         request.Headers.Add(x_rpc_app_version, AppVersion);
+        request.Headers.Add(x_rpc_device_id, DeviceId);
+        request.Headers.Add(x_rpc_device_fp, DeviceFp);
         request.Headers.Add(x_rpc_client_type, "5");
         request.Headers.Add(X_Reuqest_With, com_mihoyo_hyperion);
         var data = await CommonSendAsync<DailyNoteInfo>(request);
@@ -384,6 +451,8 @@ public class HoyolabClient
         request.Headers.Add(DS, DynamicSecret.CreateSecret2(url));
         request.Headers.Add(Referer, "https://webstatic.mihoyo.com/app/community-game-records/?game_id=2&utm_source=bbs&utm_medium=mys&utm_campaign=box");
         request.Headers.Add(x_rpc_app_version, AppVersion);
+        request.Headers.Add(x_rpc_device_id, DeviceId);
+        request.Headers.Add(x_rpc_device_fp, DeviceFp);
         request.Headers.Add(x_rpc_client_type, "5");
         request.Headers.Add(X_Reuqest_With, com_mihoyo_hyperion);
         var data = await CommonSendAsync<SpiralAbyssInfo>(request);

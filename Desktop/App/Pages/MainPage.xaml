@@ -173,6 +173,10 @@
                                                             Style="{ThemeResource DateTimePickerFlyoutButtonStyle}">
                                                         <Button.Flyout>
                                                             <MenuFlyout Placement="RightEdgeAlignedTop">
+                                                                <MenuFlyoutItem x:Name="_Button_Verify"
+                                                                                Click="_Button_Verify_Click"
+                                                                                Icon="Contact"
+                                                                                Text="校验账号" />
                                                                 <MenuFlyoutItem x:Name="_Button_PinTile"
                                                                                 Click="_Button_PinTile_Click"
                                                                                 Icon="Pin"

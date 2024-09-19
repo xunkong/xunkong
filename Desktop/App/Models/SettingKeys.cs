@@ -313,6 +313,15 @@ internal abstract class SettingKeys
     [Backup]
     public const string WallpaperRequestFormat = nameof(WallpaperRequestFormat);
 
+
+    public const string HoyolabDeviceId = nameof(HoyolabDeviceId);
+
+
+    public const string HoyolabDeviceFp = nameof(HoyolabDeviceFp);
+
+
+    public const string HoyolabDeviceFpLastUpdateTime = nameof(HoyolabDeviceFpLastUpdateTime);
+
 }
 
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Xunkong.Hoyolab;
 using Xunkong.Hoyolab.Account;
@@ -23,6 +24,39 @@ internal class HoyolabService
     public HoyolabService(HoyolabClient hoyolabClient)
     {
         _hoyolabClient = hoyolabClient;
+        _ = UpdateDeviceFpAsync();
+    }
+
+
+    /// <summary>
+    /// 更新设备指纹信息
+    /// </summary>
+    /// <param name="forceUpdate"></param>
+    /// <returns></returns>
+    public async Task UpdateDeviceFpAsync(bool forceUpdate = false)
+    {
+        try
+        {
+            string? id = AppSetting.GetValue<string>(SettingKeys.HoyolabDeviceId);
+            string? fp = AppSetting.GetValue<string>(SettingKeys.HoyolabDeviceFp);
+            DateTimeOffset lastUpdateTime = AppSetting.GetValue<DateTimeOffset>(SettingKeys.HoyolabDeviceFpLastUpdateTime);
+            if (!forceUpdate && !string.IsNullOrWhiteSpace(id) && !string.IsNullOrWhiteSpace(fp))
+            {
+                _hoyolabClient.DeviceId = id;
+                _hoyolabClient.DeviceFp = fp;
+            }
+            if (forceUpdate || DateTimeOffset.Now - lastUpdateTime > TimeSpan.FromDays(3))
+            {
+                await _hoyolabClient.GetDeviceFpAsync();
+                AppSetting.SetValue(SettingKeys.HoyolabDeviceId, _hoyolabClient.DeviceId);
+                AppSetting.SetValue(SettingKeys.HoyolabDeviceFp, _hoyolabClient.DeviceFp);
+                AppSetting.SetValue(SettingKeys.HoyolabDeviceFpLastUpdateTime, DateTimeOffset.Now);
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+        }
     }
 
 

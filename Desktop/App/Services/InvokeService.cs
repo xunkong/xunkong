@@ -23,6 +23,7 @@ internal class InvokeService
             if (uids.Any())
             {
                 var service = new HoyolabService(new HoyolabClient());
+                await service.UpdateDeviceFpAsync();
                 foreach (var uid in uids)
                 {
                     try
@@ -121,6 +122,7 @@ internal class InvokeService
         try
         {
             var service = new HoyolabService(new HoyolabClient());
+            await service.UpdateDeviceFpAsync();
             var users = service.GetGenshinRoleInfoList();
             if (!users.Any())
             {
@@ -192,6 +194,7 @@ internal class InvokeService
         try
         {
             var service = new HoyolabService(new HoyolabClient());
+            await service.UpdateDeviceFpAsync();
             var roles = service.GetGenshinRoleInfoList();
             foreach (var role in roles)
             {

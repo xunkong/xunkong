@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Window x:Class="Xunkong.Desktop.BattleChronicleWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="using:Xunkong.Desktop"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xdc="using:Xunkong.Desktop.Controls"
+        x:DefaultBindMode="OneWay"
+        mc:Ignorable="d">
+
+    <Grid Margin="0,32,0,0">
+        <xdc:BBSWebBridge x:Name="bridge"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          HorizontalContentAlignment="Stretch"
+                          VerticalContentAlignment="Stretch"
+                          GenshinRole="{x:Bind GenshinRole}" />
+    </Grid>
+</Window>

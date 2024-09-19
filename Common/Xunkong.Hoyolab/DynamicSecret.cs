@@ -6,7 +6,7 @@ namespace Xunkong.Hoyolab;
 internal abstract class DynamicSecret
 {
 
-    private static readonly string ApiSalt = "V1PYbXKQY7ysdx3MNCcNbsE1LtY2QZpW";
+    private static readonly string ApiSalt = "t0qEgfub6cvueAPgR5m9aQWWVciEer7v";
 
     private static readonly string ApiSalt2 = "xV8v4Qu54lUKrEYFZkJhB8cuOh9Asafs";
 

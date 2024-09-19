@@ -850,6 +850,12 @@ public sealed partial class MainPage : Page
     }
 
 
+    private void _Button_Verify_Click(object sender, RoutedEventArgs e)
+    {
+        new BattleChronicleWindow().Activate();
+    }
+
+
 
     private void Button_ChangeTheme_Tapped(object sender, TappedRoutedEventArgs e)
     {

@@ -63,6 +63,7 @@ public sealed partial class HomePage : Page
         _hoyolabService = ServiceProvider.GetService<HoyolabService>()!;
         _hoyolabClient = ServiceProvider.GetService<HoyolabClient>()!;
         _updateService = ServiceProvider.GetService<UpdateService>()!;
+        _ = _hoyolabClient.UpdateDeviceFpAsync();
         Loaded += HomePage_Loaded;
     }
 

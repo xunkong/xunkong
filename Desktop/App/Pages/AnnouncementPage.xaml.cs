@@ -22,6 +22,7 @@ public sealed partial class AnnouncementPage : Page
     {
         this.InitializeComponent();
         _hoyolabClient = ServiceProvider.GetService<HoyolabClient>()!;
+        _ = _hoyolabClient.UpdateDeviceFpAsync();
         Loaded += AnnouncementPage_Loaded;
     }
 
