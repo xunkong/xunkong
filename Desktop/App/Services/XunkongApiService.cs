@@ -206,14 +206,15 @@ internal class XunkongApiService
     public async Task GetAllGenshinDataFromServerAsync(bool force = false)
     {
         await GetSnapMetadataAsync(force);
-        var data = await _xunkongClient.GetAllGenshinDataAsync();
-        SaveGenshinData(data);
+        //var data = await _xunkongClient.GetAllGenshinDataAsync();
+        //SaveGenshinData(data);
     }
 
 
     private async Task GetSnapMetadataAsync(bool force = false)
     {
         var meta = await _snapMetadataClient.GetSnapMetaAsync();
+        // Achievement
         string? hash = AppSetting.GetValue<string>(nameof(meta.Achievement));
         if (force || meta.Achievement != hash)
         {
@@ -221,6 +222,7 @@ internal class XunkongApiService
             SaveSnapMetadata(data);
             AppSetting.SetValue(nameof(meta.Achievement), meta.Achievement);
         }
+        // AchievementGoal
         hash = AppSetting.GetValue<string>(nameof(meta.AchievementGoal));
         if (force || meta.AchievementGoal != hash)
         {
@@ -232,13 +234,30 @@ internal class XunkongApiService
             SaveSnapMetadata(data);
             AppSetting.SetValue(nameof(meta.AchievementGoal), meta.AchievementGoal);
         }
-        hash = AppSetting.GetValue<string>(nameof(meta.Avatar));
-        if (force || meta.Avatar != hash)
+        // Avatars
+        foreach (var item in meta.Avatars)
         {
-            var data = await _snapMetadataClient.GetAvatarInfosAsync();
-            SaveSnapMetadata(data);
-            AppSetting.SetValue(nameof(meta.Avatar), meta.Avatar);
+            hash = AppSetting.GetValue<string>(item.Key);
+            if (force || item.Value as string != hash)
+            {
+                var list = new List<SnapAvatarInfo>(meta.Avatars.Count);
+                await Parallel.ForEachAsync(meta.Avatars, async (item, _) =>
+                {
+                    if (item.Key.StartsWith("Avatar/"))
+                    {
+                        var info = await _snapMetadataClient.GetAvatarInfoAsync(item.Key);
+                        lock (list)
+                        {
+                            list.Add(info);
+                        }
+                        AppSetting.SetValue(item.Key, item.Value);
+                    }
+                });
+                SaveSnapMetadata(list);
+                break;
+            }
         }
+        // Weapon
         hash = AppSetting.GetValue<string>(nameof(meta.Weapon));
         if (force || meta.Weapon != hash)
         {
@@ -246,12 +265,37 @@ internal class XunkongApiService
             SaveSnapMetadata(data);
             AppSetting.SetValue(nameof(meta.Weapon), meta.Weapon);
         }
+        // GachaEvent
         hash = AppSetting.GetValue<string>(nameof(meta.GachaEvent));
         if (force || meta.GachaEvent != hash)
         {
             var data = await _snapMetadataClient.GetGachaEventInfosAsync();
             SaveSnapMetadata(data);
             AppSetting.SetValue(nameof(meta.GachaEvent), meta.GachaEvent);
+        }
+        // DisplayItem
+        hash = AppSetting.GetValue<string>(nameof(meta.DisplayItem));
+        if (force || meta.DisplayItem != hash)
+        {
+            var data = await _snapMetadataClient.GetDisplayItemsAsync();
+            SaveSnapMetadata(data);
+            AppSetting.SetValue(nameof(meta.DisplayItem), meta.DisplayItem);
+        }
+        // AvatarPromote
+        hash = AppSetting.GetValue<string>(nameof(meta.AvatarPromote));
+        if (force || meta.AvatarPromote != hash)
+        {
+            var data = await _snapMetadataClient.GetAvatarPromotesAsync();
+            SaveSnapMetadata(data);
+            AppSetting.SetValue(nameof(meta.AvatarPromote), meta.AvatarPromote);
+        }
+        // Material
+        hash = AppSetting.GetValue<string>(nameof(meta.Material));
+        if (force || meta.Material != hash)
+        {
+            var data = await _snapMetadataClient.GetMaterialsAsync();
+            SaveSnapMetadata(data);
+            AppSetting.SetValue(nameof(meta.Material), meta.Material);
         }
     }
 

@@ -211,7 +211,7 @@
                             Content="&#xE76C;"
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
                             Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
-                            Visibility="{x:Bind GenshinRoleInfo, Converter={StaticResource ObjectToVisibilityConverter}}">
+                            Visibility="Collapsed">
                         <Button.Flyout>
                             <Flyout Placement="RightEdgeAlignedTop">
                                 <Grid RowSpacing="20">
@@ -306,15 +306,16 @@
                                     Tag="AlbumPage" />
                 <NavigationViewItem Content="过场动画"
                                     Icon="SlideShow"
-                                    Tag="CutscenePage" />
-                <NavigationViewItem Content="祈愿记录" Tag="WishlogSummaryPage2">
-                    <NavigationViewItem.Icon>
-                        <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}" UriSource="ms-appx:///Assets/Images/SpriteUI_BtnIcon_Gacha.png" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
+                                    Tag="CutscenePage"
+                                    Visibility="Collapsed" />
                 <NavigationViewItem Content="我的角色" Tag="CharacterInfoPage2">
                     <NavigationViewItem.Icon>
                         <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}" UriSource="ms-appx:///Assets/Images/SpriteUI_BtnIcon_PlayerGirl.png" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="祈愿记录" Tag="WishlogSummaryPage2">
+                    <NavigationViewItem.Icon>
+                        <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}" UriSource="ms-appx:///Assets/Images/SpriteUI_BtnIcon_Gacha.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Content="旅行札记" Tag="TravelNotesPage">
@@ -332,7 +333,7 @@
                         <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}" UriSource="ms-appx:///Assets/Images/SpriteUI_Icon_Achievement.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="角色图鉴" Tag="CharacterWikiPage">
+                <NavigationViewItem Content="角色图鉴" Tag="CharacterWikiPage2">
                     <NavigationViewItem.Icon>
                         <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}" UriSource="ms-appx:///Assets/Images/SpriteUI_BagTabIcon_Avatar.png" />
                     </NavigationViewItem.Icon>
@@ -342,7 +343,9 @@
                         <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}" UriSource="ms-appx:///Assets/Images/SpriteUI_BagTabIcon_Weapon.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="养成计划" Tag="GrowthSchedulePage">
+                <NavigationViewItem Content="养成计划"
+                                    Tag="GrowthSchedulePage"
+                                    Visibility="Collapsed">
                     <NavigationViewItem.Icon>
                         <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}" UriSource="ms-appx:///Assets/Images/SpriteUI_BtnIcon_Wiki.png" />
                     </NavigationViewItem.Icon>

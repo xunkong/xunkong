@@ -1,11 +1,12 @@
-﻿namespace Xunkong.SnapMetadata;
+﻿using System.Text.Json.Serialization;
+
+namespace Xunkong.SnapMetadata;
 
 public class SnapMeta
 {
 
     public string Achievement { get; set; }
     public string AchievementGoal { get; set; }
-    public string Avatar { get; set; }
     public string AvatarCurve { get; set; }
     public string AvatarPromote { get; set; }
     public string DisplayItem { get; set; }
@@ -25,5 +26,8 @@ public class SnapMeta
     public string Weapon { get; set; }
     public string WeaponCurve { get; set; }
     public string WeaponPromote { get; set; }
+
+    [JsonExtensionData]
+    public Dictionary<string, object> Avatars { get; set; }
 
 }

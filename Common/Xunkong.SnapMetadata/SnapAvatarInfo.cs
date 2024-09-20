@@ -1,4 +1,8 @@
-﻿namespace Xunkong.SnapMetadata;
+﻿using System.Diagnostics;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
+
+namespace Xunkong.SnapMetadata;
 
 // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
 public class BaseValue
@@ -21,18 +25,15 @@ public class Costume
     public string Name { get; set; }
     public string Description { get; set; }
     public bool IsDefault { get; set; }
-    public string FrontIcon { get; set; }
-    public string SideIcon { get; set; }
-}
+    public string? FrontIcon { get; set; }
+    public string? SideIcon { get; set; }
 
-public class EnergySkill
-{
-    public int GroupId { get; set; }
-    public Proud Proud { get; set; }
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public string Icon { get; set; }
+    [JsonIgnore]
+    public string? BaseName => FrontIcon?.Replace("UI_AvatarIcon_", "");
+    [JsonIgnore]
+    public string? Card => IsDefault ? null : $"UI_AvatarIcon_{BaseName}_Card";
+    [JsonIgnore]
+    public string? GachaSplash => IsDefault ? null : $"UI_Costume_{BaseName}";
 }
 
 public class Fetter
@@ -41,7 +42,7 @@ public class Fetter
     public string Context { get; set; }
 }
 
-public class FetterInfo
+public class FetterInfo : IJsonOnDeserialized
 {
     public string Title { get; set; }
     public string Detail { get; set; }
@@ -60,6 +61,14 @@ public class FetterInfo
     public CookBonus CookBonus { get; set; }
     public List<Fetter> Fetters { get; set; }
     public List<FetterStory> FetterStories { get; set; }
+
+    public void OnDeserialized()
+    {
+        if (string.IsNullOrWhiteSpace(ConstellationAfter))
+        {
+            ConstellationAfter = ConstellationBefore;
+        }
+    }
 }
 
 public class FetterStory
@@ -88,12 +97,67 @@ public class Parameter
 {
     public int Level { get; set; }
     public List<double> Parameters { get; set; }
+
+    [JsonIgnore]
+    public List<string> ShownParameters { get; set; }
 }
 
-public class Proud
+public class Proud : IJsonOnDeserialized
 {
     public List<string> Descriptions { get; set; }
     public List<Parameter> Parameters { get; set; }
+
+    [JsonIgnore]
+    public bool HasValue => Descriptions.Count > 0;
+
+    [JsonIgnore]
+    public List<string> ShownDescriptions { get; set; }
+
+    public void OnDeserialized()
+    {
+        try
+        {
+            ShownDescriptions = Descriptions.Select(x => x[..x.IndexOf('|')]).ToList();
+            foreach (var param in Parameters)
+            {
+                List<string> models = Descriptions.Select(x => x[(x.IndexOf('|') + 1)..]).ToList();
+                param.ShownParameters = models.Select(x =>
+                {
+                    string result = x;
+                    var matches = Regex.Matches(x, @"{param(\d):([^}]+)}");
+                    foreach (Match match in matches)
+                    {
+                        var id = match.Groups[1].Value;
+                        var p = match.Groups[2].Value;
+                        double value = 0;
+                        if (int.TryParse(id, out int i) && i > 0)
+                        {
+                            value = param.Parameters[i - 1];
+                        }
+                        string v = "";
+                        if (p is "I")
+                        {
+                            v = value.ToString("N0");
+                        }
+                        else if (p.Contains("P") && p.Contains("F"))
+                        {
+                            v = value.ToString($"P{p.Replace("F", "").Replace("P", "")}");
+                        }
+                        else
+                        {
+                            v = value.ToString(p);
+                        }
+                        result = result.Replace(match.Value, v);
+                    }
+                    return result;
+                }).ToList();
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+        }
+    }
 }
 
 public class SnapAvatarInfo
@@ -130,9 +194,12 @@ public class Skill
 public class SkillDepot
 {
     public List<Skill> Skills { get; set; }
-    public EnergySkill EnergySkill { get; set; }
-    public List<Inherent> Inherents { get; set; }
+    public Skill EnergySkill { get; set; }
+    public List<Skill> Inherents { get; set; }
     public List<Talent> Talents { get; set; }
+
+    [JsonIgnore]
+    public List<Skill> AllSkills => Skills.Concat([EnergySkill]).Concat(Inherents).ToList();
 }
 
 public class Talent

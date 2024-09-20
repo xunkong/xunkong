@@ -203,14 +203,8 @@ public sealed partial class MainPage : Page
                     }
                     if (tag == "CharacterInfoPage2")
                     {
-                        if (AppSetting.GetValue<bool>(SettingKeys.UseCharacterPageOldVersion))
-                        {
-                            _MainPageFrame.Navigate(typeof(CharacterInfoPage));
-                        }
-                        else
-                        {
-                            _MainPageFrame.Navigate(typeof(CharacterInfoPage2));
-                        }
+                        new BattleChronicleWindow().Activate();
+                        return;
                     }
                     else
                     {

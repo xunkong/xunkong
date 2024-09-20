@@ -55,3 +55,40 @@ internal class ElementToBrushConverter : IValueConverter
 
 
 }
+
+
+
+
+internal class SnapElementToBrushConverter : IValueConverter
+{
+
+    private static SolidColorBrush Element_Fire = new SolidColorBrush(Color.FromArgb(0xFF, 0xEE, 0x69, 0x46));
+    private static SolidColorBrush Element_Water = new SolidColorBrush(Color.FromArgb(0xFF, 0x47, 0x8D, 0xCD));
+    private static SolidColorBrush Element_Wind = new SolidColorBrush(Color.FromArgb(0xFF, 0x59, 0xA4, 0xA7));
+    private static SolidColorBrush Element_Electro = new SolidColorBrush(Color.FromArgb(0xFF, 0x85, 0x75, 0xCB));
+    private static SolidColorBrush Element_Grass = new SolidColorBrush(Color.FromArgb(0xFF, 0x7F, 0xB3, 0x45));
+    private static SolidColorBrush Element_Ice = new SolidColorBrush(Color.FromArgb(0xFF, 0x47, 0xC1, 0xD9));
+    private static SolidColorBrush Element_Rock = new SolidColorBrush(Color.FromArgb(0xFF, 0xCF, 0x9A, 0x58));
+
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        return value switch
+        {
+            "火" => Element_Fire,
+            "水" => Element_Water,
+            "风" => Element_Wind,
+            "雷" => Element_Electro,
+            "草" => Element_Grass,
+            "冰" => Element_Ice,
+            "岩" => Element_Rock,
+            _ => Application.Current.Resources["TextFillColorSecondaryBrush"],
+        };
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+
+
+}

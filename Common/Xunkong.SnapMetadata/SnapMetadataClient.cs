@@ -21,21 +21,21 @@ public class SnapMetadataClient
 
     public async Task<SnapMeta> GetSnapMetaAsync()
     {
-        const string url = "https://hutao-metadata2.snapgenshin.com/Genshin/CHS/Meta.json";
+        const string url = "https://api.snapgenshin.com/metadata/Genshin/CHS/Meta.json";
         return await _httpClient.GetFromJsonAsync<SnapMeta>(url, JsonSerializerOptions);
     }
 
 
-    public async Task<List<SnapAvatarInfo>> GetAvatarInfosAsync()
+    public async Task<SnapAvatarInfo> GetAvatarInfoAsync(string id)
     {
-        const string url = "https://hutao-metadata2.snapgenshin.com/Genshin/CHS/Avatar.json";
-        return await _httpClient.GetFromJsonAsync<List<SnapAvatarInfo>>(url, JsonSerializerOptions);
+        string url = $"https://api.snapgenshin.com/metadata/Genshin/CHS/{id}.json";
+        return await _httpClient.GetFromJsonAsync<SnapAvatarInfo>(url, JsonSerializerOptions);
     }
 
 
     public async Task<List<SnapWeaponInfo>> GetWeaponInfosAsync()
     {
-        const string url = "https://hutao-metadata2.snapgenshin.com/Genshin/CHS/Weapon.json";
+        const string url = "https://api.snapgenshin.com/metadata/Genshin/CHS/Weapon.json";
         return await _httpClient.GetFromJsonAsync<List<SnapWeaponInfo>>(url, JsonSerializerOptions);
     }
 
@@ -44,7 +44,7 @@ public class SnapMetadataClient
 
     public async Task<List<SnapGachaEventInfo>> GetGachaEventInfosAsync()
     {
-        const string url = "https://hutao-metadata2.snapgenshin.com/Genshin/CHS/GachaEvent.json";
+        const string url = "https://api.snapgenshin.com/metadata/Genshin/CHS/GachaEvent.json";
         return await _httpClient.GetFromJsonAsync<List<SnapGachaEventInfo>>(url, JsonSerializerOptions);
     }
 
@@ -52,15 +52,37 @@ public class SnapMetadataClient
 
     public async Task<List<SnapAchievementItem>> GetAchievementItemsAsync()
     {
-        const string url = "https://hutao-metadata2.snapgenshin.com/Genshin/CHS/Achievement.json";
+        const string url = "https://api.snapgenshin.com/metadata/Genshin/CHS/Achievement.json";
         return await _httpClient.GetFromJsonAsync<List<SnapAchievementItem>>(url, JsonSerializerOptions);
     }
 
 
     public async Task<List<SnapAchievementGoal>> GetAchievementGoalsAsync()
     {
-        const string url = "https://hutao-metadata2.snapgenshin.com/Genshin/CHS/AchievementGoal.json";
+        const string url = "https://api.snapgenshin.com/metadata/Genshin/CHS/AchievementGoal.json";
         return await _httpClient.GetFromJsonAsync<List<SnapAchievementGoal>>(url, JsonSerializerOptions);
+    }
+
+
+    public async Task<List<SnapDisplayItem>> GetDisplayItemsAsync()
+    {
+        const string url = "https://api.snapgenshin.com/metadata/Genshin/CHS/DisplayItem.json";
+        return await _httpClient.GetFromJsonAsync<List<SnapDisplayItem>>(url, JsonSerializerOptions);
+    }
+
+
+
+    public async Task<List<SnapAvatarPromote>> GetAvatarPromotesAsync()
+    {
+        const string url = "https://api.snapgenshin.com/metadata/Genshin/CHS/AvatarPromote.json";
+        return await _httpClient.GetFromJsonAsync<List<SnapAvatarPromote>>(url, JsonSerializerOptions);
+    }
+
+
+    public async Task<List<SnapMaterial>> GetMaterialsAsync()
+    {
+        const string url = "https://api.snapgenshin.com/metadata/Genshin/CHS/Material.json";
+        return await _httpClient.GetFromJsonAsync<List<SnapMaterial>>(url, JsonSerializerOptions);
     }
 
 

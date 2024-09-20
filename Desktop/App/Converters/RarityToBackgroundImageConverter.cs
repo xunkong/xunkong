@@ -22,7 +22,7 @@ internal class RarityToBackgroundImageConverter : IValueConverter
             2 => Rarity2Background,
             3 => Rarity3Background,
             4 => Rarity4Background,
-            5 => Rarity5Background,
+            5 or 105 => Rarity5Background,
             _ => TransparentBackground,
         };
         return new BitmapImage(uri);
