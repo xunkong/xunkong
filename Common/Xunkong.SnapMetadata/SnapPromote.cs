@@ -2,7 +2,7 @@
 
 namespace Xunkong.SnapMetadata;
 
-public class SnapAvatarPromote
+public class SnapPromote
 {
 
     [JsonPropertyName("Id")]
@@ -12,14 +12,14 @@ public class SnapAvatarPromote
     public int Level { get; set; }
 
 
-    public List<SnapAvatarPromoteAddProperty> AddProperties { get; set; }
+    public List<SnapPromoteAddProperty> AddProperties { get; set; }
 
 
 }
 
 
 
-public class SnapAvatarPromoteAddProperty
+public class SnapPromoteAddProperty
 {
 
     public int Type { get; set; }

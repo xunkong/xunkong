@@ -281,13 +281,15 @@ internal class XunkongApiService
             SaveSnapMetadata(data);
             AppSetting.SetValue(nameof(meta.DisplayItem), meta.DisplayItem);
         }
-        // AvatarPromote
+        // AvatarPromote & WeaponPromote
         hash = AppSetting.GetValue<string>(nameof(meta.AvatarPromote));
-        if (force || meta.AvatarPromote != hash)
+        string? hash2 = AppSetting.GetValue<string>(nameof(meta.WeaponPromote));
+        if (force || meta.AvatarPromote != hash || meta.WeaponPromote != hash2)
         {
-            var data = await _snapMetadataClient.GetAvatarPromotesAsync();
+            var data = await _snapMetadataClient.GetPromotesAsync();
             SaveSnapMetadata(data);
             AppSetting.SetValue(nameof(meta.AvatarPromote), meta.AvatarPromote);
+            AppSetting.SetValue(nameof(meta.WeaponPromote), meta.WeaponPromote);
         }
         // Material
         hash = AppSetting.GetValue<string>(nameof(meta.Material));

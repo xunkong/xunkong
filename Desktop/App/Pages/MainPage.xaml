@@ -338,7 +338,7 @@
                         <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}" UriSource="ms-appx:///Assets/Images/SpriteUI_BagTabIcon_Avatar.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="武器图鉴" Tag="WeaponWikiPage">
+                <NavigationViewItem Content="武器图鉴" Tag="WeaponWikiPage2">
                     <NavigationViewItem.Icon>
                         <BitmapIcon Foreground="{ThemeResource TextFillColorSecondaryBrush}" UriSource="ms-appx:///Assets/Images/SpriteUI_BagTabIcon_Weapon.png" />
                     </NavigationViewItem.Icon>

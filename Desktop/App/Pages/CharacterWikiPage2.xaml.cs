@@ -79,7 +79,7 @@ public sealed partial class CharacterWikiPage2 : Page
                                              }))
                                  .ToList();
 
-            var promotes = XunkongApiService.GetGenshinData<SnapAvatarPromote>();
+            var promotes = XunkongApiService.GetGenshinData<SnapPromote>();
             var materials = XunkongApiService.GetGenshinData<SnapMaterial>();
             foreach (var info in CharacterInfos)
             {

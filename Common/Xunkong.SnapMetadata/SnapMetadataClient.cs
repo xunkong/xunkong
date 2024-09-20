@@ -72,10 +72,13 @@ public class SnapMetadataClient
 
 
 
-    public async Task<List<SnapAvatarPromote>> GetAvatarPromotesAsync()
+    public async Task<List<SnapPromote>> GetPromotesAsync()
     {
-        const string url = "https://api.snapgenshin.com/metadata/Genshin/CHS/AvatarPromote.json";
-        return await _httpClient.GetFromJsonAsync<List<SnapAvatarPromote>>(url, JsonSerializerOptions);
+        const string url1 = "https://api.snapgenshin.com/metadata/Genshin/CHS/AvatarPromote.json";
+        var list1 = await _httpClient.GetFromJsonAsync<List<SnapPromote>>(url1, JsonSerializerOptions);
+        const string url2 = "https://api.snapgenshin.com/metadata/Genshin/CHS/WeaponPromote.json";
+        var list2 = await _httpClient.GetFromJsonAsync<List<SnapPromote>>(url2, JsonSerializerOptions);
+        return list1.Concat(list2).ToList();
     }
 
 

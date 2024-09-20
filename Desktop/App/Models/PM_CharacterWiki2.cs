@@ -32,7 +32,7 @@ public partial class PM_CharacterWiki_CharacterInfo2
     private List<SnapMaterial>? promoteItems;
 
     [ObservableProperty]
-    private List<SnapAvatarPromote> avatarPromotes;
+    private List<SnapPromote> avatarPromotes;
 
     [ObservableProperty]
     private string showGachaSplash;
