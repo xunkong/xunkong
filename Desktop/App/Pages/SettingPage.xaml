@@ -125,7 +125,7 @@
                             <HyperlinkButton Name="HyperlinkButton_OpenStore"
                                              Click="HyperlinkButton_OpenStore_Click"
                                              Content="商店页面" />
-                            <HyperlinkButton Content="赞助开发者" NavigateUri="https://xunkong.cc/donate/" />
+                            <!--<HyperlinkButton Content="赞助开发者" NavigateUri="https://xunkong.cc/donate/" />-->
                         </StackPanel>
                     </Grid>
 
@@ -209,9 +209,9 @@
                                       Style="{ThemeResource RightAlignToggleSwitchStyle}" />
                         <labs:SettingsExpander.Items>
                             <!--  使用按流量计费的网络时下载新图片  -->
-                            <labs:SettingsCard Description="默认不启用，不用再担心流量偷跑啦" Header="使用按流量计费的网络时下载新图片">
+                            <!--<labs:SettingsCard Description="默认不启用，不用再担心流量偷跑啦" Header="使用按流量计费的网络时下载新图片">
                                 <ToggleSwitch IsOn="{x:Bind DownloadWallpaperOnMeteredInternet, Mode=TwoWay}" Style="{ThemeResource RightAlignToggleSwitchStyle}" />
-                            </labs:SettingsCard>
+                            </labs:SettingsCard>-->
                             <!--  使用自定义图片  -->
                             <labs:SettingsCard Description="把图片文件托到主页的图片区域即可" Header="使用自定义图片">
                                 <ToggleSwitch IsOn="{x:Bind UseCustomWallpaper, Mode=TwoWay}" Style="{ThemeResource RightAlignToggleSwitchStyle}" />
@@ -221,7 +221,7 @@
                                 <Button Command="{x:Bind ChangeWallpaperSaveFolderCommand, Mode=OneTime}" Content="修改路径" />
                             </labs:SettingsCard>
                             <!--  图片格式  -->
-                            <labs:SettingsCard Description="推荐并且默认使用 avif 格式，jpg 格式兼容性最佳，不推荐使用 png 格式" Header="图片格式">
+                            <!--<labs:SettingsCard Description="推荐并且默认使用 avif 格式，jpg 格式兼容性最佳，不推荐使用 png 格式" Header="图片格式">
                                 <StackPanel Orientation="Horizontal" Spacing="12">
                                     <Button Width="32"
                                             Height="32"
@@ -356,11 +356,11 @@
                                         </ComboBox.Items>
                                     </ComboBox>
                                 </StackPanel>
-                            </labs:SettingsCard>
+                            </labs:SettingsCard>-->
                             <!--  刷新壁纸信息  -->
-                            <labs:SettingsCard Description="重新获取本地所有壁纸的信息" Header="刷新壁纸信息">
+                            <!--<labs:SettingsCard Description="重新获取本地所有壁纸的信息" Header="刷新壁纸信息">
                                 <Button Command="{x:Bind RefreshLocalWallpaperInfosCommand, Mode=OneTime}" Content="刷新壁纸信息" />
-                            </labs:SettingsCard>
+                            </labs:SettingsCard>-->
                         </labs:SettingsExpander.Items>
                     </labs:SettingsExpander>
 
@@ -410,7 +410,7 @@
                                         Content="选择文件" />
                             </labs:SettingsCard>
                             <!--  解锁帧数上限  -->
-                            <labs:SettingsCard Header="解锁帧数上限">
+                            <!--<labs:SettingsCard Header="解锁帧数上限">
                                 <labs:SettingsCard.Description>
                                     <TextBlock Foreground="{ThemeResource SystemFillColorCautionBrush}" Text="此功能会修改游戏内存，有一定的风险，设定值超过60才会启用" />
                                 </labs:SettingsCard.Description>
@@ -419,7 +419,7 @@
                                            SmallChange="10"
                                            SpinButtonPlacementMode="Compact"
                                            Value="{x:Bind UnlockedFPS, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                            </labs:SettingsCard>
+                            </labs:SettingsCard>-->
                             <!--  窗口宽度  -->
                             <labs:SettingsCard Description="为 0 时忽略此项设置" Header="窗口宽度">
                                 <NumberBox Width="100"
@@ -445,21 +445,19 @@
 
 
                     <!--  米游社签到  -->
-                    <labs:SettingsExpander Description="因为米游社的风控限制，签到功能不再维护" Header="米游社签到">
+                    <!--<labs:SettingsExpander Description="因为米游社的风控限制，签到功能不再维护" Header="米游社签到">
                         <labs:SettingsExpander.HeaderIcon>
                             <PathIcon Data="M901.784183 130.096944l-71.520459 0 0-91.948962c0-21.034552-17.113446-38.147998-38.147998-38.147998l-2.548388 0c-21.031241 0-38.141375 17.11179-38.141375 38.147998l0 91.948962-475.285176 0 0-91.948962c0-21.034552-17.11179-38.147998-38.147998-38.147998l-2.548388 0c-21.034552 0-38.147998 17.11179-38.147998 38.147998l0 91.948962-75.087209 0c-66.715116 0-120.991315 54.276199-120.991315 120.991315L1.217878 902.998766c0 66.720084 54.276199 121.001251 120.991315 121.001251l779.573334 0c66.720084 0 120.999595-54.281167 120.999595-121.001251l0-651.908851C1022.780466 184.374799 968.499299 130.096944 901.784183 130.096944zM946.487782 944.986733l-867.617748 0L78.870034 404.68371l867.617748 0L946.487782 944.986733zM946.487782 324.319235l-867.617748 0 0-117.927951 867.617748 0L946.487782 324.319235zM408.749706 873.666635c6.794046 6.794046 15.696018 10.188585 24.597991 10.188585 6.029033 0 12.041507-1.596261 17.414814-4.710958 3.086547-1.602885 5.98598-3.690941 8.575765-6.280726L811.395053 520.810071c13.584781-13.586437 13.584781-35.612857 0-49.197637-13.586437-13.584781-35.612857-13.584781-49.199293 0L433.644098 800.165752 267.310017 633.830015c-13.586437-13.584781-35.611201-13.584781-49.197637 0-13.584781 13.586437-13.584781 35.611201 0 49.197637L408.749706 873.666635z" />
                         </labs:SettingsExpander.HeaderIcon>
                         <labs:SettingsExpander.Items>
-                            <!--  应用启动时自动签到  -->
                             <labs:SettingsCard Description="签到成功时不会有提示" Header="应用启动时自动签到">
                                 <ToggleSwitch IsOn="{x:Bind SignInAllAccountsWhenStartUpApplication, Mode=TwoWay}" Style="{ThemeResource RightAlignToggleSwitchStyle}" />
                             </labs:SettingsCard>
-                            <!--  后台定时签到  -->
                             <labs:SettingsCard Description="每日 06:00 ~ 06:15 随机运行，若超出该时间则立刻运行" Header="后台定时签到">
                                 <ToggleSwitch IsOn="{x:Bind IsRegisterCheckInScheduler, Mode=TwoWay}" Style="{ThemeResource RightAlignToggleSwitchStyle}" />
                             </labs:SettingsCard>
                         </labs:SettingsExpander.Items>
-                    </labs:SettingsExpander>
+                    </labs:SettingsExpander>-->
 
 
                     <!--  主页功能  -->
@@ -537,9 +535,9 @@
                                 <ToggleSwitch IsOn="{x:Bind ShowNoviceWishType, Mode=TwoWay}" Style="{ThemeResource RightAlignToggleSwitchStyle}" />
                             </labs:SettingsCard>
                             <!--  使用旧版我的角色页面  -->
-                            <labs:SettingsCard Description="旧版我的角色页面不再维护" Header="使用旧版我的角色页面">
+                            <!--<labs:SettingsCard Description="旧版我的角色页面不再维护" Header="使用旧版我的角色页面">
                                 <ToggleSwitch IsOn="{x:Bind UseCharacterPageOldVersion, Mode=TwoWay}" Style="{ThemeResource RightAlignToggleSwitchStyle}" />
-                            </labs:SettingsCard>
+                            </labs:SettingsCard>-->
                             <!--  隐藏未上线的角色  -->
                             <labs:SettingsCard Description="在角色图鉴中不显示未上线的角色" Header="隐藏未上线的角色">
                                 <ToggleSwitch IsOn="{x:Bind HideUnusableCharacter, Mode=TwoWay}" Style="{ThemeResource RightAlignToggleSwitchStyle}" />
@@ -605,11 +603,11 @@
                                         Content="清除缓存" />
                             </labs:SettingsCard>
                             <!--  语音缓存  -->
-                            <labs:SettingsCard Description="{x:Bind VoiceCacheSizeString}" Header="语音缓存">
+                            <!--<labs:SettingsCard Description="{x:Bind VoiceCacheSizeString}" Header="语音缓存">
                                 <Button Command="{x:Bind ClearCacheCommand, Mode=OneTime}"
                                         CommandParameter="ClearVoice"
                                         Content="清除缓存" />
-                            </labs:SettingsCard>
+                            </labs:SettingsCard>-->
                             <!--  缩略图缓存  -->
                             <labs:SettingsCard Description="{x:Bind ThumbnailCacheSizeString}" Header="缩略图缓存">
                                 <Button Command="{x:Bind ClearCacheCommand, Mode=OneTime}"
@@ -621,12 +619,12 @@
 
 
                     <!--  预缓存图片  -->
-                    <labs:SettingsCard Description="点击开始下载后会在屏幕右下角弹出进度通知" Header="预缓存所有图片">
+                    <!--<labs:SettingsCard Description="点击开始下载后会在屏幕右下角弹出进度通知" Header="预缓存所有图片">
                         <labs:SettingsCard.HeaderIcon>
                             <FontIcon FontSize="20" Glyph="&#xE8B9;" />
                         </labs:SettingsCard.HeaderIcon>
                         <Button Command="{x:Bind StartPreCacheAllImagesCommand, Mode=OneTime}" Content="开始下载" />
-                    </labs:SettingsCard>
+                    </labs:SettingsCard>-->
 
 
                     <!--  手动更新原神数据  -->
