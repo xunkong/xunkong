@@ -343,7 +343,7 @@ public sealed partial class BBSWebBridge : UserControl
             if (screenshotBytes is not null)
             {
                 string name = $"{DateTimeOffset.Now.ToUnixTimeMilliseconds()}.png";
-                string? file = await FileDialogHelper.OpenSaveFileDialogAsync(MainWindow.Current.HWND, name, false, [("Png File", ".png")]);
+                string? file = await FileDialogHelper.OpenSaveFileDialogAsync((nint)XamlRoot.ContentIslandEnvironment.AppWindowId.Value, name, false, [("Png File", ".png")]);
                 if (!string.IsNullOrWhiteSpace(file))
                 {
                     await File.WriteAllBytesAsync(file, screenshotBytes);
