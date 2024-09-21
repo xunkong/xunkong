@@ -319,7 +319,7 @@
 
 
 
-                    <StackPanel Margin="48,24,0,0">
+                    <StackPanel Margin="48,40,0,0">
 
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <!--  称号  -->
@@ -343,7 +343,7 @@
                                          Source="{x:Bind SelectedCharacter.CharacterInfo.Quality, Converter={StaticResource RarityToIconStarConverter}}" />
 
                         <!--  生日 武器  -->
-                        <StackPanel Margin="0,24,0,0"
+                        <StackPanel Margin="0,40,0,0"
                                     Orientation="Horizontal"
                                     Spacing="8">
                             <Grid Width="180"
@@ -411,23 +411,6 @@
                                            Text="{x:Bind SelectedCharacter.CharacterInfo.FetterInfo.ConstellationAfter}" />
                             </Grid>
                         </StackPanel>
-
-                        <!--  所需材料  -->
-                        <ItemsControl Margin="0,16,0,0" ItemsSource="{x:Bind SelectedCharacter.PromoteItems}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" Spacing="4" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate x:DataType="xsm:SnapMaterial">
-                                    <xdc:CachedImage Width="36"
-                                                     Height="36"
-                                                     Source="{x:Bind Icon, Converter={StaticResource SnapImageUrlConverter}}"
-                                                     ToolTipService.ToolTip="{x:Bind Name}" />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
 
                     </StackPanel>
 
@@ -537,18 +520,18 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock FontSize="20" Text="基础属性" />
-                    <!--<TextBlock Grid.Row="0"
+                    <TextBlock Grid.Row="0"
                                Grid.Column="2"
                                Margin="16,0,0,0"
                                FontSize="20"
-                               Text="突破材料" />-->
+                               Text="突破材料" />
                     <MenuFlyoutSeparator Grid.Row="1"
                                          Grid.ColumnSpan="3"
                                          Margin="-16,4,-16,4" />
-                    <!--<AppBarSeparator Grid.Row="0"
+                    <AppBarSeparator Grid.Row="0"
                                      Grid.RowSpan="3"
                                      Grid.Column="1"
-                                     Margin="0,-16,0,-16" />-->
+                                     Margin="0,-16,0,-16" />
 
 
 
@@ -613,24 +596,26 @@
 
 
                     <!--  突破材料  -->
-                    <!--<ItemsControl Grid.Row="2"
+                    <ItemsControl Grid.Row="2"
                                   Grid.Column="2"
-                                  Margin="8,0,0,0"
-                                  ItemsSource="{x:Bind SelectedCharacter.TargetLevelCostItems}">
+                                  Margin="8,8,0,0"
+                                  ItemsSource="{x:Bind SelectedCharacter.PromoteItems}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid ItemWidth="240" MaximumRowsOrColumns="4" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="xg:PromotionCostItem">
+                            <DataTemplate x:DataType="xsm:SnapMaterial">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <xdc:CachedImage Width="36"
                                                      Height="36"
-                                                     Source="{x:Bind Item.Icon, Converter={StaticResource SnapImageUrlConverter}}" />
-                                    <TextBlock VerticalAlignment="Center">
-                                        <Run Text="{x:Bind Item.Name}" />
-                                        <Run Text="x" /><Run Text="{x:Bind Count}" />
-                                    </TextBlock>
+                                                     Source="{x:Bind Icon, Converter={StaticResource SnapImageUrlConverter}}" />
+                                    <TextBlock VerticalAlignment="Center" Text="{x:Bind Name}" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
-                    </ItemsControl>-->
+                    </ItemsControl>
 
 
                 </Grid>
