@@ -288,7 +288,7 @@
 
             <StackPanel Grid.Row="2" Orientation="Horizontal">
                 <TextBlock VerticalAlignment="Center" Text="文件格式及更多内容请查看" />
-                <HyperlinkButton Content="帮助文档" NavigateUri="https://xunkong.cc/help/xunkong/wishlog.html#%E5%AF%BC%E5%85%A5%E4%B8%8E%E5%AF%BC%E5%87%BA" />
+                <HyperlinkButton Content="帮助文档" NavigateUri="https://uigf.org/zh/standards/uigf-legacy-v3.0.html" />
             </StackPanel>
 
         </Grid>

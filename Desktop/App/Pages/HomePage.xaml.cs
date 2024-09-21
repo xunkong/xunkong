@@ -98,7 +98,7 @@ public sealed partial class HomePage : Page
         // 实时便笺
         GetDailyNotesAsync();
         // 今天刷什么
-        GetCalendarAndGrowthScheduleAsync();
+        //GetCalendarAndGrowthScheduleAsync();
         // 即将结束的活动
         GetFinishingActivityAsync();
         // 通知
@@ -108,7 +108,7 @@ public sealed partial class HomePage : Page
         // 留影叙佳期
         //CheckBirthdayStarAsync();
         // 上传评分
-        _xunkongApiService.UploadWallpaperRatingAsync();
+        //_xunkongApiService.UploadWallpaperRatingAsync();
     }
 
 

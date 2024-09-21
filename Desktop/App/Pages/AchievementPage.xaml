@@ -768,7 +768,7 @@
 
             <StackPanel Grid.Row="2" Orientation="Horizontal">
                 <TextBlock VerticalAlignment="Center" Text="文件格式及更多内容请查看" />
-                <HyperlinkButton Content="统一可交换成就标准" NavigateUri="https://www.snapgenshin.com/development/UIAF.html" />
+                <HyperlinkButton Content="统一可交换成就标准" NavigateUri="https://uigf.org/zh/standards/uiaf.html" />
             </StackPanel>
 
         </Grid>
