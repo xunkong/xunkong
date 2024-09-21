@@ -137,6 +137,7 @@ public sealed partial class WishlogSummaryPage2 : Page
             InitializePageData();
         }
         UpdateWishlogItemInfoAsync();
+        NotificationProvider.Warning("云备份将在 2024-12-30 失效，请在此之前从云端恢复您的祈愿记录数据。", 0);
     }
 
 
