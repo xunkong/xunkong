@@ -20,8 +20,14 @@
     <Grid x:Name="c_Grid_Base">
 
 
+        <Border x:Name="_Border_BackgroundImage"
+                VerticalAlignment="Top"
+                SizeChanged="_Border_BackgroundImage_SizeChanged"
+                Visibility="Collapsed" />
+
+
         <ScrollViewer x:Name="_ScrollViewer_Content">
-            <StackPanel Margin="48,0,48,48">
+            <StackPanel Margin="48" Spacing="24">
                 <StackPanel.ChildrenTransitions>
                     <TransitionCollection>
                         <EntranceThemeTransition />
@@ -29,28 +35,24 @@
                 </StackPanel.ChildrenTransitions>
 
                 <Grid x:Name="_Grid_Image"
-                      Margin="-48,0,-48,-48"
+                      Height="{x:Bind _Border_BackgroundImage.Height}"
+                      Margin="0,-96,0,0"
                       AllowDrop="True"
                       Background="Transparent"
                       DragOver="_Grid_Image_DragOver"
                       Drop="_Grid_Image_Drop"
                       Visibility="Collapsed">
-                    <Border x:Name="_Border_BackgroundImage"
-                            IsHitTestVisible="False"
-                            SizeChanged="_Border_BackgroundImage_SizeChanged"
-                            Visibility="Collapsed" />
+
                     <!--  背景图片信息  -->
                     <StackPanel x:Name="_StackPanel_WallpaperInfo"
-                                Margin="48,24,48,96"
                                 HorizontalAlignment="Left"
-                                VerticalAlignment="Bottom"
-                                Visibility="{x:Bind CurrentWallpaper, Converter={StaticResource ObjectToVisibilityConverter}}">
+                                VerticalAlignment="Bottom">
                         <StackPanel.ChildrenTransitions>
                             <TransitionCollection>
                                 <AddDeleteThemeTransition />
                             </TransitionCollection>
                         </StackPanel.ChildrenTransitions>
-                        <TextBlock HorizontalAlignment="Left"
+                        <!--<TextBlock HorizontalAlignment="Left"
                                    FontSize="16"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                    IsTextSelectionEnabled="True"
@@ -67,7 +69,7 @@
                                    IsTextSelectionEnabled="True"
                                    Text="{x:Bind CurrentWallpaper.Description}"
                                    TextWrapping="Wrap"
-                                   Visibility="{x:Bind CurrentWallpaper.Description, Converter={StaticResource StringToVisibilityConverter}}" />
+                                   Visibility="{x:Bind CurrentWallpaper.Description, Converter={StaticResource StringToVisibilityConverter}}" />-->
                         <StackPanel Margin="0,8,0,0"
                                     Orientation="Horizontal"
                                     Spacing="8">
@@ -115,13 +117,14 @@
                                     Height="28"
                                     Padding="0"
                                     Command="{x:Bind OpenImageSourceCommand}"
-                                    Content="&#xE72D;"
+                                    Content="&#xE71B;"
                                     FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
-                                    ToolTipService.ToolTip="图源" />
+                                    ToolTipService.ToolTip="图源"
+                                    Visibility="{x:Bind CurrentWallpaper.Source, Converter={StaticResource ObjectToVisibilityConverter}}" />
                             <!--  下一张  -->
-                            <Button x:Name="_Button_NextWallpaper"
+                            <!--<Button x:Name="_Button_NextWallpaper"
                                     Width="28"
                                     Height="28"
                                     Padding="0"
@@ -130,9 +133,9 @@
                                     FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
-                                    ToolTipService.ToolTip="下一张" />
+                                    ToolTipService.ToolTip="下一张" />-->
                             <!--  历史记录  -->
-                            <Button Width="28"
+                            <!--<Button Width="28"
                                     Height="28"
                                     Padding="0"
                                     Command="{x:Bind NavigateToWallpaperHistoryPageCommand}"
@@ -153,7 +156,7 @@
                                     <StaticResource x:Key="RatingControlSelectedForeground" ResourceKey="AccentFillColorTertiaryBrush" />
                                     <StaticResource x:Key="RatingControlPlaceholderForeground" ResourceKey="TextFillColorDisabledBrush" />
                                 </RatingControl.Resources>
-                            </RatingControl>
+                            </RatingControl>-->
                         </StackPanel>
                     </StackPanel>
                 </Grid>
@@ -177,7 +180,6 @@
 
                 <!--  快捷指令  -->
                 <StackPanel x:Name="c_StackPanel_QuickAction"
-                            Margin="0,24,0,0"
                             Orientation="Horizontal"
                             Spacing="16"
                             Visibility="Collapsed">
@@ -315,14 +317,13 @@
 
                 <!--  实时便笺  -->
                 <TextBlock x:Name="c_TextBlock_DailyNote"
-                           Margin="0,24,0,0"
                            VerticalAlignment="Center"
                            FontSize="20"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                            Text="实时便笺"
                            Visibility="Collapsed" />
                 <GridView x:Name="c_GridView_DailyNotes"
-                          Margin="0,12,0,0"
+                          Margin="0,-12,0,0"
                           ItemContainerStyle="{StaticResource BlankGridViewItemStyle}"
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                           ScrollViewer.HorizontalScrollMode="Disabled"
@@ -341,7 +342,7 @@
                            Text="养成计划"
                            Visibility="Collapsed" />
                 <GridView x:Name="c_GridView_GrowthSchedule"
-                          Margin="0,12,0,0"
+                          Margin="0,-12,0,0"
                           ItemContainerStyle="{StaticResource BlankGridViewItemStyle}"
                           ItemsSource="{x:Bind GrowthScheduleItems}"
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -510,14 +511,13 @@
 
                 <!--  即将结束的活动  -->
                 <TextBlock x:Name="c_TextBlock_FinishingActivity"
-                           Margin="0,24,0,0"
                            VerticalAlignment="Center"
                            FontSize="20"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                            Text="即将结束的活动"
                            Visibility="Collapsed" />
                 <cc:AdaptiveGridView x:Name="c_GridView_FinishingActivity"
-                                     Margin="0,12,0,0"
+                                     Margin="0,-12,0,0"
                                      DesiredWidth="300"
                                      ItemContainerStyle="{StaticResource BlankGridViewItemStyle}"
                                      ItemHeight="180"
@@ -600,8 +600,6 @@
                         </DataTemplate>
                     </GridView.ItemTemplate>
                 </cc:AdaptiveGridView>
-
-
 
 
             </StackPanel>

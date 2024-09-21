@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Net.Http;
+using System.Text.Json.Nodes;
 using Xunkong.ApiClient;
 using Xunkong.ApiClient.GenshinData;
 using Xunkong.ApiClient.Xunkong;
@@ -448,16 +449,16 @@ internal class XunkongApiService
     {
         try
         {
-            var str = AppSetting.GetValue<string>(SettingKeys.RecommendWallpaper);
-            if (!string.IsNullOrWhiteSpace(str))
+            var url = AppSetting.GetValue<string>(SettingKeys.LauncherBackgroundUrl);
+            if (!string.IsNullOrWhiteSpace(url))
             {
-                var info = JsonSerializer.Deserialize<WallpaperInfoEx>(str);
-                if (info != null)
+                return new WallpaperInfoEx
                 {
-                    using var dapper = DatabaseProvider.CreateConnection();
-                    info.MyRating = dapper.QueryFirstOrDefault<int>("SELECT IFNULL((SELECT Rating FROM WallpaperRating WHERE WallpaperId = @Id LIMIT 1), -1);", info);
-                }
-                return info;
+                    Url = url,
+                    FileName = Path.GetFileName(url),
+                    Enable = true,
+                    Source = url,
+                };
             }
             else
             {
@@ -476,20 +477,40 @@ internal class XunkongApiService
     {
         try
         {
-            var wallpaper = await GetRandomWallpaperAsync();
-            if (wallpaper is not null)
+            var url = await GetHypBackgroundAsync();
+            if (!string.IsNullOrWhiteSpace(url))
             {
-                var file = XunkongCache.Instance.GetCacheFilePath(new Uri(wallpaper.Url));
+                var file = XunkongCache.Instance.GetCacheFilePath(new Uri(url));
                 if (!File.Exists(file))
                 {
-                    var bytes = await _httpClient.GetByteArrayAsync(wallpaper.Url);
+                    var bytes = await _httpClient.GetByteArrayAsync(url);
                     Directory.CreateDirectory(Path.GetDirectoryName(file)!);
                     await File.WriteAllBytesAsync(file, bytes);
                 }
-                AppSetting.SetValue(SettingKeys.RecommendWallpaper, JsonSerializer.Serialize(wallpaper));
+                AppSetting.SetValue(SettingKeys.LauncherBackgroundUrl, url);
             }
         }
         catch { }
+    }
+
+
+
+    private async Task<string?> GetHypBackgroundAsync()
+    {
+        const string url = "https://hyp-api.mihoyo.com/hyp/hyp-connect/api/getGames?launcher_id=jGHBHlcOq1&language=zh-cn";
+        string str = await _httpClient.GetStringAsync(url);
+        var node = JsonNode.Parse(str);
+        if (node?["data"]?["games"] is JsonArray array)
+        {
+            foreach (var item in array)
+            {
+                if (item?["biz"]?.ToString() is "hk4e_cn")
+                {
+                    return item["display"]?["background"]?["url"]?.ToString();
+                }
+            }
+        }
+        return null;
     }
 
 

@@ -35,16 +35,11 @@ namespace Xunkong.Desktop.Pages;
 public sealed partial class HomePage : Page
 {
 
-    private const string FallbackWallpaperUri = "ms-appx:///Assets/Images/102203689_p0.jpg";
+    private const string FallbackWallpaperUri = "ms-appx:///Assets/Images/4.7.png";
     public static readonly WallpaperInfoEx FallbackWallpaper = new WallpaperInfoEx
     {
-        Id = 1702,
-        Title = "原神2周年記念",
-        Author = "アナ",
-        Description = "おめでとうございます！\r\nこれからも旅人と共に、星と深淵を目指せ！",
-        FileName = "[アナ] 原神2周年記念 [102203689_p0].jpg",
-        Source = "https://www.pixiv.net/artworks/102203689",
-        Url = "ms-appx:///Assets/Images/102203689_p0.jpg"
+        FileName = "4.7.png",
+        Url = "ms-appx:///Assets/Images/4.7.png"
     };
 
     private readonly XunkongApiService _xunkongApiService;
@@ -185,14 +180,14 @@ public sealed partial class HomePage : Page
             imageMaxHeight = MainWindow.Current.Height * 0.75 / MainWindow.Current.UIScale;
             _Grid_Image.MaxHeight = imageMaxHeight;
             await LoadBackgroundImage(file);
-            if (NetworkHelper.IsInternetOnMeteredConnection() && !skipDownload)
-            {
-                if (!AppSetting.GetValue<bool>(SettingKeys.DownloadWallpaperOnMeteredInternet))
-                {
-                    // 使用按流量计费的网络时，不下载新图片
-                    return;
-                }
-            }
+            //if (NetworkHelper.IsInternetOnMeteredConnection() && !skipDownload)
+            //{
+            //    if (!AppSetting.GetValue<bool>(SettingKeys.DownloadWallpaperOnMeteredInternet))
+            //    {
+            //        // 使用按流量计费的网络时，不下载新图片
+            //        return;
+            //    }
+            //}
         }
         catch (Exception ex)
         {
@@ -300,7 +295,7 @@ public sealed partial class HomePage : Page
             // 使用无透明度效果的图片代替，这个代替方法也没有用
             // 应该去应用商店更新解码组件
             Logger.Error(ex, "使用 Win2D 加载背景图片");
-            NotificationProvider.Warning("图片加载失败", "缺少必要的解码组件，请在「设置-主页壁纸-图片格式」中查看。", 0);
+            NotificationProvider.Warning("图片加载失败", "缺少必要的解码组件，请在 Microsoft Store 中安装「Webp 图像扩展」或其他图像格式拓展。", 0);
         }
     }
 
@@ -557,63 +552,63 @@ public sealed partial class HomePage : Page
     [RelayCommand]
     private async Task GetNextWallpaperAsync()
     {
-        try
-        {
-            OperationHistory.AddToDatabase("GetNextWallpaper");
-            Logger.TrackEvent("GetNextWallpaper");
-            var loading = new ProgressRing { Width = 16, Height = 16 };
-            _Button_NextWallpaper.Content = loading;
-            var wallpaper = await _xunkongApiService.GetRandomWallpaperAsync();
-            if (wallpaper != null)
-            {
-                if (wallpaper.Id == lastRandomWallpaperId)
-                {
-                    wallpaper = await _xunkongApiService.GetNextWallpaperAsync(CurrentWallpaper.Id);
-                }
-                else
-                {
-                    lastRandomWallpaperId = wallpaper.Id;
-                }
-                var uri = new Uri(wallpaper.Url);
-                var fileTask = XunkongCache.Instance.GetFromCacheAsync(uri);
-                var progress = XunkongCache.Instance.GetProgress(uri);
-                if (progress != null)
-                {
-                    progress.ProgressChanged += (s, e) =>
-                    {
-                        if (e.DownloadState is Scighost.WinUILib.Cache.DownloadState.Completed)
-                        {
-                            loading.Value = 100;
-                        }
-                        else
-                        {
-                            loading.Value = e.BytesReceived * 100 / (double)e.TotalBytesToReceive;
-                            if (loading.Value > 1)
-                            {
-                                loading.IsIndeterminate = false;
-                            }
-                        }
-                    };
-                }
-                var file = await fileTask;
-                loading.IsIndeterminate = true;
-                if (file is not null)
-                {
-                    await LoadBackgroundImage(file.Path);
-                    imageMaxHeight = MainWindow.Current.Height * 0.75 / MainWindow.Current.UIScale;
-                    _Grid_Image.MaxHeight = imageMaxHeight;
-                    CurrentWallpaper = wallpaper;
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex);
-        }
-        finally
-        {
-            _Button_NextWallpaper.Content = "\uE149";
-        }
+        //try
+        //{
+        //    OperationHistory.AddToDatabase("GetNextWallpaper");
+        //    Logger.TrackEvent("GetNextWallpaper");
+        //    var loading = new ProgressRing { Width = 16, Height = 16 };
+        //    _Button_NextWallpaper.Content = loading;
+        //    var wallpaper = await _xunkongApiService.GetRandomWallpaperAsync();
+        //    if (wallpaper != null)
+        //    {
+        //        if (wallpaper.Id == lastRandomWallpaperId)
+        //        {
+        //            wallpaper = await _xunkongApiService.GetNextWallpaperAsync(CurrentWallpaper.Id);
+        //        }
+        //        else
+        //        {
+        //            lastRandomWallpaperId = wallpaper.Id;
+        //        }
+        //        var uri = new Uri(wallpaper.Url);
+        //        var fileTask = XunkongCache.Instance.GetFromCacheAsync(uri);
+        //        var progress = XunkongCache.Instance.GetProgress(uri);
+        //        if (progress != null)
+        //        {
+        //            progress.ProgressChanged += (s, e) =>
+        //            {
+        //                if (e.DownloadState is Scighost.WinUILib.Cache.DownloadState.Completed)
+        //                {
+        //                    loading.Value = 100;
+        //                }
+        //                else
+        //                {
+        //                    loading.Value = e.BytesReceived * 100 / (double)e.TotalBytesToReceive;
+        //                    if (loading.Value > 1)
+        //                    {
+        //                        loading.IsIndeterminate = false;
+        //                    }
+        //                }
+        //            };
+        //        }
+        //        var file = await fileTask;
+        //        loading.IsIndeterminate = true;
+        //        if (file is not null)
+        //        {
+        //            await LoadBackgroundImage(file.Path);
+        //            imageMaxHeight = MainWindow.Current.Height * 0.75 / MainWindow.Current.UIScale;
+        //            _Grid_Image.MaxHeight = imageMaxHeight;
+        //            CurrentWallpaper = wallpaper;
+        //        }
+        //    }
+        //}
+        //catch (Exception ex)
+        //{
+        //    Logger.Error(ex);
+        //}
+        //finally
+        //{
+        //    _Button_NextWallpaper.Content = "\uE149";
+        //}
     }
 
 

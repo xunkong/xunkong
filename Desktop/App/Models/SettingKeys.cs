@@ -322,6 +322,8 @@ internal abstract class SettingKeys
 
     public const string HoyolabDeviceFpLastUpdateTime = nameof(HoyolabDeviceFpLastUpdateTime);
 
+    public const string LauncherBackgroundUrl = nameof(LauncherBackgroundUrl);
+
 }
 
 
