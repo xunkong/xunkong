@@ -172,8 +172,14 @@ internal class WishlogManagePage_JsonExport
             Uid = uid,
             Language = lang,
             ExportTime = time.ToString("yyyy-MM-dd HH:mm:ss"),
-            ExportTimeStamp = time.ToUnixTimeSeconds().ToString(),
+            ExportTimeStamp = time.ToUnixTimeSeconds(),
             ExportAppVersion = version.ToString(4),
+        };
+        info.RegionTimeZone = uid.ToString()[0] switch
+        {
+            '6' => -5,
+            '7' => 1,
+            _ => 8,
         };
         Info = info;
     }
@@ -193,7 +199,7 @@ internal class WishlogManagePage_JsonExport_Info
     public string ExportTime { get; set; }
 
     [JsonPropertyName("export_timestamp")]
-    public string ExportTimeStamp { get; set; }
+    public long ExportTimeStamp { get; set; }
 
     [JsonPropertyName("export_app")]
     public string ExportApp { get; set; } = "Xunkong.Desktop";
@@ -202,7 +208,10 @@ internal class WishlogManagePage_JsonExport_Info
     public string ExportAppVersion { get; set; }
 
     [JsonPropertyName("uigf_version")]
-    public string UIGFVersion { get; set; } = "v2.3";
+    public string UIGFVersion { get; set; } = "v3.0";
+
+    [JsonPropertyName("region_time_zone")]
+    public int RegionTimeZone { get; set; }
 
 }
 

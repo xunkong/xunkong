@@ -52,7 +52,7 @@ public sealed partial class WishlogManagePage : Page
     {
         if (e.Parameter is int uid)
         {
-            _SelectedUid = uid.ToString();
+            SelectedUid = uid.ToString();
         }
     }
 
@@ -114,7 +114,7 @@ public sealed partial class WishlogManagePage : Page
 
 
     [ObservableProperty]
-    private List<string> exportTemplates = new List<string> { "UIGF Excel v2.2", "UIGF Json v2.3" };
+    private List<string> exportTemplates = new List<string> { "UIGF Excel v2.2", "UIGF Json v3.0" };
 
 
     [ObservableProperty]
