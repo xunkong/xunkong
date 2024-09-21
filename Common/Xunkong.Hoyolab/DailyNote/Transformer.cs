@@ -23,4 +23,11 @@ public class Transformer
     /// </summary>
     [JsonPropertyName("wiki")]
     public string Wiki { get; set; }
+
+    [JsonPropertyName("noticed")]
+    public bool Noticed { get; set; }
+
+    [JsonPropertyName("latest_job_id")]
+    public string LatestJobId { get; set; }
+
 }

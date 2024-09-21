@@ -140,4 +140,10 @@ public class DailyNoteInfo
     [JsonIgnore]
     public DateTimeOffset HomeCoinFullTime => UpdateTime + HomeCoinRecoveryTime;
 
+    /// <summary>
+    /// 每日任务
+    /// </summary>
+    [JsonPropertyName("daily_task")]
+    public DailyTask DailyTask { get; set; }
+
 }
