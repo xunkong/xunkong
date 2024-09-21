@@ -21,7 +21,7 @@
 
         <Image HorizontalAlignment="Center"
                VerticalAlignment="Top"
-               Source="ms-appx:///Assets/Images/102203689_p0.jpg"
+               Source="ms-appx:///Assets/Images/4.7.png"
                Stretch="UniformToFill" />
 
         <Rectangle HorizontalAlignment="Stretch"

@@ -63,7 +63,7 @@
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Top"
                                    ui:VisualExtensions.NormalizedCenterPoint="0.5"
-                                   Source="ms-appx:///Assets/Images/102203689_p0_thumb.jpg"
+                                   Source="ms-appx:///Assets/Images/4.7_thumb.jpg"
                                    Stretch="UniformToFill"
                                    Tapped="_Image_RecommendWallpaper_Tapped">
                                 <ani:Explicit.Animations>
@@ -103,14 +103,14 @@
                             <Hyperlink NavigateUri="https://github.com/xunkong/xunkong" UnderlineStyle="None">Star</Hyperlink>
                             <Run Text="吧。" />
                         </TextBlock>
-                        <TextBlock Grid.Column="1"
+                        <!--<TextBlock Grid.Column="1"
                                    Margin="0,32,0,0"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                    TextWrapping="Wrap">
                             <Run FontSize="12" Text="アナ - 原神2周年記念" />
                             <LineBreak />
                             <Run FontSize="12" Text="おめでとうございます！これからも旅人と共に、星と深淵を目指せ！" />
-                        </TextBlock>
+                        </TextBlock>-->
                         <StackPanel Grid.Row="1"
                                     Grid.Column="1"
                                     Orientation="Horizontal"
