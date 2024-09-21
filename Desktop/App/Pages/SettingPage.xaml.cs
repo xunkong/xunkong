@@ -940,7 +940,7 @@ public sealed partial class SettingPage : Page
         try
         {
             await _xunkongApiService.GetAllGenshinDataFromServerAsync(true);
-            UpdateGenshinDataText = $"数据量较大，请耐心等待。上次更新：刚刚";
+            UpdateGenshinDataText = $"数据量较大，请耐心等待（感谢 DGP-Studio 提供的元数据）。上次更新：刚刚";
             NotificationProvider.Success("完成", "本地的原神数据已是最新版本");
             OperationHistory.AddToDatabase("UpdateGenshinData");
             Logger.TrackEvent("UpdateGenshinData");
@@ -973,29 +973,29 @@ public sealed partial class SettingPage : Page
                 var time = DateTime.Now - new FileInfo(DatabaseProvider.GenshinDataDbPath).LastWriteTime;
                 if (time.Days > 0)
                 {
-                    return $"数据量较大，请耐心等待。上次更新：{time.Days}天前";
+                    return $"数据量较大，请耐心等待（感谢 DGP-Studio 提供的元数据）。上次更新：{time.Days}天前";
                 }
                 else if (time.Hours > 0)
                 {
-                    return $"数据量较大，请耐心等待。上次更新：{time.Hours}小时前";
+                    return $"数据量较大，请耐心等待（感谢 DGP-Studio 提供的元数据）。上次更新：{time.Hours}小时前";
                 }
                 else if (time.Minutes > 0)
                 {
-                    return $"数据量较大，请耐心等待。上次更新：{time.Minutes}分钟前";
+                    return $"数据量较大，请耐心等待（感谢 DGP-Studio 提供的元数据）。上次更新：{time.Minutes}分钟前";
                 }
                 else
                 {
-                    return $"数据量较大，请耐心等待。上次更新：刚刚";
+                    return $"数据量较大，请耐心等待（感谢 DGP-Studio 提供的元数据）。上次更新：刚刚";
                 }
             }
             else
             {
-                return $"数据量较大，请耐心等待";
+                return $"数据量较大，请耐心等待（感谢 DGP-Studio 提供的元数据）";
             }
         }
         catch
         {
-            return $"数据量较大，请耐心等待";
+            return $"数据量较大，请耐心等待（感谢 DGP-Studio 提供的元数据）";
         }
     }
 
