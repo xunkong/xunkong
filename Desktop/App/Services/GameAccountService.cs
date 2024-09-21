@@ -3,8 +3,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
-using Windows.ApplicationModel;
 
 namespace Xunkong.Desktop.Services;
 
@@ -183,12 +181,12 @@ internal class GameAccountService
         {
             var regKey = server switch
             {
-                0 => @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\原神",
-                1 => @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Genshin Impact",
+                0 => @"HKEY_CURRENT_USER\Software\miHoYo\HYP\1_1\hk4e_cn",
+                1 => @"HKEY_CURRENT_USER\Software\Cognosphere\HYP\1_0\hk4e_global",
                 2 => @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\云·原神",
                 _ => throw new ArgumentOutOfRangeException(nameof(server)),
             };
-            exePath = GetGameExePathFromRegistry(regKey, server == 2);
+            exePath = GetGameExePathFromRegistry(server, regKey);
         }
         if (!File.Exists(exePath))
         {
@@ -206,31 +204,34 @@ internal class GameAccountService
     /// <param name="key"></param>
     /// <param name="isCloud">云原神</param>
     /// <returns></returns>
-    private static string? GetGameExePathFromRegistry(string key, bool isCloud)
+    private static string? GetGameExePathFromRegistry(int server, string key)
     {
         var launcherPath = Registry.GetValue(key, "InstallPath", null) as string;
-        if (isCloud)
+        if (server == 0)
+        {
+            string? folder = Registry.GetValue(key, "GameInstallPath", null) as string;
+            string? exe = Path.Join(folder, "YuanShen.exe");
+            if (File.Exists(exe))
+            {
+                return exe;
+            }
+        }
+        else if (server == 1)
+        {
+            string? folder = Registry.GetValue(key, "GameInstallPath", null) as string;
+            string? exe = Path.Join(folder, "GenshinImpact.exe");
+            if (File.Exists(exe))
+            {
+                return exe;
+            }
+        }
+        else if (server == 2)
         {
             var exeName = Registry.GetValue(key, "ExeName", null) as string;
             var exePath = Path.Join(launcherPath, exeName);
             if (File.Exists(exePath))
             {
                 return exePath;
-            }
-        }
-        else
-        {
-            var configPath = Path.Join(launcherPath, "config.ini");
-            if (File.Exists(configPath))
-            {
-                var str = File.ReadAllText(configPath);
-                var installPath = Regex.Match(str, @"game_install_path=(.+)").Groups[1].Value.Trim();
-                var exeName = Regex.Match(str, @"game_start_name=(.+)").Groups[1].Value.Trim();
-                var exePath = Path.Join(installPath, exeName);
-                if (File.Exists(exePath))
-                {
-                    return exePath;
-                }
             }
         }
         return null;
@@ -266,54 +267,28 @@ internal class GameAccountService
             }
             else
             {
-                var fps = AppSetting.GetValue(SettingKeys.TargetFPS, 60);
+                //var fps = AppSetting.GetValue(SettingKeys.TargetFPS, 60);
                 var isPopup = AppSetting.GetValue<bool>(SettingKeys.IsPopupWindow);
                 var width = AppSetting.GetValue<int>(SettingKeys.StartGameWindowWidth);
                 var height = AppSetting.GetValue<int>(SettingKeys.StartGameWindowHeight);
-                if (fps > 60)
+                var command = new StringBuilder();
+                if (isPopup)
                 {
-                    var command = new StringBuilder();
-                    command.Append($@"-exe ""{exePath}"" ");
-                    command.Append($"-fps {fps} ");
-                    if (isPopup)
-                    {
-                        command.Append("-popupwindow ");
-                    }
-                    if (width > 0 && height > 0)
-                    {
-                        command.Append($"-screen-width {width} -screen-height {height} ");
-                    }
-                    var info = new ProcessStartInfo
-                    {
-                        FileName = Path.Combine(Package.Current.InstalledLocation.Path, @"Xunkong.Desktop.FpsUnlocker\Xunkong.Desktop.FpsUnlocker.exe"),
-                        Arguments = command.ToString(),
-                        UseShellExecute = true,
-                        Verb = "runas",
-                        WorkingDirectory = Path.GetDirectoryName(exePath),
-                    };
-                    Process.Start(info);
+                    command.Append("-popupwindow ");
                 }
-                else
+                if (width > 0 && height > 0)
                 {
-                    var command = new StringBuilder();
-                    if (isPopup)
-                    {
-                        command.Append("-popupwindow ");
-                    }
-                    if (width > 0 && height > 0)
-                    {
-                        command.Append($"-screen-width {width} -screen-height {height} ");
-                    }
-                    var info = new ProcessStartInfo
-                    {
-                        FileName = exePath,
-                        Arguments = command.ToString(),
-                        UseShellExecute = true,
-                        Verb = "runas",
-                        WorkingDirectory = Path.GetDirectoryName(exePath),
-                    };
-                    Process.Start(info);
+                    command.Append($"-screen-width {width} -screen-height {height} ");
                 }
+                var info = new ProcessStartInfo
+                {
+                    FileName = exePath,
+                    Arguments = command.ToString(),
+                    UseShellExecute = true,
+                    Verb = "runas",
+                    WorkingDirectory = Path.GetDirectoryName(exePath),
+                };
+                Process.Start(info);
             }
             OperationHistory.AddToDatabase("StartGame", ((GameAccount.GameServer)server).ToString());
             Logger.TrackEvent("StartGame", "Server", ((GameAccount.GameServer)server).ToString());

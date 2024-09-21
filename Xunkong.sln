@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunkong.Desktop", "Desktop\
 EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "Xunkong.Desktop.Package", "Desktop\Package\Xunkong.Desktop.Package.wapproj", "{32ADC47D-4FA7-44A2-8EF1-9BB99FF2233E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Xunkong.Desktop.FpsUnlocker", "Desktop\FpsUnlocker\Xunkong.Desktop.FpsUnlocker.vcxproj", "{5B99557A-5555-48C0-85E2-F58E31031B38}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunkong.Core", "Common\Xunkong.Core\Xunkong.Core.csproj", "{3F39BFB3-6839-4F37-AD76-F25BF893399A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunkong.GenshinData", "Common\Xunkong.GenshinData\Xunkong.GenshinData.csproj", "{F365391E-D14E-4449-A5B0-F1A03C836BD9}"
@@ -75,22 +73,6 @@ Global
 		{32ADC47D-4FA7-44A2-8EF1-9BB99FF2233E}.Release|x86.ActiveCfg = Release|x86
 		{32ADC47D-4FA7-44A2-8EF1-9BB99FF2233E}.Release|x86.Build.0 = Release|x86
 		{32ADC47D-4FA7-44A2-8EF1-9BB99FF2233E}.Release|x86.Deploy.0 = Release|x86
-		{5B99557A-5555-48C0-85E2-F58E31031B38}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{5B99557A-5555-48C0-85E2-F58E31031B38}.Debug|Any CPU.Build.0 = Debug|x64
-		{5B99557A-5555-48C0-85E2-F58E31031B38}.Debug|arm64.ActiveCfg = Debug|x64
-		{5B99557A-5555-48C0-85E2-F58E31031B38}.Debug|arm64.Build.0 = Debug|x64
-		{5B99557A-5555-48C0-85E2-F58E31031B38}.Debug|x64.ActiveCfg = Debug|x64
-		{5B99557A-5555-48C0-85E2-F58E31031B38}.Debug|x64.Build.0 = Debug|x64
-		{5B99557A-5555-48C0-85E2-F58E31031B38}.Debug|x86.ActiveCfg = Debug|Win32
-		{5B99557A-5555-48C0-85E2-F58E31031B38}.Debug|x86.Build.0 = Debug|Win32
-		{5B99557A-5555-48C0-85E2-F58E31031B38}.Release|Any CPU.ActiveCfg = Release|x64
-		{5B99557A-5555-48C0-85E2-F58E31031B38}.Release|Any CPU.Build.0 = Release|x64
-		{5B99557A-5555-48C0-85E2-F58E31031B38}.Release|arm64.ActiveCfg = Release|x64
-		{5B99557A-5555-48C0-85E2-F58E31031B38}.Release|arm64.Build.0 = Release|x64
-		{5B99557A-5555-48C0-85E2-F58E31031B38}.Release|x64.ActiveCfg = Release|x64
-		{5B99557A-5555-48C0-85E2-F58E31031B38}.Release|x64.Build.0 = Release|x64
-		{5B99557A-5555-48C0-85E2-F58E31031B38}.Release|x86.ActiveCfg = Release|Win32
-		{5B99557A-5555-48C0-85E2-F58E31031B38}.Release|x86.Build.0 = Release|Win32
 		{3F39BFB3-6839-4F37-AD76-F25BF893399A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3F39BFB3-6839-4F37-AD76-F25BF893399A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F39BFB3-6839-4F37-AD76-F25BF893399A}.Debug|arm64.ActiveCfg = Debug|Any CPU
