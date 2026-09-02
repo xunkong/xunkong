@@ -54,12 +54,16 @@ internal static class ServiceProvider
               client.DefaultRequestHeaders.Add("X-Device-Id", XunkongEnvironment.DeviceId);
           })
           .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AutomaticDecompression = System.Net.DecompressionMethods.All });
-        sc.AddHttpClient<SnapMetadataClient>()
+        sc.AddHttpClient(nameof(SnapMetadataClient))
           .ConfigureHttpClient(client =>
           {
               client.DefaultRequestHeaders.Add("User-Agent", $"XunkongDesktop/{XunkongEnvironment.AppVersion}");
           })
           .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AutomaticDecompression = System.Net.DecompressionMethods.All });
+        sc.AddTransient<SnapMetadataClient>(sp =>
+            new SnapMetadataClient(
+                sp.GetRequiredService<IHttpClientFactory>().CreateClient(nameof(SnapMetadataClient)),
+                XunkongEnvironment.UserDataPath));
     }
 
 

@@ -13,6 +13,9 @@ public partial class PM_CharacterWiki_CharacterInfo2
     [ObservableProperty]
     private SnapAvatarInfo characterInfo;
 
+    [ObservableProperty]
+    private string? wishlogIcon;
+
 
     public string BaseName => CharacterInfo.Icon.Replace("UI_AvatarIcon_", "");
 

@@ -206,7 +206,24 @@ internal class XunkongApiService
 
     public async Task GetAllGenshinDataFromServerAsync(bool force = false)
     {
-        await GetSnapMetadataAsync(force);
+        string? hash = AppSetting.GetValue<string>(SettingKeys.LastMetadataCommitHash);
+        string? remoteHash = await _snapMetadataClient.GetLatestMetadataHashAsync();
+        if (remoteHash == hash)
+        {
+            if (force) await GetSnapMetadataAsync(force);
+            return;
+        }
+        NotificationProvider.Information("检查到数据更新，正在下载...");
+        try
+        {
+            await GetSnapMetadataAsync(force);
+            NotificationProvider.Success("数据更新完成");
+            AppSetting.SetValue(SettingKeys.LastMetadataCommitHash, remoteHash);
+        }
+        catch (Exception ex)
+        {
+            NotificationProvider.Error("数据更新失败");
+        }
         //var data = await _xunkongClient.GetAllGenshinDataAsync();
         //SaveGenshinData(data);
     }
@@ -214,7 +231,7 @@ internal class XunkongApiService
 
     private async Task GetSnapMetadataAsync(bool force = false)
     {
-        var meta = await _snapMetadataClient.GetSnapMetaAsync();
+        var meta = await _snapMetadataClient.GetSnapMetaAsync(force);
         // Achievement
         string? hash = AppSetting.GetValue<string>(nameof(meta.Achievement));
         if (force || meta.Achievement != hash)

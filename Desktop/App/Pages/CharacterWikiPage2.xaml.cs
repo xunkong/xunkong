@@ -57,6 +57,10 @@ public sealed partial class CharacterWikiPage2 : Page
         try
         {
             var list = XunkongApiService.GetGenshinData<SnapAvatarInfo>();
+            var wishlogAvatarIconMap = WishlogService.LoadWishlogItemInfos()
+                                                 .Where(x => x.WeaponCatId > 0)
+                                                 .GroupBy(x => x.Id)
+                                                 .ToDictionary(x => x.Key, x => x.First().Icon);
             var maxTime = DateTime.MaxValue;
             if (AppSetting.GetValue<bool>(SettingKeys.HideUnusableCharacter))
             {
@@ -83,6 +87,7 @@ public sealed partial class CharacterWikiPage2 : Page
             var materials = XunkongApiService.GetGenshinData<SnapMaterial>();
             foreach (var info in CharacterInfos)
             {
+                info.WishlogIcon = wishlogAvatarIconMap.TryGetValue(info.CharacterInfo.Id, out var icon) ? icon : info.CharacterInfo.Icon;
                 var pid = info.CharacterInfo.PromoteId;
                 info.AvatarPromotes = promotes.Where(x => x.PromoteId == pid).OrderBy(x => x.Level).ToList();
                 info.PromoteItems = info.CharacterInfo.CultivationItems.SelectMany(x => materials.Where(y => y.Id == x)).ToList();

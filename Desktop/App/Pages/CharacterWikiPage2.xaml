@@ -222,7 +222,7 @@
                                                          Height="80"
                                                          VerticalAlignment="Top"
                                                          CornerRadius="4,4,16,0"
-                                                         Source="{x:Bind CharacterInfo.Icon, Converter={StaticResource SnapImageUrlConverter}}" />
+                                                         Source="{x:Bind WishlogIcon}" />
                                         <TextBlock Margin="0,0,0,2"
                                                    HorizontalAlignment="Center"
                                                    VerticalAlignment="Bottom"

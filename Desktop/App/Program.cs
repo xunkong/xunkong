@@ -5,6 +5,8 @@
 
 public static class Program
 {
+    private const string AppDataPathEnvVar = "XUNKONG_APP_DATA_PATH";
+
     [global::System.Runtime.InteropServices.DllImport("Microsoft.ui.xaml.dll")]
     private static extern void XamlCheckProcessRequirements();
 
@@ -16,6 +18,7 @@ public static class Program
         // 不要使用 async Task Main，否则 WebView2 会出错
 
         Environment.CurrentDirectory = AppContext.BaseDirectory;
+        Environment.SetEnvironmentVariable(AppDataPathEnvVar, XunkongEnvironment.UserDataPath);
 
         if (args.FirstOrDefault() == "DoNotClickToast")
         {

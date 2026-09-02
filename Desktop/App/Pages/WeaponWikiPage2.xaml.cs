@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Xunkong.Hoyolab.Wishlog;
 using Xunkong.SnapMetadata;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -48,6 +49,11 @@ public sealed partial class WeaponWikiPage2 : Page
     {
         try
         {
+            var wishlogWeaponIconMap = WishlogService.LoadWishlogItemInfos()
+                                                 .Where(x => x.CatId > 0)
+                                                 .GroupBy(x => x.Id)
+                                                 .ToDictionary(x => x.Key, x => x.First().Icon);
+
             WeaponInfos = XunkongApiService.GetGenshinData<SnapWeaponInfo>()
                                            .OrderByDescending(x => x.RankLevel)
                                            .OrderByDescending(x => x.Sort)
@@ -60,6 +66,7 @@ public sealed partial class WeaponWikiPage2 : Page
             var materials = XunkongApiService.GetGenshinData<SnapMaterial>();
             foreach (var info in WeaponInfos)
             {
+                info.WishlogIcon = wishlogWeaponIconMap.TryGetValue(info.WeaponInfo.Id, out var icon) ? icon : info.WeaponInfo.Icon;
                 var pid = info.WeaponInfo.PromoteId;
                 info.WeaponPromotes = promotes.Where(x => x.PromoteId == pid).OrderBy(x => x.Level).ToList();
                 info.PromoteItems = info.WeaponInfo.CultivationItems?.SelectMany(x => materials.Where(y => y.Id == x)).ToList();

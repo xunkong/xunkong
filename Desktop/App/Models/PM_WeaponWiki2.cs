@@ -13,6 +13,9 @@ public partial class PM_WeaponWiki_WeaponInfo2
     [ObservableProperty]
     private SnapWeaponInfo weaponInfo;
 
+    [ObservableProperty]
+    private string? wishlogIcon;
+
     public string BaseName => WeaponInfo.Icon.Replace("UI_EquipIcon_", "");
 
     [ObservableProperty]

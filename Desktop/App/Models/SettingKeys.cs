@@ -324,6 +324,10 @@ internal abstract class SettingKeys
 
     public const string LauncherBackgroundUrl = nameof(LauncherBackgroundUrl);
 
+    /// <summary>
+    /// 上次拉取的元数据提交Hash
+    /// </summary>
+    public const string LastMetadataCommitHash = nameof(LastMetadataCommitHash);
 }
 
 
