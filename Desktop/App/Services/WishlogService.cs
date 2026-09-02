@@ -78,10 +78,10 @@ internal class WishlogService
         using var stream = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         using var reader = new StreamReader(stream);
         var log = await reader.ReadToEndAsync();
-        var matches = Regex.Matches(log, @"OnGetWebViewPageFinish:(.+#/log)");
+        var matches = isSea ? Regex.Matches(log, @"https://gs.hoyoverse.com/genshin/event/e20190909gacha(.+#/log)"):Regex.Matches(log, @"https://webstatic\.mihoyo\.com/hk4e/event/e20190909gacha(.+#/log)");
         if (matches.Any())
         {
-            return matches.Last().Value.Replace("OnGetWebViewPageFinish:", "");
+            return matches.Last().Value;
         }
         else
         {

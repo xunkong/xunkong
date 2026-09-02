@@ -644,7 +644,7 @@ public sealed partial class WishlogSummaryPage2 : Page
         {
             var url = server switch
             {
-                "0" or "1" => WishlogClient.GetWishlogUrlFromCacheFile(GameAccountService.GetGameExePath(server == "1" ? 1 : 0)),
+                "0" or "1" => await _wishlogService.FindWishlogUrlFromLogFileAsync(server == "1"),
                 "2" => WishlogService.FindWishlogUrlFromCloudServer(),
                 _ => null,
             };
